@@ -7,10 +7,10 @@
 #include <stddef.h>
 
 #include "player.h"
-
-// Faction defines
-#define FA_ALLIANCE 0x00000001
-#define FA_HORDE    0x00000001
+#include "colour.h"
+#include "class.h"
+#include "race.h"
+#include "faction.h"
 
 #define PICK_CLASS 0
 #define PICK_RACE  1
@@ -25,20 +25,38 @@ void print_options(int what, short mask);
 void pick_race(struct Player* you);
 void pick_class(struct Player* you);
 
-void do_char_creation(struct Player*);
+void do_char_creation(struct Player* you);
+
+extern void init_colours(void);
+extern const struct Race races[];
+extern const struct Class classes[];
 
 void do_quit(void)
 {
     endwin();
+    use_default_colors();
     puts("Your curiosity will be the death of you.");
     exit(0);
 }
 
 void print_picked(struct Player* you)
 {
-    mvprintw(1, 4, "name: %s", !you->name ? "unknown" : you->name);
-    mvprintw(2, 3, "class: %s", !you->cls ? "not chosen" : you->cls->name);
-    mvprintw(3, 4, "race: %s", !you->race ? "not chosen" : you->race->noun);
+    int col;
+    mvprintw(1, 2, "    name: %s", !you->name ? "unknown" : you->name);
+
+    mvprintw(2, 2, "   class: ");
+    col = get_class_colour(you->cls);
+    attron(COLOR_PAIR(col));
+    mvprintw(2, 12, "%s", !you->cls ? "not chosen" : you->cls->name);
+    attroff(COLOR_PAIR(col));
+
+    col = you->race ? you->race->faction == FA_ALLIANCE ? CP_ALLIANCE : CP_HORDE : CP_DEFAULT; 
+    mvprintw(3, 2, "    race: ", !you->race ? "not chosen" : you->race->noun);
+    mvprintw(4, 2, "alliance: ", !you->faction ? "not chosen" : you->faction);
+    attron(COLOR_PAIR(col));
+    mvprintw(3, 12, "%s", !you->race ? "not chosen" : you->race->noun);
+    mvprintw(4, 12, "%s", !you->faction ? "not chosen" : you->faction);
+    attroff(COLOR_PAIR(col));
 }
 
 void print_options(int what, short mask)
@@ -50,20 +68,30 @@ void print_options(int what, short mask)
         case PICK_CLASS:
             mvprintw(menu_row, menu_col, "Choose your class");
             menu_row += 2;
-            for(int i = 0; i < SIZE(classes); i++, menu_row++)
+            for(int i = 0; i < 9; i++, menu_row++)
+            {
+                int col = get_class_colour(&classes[i]);
+                attron(COLOR_PAIR(col));
                 mvprintw(menu_row, menu_col, "%c - %s", classes[i].hotkey, classes[i].name);
+                attroff(COLOR_PAIR(col));
+            }
 
             break;
 
         case PICK_RACE:
             mvprintw(menu_row, menu_col, "Choose your race");
             menu_row += 2;
-            for(int i = 0; i < SIZE(races); i++)
+            for(int i = 0; i < 8; i++)
             {
                 if(races[i].selfmask & mask)
                 {
+                    int col = races[i].faction == FA_ALLIANCE ? CP_ALLIANCE : CP_HORDE;
+                    attron(COLOR_PAIR(col));
+                    
                     mvprintw(menu_row, menu_col, "%c - %s", races[i].hotkey, races[i].noun);
                     menu_row++;
+
+                    attroff(COLOR_PAIR(col)); 
                 }
             }
 
@@ -88,27 +116,29 @@ void pick_class(struct Player* you)
     {
         switch(getch())
         {
-            case 'h':
-                *(you->cls) = classes[0]; break;
-            case 'm':
-                *(you->cls) = classes[1]; break;
-            case 'r':
-                *(you->cls) = classes[2]; break;
             case 'd':
-                *(you->cls) = classes[3]; break;
+                *(you->cls) = classes[0]; return;
+            case 'h':
+                *(you->cls) = classes[1]; return;
+            case 'm':
+                *(you->cls) = classes[2]; return;
+            case 'r':
+                *(you->cls) = classes[3]; return;
             case 'p':
-                *(you->cls) = classes[4]; break;
+                *(you->cls) = classes[4]; return;
+            case 'i':
+                *(you->cls) = classes[5]; return;
             case 's':
-                *(you->cls) = classes[6]; break;
+                *(you->cls) = classes[6]; return;
             case 'l':
-                *(you->cls) = classes[5]; break;
+                *(you->cls) = classes[7]; return;
             case 'w':
-                *(you->cls) = classes[7]; break;
+                *(you->cls) = classes[8]; return;
             case 'q':
-                do_quit(); break;
+                do_quit(); return;
         }
     } 
-    while(!you->cls);
+    while(true);
 }
 
 void pick_race(struct Player* you)
@@ -128,26 +158,26 @@ void pick_race(struct Player* you)
         switch(getch())
         {
             case 'h':
-                *(you->race) = races[0]; break;
+                *(you->race) = races[0]; you->faction = "alliance"; return;
             case 'd':
-                *(you->race) = races[1]; break;
+                *(you->race) = races[1]; you->faction = "alliance"; return;
             case 'e':
-                *(you->race) = races[2]; break;
+                *(you->race) = races[2]; you->faction = "alliance"; return;
             case 'g':
-                *(you->race) = races[3]; break;
+                *(you->race) = races[3]; you->faction = "alliance"; return;
             case 'o':
-                *(you->race) = races[4]; break;
+                *(you->race) = races[4]; you->faction = "horde"; return;
             case 'f':
-                *(you->race) = races[5]; break;
+                *(you->race) = races[5]; you->faction = "horde"; return;
             case 't':
-                *(you->race) = races[6]; break;
+                *(you->race) = races[6]; you->faction = "horde"; return;
             case 'l':
-                *(you->race) = races[7]; break;
+                *(you->race) = races[7]; you->faction = "horde"; return;
             case 'q':
-                do_quit(); break;
+                do_quit(); return;
         }
     }
-    while(!you->race);
+    while(true);
 }
 
 
@@ -178,6 +208,10 @@ int main(int argc, char** argv)
     initscr();
     noecho();
     raw();
+   
+    init_colours();
+
+    attrset(COLOR_PAIR(CP_DEFAULT));
 
     int rows, cols;
     getmaxyx(stdscr, rows, cols);

@@ -1,6 +1,8 @@
 #ifndef RACE_H
 #define RACE_H
 
+#include "faction.h"
+
 // Player race defines
 #define RA_HUMAN    0x00000001
 #define RA_DWARF    0x00000002
@@ -17,42 +19,7 @@ struct Race
     char* noun;
     char* adj;
     short selfmask;
-};
-
-const struct Race races[] =
-{
-    {
-        'h', "human", "human",
-        RA_HUMAN
-    },
-    {
-        'd', "dwarf", "dwarven",
-        RA_DWARF
-    },
-    {
-        'e', "night elf", "night elven",
-        RA_NELF
-    },
-    {
-        'g', "gnome", "gnomish",
-        RA_GNOME
-    },
-    {
-        'o', "orc", "orcish",
-        RA_ORC
-    },
-    {
-        'f', "forsaken", "forsaken",
-        RA_FORSAKEN
-    },
-    {
-        't', "tauren", "tauren",
-        RA_TAUREN
-    },
-    {
-        'l', "troll", "troll",
-        RA_TROLL
-    }
+    short faction;
 };
 
 #endif
