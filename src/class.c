@@ -5,47 +5,47 @@
 const struct Class classes[] = 
 {
     {
-        "druid", 'd',
+        "druid", "druids", 'd',
         RA_NELF | RA_TAUREN,
         CLS_DRUID,
     },
     {
-        "hunter", 'h',
+        "hunter", "hunters", 'h',
         RA_DWARF | RA_NELF | RA_ORC | RA_TAUREN | RA_TROLL,
         CLS_HUNTER
     },
     {
-        "mage", 'm',
+        "mage", "magi", 'm',
         RA_HUMAN | RA_DWARF | RA_GNOME | RA_FORSAKEN | RA_TROLL,
         CLS_MAGE
     },
     {
-        "rogue",'r',
+        "rogue", "rogues", 'r',
         RA_HUMAN | RA_DWARF | RA_NELF | RA_GNOME | RA_ORC | RA_FORSAKEN | RA_TROLL,
         CLS_ROGUE
     },
     {
-        "paladin", 'p',
+        "paladin", "paladins", 'p',
         RA_HUMAN | RA_DWARF,
         CLS_PALADIN
     },
     {
-        "priest", 'i',
+        "priest", "priests", 'i',
         RA_HUMAN | RA_DWARF | RA_NELF | RA_FORSAKEN | RA_TROLL,
         CLS_PRIEST
     },
     {
-        "shaman", 's',
+        "shaman", "shamans", 's',
         RA_ORC | RA_TAUREN | RA_TROLL,
         CLS_SHAMAN
     },
     {
-        "warlock", 'l',
+        "warlock", "warlocks", 'l',
         RA_HUMAN | RA_GNOME | RA_ORC | RA_FORSAKEN,
         CLS_WARLOCK
     },
     {
-        "warrior", 'w',
+        "warrior", "warriors", 'w',
         RA_HUMAN | RA_DWARF | RA_NELF | RA_GNOME | RA_ORC | RA_FORSAKEN | RA_TAUREN | RA_TROLL,
         CLS_WARRIOR
     }

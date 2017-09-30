@@ -14,6 +14,7 @@
 struct Class 
 {
     char* name;
+    char* name_plural;
     char hotkey;
 
     short allow_races;
