@@ -19,17 +19,20 @@
 
 // Forward declarations
 void do_quit(void);
-void print_picked(struct Player* you);
+void print_picked(void);
 void print_options(int what, short mask);
 
-void pick_race(struct Player* you);
-void pick_class(struct Player* you);
+void pick_race(void);
+void pick_class(void);
 
-void do_char_creation(struct Player* you);
+void confirm_charater(void);
+void do_char_creation(void);
 
 extern void init_colours(void);
 extern const struct Race races[];
 extern const struct Class classes[];
+
+struct Player* you;
 
 void do_quit(void)
 {
@@ -39,23 +42,23 @@ void do_quit(void)
     exit(0);
 }
 
-void print_picked(struct Player* you)
+void print_picked(void)
 {
     int col;
-    mvprintw(1, 2, "    name: %s", !you->name ? "unknown" : you->name);
+    mvprintw(1, 2, "   name: %s", !you->name ? "unknown" : you->name);
 
-    mvprintw(2, 2, "   class: ");
+    mvprintw(2, 2, "  class: ");
     col = get_class_colour(you->cls);
     attron(COLOR_PAIR(col));
-    mvprintw(2, 12, "%s", !you->cls ? "not chosen" : you->cls->name);
+    mvprintw(2, 11, "%s", !you->cls ? "not chosen" : you->cls->name);
     attroff(COLOR_PAIR(col));
 
     col = you->race ? you->race->faction == FA_ALLIANCE ? CP_ALLIANCE : CP_HORDE : CP_DEFAULT; 
-    mvprintw(3, 2, "    race: ", !you->race ? "not chosen" : you->race->noun);
-    mvprintw(4, 2, "alliance: ", !you->faction ? "not chosen" : you->faction);
+    mvprintw(3, 2, "   race: ", !you->race ? "not chosen" : you->race->noun);
+    mvprintw(4, 2, "faction: ", !you->faction ? "not chosen" : you->faction);
     attron(COLOR_PAIR(col));
-    mvprintw(3, 12, "%s", !you->race ? "not chosen" : you->race->noun);
-    mvprintw(4, 12, "%s", !you->faction ? "not chosen" : you->faction);
+    mvprintw(3, 11, "%s", !you->race ? "not chosen" : you->race->noun);
+    mvprintw(4, 11, "%s", !you->faction ? "not chosen" : you->faction);
     attroff(COLOR_PAIR(col));
 }
 
@@ -102,11 +105,11 @@ void print_options(int what, short mask)
     mvprintw(menu_row, menu_col, "q - quit");
 }
 
-void pick_class(struct Player* you)
+void pick_class(void)
 {
     clear();
 
-    print_picked(you);
+    print_picked();
     
     print_options(PICK_CLASS, 0);
    
@@ -141,11 +144,11 @@ void pick_class(struct Player* you)
     while(true);
 }
 
-void pick_race(struct Player* you)
+void pick_race(void)
 {
     clear();
 
-    print_picked(you);
+    print_picked();
 
     short allowed = you->cls->allow_races & 0xffff;
 
@@ -181,7 +184,7 @@ void pick_race(struct Player* you)
 }
 
 
-void do_char_creation(struct Player* you)
+void do_char_creation(void)
 {
     struct passwd* pd = getpwuid(getuid());
     if(pd == NULL)
@@ -191,9 +194,9 @@ void do_char_creation(struct Player* you)
 
     //pick_faction(you);
 
-    pick_class(you);
+    pick_class();
 
-    pick_race(you);
+    pick_race();
 
     clear();
 
@@ -221,12 +224,14 @@ int main(int argc, char** argv)
     refresh();
     getch();
 
-    struct Player* you = (struct Player*)malloc(sizeof(struct Player));
+    you = (struct Player*)malloc(sizeof(struct Player));
     you->name = NULL;
     you->race = NULL;
     you->cls = NULL;
 
-    do_char_creation(you);
+    do_char_creation();
+    
+    getch();
 
     do_quit();
 }
