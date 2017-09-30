@@ -5,15 +5,19 @@
 #include <string.h>
 #include <pwd.h>
 #include <stddef.h>
+#include <stdio.h>
 
 #include "player.h"
 #include "colour.h"
 #include "class.h"
 #include "race.h"
 #include "faction.h"
+#include "map.h"
 
 #define PICK_CLASS 0
 #define PICK_RACE  1
+#define PICK_SPEC  2
+#define CONFIRM    3
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
@@ -28,9 +32,14 @@ void pick_class(void);
 void confirm_charater(void);
 void do_char_creation(void);
 
-extern void init_colours(void);
+void new_game(void);
+
+// Externs
+//
 extern const struct Race races[];
 extern const struct Class classes[];
+
+static int rows, cols;
 
 struct Player* you;
 
@@ -90,7 +99,7 @@ void print_options(int what, short mask)
                 {
                     int col = races[i].faction == FA_ALLIANCE ? CP_ALLIANCE : CP_HORDE;
                     attron(COLOR_PAIR(col));
-                    
+
                     mvprintw(menu_row, menu_col, "%c - %s", races[i].hotkey, races[i].noun);
                     menu_row++;
 
@@ -98,6 +107,13 @@ void print_options(int what, short mask)
                 }
             }
 
+            break;
+
+        case CONFIRM:
+            mvprintw(menu_row, menu_col, "Confirm this character and start new game?");
+            menu_row += 2;
+            mvprintw(menu_row++, menu_col, "y - Start game");
+            mvprintw(menu_row++, menu_col, "n - Choose again");
             break;
     }
 
@@ -110,9 +126,9 @@ void pick_class(void)
     clear();
 
     print_picked();
-    
+
     print_options(PICK_CLASS, 0);
-   
+
     you->cls = (struct Class*)malloc(sizeof(struct Class));
 
     do
@@ -156,7 +172,7 @@ void pick_race(void)
 
     you->race = (struct Race*)malloc(sizeof(struct Race));
 
-    do 
+    do
     {
         switch(getch())
         {
@@ -183,6 +199,28 @@ void pick_race(void)
     while(true);
 }
 
+void confirm_character(void)
+{
+    clear();
+
+    print_picked();
+
+    print_options(CONFIRM, 0);
+
+   do
+   {
+       switch(getch())
+       {
+           case 'y':
+               return;
+           case 'n':
+               return;
+           case 'q':
+               do_quit(); return;
+       }
+   }
+   while(true);
+}
 
 void do_char_creation(void)
 {
@@ -198,9 +236,71 @@ void do_char_creation(void)
 
     pick_race();
 
+    confirm_character();
+}
+
+void convert_arg(char c, char* buf)
+{
+    switch(c)
+    {
+        case 'C':
+            strcpy(buf, you->cls->name_plural);
+            return;
+        case 'c':
+            strcpy(buf, you->cls->name);
+            return;
+        case 'F':
+            strcpy(buf, you->race->faction == FA_ALLIANCE ? "The Alliance" : "The Horde");
+            return;
+        case 'H':
+            strcpy(buf, you->race->home);
+            return;
+        case 'L':
+            strcpy(buf, you->race->leader);
+            return;
+    }
+}
+
+void new_game(void)
+{
+    FILE* intro = fopen("intro.txt", "r");
+
+    char buf[256];
+
     clear();
 
-    print_picked(you);
+    int row = rows/2 - 20;
+
+    while(fgets(buf, sizeof(buf), intro) != NULL)
+    {
+        int col = cols/2 - 38;
+
+        for(int i = 0; i < SIZE(buf) && buf[i] != '\0'; ++i)
+        {
+            if(buf[i] == '%')
+            {
+                char tmp[30];
+                ++i;
+
+                convert_arg(buf[i], tmp);
+
+                for(int j = 0; j < SIZE(tmp) && tmp[j] != '\0'; ++j)
+                {
+                    mvaddch(row, col, tmp[j]);
+                    ++col;
+                }
+
+                ++i;
+            }
+
+            mvaddch(row, col, buf[i]);
+            ++col;
+        }
+
+        ++row;
+    }
+
+    fclose(intro);
 
     getch();
 }
@@ -211,12 +311,10 @@ int main(int argc, char** argv)
     initscr();
     noecho();
     raw();
-   
+
     init_colours();
 
     attrset(COLOR_PAIR(CP_DEFAULT));
-
-    int rows, cols;
     getmaxyx(stdscr, rows, cols);
 
     // some intro text
@@ -230,7 +328,11 @@ int main(int argc, char** argv)
     you->cls = NULL;
 
     do_char_creation();
-    
+
+    new_game();
+
+    init_map();
+    display_map();
     getch();
 
     do_quit();
