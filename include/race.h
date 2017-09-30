@@ -18,6 +18,8 @@ struct Race
     char hotkey;
     char* noun;
     char* adj;
+    char* home;
+    char* leader;
     short selfmask;
     short faction;
 };
