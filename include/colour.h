@@ -1,12 +1,20 @@
 #ifndef COLOUR_H
 #define COLOUR_H
 
-// ncurses already defines colours 0-7
-
-#define COLOR_ORANGE 8
-#define COLOR_PINK   9
-#define COLOR_BROWN  10
-#define COLOR_PURPLE 11
+// colours
+// base
+#define CLR_BLACK   0
+#define CLR_RED     1
+#define CLR_GREEN   2
+#define CLR_YELLOW  3
+#define CLR_BLUE    4
+#define CLR_MAGENTA 5
+#define CLR_CYAN    6
+#define CLR_WHITE   7
+#define CLR_ORANGE  8
+#define CLR_PINK    9
+#define CLR_BROWN   10
+#define CLR_PURPLE  11
 
 // colour pairs
 // base
