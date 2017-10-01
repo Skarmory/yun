@@ -2,53 +2,22 @@
 #include "race.h"
 #include "colour.h"
 
+#define CLS(name, pl, mhk, allow, smask) \
+    {\
+        name, pl, mhk, allow, smask\
+    }\
+
 const struct Class classes[] = 
 {
-    {
-        "druid", "druids", 'd',
-        RA_NELF | RA_TAUREN,
-        CLS_DRUID,
-    },
-    {
-        "hunter", "hunters", 'h',
-        RA_DWARF | RA_NELF | RA_ORC | RA_TAUREN | RA_TROLL,
-        CLS_HUNTER
-    },
-    {
-        "mage", "magi", 'm',
-        RA_HUMAN | RA_DWARF | RA_GNOME | RA_FORSAKEN | RA_TROLL,
-        CLS_MAGE
-    },
-    {
-        "rogue", "rogues", 'r',
-        RA_HUMAN | RA_DWARF | RA_NELF | RA_GNOME | RA_ORC | RA_FORSAKEN | RA_TROLL,
-        CLS_ROGUE
-    },
-    {
-        "paladin", "paladins", 'p',
-        RA_HUMAN | RA_DWARF,
-        CLS_PALADIN
-    },
-    {
-        "priest", "priests", 'i',
-        RA_HUMAN | RA_DWARF | RA_NELF | RA_FORSAKEN | RA_TROLL,
-        CLS_PRIEST
-    },
-    {
-        "shaman", "shamans", 's',
-        RA_ORC | RA_TAUREN | RA_TROLL,
-        CLS_SHAMAN
-    },
-    {
-        "warlock", "warlocks", 'l',
-        RA_HUMAN | RA_GNOME | RA_ORC | RA_FORSAKEN,
-        CLS_WARLOCK
-    },
-    {
-        "warrior", "warriors", 'w',
-        RA_HUMAN | RA_DWARF | RA_NELF | RA_GNOME | RA_ORC | RA_FORSAKEN | RA_TAUREN | RA_TROLL,
-        CLS_WARRIOR
-    }
+    CLS("druid", "druids", 'd', RA_NELF | RA_TAUREN, CLS_DRUID),
+    CLS("hunter", "hunters", 'h', RA_DWARF | RA_NELF | RA_ORC | RA_TAUREN | RA_TROLL, CLS_HUNTER),
+    CLS("mage", "magi", 'm', RA_HUMAN | RA_DWARF | RA_GNOME | RA_FORSAKEN | RA_TROLL, CLS_MAGE),
+    CLS("rogue", "rogues", 'r', RA_HUMAN | RA_DWARF | RA_NELF | RA_GNOME | RA_ORC | RA_FORSAKEN | RA_TROLL, CLS_ROGUE),
+    CLS("paladin", "paladins", 'p', RA_HUMAN | RA_DWARF, CLS_PALADIN),
+    CLS("priest", "priests", 'i', RA_HUMAN | RA_DWARF | RA_NELF | RA_FORSAKEN | RA_TROLL, CLS_PRIEST),
+    CLS("shaman", "shamans", 's', RA_ORC | RA_TAUREN | RA_TROLL, CLS_SHAMAN),
+    CLS("warlock", "warlocks", 'l', RA_HUMAN | RA_GNOME | RA_ORC | RA_FORSAKEN, CLS_WARLOCK),
+    CLS("warrior", "warriors", 'w', RA_HUMAN | RA_DWARF | RA_NELF | RA_GNOME | RA_ORC | RA_FORSAKEN | RA_TAUREN | RA_TROLL, CLS_WARRIOR)
 };
 
 int get_class_colour(const struct Class* cls)
