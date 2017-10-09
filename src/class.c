@@ -7,7 +7,7 @@
         name, pl, mhk, allow, smask\
     }\
 
-const struct Class classes[] = 
+struct Class classes[] = 
 {
     CLS("druid", "druids", 'd', RA_NELF | RA_TAUREN, CLS_DRUID),
     CLS("hunter", "hunters", 'h', RA_DWARF | RA_NELF | RA_ORC | RA_TAUREN | RA_TROLL, CLS_HUNTER),

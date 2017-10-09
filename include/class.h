@@ -21,6 +21,8 @@ struct Class
     short selfmask;
 };
 
+extern struct Class classes[];
+
 int get_class_colour(const struct Class* cls);
 
 #endif
