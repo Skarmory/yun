@@ -1,12 +1,19 @@
 #include "mon.h"
-#include "colours.h"
+#include <stdlib.h>
 
-#define MON(n, s, fg) \
-    {                 \
-        n, s, fg      \
-    }
-
-const struct MonType mon_type[] =
+struct Mon* gen_mon(struct MonType* montype, int x, int y)
 {
-    MON("ghoul", 'g', CLR_WHITE),
+    struct Mon* mon = (struct Mon*) malloc(sizeof(struct Mon));
+
+    mon->next = NULL;
+    mon->type = montype;
+    mon->x = x;
+    mon->y = y;
+
+    return mon;
+}
+
+void kill_mon(struct Mon* mon)
+{
+    free(mon);
 }

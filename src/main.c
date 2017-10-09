@@ -14,6 +14,8 @@
 #include "race.h"
 #include "faction.h"
 #include "map.h"
+#include "montype.h"
+#include "mon.h"
 
 #define PICK_CLASS 0
 #define PICK_RACE  1
@@ -34,6 +36,7 @@ void confirm_charater(void);
 void do_char_creation(void);
 
 void new_game(void);
+void main_loop(void);
 
 int rows, cols;
 struct Player* you;
@@ -298,6 +301,39 @@ void new_game(void)
     fclose(intro);
 
     getch();
+    clear();
+}
+
+void main_loop(void)
+{
+    // Basic implementation for debugging
+
+    display_map();
+
+    for(;;)
+    {
+        bool move = true;
+        do
+        {
+            char ch;
+            switch(ch = getch()) // get movement
+            {
+                case 'h':
+                case 'j':
+                case 'k':
+                case 'l':
+                    move = false;
+                    you->mon->x += (ch == 'h' ? -1 : ch == 'l' ? 1 : 0);
+                    you->mon->y += (ch == 'k' ? -1 : ch == 'j' ? 1 : 0);
+                    break;
+                case 'q':
+                    do_quit();
+                    break;
+            }
+        } while(move);
+
+        display_map();
+    }
 }
 
 int main(int argc, char** argv)
@@ -322,13 +358,19 @@ int main(int argc, char** argv)
     you->race = NULL;
     you->cls = NULL;
 
+    you->mon = (struct Mon*) malloc(sizeof(struct Mon));
+    you->mon->x = 5;
+    you->mon->y = 5;
+
+    you->mon->type = &mon_type[MT_PLAYER];
+
     do_char_creation();
 
     new_game();
 
     init_map();
-    display_map();
-    getch();
+
+    main_loop();
 
     do_quit();
 }

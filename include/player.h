@@ -3,6 +3,7 @@
 
 #include "class.h"
 #include "race.h"
+#include "mon.h"
 
 struct Player {
     char* name;
@@ -10,6 +11,8 @@ struct Player {
 
     struct Class* cls;
     struct Race* race;
+
+    struct Mon* mon;
 };
 
 extern struct Player* you;
