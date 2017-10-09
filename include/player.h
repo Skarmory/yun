@@ -12,4 +12,6 @@ struct Player {
     struct Race* race;
 };
 
+extern struct Player* you;
+
 #endif

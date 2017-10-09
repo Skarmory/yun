@@ -1,11 +1,12 @@
-#include <ncurses.h>
 #include <stdlib.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <ncurses.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <string.h>
 #include <pwd.h>
-#include <stddef.h>
-#include <stdio.h>
 
 #include "player.h"
 #include "colour.h"
@@ -34,13 +35,7 @@ void do_char_creation(void);
 
 void new_game(void);
 
-// Externs
-//
-extern const struct Race races[];
-extern const struct Class classes[];
-
-static int rows, cols;
-
+int rows, cols;
 struct Player* you;
 
 void do_quit(void)
@@ -62,7 +57,7 @@ void print_picked(void)
     mvprintw(2, 11, "%s", !you->cls ? "not chosen" : you->cls->name);
     attroff(COLOR_PAIR(col));
 
-    col = you->race ? you->race->faction == FA_ALLIANCE ? CP_ALLIANCE : CP_HORDE : CP_DEFAULT; 
+    col = you->race ? you->race->faction == FA_ALLIANCE ? CP_ALLIANCE : CP_HORDE : CP_DEFAULT;
     mvprintw(3, 2, "   race: ", !you->race ? "not chosen" : you->race->noun);
     mvprintw(4, 2, "faction: ", !you->faction ? "not chosen" : you->faction);
     attron(COLOR_PAIR(col));
@@ -74,7 +69,7 @@ void print_picked(void)
 void print_options(int what, short mask)
 {
     int menu_col = 60, menu_row = 1;
-   
+
     switch(what)
     {
         case PICK_CLASS:
@@ -156,7 +151,7 @@ void pick_class(void)
             case 'q':
                 do_quit(); return;
         }
-    } 
+    }
     while(true);
 }
 
