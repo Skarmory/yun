@@ -1,16 +1,25 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include <stdbool.h>
+#include "mon.h"
+
+struct Location
+{
+    char terrain;
+    struct Mon* mon;
+};
+
 struct Map
 {
-    char** glyphs; // the terrain symbols
-    struct Mon** mons;
+    struct Location** locs;
     struct Mon* monlist; // the monsters on this level
 };
 
 void init_map(void);
 void display_map(void);
-
-extern struct Map* cmap;
+void add_mon(struct Mon* mon);
+void rm_mon(struct Mon* mon);
+bool move_mon(struct Mon* mon, int newx, int newy);
 
 #endif

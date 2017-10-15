@@ -10,9 +10,7 @@ struct Mon
     struct MonType* type;
 };
 
-const struct Mon MON_NULL = { 0 };
-
-struct Mon* gen_mon(struct MonType* mon, int x, int y);
+struct Mon* gen_mon(int mtype, int x, int y);
 void kill_mon(struct Mon*);
 
 #endif

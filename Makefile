@@ -4,7 +4,8 @@ LDFLAGS=-lncurses
 GAME=naxx
 
 INCL=$(wildcard include/*.h)
-OBJS=src/colour.o src/race.o src/class.o src/map.o src/montype.o src/mon.o src/main.o
+OBJS=src/colour.o src/race.o src/class.o src/map.o src/montype.o src/mon.o src/input.o \
+     src/util.o src/main.o
 
 .PHONY: all clean default
 
@@ -35,6 +36,12 @@ src/montype.o: src/montype.c $(INCL)
 
 src/mon.o: src/mon.c $(INCL)
 	$(CC) $(CFLAGS) -c src/mon.c -o src/mon.o
+
+src/input.o: src/input.c $(INCL)
+	$(CC) $(CFLAGS) -c src/input.c -o src/input.o
+
+src/util.o: src/util.c $(INCL)
+	$(CC) $(CFLAGS) -c src/util.c -o src/util.o
 
 clean:
 	@rm -f src/*.o

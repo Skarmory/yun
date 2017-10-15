@@ -7,27 +7,27 @@
 
 struct Map* cmap;
 
+// Initialise new map
 void init_map(void)
 {
     cmap = (struct Map*) malloc(sizeof(struct Map));
-    cmap->glyphs = (char**) malloc(sizeof(char*) * MCOLS);
-    cmap->mons = (struct Mon**) malloc(sizeof(struct Mon*) * MCOLS);
-    cmap->monlist = (struct Mon*) malloc(sizeof(struct Mon) * 100);
+    cmap->locs = (struct Location**) malloc(sizeof(struct Location*) * MCOLS);
+    cmap->monlist = (struct Mon*) malloc(sizeof(struct Mon));
+    cmap->monlist = NULL;
 
     for(int i = 0; i < MCOLS; ++i)
     {
-        cmap->glyphs[i] = (char*) malloc(sizeof(char) * MROWS);
-        cmap->mons[i] = (struct Mon*) malloc(sizeof(struct Mon) * MROWS);
+        cmap->locs[i] = (struct Location*) malloc(sizeof(struct Location) * MROWS);
 
         for(int j = 0; j < MROWS; ++j)
         {
-            cmap->glyphs[i][j] = '.';
-            cmap->mons[i][j] = MON_NULL;
+            cmap->locs[i][j].terrain = '.';
+            cmap->locs[i][j].mon = NULL;
         }
     }
-
 }
 
+// Draw map using ncurses
 void display_map(void)
 {
     clear();
@@ -35,28 +35,65 @@ void display_map(void)
     for(int i = 0; i < MCOLS; ++i)
     for(int j = 0; j < MROWS; ++j)
     {
-        if(cmap->mons[i][j] != MON_NULL)
-            mvaddch(j, i, cmap->mons[i][j]->type->sym);
+        struct Location* loc = &cmap->locs[i][j];
+
+        if(loc->mon != NULL)
+            mvaddch(j, i, loc->mon->type->sym);
         else
-            mvaddch(j, i, cmap->glyphs[i][j]);
+            mvaddch(j, i, loc->terrain);
     }
+
+    refresh();
 }
 
+// Add monster to the level
 void add_mon(struct Mon* mon)
 {
     int x = mon->x;
     int y = mon->y;
-    cmap->mons[x][y] = mon;
+    cmap->locs[x][y].mon = mon;
 
-    cmap->monlist
+    // push mon onto the list
+    mon->next = cmap->monlist;
+    cmap->monlist = mon->next;
 }
 
+// Remove monster from the level
 void rm_mon(struct Mon* mon)
 {
-    for(struct Mon* tmp = cmap->monlist; tmp; tmp = tmp->next)
+    struct Mon* tmp = cmap->monlist;
+    struct Mon* pre = cmap->monlist;
+
+    while(tmp != NULL)
     {
-        if(mon == tmp)
+        if(tmp == mon)
         {
+            cmap->locs[mon->x][mon->y].mon = NULL;
+            pre->next = tmp->next;
+            tmp->next = NULL;
         }
+
+        pre = tmp;
+        tmp = tmp->next;
     }
+}
+
+// Do map bounds checking
+bool _valid_move(int x, int y)
+{
+    return (x >= 0 && x < MCOLS) && (y >= 0 && y < MROWS);
+}
+
+// Change monster location
+bool move_mon(struct Mon* mon, int newx, int newy)
+{
+    if(!_valid_move(newx, newy))
+        return false;
+
+    cmap->locs[mon->x][mon->y].mon = NULL;
+    cmap->locs[newx][newy].mon = mon;
+    mon->x = newx;
+    mon->y = newy;
+
+    return true;
 }

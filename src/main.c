@@ -16,6 +16,8 @@
 #include "map.h"
 #include "montype.h"
 #include "mon.h"
+#include "input.h"
+#include "util.h"
 
 #define PICK_CLASS 0
 #define PICK_RACE  1
@@ -25,7 +27,6 @@
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
 // Forward declarations
-void do_quit(void);
 void print_picked(void);
 void print_options(int what, short mask);
 
@@ -41,13 +42,6 @@ void main_loop(void);
 int rows, cols;
 struct Player* you;
 
-void do_quit(void)
-{
-    endwin();
-    use_default_colors();
-    puts("Your curiosity will be the death of you.");
-    exit(0);
-}
 
 void print_picked(void)
 {
@@ -312,26 +306,7 @@ void main_loop(void)
 
     for(;;)
     {
-        bool move = true;
-        do
-        {
-            char ch;
-            switch(ch = getch()) // get movement
-            {
-                case 'h':
-                case 'j':
-                case 'k':
-                case 'l':
-                    move = false;
-                    you->mon->x += (ch == 'h' ? -1 : ch == 'l' ? 1 : 0);
-                    you->mon->y += (ch == 'k' ? -1 : ch == 'j' ? 1 : 0);
-                    break;
-                case 'q':
-                    do_quit();
-                    break;
-            }
-        } while(move);
-
+        handle_input();
         display_map();
     }
 }
@@ -358,17 +333,15 @@ int main(int argc, char** argv)
     you->race = NULL;
     you->cls = NULL;
 
-    you->mon = (struct Mon*) malloc(sizeof(struct Mon));
-    you->mon->x = 5;
-    you->mon->y = 5;
-
-    you->mon->type = &mon_type[MT_PLAYER];
+    you->mon = gen_mon(MT_PLAYER, 5, 5);
 
     do_char_creation();
 
     new_game();
 
     init_map();
+
+    add_mon(you->mon);
 
     main_loop();
 
