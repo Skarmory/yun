@@ -54,7 +54,7 @@ void print_picked(void)
     mvprintw(2, 11, "%s", !you->cls ? "not chosen" : you->cls->name);
     attroff(COLOR_PAIR(col));
 
-    col = you->race ? you->race->faction == FA_ALLIANCE ? CP_ALLIANCE : CP_HORDE : CP_DEFAULT;
+    col = you->race ? you->race->faction == FA_ALLIANCE ? CLR_ALLIANCE : CLR_HORDE : CLR_DEFAULT;
     mvprintw(3, 2, "   race: ", !you->race ? "not chosen" : you->race->noun);
     mvprintw(4, 2, "faction: ", !you->faction ? "not chosen" : you->faction);
     attron(COLOR_PAIR(col));
@@ -89,7 +89,7 @@ void print_options(int what, short mask)
             {
                 if(races[i].selfmask & mask)
                 {
-                    int col = races[i].faction == FA_ALLIANCE ? CP_ALLIANCE : CP_HORDE;
+                    int col = races[i].faction == FA_ALLIANCE ? CLR_ALLIANCE : CLR_HORDE;
                     attron(COLOR_PAIR(col));
 
                     mvprintw(menu_row, menu_col, "%c - %s", races[i].hotkey, races[i].noun);
@@ -320,7 +320,7 @@ int main(int argc, char** argv)
 
     init_colours();
 
-    attrset(COLOR_PAIR(CP_DEFAULT));
+    attron(COLOR_PAIR(CLR_DEFAULT));
     getmaxyx(stdscr, rows, cols);
 
     // some intro text
@@ -332,6 +332,7 @@ int main(int argc, char** argv)
     you->name = NULL;
     you->race = NULL;
     you->cls = NULL;
+    you->faction = NULL;
 
     you->mon = gen_mon(MT_PLAYER, 5, 5);
 

@@ -23,26 +23,26 @@ struct Class classes[] =
 int get_class_colour(const struct Class* cls)
 {
     if(!cls)
-        return CP_DEFAULT;
+        return CLR_DEFAULT;
 
     if(cls->selfmask == CLS_DRUID)
-        return CP_DRUID;
+        return CLR_DRUID;
     else if(cls->selfmask == CLS_HUNTER)
-        return CP_HUNTER;
+        return CLR_HUNTER;
     else if(cls->selfmask == CLS_MAGE)
-        return CP_MAGE;
+        return CLR_MAGE;
     else if(cls->selfmask == CLS_ROGUE)
-        return CP_ROGUE;
+        return CLR_ROGUE;
     else if(cls->selfmask == CLS_PALADIN)
-        return CP_PALADIN;
+        return CLR_PALADIN;
     else if(cls->selfmask == CLS_PRIEST)
-        return CP_PRIEST;
+        return CLR_PRIEST;
     else if(cls->selfmask == CLS_SHAMAN)
-        return CP_SHAMAN;
+        return CLR_SHAMAN;
     else if(cls->selfmask == CLS_WARLOCK)
-        return CP_WARLOCK;
+        return CLR_WARLOCK;
     else if(cls->selfmask == CLS_WARRIOR)
-        return CP_WARRIOR;
+        return CLR_WARRIOR;
 
-    return CP_DEFAULT;
+    return CLR_DEFAULT;
 } 
