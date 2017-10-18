@@ -30,14 +30,13 @@ void init_map(void)
 // Draw map using ncurses
 void display_map(void)
 {
-    clear();
-
     for(int i = 0; i < MCOLS; ++i)
     for(int j = 0; j < MROWS; ++j)
     {
         struct Location* loc = &cmap->locs[i][j];
 
         if(loc->mon != NULL)
+
             mvaddch(j, i, loc->mon->type->sym);
         else
             mvaddch(j, i, loc->terrain);
