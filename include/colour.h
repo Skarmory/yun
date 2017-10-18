@@ -21,13 +21,13 @@
 
 // specific
 #define CLR_DEFAULT  0
-#define CLR_ALLIANCE 19
+#define CLR_ALLIANCE 21
 #define CLR_HORDE    196
 
 #define CLR_SHAMAN   25
 #define CLR_DRUID    208
 #define CLR_PALADIN  218
-#define CLR_WARRIOR  11
+#define CLR_WARRIOR  136
 #define CLR_WARLOCK  13
 #define CLR_PRIEST   255
 #define CLR_ROGUE    191
