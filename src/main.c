@@ -86,6 +86,8 @@ void main_loop(void)
 
 int main(int argc, char** argv)
 {
+    srand(time(NULL));
+
     // ncurses init funcs
     initscr();
     noecho();
@@ -107,13 +109,14 @@ int main(int argc, char** argv)
     you->cls = NULL;
     you->faction = NULL;
 
-    you->mon = gen_mon(MT_PLAYER, 5, 5);
+    you->mon = gen_mon(MT_PLAYER, 20, 5);
 
     do_char_creation();
 
     new_game();
 
     init_map();
+    gen_map();
 
     add_mon(you->mon);
 

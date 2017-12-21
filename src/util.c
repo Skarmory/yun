@@ -29,10 +29,22 @@ void convert_arg(char c, char* buf)
     }
 }
 
+void write_debug_msg(char* msg)
+{
+    FILE* debug_log = fopen("debug.log", "a");
+    fprintf(debug_log, "%s\n", msg);
+    fclose(debug_log);
+}
+
 void do_quit(void)
 {
     endwin();
     use_default_colors();
     puts("Your curiosity will be the death of you.");
     exit(0);
+}
+
+int random_int(int lo, int hi)
+{
+    return lo + (rand() % (hi - lo + 1));
 }

@@ -10,6 +10,11 @@ struct Location
     struct Mon* mon;
 };
 
+struct Room
+{
+    int x, y, w, h;
+};
+
 struct Map
 {
     struct Location** locs;
@@ -17,6 +22,7 @@ struct Map
 };
 
 void init_map(void);
+void gen_map(void);
 void display_map(void);
 void add_mon(struct Mon* mon);
 void rm_mon(struct Mon* mon);
