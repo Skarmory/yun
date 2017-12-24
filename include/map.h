@@ -6,8 +6,9 @@
 
 struct Location
 {
-    char terrain;
+    int x, y;
     struct Mon* mon;
+    char terrain;
 };
 
 struct Room

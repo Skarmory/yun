@@ -22,7 +22,9 @@ void init_map(void)
 
         for(int j = 0; j < MROWS; ++j)
         {
-            cmap->locs[i][j].terrain = '.';
+            cmap->locs[i][j].x = i;
+            cmap->locs[i][j].y = j;
+            cmap->locs[i][j].terrain = ' ';
             cmap->locs[i][j].mon = NULL;
         }
     }
