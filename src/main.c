@@ -3,8 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <ncurses.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <time.h>
 
 #include "player.h"
 #include "colour.h"
