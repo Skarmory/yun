@@ -30,55 +30,19 @@ void init_map(void)
     }
 }
 
-void subdivide_map(int level, const int min, int x, int y, int w, int h)
-{
-    if(level == min)
-        return;
-
-    int opt = rand() % 2;
-    if(opt == 0 && w >= 6)
-    {
-        // vertical
-        int _x = x + w/2;
-
-        for(int _y = 0; _y < (y + h); _y++)
-        {
-            cmap->locs[_x][_y].terrain = '|';
-        }
-
-       subdivide_map(level+1, min, x, y, w/2, h);
-       subdivide_map(level+1, min, _x, y, w/2, h); 
-    }
-    else if(opt == 1 && h >= 6)
-    {
-        // horizontal
-        int _y = y + h/2;
-        
-        for(int _x = 0; _x < (x + w); _x++)
-        {
-            cmap->locs[_x][_y].terrain = '=';
-        } 
-
-        subdivide_map(level+1, min, x, y, w, h/2);
-        subdivide_map(level+1, min, x, _y, w, h/2); 
-    }
-}
-
 /* Draws a random map by drawing squares randomly. Squares start off large, and few, but finish small and many
  * When a square is drawn, it fills in the insides of its walls with dungeon floor, this reduces a lot of the clutter caused by wall overlap
  */
-void gen_by_squares(void)
+void gen_rooms(void)
 {
-    write_debug_msg("Begin gen_by_squares");
-
-    int attempts = 200;
+    int attempts = 2000;
     struct Room* rooms = malloc(sizeof(struct Room) * attempts);
 
     int rcount = -1;
     for(int i = 0; i < attempts; i++)
     {
         int w = random_int(4, 10);
-        int h = random_int(4, 10);
+        int h = random_int(4, 8);
 
         int x = random_int(0, (MCOLS - w - 1));
         int y = random_int(0, (MROWS - h - 1));
@@ -138,7 +102,7 @@ void gen_by_squares(void)
 
 void gen_map(void)
 {
-    gen_by_squares();
+    gen_rooms();
 }
 
 // Draw map using ncurses
