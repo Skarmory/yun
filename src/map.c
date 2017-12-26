@@ -100,9 +100,137 @@ void gen_rooms(void)
     free(rooms);
 }
 
+bool _is_maze_snode(struct Location* loc)
+{
+    int x = loc->x;
+    int y = loc->y;
+
+    if(x == 0 || x == MCOLS - 1 || y == 0 || y == MROWS - 1 || cmap->locs[x][y].terrain != ' ')
+        return false;
+
+    if(cmap->locs[x-1][y-1].terrain == ' ' && cmap->locs[x][y-1].terrain == ' ' && cmap->locs[x+1][y-1].terrain == ' ' &&
+       cmap->locs[x-1][y].terrain   == ' ' && cmap->locs[x+1][y].terrain == ' ' &&
+       cmap->locs[x-1][y+1].terrain == ' ' && cmap->locs[x][y+1].terrain == ' ' && cmap->locs[x+1][y+1].terrain == ' ')
+        return true;
+
+    return false;
+}
+
+bool _get_maze_snode(struct Location** tmp)
+{
+    for(int x = 0; x < MCOLS; x++)
+    for(int y = 0; y < MROWS; y++)
+    {
+        if(_is_maze_snode(&cmap->locs[x][y]))
+        {
+            *tmp = &(cmap->locs[x][y]);
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool _is_valid_maze_node(struct Location* loc)
+{
+    if(loc->terrain != ' ')
+        return false;
+
+    if(loc->x == 0 || loc->y == 0 || loc->x == MCOLS-1 || loc->y == MROWS-1)
+        return false;
+
+    int conn_count = 0;
+
+    if(cmap->locs[loc->x-1][loc->y].terrain == '#')
+        conn_count++;
+
+    if(cmap->locs[loc->x+1][loc->y].terrain == '#')
+        conn_count++;
+
+    if(cmap->locs[loc->x][loc->y-1].terrain == '#')
+        conn_count++;
+
+    if(cmap->locs[loc->x][loc->y+1].terrain == '#')
+        conn_count++;
+
+    if(conn_count > 1)
+        return false;
+
+    return true;
+
+}
+
+bool _get_valid_maze_node(struct Location* loc, struct Location** next)
+{
+    int x = loc->x;
+    int y = loc->y;
+
+    int xoff = 0;
+    int yoff = 0;
+
+    int dir = random_int(0, 3);
+
+    switch(dir)
+    {
+        case 0:
+            xoff = -1; break;
+        case 1:
+            xoff = 1; break;
+        case 2:
+            yoff = -1; break;
+        case 3:
+            yoff= 1; break;
+    }
+
+    *next = &cmap->locs[x + xoff][y + yoff];
+    if(_is_valid_maze_node(*next))
+        return true;
+
+    *next = &cmap->locs[x+1][y];
+    if(_is_valid_maze_node(*next))
+        return true;
+
+    *next = &cmap->locs[x-1][y];
+    if(_is_valid_maze_node(*next))
+        return true;
+
+    *next = &cmap->locs[x][y+1];
+    if(_is_valid_maze_node(*next))
+        return true;
+
+    *next = &cmap->locs[x][y-1];
+    if(_is_valid_maze_node(*next))
+        return true;
+
+    return false;
+}
+
+void fill(struct Location* loc)
+{
+    struct Location* next;
+
+    while(_get_valid_maze_node(loc, &next))
+    {
+        next->terrain = '#';
+        fill(next);
+    }
+}
+
+void gen_maze(void)
+{
+    struct Location* tmp;
+
+    while(_get_maze_snode(&tmp))
+    {
+        tmp->terrain = '#';
+        fill(tmp);
+    }
+}
+
 void gen_map(void)
 {
     gen_rooms();
+    gen_maze();
 }
 
 // Draw map using ncurses
