@@ -35,8 +35,8 @@ void init_map(void)
  */
 void gen_rooms(void)
 {
-    int attempts = 2000;
-    struct Room* rooms = malloc(sizeof(struct Room) * attempts);
+    int attempts = 200;
+    cmap->rooms = (struct Room**)malloc(sizeof(struct Room*) * attempts);
 
     int rcount = -1;
     for(int i = 0; i < attempts; i++)
@@ -51,7 +51,7 @@ void gen_rooms(void)
 
         for(int r = 0; r <= rcount; r++)
         {
-            struct Room* tmp = &rooms[r];
+            struct Room* tmp = cmap->rooms[r];
 
             if(
                 (((x >= tmp->x) && (x <= (tmp->x + tmp->w))) ||
@@ -68,7 +68,10 @@ void gen_rooms(void)
         if(gen)
         {
             rcount++;
-            struct Room* room = &rooms[rcount];
+
+            cmap->rooms[rcount] = (struct Room*)malloc(sizeof(struct Room));
+            struct Room* room = cmap->rooms[rcount];
+
             room->x = x;
             room->y = y;
             room->w = w;
@@ -97,7 +100,8 @@ void gen_rooms(void)
         }
     }
 
-    free(rooms);
+    cmap->rooms = realloc(cmap->rooms, sizeof(struct Room*) * (rcount+1));
+
 }
 
 bool _is_maze_snode(struct Location* loc)
