@@ -145,23 +145,64 @@ bool _is_valid_maze_node(struct Location* loc)
 
     int conn_count = 0;
 
+    struct Location* conn;
+
     if(cmap->locs[loc->x-1][loc->y].terrain == '#')
+    {
         conn_count++;
+        conn = &cmap->locs[loc->x-1][loc->y];
+    }
 
     if(cmap->locs[loc->x+1][loc->y].terrain == '#')
+    {
         conn_count++;
+        conn = &cmap->locs[loc->x+1][loc->y];
+    }
 
     if(cmap->locs[loc->x][loc->y-1].terrain == '#')
+    {
         conn_count++;
+        conn = &cmap->locs[loc->x][loc->y-1];
+    }
 
     if(cmap->locs[loc->x][loc->y+1].terrain == '#')
+    {
         conn_count++;
+        conn = &cmap->locs[loc->x][loc->y+1];
+    }
 
     if(conn_count > 1)
         return false;
 
-    return true;
+    int xoff = loc->x - conn->x;
+    int yoff = loc->y - conn->y;
 
+    if(xoff == -1)
+    {
+        if(cmap->locs[loc->x-1][loc->y-1].terrain == '#' ||
+           cmap->locs[loc->x-1][loc->y+1].terrain == '#')
+            return false;
+    }
+    else if(xoff == 1)
+    {
+        if(cmap->locs[loc->x+1][loc->y-1].terrain == '#' ||
+           cmap->locs[loc->x+1][loc->y+1].terrain == '#')
+            return false;
+    }
+    else if(yoff == 1)
+    {
+        if(cmap->locs[loc->x-1][loc->y+1].terrain == '#' ||
+           cmap->locs[loc->x+1][loc->y+1].terrain == '#')
+            return false;
+    }
+    else
+    {
+        if(cmap->locs[loc->x-1][loc->y-1].terrain == '#' ||
+           cmap->locs[loc->x+1][loc->y-1].terrain == '#')
+            return false;
+    }
+
+   return true;
 }
 
 bool _get_valid_maze_node(struct Location* loc, struct Location** next)
@@ -209,14 +250,17 @@ bool _get_valid_maze_node(struct Location* loc, struct Location** next)
     return false;
 }
 
-void fill(struct Location* loc)
+void _flood_fill_maze(struct Location* loc)
 {
     struct Location* next;
 
     while(_get_valid_maze_node(loc, &next))
     {
         next->terrain = '#';
-        fill(next);
+        _flood_fill_maze(next);
+    }
+}
+
     }
 }
 
@@ -227,7 +271,9 @@ void gen_maze(void)
     while(_get_maze_snode(&tmp))
     {
         tmp->terrain = '#';
-        fill(tmp);
+        _flood_fill_maze(tmp);
+    }
+
     }
 }
 
