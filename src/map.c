@@ -261,9 +261,6 @@ void _flood_fill_maze(struct Location* loc)
     }
 }
 
-    }
-}
-
 void gen_maze(void)
 {
     struct Location* tmp;
@@ -272,8 +269,6 @@ void gen_maze(void)
     {
         tmp->terrain = '#';
         _flood_fill_maze(tmp);
-    }
-
     }
 }
 
