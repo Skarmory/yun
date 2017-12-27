@@ -20,6 +20,7 @@ struct Map
 {
     struct Location** locs;
     struct Room** rooms;
+    int room_count;
     struct Mon* monlist; // the monsters on this level
 };
 

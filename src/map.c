@@ -101,7 +101,7 @@ void gen_rooms(void)
     }
 
     cmap->rooms = realloc(cmap->rooms, sizeof(struct Room*) * (rcount+1));
-
+    cmap->room_count = rcount;
 }
 
 bool _is_maze_snode(struct Location* loc)
@@ -261,6 +261,76 @@ void _flood_fill_maze(struct Location* loc)
     }
 }
 
+void _make_doors(void)
+{
+    struct Room* room;
+    for(int i = 0; i < cmap->room_count; i++)
+    {
+        room = cmap->rooms[i];
+
+        int which_wall = 0;
+        int x = 0;
+        int y = 0;
+        int gen = false;
+
+        do
+        {
+            which_wall = random_int(0, 3);
+
+            switch(which_wall)
+            {
+                case 0: // north
+                    x = random_int(room->x+1, room->x + room->w - 2);
+                    y = room->y;
+
+                    if(cmap->locs[x][y-1].terrain == '#')
+                    {
+                        cmap->locs[x][y].terrain = '.';
+                        gen = true;
+                    }
+
+                    break;
+                case 1: // south
+                    x = random_int(room->x+1, room->x + room->w - 2);
+                    y = room->y + room->h - 1;
+
+                    if(cmap->locs[x][y+1].terrain == '#')
+                    {
+                        cmap->locs[x][y].terrain = '.';
+                        gen = true;
+                    }
+
+                    break;
+
+                case 2: // west
+                    x = room->x;
+                    y = random_int(room->y+1, room->y + room->h - 2);
+
+                    if(cmap->locs[x-1][y].terrain == '#')
+                    {
+                        cmap->locs[x][y].terrain = '.';
+                        gen = true;
+                    }
+
+                    break;
+
+                case 3: // east
+                    x = room->x + room->w - 1;
+                    y = random_int(room->y+1, room->y + room->h - 2);
+
+                    if(cmap->locs[x+1][y].terrain == '#')
+                    {
+                        cmap->locs[x][y].terrain = '.';
+                        gen = true;
+                    }
+
+                    break;
+            }
+        }
+        while(!gen);
+    }
+}
+
 void gen_maze(void)
 {
     struct Location* tmp;
@@ -270,6 +340,8 @@ void gen_maze(void)
         tmp->terrain = '#';
         _flood_fill_maze(tmp);
     }
+
+    _make_doors();
 }
 
 void gen_map(void)
