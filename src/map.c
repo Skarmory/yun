@@ -8,7 +8,7 @@
 
 struct Map* cmap;
 
-// Initialise new map
+/* Mallocs map and sets map locations to default values */
 void init_map(void)
 {
     cmap = (struct Map*) malloc(sizeof(struct Map));
@@ -30,9 +30,7 @@ void init_map(void)
     }
 }
 
-/* Draws a random map by drawing squares randomly. Squares start off large, and few, but finish small and many
- * When a square is drawn, it _flood_fill_mazes in the insides of its walls with dungeon floor, this reduces a lot of the clutter caused by wall overlap
- */
+/* Draws a map by drawing square rooms at random locations, and with random dimensions. */
 void gen_rooms(void)
 {
     int attempts = 200;
@@ -104,6 +102,8 @@ void gen_rooms(void)
     cmap->room_count = rcount;
 }
 
+/* Check if a location is a valid starting node for a maze
+ * Valid maze starting nodes are solid rock surrounded by 8 other solid rock */
 bool _is_maze_snode(struct Location* loc)
 {
     int x = loc->x;
@@ -120,6 +120,7 @@ bool _is_maze_snode(struct Location* loc)
     return false;
 }
 
+/* Finds a maze starting node */
 bool _get_maze_snode(struct Location** tmp)
 {
     for(int x = 0; x < MCOLS; x++)
@@ -135,6 +136,10 @@ bool _get_maze_snode(struct Location** tmp)
     return false;
 }
 
+/* Checks to see if a location is a viable maze node
+ * Valid maze nodes need to have only 1 connection to another corridor tile.
+ * They can also only have 2 of 4 diagonal squares as corridor tiles so long as those tiles
+ * are orthogonal to the single connecting corridor tile. */
 bool _is_valid_maze_node(struct Location* loc)
 {
     if(loc->terrain != ' ')
@@ -205,6 +210,9 @@ bool _is_valid_maze_node(struct Location* loc)
    return true;
 }
 
+/* Attempts to get a location at random orthogonal to a maze node to continue the maze with.
+ * It will fall back to just checking every single orthogonal direction if the randomly picked
+ * direction is not valid. */
 bool _get_valid_maze_node(struct Location* loc, struct Location** next)
 {
     int x = loc->x;
@@ -250,6 +258,7 @@ bool _get_valid_maze_node(struct Location* loc, struct Location** next)
     return false;
 }
 
+/* Recursive algorithm to carve out a maze in the level. */
 void _flood_fill_maze(struct Location* loc)
 {
     struct Location* next;
@@ -261,6 +270,8 @@ void _flood_fill_maze(struct Location* loc)
     }
 }
 
+/* Checks if a given location is a deadend.
+ * Deadends have only one connecting corridor tile */
 bool _is_maze_deadend(struct Location* loc)
 {
     int x = loc->x;
@@ -292,6 +303,8 @@ bool _is_maze_deadend(struct Location* loc)
     return true;
 }
 
+/* Finds and sets the input arg to the first deadend it finds.
+ * Returns true if it finds a deadend. */
 bool _get_maze_deadend(struct Location** loc)
 {
     for(int x = 0; x < MCOLS; x++)
@@ -307,6 +320,8 @@ bool _get_maze_deadend(struct Location** loc)
     return false;
 }
 
+/* Finds the next deadend node next to the given one, and sets the input arg to it.
+ * Returns true if it finds a deadend */
 bool _get_next_deadend_node(struct Location* loc, struct Location** next)
 {
     int x = loc->x;
@@ -331,18 +346,20 @@ bool _get_next_deadend_node(struct Location* loc, struct Location** next)
     return false;
 }
 
+/* Recursively fills in deadend corridors until only connected corridors remain. */
 void _back_fill_deadends(struct Location* loc)
 {
     struct Location* next;
     while(_get_next_deadend_node(loc, &next))
     {
         next->terrain = ' ';
-        display_map();
-        getch();
         _back_fill_deadends(next);
     }
 }
 
+/* Picks wall sections on each wall at random until it finds one that has a corridor next to it.
+ * It converts that wall section into an entryway into the room.
+ * TODO: Generate a door object in the entryway tile */
 void _make_doors(void)
 {
     struct Room* room;
@@ -413,6 +430,7 @@ void _make_doors(void)
     }
 }
 
+/* Generate the maze of corridors, adds entryways into rooms, and fills in the deadends */
 void gen_maze(void)
 {
     struct Location* tmp;
@@ -432,13 +450,14 @@ void gen_maze(void)
     }
 }
 
+/* Call this to generate a map that contains rooms and a load of connecting corridors */
 void gen_map(void)
 {
     gen_rooms();
     gen_maze();
 }
 
-// Draw map using ncurses
+/* Draw map using ncurses */
 void display_map(void)
 {
     for(int i = 0; i < MCOLS; ++i)
@@ -455,7 +474,7 @@ void display_map(void)
     refresh();
 }
 
-// Add monster to the level
+/* Add monster to the level */
 void add_mon(struct Mon* mon)
 {
     int x = mon->x;
@@ -467,7 +486,7 @@ void add_mon(struct Mon* mon)
     cmap->monlist = mon->next;
 }
 
-// Remove monster from the level
+/* Remove monster from the level */
 void rm_mon(struct Mon* mon)
 {
     struct Mon* tmp = cmap->monlist;
@@ -487,13 +506,13 @@ void rm_mon(struct Mon* mon)
     }
 }
 
-// Do map bounds checking
+/* Do map bounds checking */
 bool _valid_move(int x, int y)
 {
     return (x >= 0 && x < MCOLS) && (y >= 0 && y < MROWS);
 }
 
-// Change monster location
+/* Change monster location */
 bool move_mon(struct Mon* mon, int newx, int newy)
 {
     if(!_valid_move(newx, newy))
