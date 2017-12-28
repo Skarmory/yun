@@ -31,7 +31,7 @@ void init_map(void)
 }
 
 /* Draws a random map by drawing squares randomly. Squares start off large, and few, but finish small and many
- * When a square is drawn, it fills in the insides of its walls with dungeon floor, this reduces a lot of the clutter caused by wall overlap
+ * When a square is drawn, it _flood_fill_mazes in the insides of its walls with dungeon floor, this reduces a lot of the clutter caused by wall overlap
  */
 void gen_rooms(void)
 {
@@ -261,6 +261,89 @@ void _flood_fill_maze(struct Location* loc)
     }
 }
 
+bool _is_maze_deadend(struct Location* loc)
+{
+    int x = loc->x;
+    int y = loc->y;
+
+    if(loc->terrain != '#')
+        return false;
+
+    if(x == 0 || y == 0 || x == MCOLS-1 || y == MROWS-1)
+        return false;
+
+    int conn_count = 0;
+
+    if(cmap->locs[x-1][y].terrain == '#' || cmap->locs[x-1][y].terrain == '.')
+        conn_count++;
+
+    if(cmap->locs[x+1][y].terrain == '#' || cmap->locs[x+1][y].terrain == '.')
+        conn_count++;
+
+    if(cmap->locs[x][y+1].terrain == '#' || cmap->locs[x][y+1].terrain == '.')
+        conn_count++;
+
+    if(cmap->locs[x][y-1].terrain == '#' || cmap->locs[x][y-1].terrain == '.')
+        conn_count++;
+
+    if(conn_count > 1)
+        return false;
+
+    return true;
+}
+
+int _get_maze_deadends(struct Location** loc)
+{
+    int i = 0;
+    for(int x = 0; x < MCOLS; x++)
+    for(int y = 0; y < MROWS; y++)
+    {
+        if(_is_maze_deadend(&cmap->locs[x][y]))
+        {
+            loc[i] = &cmap->locs[x][y];
+            i++;
+        }
+    }
+
+    return i;
+}
+
+bool _get_next_deadend_node(struct Location* loc, struct Location** next)
+{
+    int x = loc->x;
+    int y = loc->y;
+
+    *next = &cmap->locs[x-1][y];
+    if(_is_maze_deadend(*next))
+        return true;
+
+    *next = &cmap->locs[x+1][y];
+    if(_is_maze_deadend(*next))
+        return true;
+
+    *next = &cmap->locs[x][y-1];
+    if(_is_maze_deadend(*next))
+        return true;
+
+    *next = &cmap->locs[x][y+1];
+    if(_is_maze_deadend(*next))
+        return true;
+
+    return false;
+}
+
+void _back_fill_deadends(struct Location* loc)
+{
+    struct Location* next;
+    while(_get_next_deadend_node(loc, &next))
+    {
+        next->terrain = ' ';
+        display_map();
+        getch();
+        _back_fill_deadends(next);
+    }
+}
+
 void _make_doors(void)
 {
     struct Room* room;
@@ -342,6 +425,18 @@ void gen_maze(void)
     }
 
     _make_doors();
+
+    struct Location** tmp_deadends = (struct Location**) malloc(sizeof(struct Location*) * 1000); 
+
+    int i = _get_maze_deadends(tmp_deadends);
+
+    for(int j = 0; j < i; j++)
+    {
+        tmp_deadends[j]->terrain = ' ';
+        _back_fill_deadends(tmp_deadends[j]);
+    }
+
+    free(tmp_deadends);
 }
 
 void gen_map(void)
