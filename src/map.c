@@ -292,20 +292,19 @@ bool _is_maze_deadend(struct Location* loc)
     return true;
 }
 
-int _get_maze_deadends(struct Location** loc)
+bool _get_maze_deadend(struct Location** loc)
 {
-    int i = 0;
     for(int x = 0; x < MCOLS; x++)
     for(int y = 0; y < MROWS; y++)
     {
         if(_is_maze_deadend(&cmap->locs[x][y]))
         {
-            loc[i] = &cmap->locs[x][y];
-            i++;
+            *loc = &cmap->locs[x][y];
+            return true;
         }
     }
 
-    return i;
+    return false;
 }
 
 bool _get_next_deadend_node(struct Location* loc, struct Location** next)
@@ -426,17 +425,11 @@ void gen_maze(void)
 
     _make_doors();
 
-    struct Location** tmp_deadends = (struct Location**) malloc(sizeof(struct Location*) * 1000); 
-
-    int i = _get_maze_deadends(tmp_deadends);
-
-    for(int j = 0; j < i; j++)
+    while(_get_maze_deadend(&tmp))
     {
-        tmp_deadends[j]->terrain = ' ';
-        _back_fill_deadends(tmp_deadends[j]);
+        tmp->terrain = ' ';
+        _back_fill_deadends(tmp);
     }
-
-    free(tmp_deadends);
 }
 
 void gen_map(void)
@@ -454,7 +447,6 @@ void display_map(void)
         struct Location* loc = &cmap->locs[i][j];
 
         if(loc->mon != NULL)
-
             mvaddch(j, i, loc->mon->type->sym);
         else
             mvaddch(j, i, loc->terrain);
