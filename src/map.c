@@ -359,7 +359,7 @@ void _back_fill_deadends(struct Location* loc)
     while(_get_next_deadend_node(loc, &next))
     {
         next->terrain = ' ';
-        //next->pathing = 0;
+        next->pathing = 0;
         _back_fill_deadends(next);
     }
 }
@@ -457,7 +457,7 @@ void gen_maze(void)
     while(_get_maze_snode(&tmp))
     {
         tmp->terrain = '#';
-        //tmp->pathing |= WALKABLE;
+        tmp->pathing |= WALKABLE;
         _flood_fill_maze(tmp);
     }
 
@@ -466,7 +466,7 @@ void gen_maze(void)
     while(_get_maze_deadend(&tmp))
     {
         tmp->terrain = ' ';
-        //tmp->pathing = 0;
+        tmp->pathing = 0;
         _back_fill_deadends(tmp);
     }
 }
