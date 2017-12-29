@@ -362,71 +362,83 @@ void _back_fill_deadends(struct Location* loc)
 void _make_doors(void)
 {
     struct Room* room;
+
+    struct Location** connectors = (struct Location**) malloc(sizeof(struct Location*) * (10 * 2 + 8 * 2));
+
     for(int i = 0; i < cmap->room_count; i++)
     {
         room = cmap->rooms[i];
 
-        int which_wall = 0;
-        int x = 0;
-        int y = 0;
-        int gen = false;
+        int cidx = 0;
+        int x, y;
 
-        do
+        // North wall
+        x = room->x+1;
+        y = room->y;
+        if(y-1 > 0)
         {
-            which_wall = random_int(0, 3);
-
-            switch(which_wall)
+            for(; x < (room->x + room->w - 1); x++)
             {
-                case 0: // north
-                    x = random_int(room->x+1, room->x + room->w - 2);
-                    y = room->y;
-
-                    if(cmap->locs[x][y-1].terrain == '#')
-                    {
-                        cmap->locs[x][y].terrain = '.';
-                        gen = true;
-                    }
-
-                    break;
-                case 1: // south
-                    x = random_int(room->x+1, room->x + room->w - 2);
-                    y = room->y + room->h - 1;
-
-                    if(cmap->locs[x][y+1].terrain == '#')
-                    {
-                        cmap->locs[x][y].terrain = '.';
-                        gen = true;
-                    }
-
-                    break;
-
-                case 2: // west
-                    x = room->x;
-                    y = random_int(room->y+1, room->y + room->h - 2);
-
-                    if(cmap->locs[x-1][y].terrain == '#')
-                    {
-                        cmap->locs[x][y].terrain = '.';
-                        gen = true;
-                    }
-
-                    break;
-
-                case 3: // east
-                    x = room->x + room->w - 1;
-                    y = random_int(room->y+1, room->y + room->h - 2);
-
-                    if(cmap->locs[x+1][y].terrain == '#')
-                    {
-                        cmap->locs[x][y].terrain = '.';
-                        gen = true;
-                    }
-
-                    break;
+                if(cmap->locs[x][y-1].terrain == '#')
+                {
+                    connectors[cidx] = &cmap->locs[x][y];
+                    cidx++;
+                }
             }
         }
-        while(!gen);
+
+        // South wall
+        x = room->x+1;
+        y = room->y + room->h-1;
+        if(y+1 < MROWS-1)
+        {
+            for(; x < (room->x + room->w - 1); x++)
+            {
+                if(cmap->locs[x][y+1].terrain == '#')
+                {
+                    connectors[cidx] = &cmap->locs[x][y];
+                    cidx++;
+                }
+            }
+        }
+
+        // West wall
+        x = room->x;
+        y = room->y+1;
+        if(x-1 > 0)
+        {
+            for(; y < (room->y + room->h - 1); y++)
+            {
+                if(cmap->locs[x-1][y].terrain == '#')
+                {
+                    connectors[cidx] = &cmap->locs[x][y];
+                    cidx++;
+                }
+            }
+        }
+
+        // East wall
+        x = room->x + room->w - 1;
+        y = room->y+1;
+        if(x+1 < MCOLS-1)
+        {
+            for(; y < (room->y + room->h - 1); y++)
+            {
+                if(cmap->locs[x+1][y].terrain == '#')
+                {
+                    connectors[cidx] = &cmap->locs[x][y];
+                    cidx++;
+                }
+            }
+        }
+
+        int which = random_int(0, cidx-1);
+
+        connectors[which]->terrain = '.';
+        connectors[which]->pathing |= WALKABLE;
     }
+
+    free(connectors); 
 }
 
 /* Generate the maze of corridors, adds entryways into rooms, and fills in the deadends */
