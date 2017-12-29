@@ -20,11 +20,15 @@ void handle_input(void)
             case 'j':
             case 'k':
             case 'l':
+            case 'y':
+            case 'u':
+            case 'b':
+            case 'n':
                 // set went to true if move success
                 went = move_mon(
                     you->mon,
-                    you->mon->x + (ch == 'h' ? -1 : ch == 'l' ? 1 : 0),
-                    you->mon->y + (ch == 'k' ? -1 : ch == 'j' ? 1 : 0)
+                    you->mon->x + (ch == 'h' || ch == 'y' || ch == 'b' ? -1 : ch == 'l' || ch == 'u' || ch == 'n' ? 1 : 0),
+                    you->mon->y + (ch == 'k' || ch == 'y' || ch == 'u' ? -1 : ch == 'j' || ch == 'b' || ch == 'n' ? 1 : 0)
                 );
                 break;
             case 'q':
