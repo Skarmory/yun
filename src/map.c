@@ -540,6 +540,9 @@ bool _valid_move(int x, int y)
     if(!(cmap->locs[x][y].pathing & WALKABLE))
         return false;
 
+    if(cmap->locs[x][y].mon != NULL)
+        return false;
+
     return true;
 }
 
