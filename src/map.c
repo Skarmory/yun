@@ -90,7 +90,7 @@ void gen_rooms(void)
 
             // Fill in with floor
             for(int tmpx = 1; tmpx < w-1; tmpx++)
-            for(int tmpy = 1; tmpy < h; tmpy++)
+            for(int tmpy = 1; tmpy < h-1; tmpy++)
             {
                 cmap->locs[x + tmpx][y + tmpy].terrain = '.';
             }
