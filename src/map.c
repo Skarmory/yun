@@ -25,6 +25,7 @@ void init_map(void)
             cmap->locs[i][j].y = j;
             cmap->locs[i][j].terrain = ' ';
             cmap->locs[i][j].mon = NULL;
+            cmap->locs[i][j].pathing = 0;
         }
     }
 }
@@ -78,14 +79,18 @@ void gen_rooms(void)
             for(int tmp = 0; tmp < h; tmp++)
             {
                 cmap->locs[x][y+tmp].terrain = '|';
+                cmap->locs[x][y+tmp].pathing = 0;
                 cmap->locs[x+w-1][y+tmp].terrain = '|';
+                cmap->locs[x+w-1][y+tmp].pathing = 0;
             }
 
             // Draw horizontal walls
             for(int tmp = 0; tmp < w; tmp++)
             {
-                cmap->locs[x+tmp][y].terrain = '=';
-                cmap->locs[x+tmp][y+h].terrain = '=';
+                cmap->locs[x+tmp][y].terrain = '-';
+                cmap->locs[x+tmp][y].pathing = 0;
+                cmap->locs[x+tmp][y+h-1].terrain = '-';
+                cmap->locs[x+tmp][y+h-1].pathing = 0;
             }
 
             // Fill in with floor
@@ -93,6 +98,7 @@ void gen_rooms(void)
             for(int tmpy = 1; tmpy < h-1; tmpy++)
             {
                 cmap->locs[x + tmpx][y + tmpy].terrain = '.';
+                cmap->locs[x + tmpx][y + tmpy].pathing |= WALKABLE;
             }
         }
     }
@@ -265,6 +271,7 @@ void _flood_fill_maze(struct Location* loc)
     while(_get_valid_maze_node(loc, &next))
     {
         next->terrain = '#';
+        next->pathing |= WALKABLE;
         _flood_fill_maze(next);
     }
 }
@@ -352,6 +359,7 @@ void _back_fill_deadends(struct Location* loc)
     while(_get_next_deadend_node(loc, &next))
     {
         next->terrain = ' ';
+        //next->pathing = 0;
         _back_fill_deadends(next);
     }
 }
@@ -438,7 +446,7 @@ void _make_doors(void)
         connectors[which]->pathing |= WALKABLE;
     }
 
-    free(connectors); 
+    free(connectors);
 }
 
 /* Generate the maze of corridors, adds entryways into rooms, and fills in the deadends */
@@ -449,6 +457,7 @@ void gen_maze(void)
     while(_get_maze_snode(&tmp))
     {
         tmp->terrain = '#';
+        //tmp->pathing |= WALKABLE;
         _flood_fill_maze(tmp);
     }
 
@@ -457,6 +466,7 @@ void gen_maze(void)
     while(_get_maze_deadend(&tmp))
     {
         tmp->terrain = ' ';
+        //tmp->pathing = 0;
         _back_fill_deadends(tmp);
     }
 }
@@ -520,7 +530,13 @@ void rm_mon(struct Mon* mon)
 /* Do map bounds checking */
 bool _valid_move(int x, int y)
 {
-    return (x >= 0 && x < MCOLS) && (y >= 0 && y < MROWS);
+    if(x < 0 || x >= MCOLS || y < 0 || y >= MROWS)
+        return false;
+
+    if(!(cmap->locs[x][y].pathing & WALKABLE))
+        return false;
+
+    return true;
 }
 
 /* Change monster location */

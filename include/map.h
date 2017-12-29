@@ -4,9 +4,12 @@
 #include <stdbool.h>
 #include "mon.h"
 
+#define WALKABLE 0x00000001
+
 struct Location
 {
     int x, y;
+    int pathing;
     struct Mon* mon;
     char terrain;
 };

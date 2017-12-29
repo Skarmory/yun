@@ -26,6 +26,8 @@ int rows, cols;
 
 void new_game(void)
 {
+    do_char_creation();
+
     FILE* intro = fopen("intro.txt", "r");
 
     char buf[256];
@@ -107,15 +109,18 @@ int main(int argc, char** argv)
     you->cls = NULL;
     you->faction = NULL;
 
-    you->mon = gen_mon(MT_PLAYER, 20, 5);
 
-    do_char_creation();
 
     new_game();
 
     init_map();
     gen_map();
 
+    struct Room* room = cmap->rooms[0];
+    int startx = random_int(room->x + 1, room->x + room->w - 2);
+    int starty = random_int(room->y + 1, room->y + room->h - 2);
+
+    you->mon = gen_mon(MT_PLAYER, startx, starty);
     add_mon(you->mon);
 
     main_loop();
