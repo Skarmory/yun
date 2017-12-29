@@ -487,7 +487,11 @@ void display_map(void)
         struct Location* loc = &cmap->locs[i][j];
 
         if(loc->mon != NULL)
+        {
+            attron(loc->mon->type->attr);
             mvaddch(j, i, loc->mon->type->sym);
+            attroff(loc->mon->type->attr);
+        }
         else
             mvaddch(j, i, loc->terrain);
     }

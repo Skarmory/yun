@@ -1,13 +1,17 @@
 #include "montype.h"
 #include "colour.h"
+#include <ncurses.h>
 
-#define MON(n, s, fg) \
+#define MON(n, sym) \
     {                 \
-        n, s, fg      \
+        n, sym      \
     }
+
+#define SYM(s, fg, bg, attr)\
+    s, fg, bg, attr
 
 struct MonType mon_type[] =
 {
-    MON("ghoul", 'g', CLR_WHITE),
-    MON("player", '@', CLR_WHITE)
+    MON("ghoul", SYM('g', CLR_WHITE, CLR_BLACK, A_BOLD)),
+    MON("player", SYM('@', CLR_WHITE, CLR_BLACK, A_BOLD))
 };
