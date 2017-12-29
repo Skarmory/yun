@@ -23,7 +23,6 @@ void new_game(void);
 void main_loop(void);
 
 int rows, cols;
-struct Player* you;
 
 void new_game(void)
 {

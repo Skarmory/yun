@@ -15,6 +15,8 @@ struct Player {
     struct Mon* mon;
 };
 
+void destroy_player(void);
+
 extern struct Player* you;
 
 #endif

@@ -31,4 +31,8 @@ void add_mon(struct Mon* mon);
 void rm_mon(struct Mon* mon);
 bool move_mon(struct Mon* mon, int newx, int newy);
 
+void destroy_map(void);
+
+extern struct Map* cmap;
+
 #endif

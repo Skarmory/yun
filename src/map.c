@@ -13,7 +13,6 @@ void init_map(void)
 {
     cmap = (struct Map*) malloc(sizeof(struct Map));
     cmap->locs = (struct Location**) malloc(sizeof(struct Location*) * MCOLS);
-    cmap->monlist = (struct Mon*) malloc(sizeof(struct Mon));
     cmap->monlist = NULL;
 
     for(int i = 0; i < MCOLS; ++i)
@@ -99,7 +98,7 @@ void gen_rooms(void)
     }
 
     cmap->rooms = realloc(cmap->rooms, sizeof(struct Room*) * (rcount+1));
-    cmap->room_count = rcount;
+    cmap->room_count = rcount + 1;
 }
 
 /* Check if a location is a valid starting node for a maze
@@ -524,4 +523,20 @@ bool move_mon(struct Mon* mon, int newx, int newy)
     mon->y = newy;
 
     return true;
+}
+
+void destroy_map(void)
+{
+    if(cmap != NULL)
+    {
+        for(int r = 0; r < cmap->room_count; r++)
+            free(cmap->rooms[r]);
+
+        free(cmap->rooms);
+
+        for(int x = 0; x < MCOLS; x++)
+            free(cmap->locs[x]);
+
+        free(cmap->locs);
+    }
 }

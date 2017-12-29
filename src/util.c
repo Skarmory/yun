@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "player.h"
+#include "map.h"
 
 void convert_arg(char c, char* buf)
 {
@@ -38,6 +39,8 @@ void write_debug_msg(char* msg)
 
 void do_quit(void)
 {
+    destroy_player();
+    destroy_map();
     endwin();
     use_default_colors();
     puts("Your curiosity will be the death of you.");
