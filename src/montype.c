@@ -12,6 +12,6 @@
 
 struct MonType mon_type[] =
 {
-    MON("ghoul", SYM('g', CLR_WHITE, CLR_BLACK, A_BOLD)),
+    MON("ghoul", SYM('g', CLR_WHITE, CLR_BLACK, 0)),
     MON("player", SYM('@', CLR_WHITE, CLR_BLACK, A_BOLD))
 };
