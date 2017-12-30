@@ -508,7 +508,7 @@ void add_mon(struct Mon* mon)
 
     // push mon onto the list
     mon->next = cmap->monlist;
-    cmap->monlist = mon->next;
+    cmap->monlist = mon;
 }
 
 /* Remove monster from the level */
