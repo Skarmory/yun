@@ -1,6 +1,8 @@
 #ifndef MONTYPE_H
 #define MONTYPE_H
 
+#include "attack.h"
+
 #define MT_GHOUL 0
 #define MT_PLAYER 1
 
@@ -11,6 +13,7 @@ struct MonType
     signed char fg; // foreground colour
     signed char bg; // background colour
     int attr; // symbol attributes
+    struct Weapon* base_weapon;
 };
 
 extern struct MonType mon_type[];

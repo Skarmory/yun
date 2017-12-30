@@ -2,7 +2,7 @@
 #include "colour.h"
 #include <ncurses.h>
 
-#define MON(n, sym) \
+#define MON(n, sym, weapon) \
     {                 \
         n, sym      \
     }
@@ -12,6 +12,6 @@
 
 struct MonType mon_type[] =
 {
-    MON("ghoul", SYM('g', CLR_WHITE, CLR_BLACK, 0)),
-    MON("player", SYM('@', CLR_WHITE, CLR_BLACK, A_BOLD))
+    MON("ghoul", SYM('g', CLR_WHITE, CLR_BLACK, 0), W_LONGSWORD),
+    MON("player", SYM('@', CLR_WHITE, CLR_BLACK, A_BOLD), W_CLAWS)
 };
