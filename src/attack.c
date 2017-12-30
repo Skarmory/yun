@@ -1,16 +1,22 @@
 #include "attack.h"
+#include "util.h"
+#include "attack_data.h"
 
-#define WEAPON(n, attk)\
-    { n, attk }
+#include <stdio.h>
 
-#define ATTKS(a1)\
-    { a1 }
-
-#define ATTK(dice, sides)\
-    { dice, sides }
-
-struct Weapon weapons[] =
+bool do_attack(struct Mon* attacker, struct Mon* defender)
 {
-    WEAPON("longsword", ATTKS(ATTK(1, 6))),
-    WEAPON("claws", ATTKS(ATTK(2, 2)))
-};
+    struct Weapon* weapon = get_weapon(attacker);
+    int dmg = 0;
+
+    for(int dice = 0; dice < weapon->attk->num_dice; dice++)
+    {
+        dmg += random_int(1, weapon->attk->sides_per_die);
+    }
+
+    defender->hp -= dmg;
+
+    chk_dead(defender);
+
+    return true;
+}

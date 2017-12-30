@@ -1,7 +1,7 @@
 #ifndef MONTYPE_H
 #define MONTYPE_H
 
-#include "attack.h"
+#include "attack_data.h"
 
 #define MT_GHOUL 0
 #define MT_PLAYER 1
