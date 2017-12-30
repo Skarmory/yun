@@ -123,12 +123,15 @@ int main(int argc, char** argv)
     you->mon = gen_mon(MT_PLAYER, startx, starty);
     add_mon(you->mon);
 
-    room = cmap->rooms[1];
-    startx = random_int(room->x + 1, room->x + room->w - 2);
-    starty = random_int(room->y + 1, room->y + room->h - 2);
+    for(int i = 1; i < cmap->room_count - 1; i++)
+    {
+        room = cmap->rooms[i];
+        startx = random_int(room->x + 1, room->x + room->w - 2);
+        starty = random_int(room->y + 1, room->y + room->h - 2);
 
-    struct Mon* ghoul = gen_mon(MT_GHOUL, startx, starty);
-    add_mon(ghoul);
+        struct Mon* ghoul = gen_mon(MT_GHOUL, startx, starty);
+        add_mon(ghoul);
+    }
 
     main_loop();
 
