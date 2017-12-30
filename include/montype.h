@@ -14,6 +14,8 @@ struct MonType
     signed char bg; // background colour
     int attr; // symbol attributes
     struct Weapon* base_weapon;
+    int num_hitdice;
+    int sides_per_hitdie;
 };
 
 extern struct MonType mon_type[];
