@@ -1,7 +1,9 @@
 #include "mon.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include "util.h"
 #include "map.h"
+#include "message.h"
 
 struct Mon* gen_mon(int mtype, int x, int y)
 {
@@ -27,6 +29,10 @@ void kill_mon(struct Mon* mon)
 {
     rm_mon(mon);
     free(mon);
+
+    char buf[256];
+    sprintf(buf, "The %s was slain.", mon->type->name);
+    display_msg(buf);
 }
 
 struct Weapon* get_weapon(struct Mon* mon)

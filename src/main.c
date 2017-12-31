@@ -16,6 +16,7 @@
 #include "input.h"
 #include "cc_menu.h"
 #include "util.h"
+#include "message.h"
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
@@ -80,6 +81,8 @@ void main_loop(void)
     for(;;)
     {
         handle_input();
+        clear_msgs();
+        flush_msg_buffer();
         display_map();
     }
 }
@@ -92,6 +95,7 @@ int main(int argc, char** argv)
     initscr();
     noecho();
     raw();
+    curs_set(0);
 
     init_colours();
 
