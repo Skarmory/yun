@@ -33,6 +33,8 @@ void kill_mon(struct Mon* mon)
     char buf[256];
     sprintf(buf, "The %s was slain.", mon->type->name);
     display_msg(buf);
+    sprintf(buf, "It had %d hp.", mon->max_hp);
+    display_msg(buf);
 }
 
 struct Weapon* get_weapon(struct Mon* mon)

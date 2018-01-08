@@ -44,6 +44,10 @@ void handle_input(void)
             case 'q':
                 do_quit();
                 break;
+            case 'm':
+                display_msg("This is a message that is going to be larger than the display area of the message box so this ought be split up into multiple messages");
+                went=true;
+                break;
         }
     } while(!went);
 }
