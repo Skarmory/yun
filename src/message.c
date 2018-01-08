@@ -68,14 +68,24 @@ void display_msg(char* msg)
         {
             // handle messages that are larger than the display area
             // by splitting it up and prompting user to input to show
-            
             int idx = (MSGBOX_W - 1) - msgbuf_size - 1;
-            while(!isspace(msg[idx]) && idx > 0)
-            {
-                sprintf(tmp, "%c", msg[idx]);
-                write_debug_msg(tmp);
-
+            while(!isspace(msg[idx]) && idx >= 0)
                 idx--;
+
+            if(idx == -1)
+            {
+                if(msgbuf_size == 0)
+                {
+                    memcpy(msgbuf, msg, MSGBOX_W-1);
+                    msgbuf[MSGBOX_W] = '\0';
+                    msgbuf_size = MSGBOX_W-1;
+                    msgsize -= MSGBOX_W-1;
+
+                    msg = &msg[MSGBOX_W-1]; 
+                }
+
+                _flush_and_prompt();
+                continue;
             }
 
             char substr[idx+1];
@@ -84,7 +94,7 @@ void display_msg(char* msg)
 
             sprintf(msgbuf, "%s %s", msgbuf, substr);
             msgbuf_size = idx;
-            msgsize -= (idx);
+            msgsize -= idx;
 
             _flush_and_prompt();
             

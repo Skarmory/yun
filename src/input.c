@@ -48,6 +48,10 @@ void handle_input(void)
                 display_msg("This is a message that is going to be larger than the display area of the message box so this ought be split up into multiple messages");
                 went=true;
                 break;
+            case 'M':
+                display_msg("This_is_a_message_that_is_going_to_be_larger_than_the_display_area_of_the_message_box_so_this_ought_be_split_up_into_multiple_messages");
+                went=true;
+                break;
         }
     } while(!went);
 }
