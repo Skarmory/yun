@@ -4,18 +4,12 @@
 #include <stdbool.h>
 #include <ctype.h>
 #include "util.h"
+#include "log.h"
 
 #define MSGBOX_X 0
 #define MSGBOX_Y 40
 #define MSGBOX_W 80
 #define MSGBOX_H 3
-
-void _write_msg_log(char* msg)
-{
-    FILE* log = fopen("msghist.log", "a");
-    fprintf(log, "%s\n", msg); 
-    fclose(log);
-}
 
 char msgbuf[MSGBOX_W];
 int msgbuf_size = 0;
@@ -43,7 +37,7 @@ int _msg_size(char* msg)
 /* Write a message to the messages area */
 void display_msg(char* msg)
 {
-    _write_msg_log(msg);
+    logmsg(msg, MSGHIST);
 
     int msgsize = _msg_size(msg);
     bool handled = false;

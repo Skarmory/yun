@@ -17,6 +17,7 @@
 #include "cc_menu.h"
 #include "util.h"
 #include "message.h"
+#include "log.h"
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
@@ -106,6 +107,8 @@ int main(int argc, char** argv)
     mvprintw(rows/2, cols/2 - 7, "Welcome to Naxx");
     refresh();
     getch();
+
+    init_logs();
 
     you = (struct Player*)malloc(sizeof(struct Player));
     you->name = NULL;

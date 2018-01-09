@@ -7,6 +7,7 @@
 
 #include "player.h"
 #include "map.h"
+#include "log.h"
 
 void convert_arg(char c, char* buf)
 {
@@ -30,17 +31,11 @@ void convert_arg(char c, char* buf)
     }
 }
 
-void write_debug_msg(char* msg)
-{
-    FILE* debug_log = fopen("debug.log", "a");
-    fprintf(debug_log, "%s\n", msg);
-    fclose(debug_log);
-}
-
 void do_quit(void)
 {
     destroy_player();
     destroy_map();
+    destroy_logs();
     endwin();
     use_default_colors();
     puts("Your curiosity will be the death of you.");
