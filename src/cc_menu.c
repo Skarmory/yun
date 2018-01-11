@@ -54,6 +54,7 @@ void print_options(int what, short mask)
                 if(races[i].selfmask & mask)
                 {
                     int col = races[i].faction == FA_ALLIANCE ? CLR_ALLIANCE : CLR_HORDE;
+                    you->faction = factions[races[i].faction];
                     attron(COLOR_PAIR(col));
 
                     mvprintw(menu_row, menu_col, "%c - %s", races[i].hotkey, races[i].noun);

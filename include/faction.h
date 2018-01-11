@@ -6,4 +6,7 @@
 #define FA_HORDE    2
 #define FA_SCOURGE  3 
 
+extern char* factions[];
+
 #endif
+

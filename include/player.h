@@ -4,8 +4,10 @@
 #include "class.h"
 #include "race.h"
 #include "mon.h"
+#include "stats.h"
 
-struct Player {
+struct Player 
+{
     char* name;
     char* faction;
 
@@ -13,8 +15,10 @@ struct Player {
     struct Race* race;
 
     struct Mon* mon;
+    struct Stats* stats; 
 };
 
+void new_player(void);
 void destroy_player(void);
 
 extern struct Player* you;

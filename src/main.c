@@ -110,13 +110,7 @@ int main(int argc, char** argv)
 
     init_logs();
 
-    you = (struct Player*)malloc(sizeof(struct Player));
-    you->name = NULL;
-    you->race = NULL;
-    you->cls = NULL;
-    you->faction = NULL;
-
-
+    new_player();
 
     new_game();
 
