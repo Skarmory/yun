@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <ncurses.h>
-#include "cc_menu.h"
+#include "menu.h"
 #include "player.h"
 #include "colour.h"
 #include "util.h"

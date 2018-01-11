@@ -1,7 +1,7 @@
 // Character creation menu logic
 
-#ifndef CC_MENU_H
-#define CC_MENU_H
+#ifndef MENU_H
+#define MENU_H
 
 #define PICK_CLASS 0
 #define PICK_RACE  1

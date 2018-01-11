@@ -14,7 +14,7 @@
 #include "montype.h"
 #include "mon.h"
 #include "input.h"
-#include "cc_menu.h"
+#include "menu.h"
 #include "util.h"
 #include "message.h"
 #include "log.h"
