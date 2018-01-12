@@ -19,9 +19,11 @@ void logmsg(char* msg, int logtype)
     {
         case MSGHIST:
             fprintf(msghist_file, "%s\n", msg); 
+            fflush(msghist_file);
             break;
         case DEBUG:
             fprintf(debug_file, "%s\n", msg); 
+            fflush(debug_file);
             break;
     }
 }
