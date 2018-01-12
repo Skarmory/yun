@@ -5,7 +5,7 @@
 #include "map.h"
 #include "message.h"
 
-struct Mon* gen_mon(int mtype, int x, int y)
+struct Mon* new_mon(int mtype, int x, int y)
 {
     struct Mon* mon = (struct Mon*) malloc(sizeof(struct Mon));
 
@@ -25,7 +25,7 @@ struct Mon* gen_mon(int mtype, int x, int y)
     return mon;
 }
 
-void kill_mon(struct Mon* mon)
+void destroy_mon(struct Mon* mon)
 {
     rm_mon(mon);
     free(mon);
@@ -46,6 +46,6 @@ void chk_dead(struct Mon* mon)
 {
     if(mon->hp <= 0)
     {
-        kill_mon(mon);
+        destroy_mon(mon);
     }
 }

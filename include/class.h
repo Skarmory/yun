@@ -19,6 +19,8 @@ struct Class
 
     short allow_races;
     short selfmask;
+
+    unsigned char strength_up, agility_up, intelligence_up, spirit_up, stamina_up;
 };
 
 extern struct Class classes[];

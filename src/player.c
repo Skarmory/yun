@@ -12,7 +12,6 @@ void new_player(void)
     you->cls = NULL;
     you->race = NULL;
     you->mon = NULL;
-    you->stats = NULL;
 }
 
 void destroy_player(void)
@@ -22,7 +21,6 @@ void destroy_player(void)
         you->faction = NULL;
         free(you->cls);
         free(you->race);
-        free(you->stats);
         if(you->mon != NULL)
             free(you->mon);
         free(you); 

@@ -15,7 +15,6 @@ struct Player
     struct Race* race;
 
     struct Mon* mon;
-    struct Stats* stats; 
 };
 
 void new_player(void);

@@ -16,6 +16,7 @@ struct MonType
     struct Weapon* base_weapon;
     int num_hitdice;
     int sides_per_hitdie;
+    int strength, agility, intelligence, spirit, stamina;
 };
 
 extern struct MonType mon_type[];
