@@ -120,7 +120,8 @@ int main(int argc, char** argv)
     int startx = random_int(room->x + 1, room->x + room->w - 2);
     int starty = random_int(room->y + 1, room->y + room->h - 2);
 
-    you->mon = new_mon(MT_PLAYER, startx, starty);
+    you->mon->x = startx;
+    you->mon->y = starty;
     add_mon(you->mon);
 
     for(int i = 1; i < cmap->room_count - 1; i++)

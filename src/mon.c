@@ -15,6 +15,18 @@ struct Mon* new_mon(int mtype, int x, int y)
     mon->y = y;
     mon->max_hp = 0;
 
+    MSTAT(mon, strength, base_strength) = mon->type->strength;
+    MSTAT(mon, agility, base_agility) = mon->type->agility;
+    MSTAT(mon, intelligence, base_intelligence) = mon->type->intelligence;
+    MSTAT(mon, spirit, base_spirit) = mon->type->spirit;
+    MSTAT(mon, stamina, base_stamina) = mon->type->stamina;
+
+    MSTAT(mon, strength, strength) = mon->type->strength;
+    MSTAT(mon, agility, agility) = mon->type->agility;
+    MSTAT(mon, intelligence, intelligence) = mon->type->intelligence;
+    MSTAT(mon, spirit, spirit) = mon->type->spirit;
+    MSTAT(mon, stamina, stamina) = mon->type->stamina;
+
     for(int hd = 0; hd < mon->type->num_hitdice; hd++)
     {
         mon->max_hp += random_int(1, mon->type->sides_per_hitdie);

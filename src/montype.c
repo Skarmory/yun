@@ -4,7 +4,7 @@
 
 #define MON(n, sym, weapon, nhd, shd, stats) \
     {                                 \
-        n, sym, weapon, nhd, shd      \
+        n, sym, weapon, nhd, shd, stats      \
     }
 
 #define WEAPON(w) &weapons[w]
@@ -12,8 +12,8 @@
 #define SYM(s, fg, bg, attr)\
     s, fg, bg, attr
 
-#define STATS(str, agi, int, spi, sta)\
-{ str, agi, int, spi, sta }
+#define STATS(str, agi, in, spi, sta)\
+    str, agi, in, spi, sta
 
 struct MonType mon_type[] =
 {

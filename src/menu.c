@@ -6,6 +6,7 @@
 #include "player.h"
 #include "colour.h"
 #include "util.h"
+#include "stats.h"
 
 void print_picked(void)
 {
@@ -117,6 +118,12 @@ void pick_class(void)
         }
     }
     while(!picked);
+
+    add_stat(you->mon, STRENGTH, you->cls->strength_up, true);
+    add_stat(you->mon, AGILITY, you->cls->agility_up, true);
+    add_stat(you->mon, INTELLIGENCE, you->cls->intelligence_up, true);
+    add_stat(you->mon, SPIRIT, you->cls->spirit_up, true);
+    add_stat(you->mon, STAMINA, you->cls->stamina_up, true);
 }
 
 void pick_race(void)
@@ -158,6 +165,12 @@ void pick_race(void)
         }
     }
     while(!picked);
+
+    add_stat(you->mon, STRENGTH, you->race->strength_up, true);
+    add_stat(you->mon, AGILITY, you->race->agility_up, true);
+    add_stat(you->mon, INTELLIGENCE, you->race->intelligence_up, true);
+    add_stat(you->mon, SPIRIT, you->race->spirit_up, true);
+    add_stat(you->mon, STAMINA, you->race->stamina_up, true);
 }
 
 void confirm_character(void)

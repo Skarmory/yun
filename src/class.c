@@ -4,13 +4,12 @@
 
 #define CLS(name, pl, mhk, allow, smask, statups) \
     {\
-        name, pl, mhk, allow, smask\
+        name, pl, mhk, allow, smask, statups\
     }\
 
 #define STATUPS(str, agi, in, spi, stam) \
-{                                        \
     str, agi, in, spi, stam              \
-}
+
 
 struct Class classes[] = 
 {

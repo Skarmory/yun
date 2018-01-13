@@ -31,7 +31,7 @@ struct Race
     char* leader;
     short selfmask;
     short faction;
-    unsigned char strength_up, agility_up, intelligence_up, spirit_up, stamina_up;
+    short strength_up, agility_up, intelligence_up, spirit_up, stamina_up;
 };
 
 extern struct Race races[];

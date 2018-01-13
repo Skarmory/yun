@@ -7,11 +7,11 @@ struct Player* you;
 void new_player(void)
 {
     you = (struct Player*)malloc(sizeof(struct Player));
+    you->mon = new_mon(MT_PLAYER, 0, 0);
     you->name = NULL;
     you->faction = NULL;
     you->cls = NULL;
     you->race = NULL;
-    you->mon = NULL;
 }
 
 void destroy_player(void)

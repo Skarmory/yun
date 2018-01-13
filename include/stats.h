@@ -1,6 +1,19 @@
 #ifndef STATS_H
 #define STATS_H
 
+#include <stdbool.h>
+
+#define STRENGTH     0
+#define AGILITY      1
+#define INTELLIGENCE 2
+#define SPIRIT       3
+#define STAMINA      4
+
+#define PSTAT(s, t) you->mon->stats.s.t
+#define MSTAT(m, s, t) m->stats.s.t
+
+struct Mon;
+
 struct Strength
 {
     int base_strength;
@@ -39,5 +52,7 @@ struct Stats
     struct Stamina stamina;
     struct Spirit spirit;
 };
+
+void add_stat(struct Mon* mon, int stat, int amount, bool base);
 
 #endif
