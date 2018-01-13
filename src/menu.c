@@ -88,33 +88,35 @@ void pick_class(void)
 
     you->cls = (struct Class*)malloc(sizeof(struct Class));
 
+    bool picked = false;
+
     do
     {
         switch(getch())
         {
             case 'd':
-                *(you->cls) = classes[0]; return;
+                *(you->cls) = classes[CLS_DRUID_IDX]; picked = true; break;
             case 'h':
-                *(you->cls) = classes[1]; return;
+                *(you->cls) = classes[CLS_HUNTER_IDX]; picked = true; break;
             case 'm':
-                *(you->cls) = classes[2]; return;
+                *(you->cls) = classes[CLS_MAGE_IDX]; picked = true; break;
             case 'r':
-                *(you->cls) = classes[3]; return;
+                *(you->cls) = classes[CLS_ROGUE_IDX]; picked = true; break;
             case 'p':
-                *(you->cls) = classes[4]; return;
+                *(you->cls) = classes[CLS_PALADIN_IDX]; picked = true; break;
             case 'i':
-                *(you->cls) = classes[5]; return;
+                *(you->cls) = classes[CLS_PRIEST_IDX]; picked = true; break;
             case 's':
-                *(you->cls) = classes[6]; return;
+                *(you->cls) = classes[CLS_SHAMAN_IDX]; picked = true; break;
             case 'l':
-                *(you->cls) = classes[7]; return;
+                *(you->cls) = classes[CLS_WARLOCK_IDX]; picked = true; break;
             case 'w':
-                *(you->cls) = classes[8]; return;
+                *(you->cls) = classes[CLS_WARRIOR_IDX]; picked = true; break;
             case 'q':
                 do_quit(); return;
         }
     }
-    while(true);
+    while(!picked);
 }
 
 void pick_race(void)
@@ -129,31 +131,33 @@ void pick_race(void)
 
     you->race = (struct Race*)malloc(sizeof(struct Race));
 
+    bool picked = false;
+
     do
     {
         switch(getch())
         {
             case 'h':
-                *(you->race) = races[0]; you->faction = "alliance"; return;
+                *(you->race) = races[RA_HUMAN_IDX]; you->faction = "alliance"; picked = true; break;
             case 'd':
-                *(you->race) = races[1]; you->faction = "alliance"; return;
+                *(you->race) = races[RA_DWARF_IDX]; you->faction = "alliance"; picked = true; break;
             case 'e':
-                *(you->race) = races[2]; you->faction = "alliance"; return;
+                *(you->race) = races[RA_NELF_IDX]; you->faction = "alliance"; picked = true; break;
             case 'g':
-                *(you->race) = races[3]; you->faction = "alliance"; return;
+                *(you->race) = races[RA_GNOME_IDX]; you->faction = "alliance"; picked = true; break;
             case 'o':
-                *(you->race) = races[4]; you->faction = "horde"; return;
+                *(you->race) = races[RA_ORC_IDX]; you->faction = "horde"; picked = true; break;
             case 'f':
-                *(you->race) = races[5]; you->faction = "horde"; return;
+                *(you->race) = races[RA_FORSAKEN_IDX]; you->faction = "horde"; picked = true; break;
             case 't':
-                *(you->race) = races[6]; you->faction = "horde"; return;
+                *(you->race) = races[RA_TAUREN_IDX]; you->faction = "horde"; picked = true; break;
             case 'l':
-                *(you->race) = races[7]; you->faction = "horde"; return;
+                *(you->race) = races[RA_TROLL_IDX]; you->faction = "horde"; picked = true; break;
             case 'q':
                 do_quit(); return;
         }
     }
-    while(true);
+    while(!picked);
 }
 
 void confirm_character(void)

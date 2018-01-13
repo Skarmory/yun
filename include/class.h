@@ -11,6 +11,16 @@
 #define CLS_WARLOCK 0x00000080
 #define CLS_WARRIOR 0x00000100 
 
+#define CLS_DRUID_IDX   0
+#define CLS_HUNTER_IDX  1
+#define CLS_MAGE_IDX    2
+#define CLS_ROGUE_IDX   3
+#define CLS_PALADIN_IDX 4
+#define CLS_PRIEST_IDX  5
+#define CLS_SHAMAN_IDX  6
+#define CLS_WARLOCK_IDX 7
+#define CLS_WARRIOR_IDX 8
+
 struct Class 
 {
     char* name;
