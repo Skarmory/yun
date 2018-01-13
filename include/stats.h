@@ -14,34 +14,64 @@
 
 struct Mon;
 
+// Strength increases attack power, armour pen, and parry chanc.
+// It is the affinity stat for warriors and paladins
 struct Strength
 {
     int base_strength;
     int strength;
+    int attack_power;
+    int armour_pen;
+    float parry_chance;
 };
 
+// Agility increases attack power, physical crit, and dodge chance.
+// It is the affinity stat for rogues and hunters
 struct Agility
 {
     int base_agility;
     int agility;
+    int attack_power;
+    float crit_chance;
+    float dodge_chance;
 };
 
-struct Intelligence 
+// Intelligence increases mana pool, spellpower, spell crit, and spell pen.
+// It is the affinity stat for mages, warlocks, and shamans.
+struct Intelligence
 {
     int base_intelligence;
     int intelligence;
+    int max_mana;
+    int mana;
+    int spell_power;
+    int spell_crit_chance;
+    int spell_pen;
 };
 
-struct Stamina 
+// Stamina increases health, block chance, critical block chance, and block amount.
+// It is the only "primary stat" that no class has an affinity for. It is equally good for all classes.
+struct Stamina
 {
     int base_stamina;
-    int stamina; 
+    int stamina;
+    int max_health;
+    int health;
+    float block_chance;
+    float crit_block_chance;
+    int block_amount;
 };
 
+// Spirit grants bonuses to mana and health regeneration, spellpower, and base resistance
+// It is the affinity stat for priests
 struct Spirit
 {
     int base_spirit;
-    int spirit; 
+    int spirit;
+    int mana_regen;
+    int health_regen;
+    int resist;
+    int spell_power;
 };
 
 struct Stats
