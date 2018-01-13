@@ -18,6 +18,7 @@
 #include "util.h"
 #include "message.h"
 #include "log.h"
+#include "ui.h"
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
@@ -78,14 +79,17 @@ void main_loop(void)
     // Basic implementation for debugging
 
     display_map();
+    display_char_status();
 
-    for(;;)
+    do
     {
         handle_input();
         clear_msgs();
         flush_msg_buffer();
         display_map();
+        display_char_status();
     }
+    while(true);
 }
 
 int main(int argc, char** argv)
