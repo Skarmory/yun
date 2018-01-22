@@ -31,6 +31,7 @@ struct Class
     short selfmask;
 
     short strength_up, agility_up, intelligence_up, spirit_up, stamina_up;
+    short primary_stat, secondary_stat, tertiary_stat;
 };
 
 extern struct Class classes[];
