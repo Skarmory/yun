@@ -1,10 +1,11 @@
 #include "montype.h"
+#include "stats.h"
 #include "colour.h"
 #include <ncurses.h>
 
-#define MON(n, sym, weapon, nhd, shd, stats) \
+#define MON(n, sym, weapon, stats, pri, sec, ter) \
     {                                 \
-        n, sym, weapon, nhd, shd, stats      \
+        n, sym, weapon, stats, pri, sec, ter      \
     }
 
 #define WEAPON(w) &weapons[w]
@@ -17,6 +18,6 @@
 
 struct MonType mon_type[] =
 {
-    MON("ghoul", SYM('g', CLR_WHITE, CLR_BLACK, 0), WEAPON(W_CLAWS), 1, 4, STATS(5, 5, 5, 5, 5)),
-    MON("player", SYM('@', CLR_WHITE, CLR_BLACK, A_BOLD), WEAPON(W_LONGSWORD), 1, 12, STATS(10, 10, 10, 10, 10))
+    MON("ghoul", SYM('g', CLR_WHITE, CLR_BLACK, 0), WEAPON(W_CLAWS), STATS(5, 5, 5, 5, 5), AGILITY, STRENGTH, STAMINA),
+    MON("player", SYM('@', CLR_WHITE, CLR_BLACK, A_BOLD), WEAPON(W_LONGSWORD), STATS(10, 10, 10, 10, 10), STRENGTH, STAMINA, AGILITY)
 };

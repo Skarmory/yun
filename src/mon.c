@@ -4,6 +4,7 @@
 #include "util.h"
 #include "map.h"
 #include "message.h"
+#include "log.h"
 
 struct Mon* new_mon(int mtype, int x, int y)
 {
@@ -13,8 +14,27 @@ struct Mon* new_mon(int mtype, int x, int y)
     mon->type = &mon_type[mtype];
     mon->x = x;
     mon->y = y;
-    mon->max_hp = 0;
 
+    mon->stats.primary = mon->type->primary;
+    mon->stats.secondary = mon->type->secondary;
+    mon->stats.tertiary = mon->type->tertiary;
+
+    MSTAT(mon, stamina, max_health) = 1;
+    MSTAT(mon, stamina, health) = 1;
+    MSTAT(mon, intelligence, max_mana) = 1;
+    MSTAT(mon, intelligence, mana) = 1;
+
+    set_stat(mon, STRENGTH, mon->type->strength);
+    logmsg("done str", DEBUG);
+    set_stat(mon, AGILITY, mon->type->agility);
+    logmsg("done agi", DEBUG);
+    set_stat(mon, INTELLIGENCE, mon->type->intelligence);
+    logmsg("done int", DEBUG);
+    set_stat(mon, SPIRIT, mon->type->spirit);
+    logmsg("done spi", DEBUG);
+    set_stat(mon, STAMINA, mon->type->stamina);
+    logmsg("done stam", DEBUG);
+    /*
     MSTAT(mon, strength, base_strength) = mon->type->strength;
     MSTAT(mon, agility, base_agility) = mon->type->agility;
     MSTAT(mon, intelligence, base_intelligence) = mon->type->intelligence;
@@ -26,13 +46,7 @@ struct Mon* new_mon(int mtype, int x, int y)
     MSTAT(mon, intelligence, intelligence) = mon->type->intelligence;
     MSTAT(mon, spirit, spirit) = mon->type->spirit;
     MSTAT(mon, stamina, stamina) = mon->type->stamina;
-
-    for(int hd = 0; hd < mon->type->num_hitdice; hd++)
-    {
-        mon->max_hp += random_int(1, mon->type->sides_per_hitdie);
-    }
-
-    mon->hp = mon->max_hp;
+    */
 
     return mon;
 }
@@ -56,7 +70,7 @@ struct Weapon* get_weapon(struct Mon* mon)
 
 void chk_dead(struct Mon* mon)
 {
-    if(mon->hp <= 0)
+    if(HP(mon) <= 0)
     {
         destroy_mon(mon);
     }

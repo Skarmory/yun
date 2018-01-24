@@ -8,6 +8,7 @@
 #include "util.h"
 #include "attack.h"
 #include "message.h"
+#include "ui.h"
 
 bool _do_smart_action(int x, int y)
 {
@@ -52,6 +53,10 @@ void handle_input(void)
                 display_msg("This_is_a_message_that_is_going_to_be_larger_than_the_display_area_of_the_message_box_so_this_ought_be_split_up_into_multiple_messages");
                 went=true;
                 break;
+            case 'c':
+                display_char_info_screen();
+                break;
+
         }
     } while(!went);
 }

@@ -5,14 +5,17 @@
 #include "attack_data.h"
 #include "stats.h"
 
+#define HP(mon) mon->stats.stamina.health
+#define MAXHP(mon) mon->stats.stamina.max_health
+#define MANA(mon) mon->stats.intelligence.mana
+#define MAXMANA(mon) mon->stats.intelligence.max_mana
+
 struct Mon
 {
     struct Mon* next; // linked list for mons on the level
     unsigned int x, y;
     struct MonType* type;
     struct Weapon* weapon;
-    int hp;
-    int max_hp;
     struct Stats stats;
 };
 

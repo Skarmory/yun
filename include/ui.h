@@ -2,5 +2,6 @@
 #define UI_H
 
 void display_char_status(void);
+void display_char_info_screen(void);
 
 #endif

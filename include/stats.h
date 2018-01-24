@@ -12,6 +12,13 @@
 #define PSTAT(s, t) you->mon->stats.s.t
 #define MSTAT(m, s, t) m->stats.s.t
 
+#define STAT_MAX      999
+#define INV_STAT_MAX  (1.f/999.f)
+#define PRIMARY_MOD   1.0f
+#define SECONDARY_MOD 0.85f
+#define TERTIARY_MOD  0.65f
+#define OTHER_MOD     0.45f
+
 struct Mon;
 
 // Strength increases attack power, armour pen, and parry chanc.
@@ -21,7 +28,7 @@ struct Strength
     int base_strength;
     int strength;
     int attack_power;
-    int armour_pen;
+    float armour_pen;
     float parry_chance;
 };
 
@@ -81,8 +88,11 @@ struct Stats
     struct Intelligence intelligence;
     struct Stamina stamina;
     struct Spirit spirit;
+
+    short primary, secondary, tertiary;
 };
 
 void add_stat(struct Mon* mon, int stat, int amount, bool base);
+void set_stat(struct Mon* mon, int stat, int amount);
 
 #endif

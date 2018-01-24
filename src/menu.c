@@ -119,6 +119,10 @@ void pick_class(void)
     }
     while(!picked);
 
+    you->mon->stats.primary = you->cls->primary_stat;
+    you->mon->stats.secondary = you->cls->secondary_stat;
+    you->mon->stats.tertiary = you->cls->tertiary_stat;
+
     add_stat(you->mon, STRENGTH, you->cls->strength_up, true);
     add_stat(you->mon, AGILITY, you->cls->agility_up, true);
     add_stat(you->mon, INTELLIGENCE, you->cls->intelligence_up, true);
