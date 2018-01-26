@@ -93,29 +93,19 @@ void pick_class(void)
 
     do
     {
-        switch(getch())
+        char choice = getch();
+        if(choice == 'q')
         {
-            case 'd':
-                *(you->cls) = classes[CLS_DRUID_IDX]; picked = true; break;
-            case 'h':
-                *(you->cls) = classes[CLS_HUNTER_IDX]; picked = true; break;
-            case 'm':
-                *(you->cls) = classes[CLS_MAGE_IDX]; picked = true; break;
-            case 'r':
-                *(you->cls) = classes[CLS_ROGUE_IDX]; picked = true; break;
-            case 'p':
-                *(you->cls) = classes[CLS_PALADIN_IDX]; picked = true; break;
-            case 'i':
-                *(you->cls) = classes[CLS_PRIEST_IDX]; picked = true; break;
-            case 's':
-                *(you->cls) = classes[CLS_SHAMAN_IDX]; picked = true; break;
-            case 'l':
-                *(you->cls) = classes[CLS_WARLOCK_IDX]; picked = true; break;
-            case 'w':
-                *(you->cls) = classes[CLS_WARRIOR_IDX]; picked = true; break;
-            case 'q':
-                do_quit(); return;
+            do_quit();
+            return;
         }
+
+        int cls_idx = get_class_idx(choice);
+        if(cls_idx == -1)
+            continue;
+
+        *(you->cls) = classes[cls_idx];
+        picked = true;
     }
     while(!picked);
 
@@ -157,6 +147,9 @@ void pick_race(void)
         if(you->cls->allow_races & mask)
         {
             int race_idx = get_race_idx(choice);
+            if(race_idx == -1)
+                continue;
+
             char* faction_name = get_faction_name(get_faction_by_race(choice));
 
             *(you->race) = races[race_idx];
