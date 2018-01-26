@@ -36,4 +36,7 @@ struct Race
 
 extern struct Race races[];
 
+int get_race_mask(char race);
+int get_race_idx(char race);
+
 #endif
