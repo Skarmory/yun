@@ -146,26 +146,22 @@ void pick_race(void)
 
     do
     {
-        switch(getch())
+        char choice = getch();
+        if(choice == 'q')
         {
-            case 'h':
-                *(you->race) = races[RA_HUMAN_IDX]; you->faction = "alliance"; picked = true; break;
-            case 'd':
-                *(you->race) = races[RA_DWARF_IDX]; you->faction = "alliance"; picked = true; break;
-            case 'e':
-                *(you->race) = races[RA_NELF_IDX]; you->faction = "alliance"; picked = true; break;
-            case 'g':
-                *(you->race) = races[RA_GNOME_IDX]; you->faction = "alliance"; picked = true; break;
-            case 'o':
-                *(you->race) = races[RA_ORC_IDX]; you->faction = "horde"; picked = true; break;
-            case 'f':
-                *(you->race) = races[RA_FORSAKEN_IDX]; you->faction = "horde"; picked = true; break;
-            case 't':
-                *(you->race) = races[RA_TAUREN_IDX]; you->faction = "horde"; picked = true; break;
-            case 'l':
-                *(you->race) = races[RA_TROLL_IDX]; you->faction = "horde"; picked = true; break;
-            case 'q':
-                do_quit(); return;
+            do_quit();
+            return;
+        }
+
+        int mask = get_race_mask(choice);
+        if(you->cls->allow_races & mask)
+        {
+            int race_idx = get_race_idx(choice);
+            char* faction_name = get_faction_name(get_faction_by_race(choice));
+
+            *(you->race) = races[race_idx];
+            you->faction = faction_name;
+            picked = true;
         }
     }
     while(!picked);
