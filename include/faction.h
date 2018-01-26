@@ -8,5 +8,8 @@
 
 extern char* factions[];
 
+int get_faction_by_race(char race);
+char* get_faction_name(int idx);
+
 #endif
 
