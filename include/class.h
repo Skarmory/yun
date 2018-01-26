@@ -37,5 +37,6 @@ struct Class
 extern struct Class classes[];
 
 int get_class_colour(const struct Class* cls);
+int get_class_idx(char cls);
 
 #endif

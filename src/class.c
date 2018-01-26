@@ -70,6 +70,31 @@ int get_class_colour(const struct Class* cls)
         default:
             return CLR_DEFAULT;
     }
-
-
 } 
+
+int get_class_idx(char cls)
+{
+    switch(cls)
+    {
+        case 'd':
+            return CLS_DRUID_IDX;
+        case 'h':
+            return CLS_HUNTER_IDX;
+        case 'm':
+            return CLS_MAGE_IDX;
+        case 'r':
+            return CLS_ROGUE_IDX;
+        case 'p':
+            return CLS_PALADIN_IDX;
+        case 'i':
+            return CLS_PRIEST_IDX;
+        case 's':
+            return CLS_SHAMAN_IDX;
+        case 'l':
+            return CLS_WARLOCK_IDX;
+        case 'w':
+            return CLS_WARRIOR_IDX;
+        default:
+            return -1;
+    }
+}
