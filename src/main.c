@@ -11,6 +11,7 @@
 #include "race.h"
 #include "faction.h"
 #include "map.h"
+#include "mapgen.h"
 #include "montype.h"
 #include "mon.h"
 #include "input.h"

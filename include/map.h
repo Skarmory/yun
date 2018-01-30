@@ -4,6 +4,9 @@
 #include <stdbool.h>
 #include "mon.h"
 
+#define MROWS 40
+#define MCOLS 80
+
 #define WALKABLE 0x00000001
 
 struct Location
@@ -28,7 +31,6 @@ struct Map
 };
 
 void init_map(void);
-void gen_map(void);
 void display_map(void);
 void add_mon(struct Mon* mon);
 void rm_mon(struct Mon* mon);
