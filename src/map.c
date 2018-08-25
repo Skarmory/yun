@@ -62,23 +62,30 @@ void add_mon(struct Mon* mon)
 }
 
 /* Remove monster from the level */
-void rm_mon(struct Mon* mon)
+bool rm_mon(struct Mon* mon)
 {
-    struct Mon* tmp = cmap->monlist;
-    struct Mon* pre = cmap->monlist;
-
-    while(tmp != NULL)
+    struct Mon* curr = cmap->monlist;
+    struct Mon* prev = NULL;
+    while(curr)
     {
-        if(tmp == mon)
-        {
+       if(curr == mon)
+       {
             cmap->locs[mon->x][mon->y].mon = NULL;
-            pre->next = tmp->next;
-            tmp->next = NULL;
-        }
 
-        pre = tmp;
-        tmp = tmp->next;
+            // Check if this is head of monlist
+            if(prev)
+                prev->next = curr->next;
+            else
+                cmap->monlist = curr->next;
+
+            return true;
+       }
+
+       prev = curr;
+       curr = curr->next;
     }
+
+    return false;
 }
 
 /* Do map bounds checking */
