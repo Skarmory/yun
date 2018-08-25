@@ -1,11 +1,12 @@
 #include "map.h"
+#include "log.h"
 #include <stdlib.h>
 #include <curses.h>
 #include "util.h"
 
 struct Map* cmap;
 
-/* Mallocs map and sets map locations to default values */
+/* Creates the map and sets map locations to default values */
 void init_map(void)
 {
     cmap = (struct Map*) malloc(sizeof(struct Map));
@@ -88,11 +89,13 @@ bool rm_mon(struct Mon* mon)
     return false;
 }
 
-/* Do map bounds checking */
-bool _valid_move(int x, int y)
+/* Does map boundary check */
+bool _valid_map_loc(int x, int y)
 {
     if(x < 0 || x >= MCOLS || y < 0 || y >= MROWS)
         return false;
+    return true;
+}
 
     if(!(cmap->locs[x][y].pathing & WALKABLE))
         return false;

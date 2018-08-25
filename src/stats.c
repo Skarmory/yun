@@ -20,7 +20,6 @@ void _update_strength(struct Mon* mon)
 {
     int str = MSTAT(mon, strength, strength);
     float invstr = str * INV_STAT_MAX;
-    logmsg("zzz", DEBUG);
     float mod = _get_mod(mon, STRENGTH);
 
     MSTAT(mon, strength, attack_power) = str * mod *  0.2f;

@@ -11,6 +11,9 @@
 #define STATUS_Y 45
 #define STATUS_W 80
 
+/*
+ * Prints a simple view of the player's stats at the bottom of the game area.
+ */
 void display_char_status(void)
 {
     char tmp[STATUS_W];
@@ -21,6 +24,9 @@ void display_char_status(void)
     mvprintw(STATUS_Y, STATUS_X, tmp);
 }
 
+/*
+ * Displays a detailed view of the player's stats.
+ */
 void display_char_info_screen(void)
 {
     clear();

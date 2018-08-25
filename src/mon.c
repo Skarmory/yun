@@ -25,15 +25,10 @@ struct Mon* new_mon(int mtype, int x, int y)
     MSTAT(mon, intelligence, mana) = 1;
 
     set_stat(mon, STRENGTH, mon->type->strength);
-    logmsg("done str", DEBUG);
     set_stat(mon, AGILITY, mon->type->agility);
-    logmsg("done agi", DEBUG);
     set_stat(mon, INTELLIGENCE, mon->type->intelligence);
-    logmsg("done int", DEBUG);
     set_stat(mon, SPIRIT, mon->type->spirit);
-    logmsg("done spi", DEBUG);
     set_stat(mon, STAMINA, mon->type->stamina);
-    logmsg("done stam", DEBUG);
     /*
     MSTAT(mon, strength, base_strength) = mon->type->strength;
     MSTAT(mon, agility, base_agility) = mon->type->agility;
