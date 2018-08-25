@@ -126,6 +126,36 @@ bool move_mon(struct Mon* mon, int newx, int newy)
     return true;
 }
 
+/* Get an array of the neighbouring locations to given location */
+int get_neighbours(struct Location* loc, struct Location*** locs)
+{
+    *locs = (struct Location**)malloc(sizeof(struct Location*) * 8);
+
+    int x = loc->x;
+    int y = loc->y;
+
+    int count = 0;
+
+    for(int _x = x-1; _x < x+2; _x++)
+    for(int _y = y-1; _y < y+2; _y++)
+    {
+        if(_x == x && _y == y)
+            continue;
+
+        if(_valid_map_loc(_x, _y))
+        {
+            (*locs)[count] = &cmap->locs[_x][_y];
+            count++;
+        }
+    }
+
+    if(count < 8)
+        *locs = realloc(locs, count * sizeof(struct Location*));
+
+    return count;
+}
+
+/* Safely deletes the map */
 void destroy_map(void)
 {
     if(cmap != NULL)

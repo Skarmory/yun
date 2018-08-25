@@ -37,6 +37,8 @@ bool rm_mon(struct Mon* mon);
 bool move_mon(struct Mon* mon, int newx, int newy);
 
 bool valid_move(int x, int y);
+
+int get_neighbours(struct Location* loc, struct Location*** neighbours);
 void destroy_map(void);
 
 extern struct Map* cmap;
