@@ -92,7 +92,6 @@ void __log_open(void)
 
 void _add_open(struct PathNode* node)
 {
-    logmsg("_add_open called", DEBUG);
     if(_open_tail)
     {
         _open_tail->pathlist_next = node;
@@ -105,7 +104,6 @@ void _add_open(struct PathNode* node)
     }
 
     _open_tail->pathlist_next = NULL;
-    __log_open();
 }
 
 
@@ -126,7 +124,6 @@ void __log_closed(void)
 
 void _add_closed(struct PathNode* node)
 {
-    logmsg("_add_closed called", DEBUG);
     if(_closed_tail)
     {
         _closed_tail->pathlist_next = node;
@@ -158,8 +155,6 @@ struct PathNode* _get_open(void)
 // Go through the open linked list and return the PathNode with the lowest score
 struct PathNode* _get_best_open(void)
 {
-    logmsg("_get_best_open called", DEBUG);
-
     struct PathNode *ret, *ret_prev, *prev, *cur;
 
     // Check for empty or single element list
@@ -254,10 +249,6 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest)
     {
         struct PathNode* best_node = _get_best_open();
         
-        char msg1[256];
-        sprintf(msg1, "best: %d %d", best_node->loc->x, best_node->loc->y);
-        logmsg(msg1, DEBUG);
-
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
             return best_node;
 
@@ -300,9 +291,6 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest)
             }
         }
 
-        __log_closed();
-        __log_open();
-
         free(*neighbours);
         free(neighbours);
     }
@@ -329,7 +317,6 @@ void _free_path_lists(void)
 /* Returns the next location in the shortest path from start to dest */
 struct Location* next_path_loc(struct Location* start, struct Location* dest)
 {
-    logmsg("next_path_loc called", DEBUG);
     _open_head = NULL;
     _open_tail = NULL;
     _closed_head = NULL;
