@@ -36,6 +36,7 @@ void add_mon(struct Mon* mon);
 bool rm_mon(struct Mon* mon);
 bool move_mon(struct Mon* mon, int newx, int newy);
 
+bool valid_move(int x, int y);
 void destroy_map(void);
 
 extern struct Map* cmap;

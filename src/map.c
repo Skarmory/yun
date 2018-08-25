@@ -97,6 +97,12 @@ bool _valid_map_loc(int x, int y)
     return true;
 }
 
+/* Check if given x, y location is a valid move */
+bool valid_move(int x, int y)
+{
+    if(!_valid_map_loc(x, y))
+        return false;
+
     if(!(cmap->locs[x][y].pathing & WALKABLE))
         return false;
 
@@ -109,7 +115,7 @@ bool _valid_map_loc(int x, int y)
 /* Change monster location */
 bool move_mon(struct Mon* mon, int newx, int newy)
 {
-    if(!_valid_move(newx, newy))
+    if(!valid_move(newx, newy))
         return false;
 
     cmap->locs[mon->x][mon->y].mon = NULL;
