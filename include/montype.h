@@ -16,6 +16,7 @@ struct MonType
     struct Weapon* base_weapon;
     int strength, agility, intelligence, spirit, stamina;
     short primary, secondary, tertiary;
+    int pathing;
 };
 
 extern struct MonType mon_type[];

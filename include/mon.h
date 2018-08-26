@@ -14,6 +14,7 @@ struct Mon
 {
     struct Mon* next; // linked list for mons on the level
     unsigned int x, y;
+    int pathing;
     struct MonType* type;
     struct Weapon* weapon;
     struct Stats stats;
