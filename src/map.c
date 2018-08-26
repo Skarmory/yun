@@ -90,32 +90,33 @@ bool rm_mon(struct Mon* mon)
 }
 
 /* Does map boundary check */
-bool _valid_map_loc(int x, int y)
+bool loc_in_bounds(int x, int y)
 {
     if(x < 0 || x >= MCOLS || y < 0 || y >= MROWS)
         return false;
     return true;
 }
 
-/* Check if given x, y location is a valid move */
-bool valid_move(int x, int y)
+bool loc_has_mon(int x, int y)
 {
-    if(!_valid_map_loc(x, y))
-        return false;
+    return cmap->locs[x][y].mon != NULL;
+}
 
-    if(!(cmap->locs[x][y].pathing & WALKABLE))
-        return false;
+bool loc_is_pathable(int x, int y, int path_bits)
+{
+    return cmap->locs[x][y].pathing & path_bits;
+}
 
-    if(cmap->locs[x][y].mon != NULL)
-        return false;
-
-    return true;
+/* Check if given x, y location is a valid move */
+bool valid_move(int x, int y, int path_bits)
+{
+    return loc_in_bounds(x, y) && loc_is_pathable(x, y, path_bits) && !loc_has_mon(x, y);
 }
 
 /* Change monster location */
 bool move_mon(struct Mon* mon, int newx, int newy)
 {
-    if(!valid_move(newx, newy))
+    if(!valid_move(newx, newy, mon->pathing))
         return false;
 
     cmap->locs[mon->x][mon->y].mon = NULL;
@@ -142,7 +143,7 @@ int get_neighbours(struct Location* loc, struct Location*** locs)
         if(_x == x && _y == y)
             continue;
 
-        if(_valid_map_loc(_x, _y))
+        if(loc_in_bounds(_x, _y))
         {
             (*locs)[count] = &cmap->locs[_x][_y];
             count++;

@@ -20,14 +20,15 @@ void __print_node(char* msg, struct PathNode* path)
     logmsg(_msg, DEBUG);
 }
 
-float _evaluate(struct PathNode* path, struct Location* dest)
+float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
 {
     // Special handling for the destination
     if(path->loc->x == dest->x && path->loc->y == dest->y)
         return -INFINITY;
 
-    // If somehow this location is not valid, assign infinity to the cost
-    if(!valid_move(path->loc->x, path->loc->y))
+    // If this is not a valid move (e.g. other mon on this loc), assign infinity 
+    // This means the algorithm will explore other paths before checking further in this direction
+    if(!valid_move(path->loc->x, path->loc->y, path_bits))
         return INFINITY;
 
     // Use distance squared to avoid sqrt
@@ -38,13 +39,13 @@ float _evaluate(struct PathNode* path, struct Location* dest)
     return dist2;
 }
 
-struct PathNode* _new_path_node(struct Location* loc, struct Location* start, struct Location* dest)
+struct PathNode* _new_path_node(struct Location* loc, struct Location* start, struct Location* dest, int path_bits)
 {
     struct PathNode* p = (struct PathNode*)malloc(sizeof(struct PathNode));
     p->pathlist_next = NULL;
     p->prev = NULL;
     p->loc = loc;
-    p->cost_to_end = _evaluate(p, dest);
+    p->cost_to_end = _evaluate(p, dest, path_bits);
     return p;
 }
 
@@ -240,15 +241,21 @@ void _debug_draw_path(void)
     refresh();
 }
 
-/*
- * A* algorithm constructing shortest path
- */
-struct PathNode* _find_path(struct Location* start, struct Location* dest)
+/* A* algorithm constructing shortest path */
+struct PathNode* _find_path(struct Location* start, struct Location* dest, int path_bits)
 {
+    struct PathNode* global_best;
+    struct PathNode* best_node;
+
     while(_open_head)
     {
-        struct PathNode* best_node = _get_best_open();
+        best_node = _get_best_open();
+
+        // Set global best node seen so far
+        if(!global_best || best_node->cost_to_end < global_best->cost_to_end)
+            global_best = best_node;
         
+        // Reached destination, return
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
             return best_node;
 
@@ -263,8 +270,7 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest)
             loc = (*neighbours)[i];
             
             // Check for invalid location
-            // valid_move returns false if something is on the location, but we need the player's location 
-            if(!valid_move(loc->x, loc->y) && (loc->x != dest->x || loc->y != dest->y))
+            if((!loc_in_bounds(loc->x, loc->y) || !loc_is_pathable(loc->x, loc->y, path_bits))  && (loc->x != dest->x || loc->y != dest->y))
                 continue;
 
             struct PathNode* p;
@@ -284,7 +290,7 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest)
             {
                 // This location has not been visited yet
                 // Add to open list
-                p = _new_path_node((*neighbours)[i], start, dest);
+                p = _new_path_node((*neighbours)[i], start, dest, path_bits);
                 p->prev = best_node; 
                 p->cost_from_start = best_node->cost_from_start + 1;
                 _add_open(p);
@@ -295,7 +301,7 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest)
         free(neighbours);
     }
 
-    return NULL;
+    return global_best;
 }
 
 /* Free the two path node lists */
@@ -315,25 +321,24 @@ void _free_path_lists(void)
 }
 
 /* Returns the next location in the shortest path from start to dest */
-struct Location* next_path_loc(struct Location* start, struct Location* dest)
+struct Location* next_path_loc(struct Location* start, struct Location* dest, int path_bits)
 {
     _open_head = NULL;
     _open_tail = NULL;
     _closed_head = NULL;
     _closed_tail = NULL;
 
-    struct PathNode* node = _new_path_node(start, start, dest);
+    struct PathNode* node = _new_path_node(start, start, dest, path_bits);
     struct Location* ret = NULL;
 
     node->cost_from_start = 0.0f;
     _add_open(node);
 
-    if((node = _find_path(start, dest)) != NULL)
+    if((node = _find_path(start, dest, path_bits)) != NULL)
     {
         ret = get_first_path_node(node)->loc;
     }
 
-//    _debug_draw_path();
     _free_path_lists();
 
     return ret;

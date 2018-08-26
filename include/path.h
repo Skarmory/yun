@@ -13,7 +13,7 @@ struct PathNode
     float cost_from_start;
 };
 
-struct Location* next_path_loc(struct Location* start, struct Location* dest);
+struct Location* next_path_loc(struct Location* start, struct Location* dest, int path_bits);
 
 inline struct PathNode* get_first_path_node(struct PathNode* node)
 {

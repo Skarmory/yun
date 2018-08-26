@@ -1,4 +1,5 @@
 #include "attack.h"
+#include "log.h"
 #include "util.h"
 #include "attack_data.h"
 #include "message.h"

@@ -14,6 +14,8 @@ struct Mon* new_mon(int mtype, int x, int y)
     mon->type = &mon_type[mtype];
     mon->x = x;
     mon->y = y;
+    mon->pathing = mon->type->pathing;
+    mon->weapon = NULL;
 
     mon->stats.primary = mon->type->primary;
     mon->stats.secondary = mon->type->secondary;
