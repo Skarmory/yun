@@ -22,21 +22,23 @@ void __print_node(char* msg, struct PathNode* path)
 
 float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
 {
+    float mod = 0.0f;
+
     // Special handling for the destination
     if(path->loc->x == dest->x && path->loc->y == dest->y)
         return -INFINITY;
 
-    // If this is not a valid move (e.g. other mon on this loc), assign infinity 
+    // If this is not a valid move (e.g. other mon on this loc), assign a higher value than it's distance
     // This means the algorithm will explore other paths before checking further in this direction
     if(!valid_move(path->loc->x, path->loc->y, path_bits))
-        return INFINITY;
+        mod = 100.0f;
 
     // Use distance squared to avoid sqrt
     float _x = dest->x - path->loc->x;
     float _y = dest->y - path->loc->y;
     float dist2 = _x * _x + _y * _y;
-    
-    return dist2;
+
+    return dist2 + mod;
 }
 
 struct PathNode* _new_path_node(struct Location* loc, struct Location* start, struct Location* dest, int path_bits)
