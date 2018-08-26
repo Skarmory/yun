@@ -22,6 +22,9 @@ struct Mon
 
 struct Mon* new_mon(int mtype, int x, int y);
 void destroy_mon(struct Mon*);
+
+bool mon_has_pathing_attr(struct Mon* mon, int path_attr);
+
 struct Weapon* get_weapon(struct Mon* mon);
 void chk_dead(struct Mon* mon);
 

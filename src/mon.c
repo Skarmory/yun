@@ -56,6 +56,11 @@ void destroy_mon(struct Mon* mon)
     display_msg(buf);
 }
 
+bool mon_has_pathing_attr(struct Mon* mon, int path_attr)
+{
+   return mon->pathing & path_attr;
+}
+
 struct Weapon* get_weapon(struct Mon* mon)
 {
     if(!mon->weapon)
