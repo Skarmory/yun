@@ -92,13 +92,9 @@ void display_format_msg(char* format, ...)
     va_list args;
     va_start(args, format);
 
-    logmsg("1", DEBUG);
-
     char msg[256];
     vsnprintf(msg, 512, format, args);
-    logmsg("2", DEBUG);
     display_msg(msg);
-    logmsg("3", DEBUG);
 
     va_end(args);
 }
