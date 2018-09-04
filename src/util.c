@@ -33,12 +33,18 @@ void convert_arg(char c, char* buf)
 
 void do_quit(void)
 {
+    char exit_msg[512];
+    if(mon_is_dead(you->mon))
+        sprintf(exit_msg, "The dark void awaits you!");
+    else
+        sprintf(exit_msg, "Your curiosity will be the death of you.");
+
     destroy_player();
     destroy_map();
     destroy_logs();
     endwin();
     use_default_colors();
-    puts("Your curiosity will be the death of you.");
+    puts(exit_msg);
     exit(0);
 }
 

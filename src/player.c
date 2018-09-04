@@ -1,6 +1,10 @@
 #include "player.h"
 
+#include <ncurses.h>
 #include <stdlib.h>
+
+#include "util.h"
+#include "message.h"
 
 struct Player* you;
 
@@ -24,5 +28,22 @@ void destroy_player(void)
         if(you->mon != NULL)
             free(you->mon);
         free(you); 
+    }
+}
+
+void player_chk_dead(void)
+{
+    if(mon_is_dead(you->mon))
+    {
+        clear_msgs();
+        flush_msg_buffer();
+
+        display_msg("You died...");
+
+        clear_msgs();
+        flush_msg_buffer();
+
+        getch();
+        do_quit();
     }
 }

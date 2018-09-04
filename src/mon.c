@@ -52,10 +52,6 @@ void destroy_mon(struct Mon* mon)
 {
     rm_mon(mon);
     free(mon);
-
-    char buf[256];
-    sprintf(buf, "The %s was slain.", mon->type->name);
-    display_msg(buf);
 }
 
 bool mon_has_pathing_attr(struct Mon* mon, int path_attr)
@@ -63,17 +59,25 @@ bool mon_has_pathing_attr(struct Mon* mon, int path_attr)
    return mon->pathing & path_attr;
 }
 
-struct Weapon* get_weapon(struct Mon* mon)
+struct Weapon* mon_get_weapon(struct Mon* mon)
 {
     if(!mon->weapon)
         return mon->type->base_weapon;
     return mon->weapon;
 }
 
-void chk_dead(struct Mon* mon)
+bool mon_is_dead(struct Mon* mon)
 {
-    if(HP(mon) <= 0)
+    return HP(mon) <= 0;
+}
+
+void mon_chk_dead(struct Mon* mon)
+{
+    if(mon_is_dead(mon))
     {
+        char buf[256];
+        sprintf(buf, "The %s was slain.", mon->type->name);
+        display_msg(buf);
         destroy_mon(mon);
     }
 }

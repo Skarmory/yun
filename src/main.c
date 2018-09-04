@@ -20,6 +20,7 @@
 #include "message.h"
 #include "log.h"
 #include "ui.h"
+#include "mon_ai.h"
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
@@ -85,8 +86,11 @@ void main_loop(void)
     do
     {
         handle_input();
+        update_mons();
+
         clear_msgs();
         flush_msg_buffer();
+
         display_map();
         display_char_status();
     }
