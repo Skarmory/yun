@@ -21,25 +21,12 @@ void _flush_and_prompt(void)
     getch();
 }
 
-int _msg_size(char* msg)
-{
-    int msgsize = 0;
-    char* c = msg;
-    while(*c != '\0')
-    {
-        msgsize++;
-        c++;
-    }
-
-    return msgsize; 
-}
-
 /* Write a message to the messages area */
 void display_msg(char* msg)
 {
     logmsg(msg, MSGHIST);
 
-    int msgsize = _msg_size(msg);
+    int msgsize = strlen(msg);
     bool handled = false;
     
     while(!handled)
