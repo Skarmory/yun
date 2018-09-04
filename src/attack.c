@@ -26,9 +26,7 @@ bool do_player_attack_mon(struct Mon* defender)
 
     _do_attack(you->mon, defender, &dmg, weapon);
 
-    char buf[256];
-    sprintf(buf, "You hit the %s for %d (%dd%d) with your %s.", defender->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->name);
-    display_msg(buf);
+    display_format_msg("You hit the %s for %d (%dd%d) with your %s.", defender->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->name);
 
     mon_chk_dead(defender);
 
@@ -42,9 +40,7 @@ bool do_mon_attack_player(struct Mon* attacker)
 
    _do_attack(attacker, you->mon, &dmg, weapon);
 
-    char buf[256];
-    sprintf(buf, "The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->name);
-    display_msg(buf);
+    display_format_msg("The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->name);
 
     player_chk_dead();
 
