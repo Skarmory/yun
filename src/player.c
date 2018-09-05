@@ -3,6 +3,8 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
+#include "ui.h"
+#include "map.h"
 #include "util.h"
 #include "message.h"
 
@@ -42,6 +44,9 @@ void player_chk_dead(void)
 
         clear_msgs();
         flush_msg_buffer();
+
+        display_map();
+        display_char_status();
 
         getch();
         do_quit();
