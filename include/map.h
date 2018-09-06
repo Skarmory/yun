@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "mon.h"
+#include "room.h"
 
 #define MROWS 40
 #define MCOLS 80
@@ -15,11 +16,6 @@ struct Location
     int pathing;
     struct Mon* mon;
     char terrain;
-};
-
-struct Room
-{
-    int x, y, w, h;
 };
 
 struct Map
