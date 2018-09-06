@@ -27,6 +27,9 @@ struct Mon* new_mon(int mtype, int x, int y);
 /* Destroy monster */
 void destroy_mon(struct Mon*);
 
+/* Update all active mons */
+void update_mons(void);
+
 /* Return true if monster has ability to use a particular pathing type */
 bool mon_has_pathing_attr(struct Mon* mon, int path_attr);
 

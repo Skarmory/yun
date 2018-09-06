@@ -3,6 +3,7 @@
 
 #include "map.h"
 
-void update_mons(void); 
+/* Make ai decision for a given mon */
+void update_mon_ai(struct Mon* mon);
 
 #endif

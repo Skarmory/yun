@@ -5,6 +5,7 @@
 #include "map.h"
 #include "message.h"
 #include "log.h"
+#include "mon_ai.h"
 
 struct Mon* new_mon(int mtype, int x, int y)
 {
@@ -52,6 +53,17 @@ void destroy_mon(struct Mon* mon)
 {
     rm_mon(mon);
     free(mon);
+}
+
+void update_mons(void)
+{
+    struct Mon* mon = cmap->monlist;
+
+    while(mon)
+    {
+       update_mon_ai(mon);
+       mon = mon->next;
+    }
 }
 
 bool mon_has_pathing_attr(struct Mon* mon, int path_attr)

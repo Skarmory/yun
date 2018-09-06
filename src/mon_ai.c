@@ -5,14 +5,10 @@
 #include "log.h"
 #include <stdio.h>
 
-// Forward declares
-void _update_mon(struct Mon* mon);
-
-// Functions
-
 /* Make decision for a given mon */
-void _update_mon(struct Mon* mon)
+void update_mon_ai(struct Mon* mon)
 {
+   // Player character is not an ai
    if(mon == you->mon)
        return;
 
@@ -32,16 +28,4 @@ void _update_mon(struct Mon* mon)
        // Move towards the player
        move_mon(mon, next_loc->x, next_loc->y);
    }
-}
-
-/* Go through list of monsters on the map and make decisions for their turn */
-void update_mons(void)
-{
-    struct Mon* mon = cmap->monlist;
-
-    while(mon)
-    {
-       _update_mon(mon); 
-       mon = mon->next;
-    }
 }
