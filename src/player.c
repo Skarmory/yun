@@ -40,13 +40,14 @@ void player_chk_dead(void)
         clear_msgs();
         flush_msg_buffer();
 
+        display_map();
+        display_char_status();
+
+        getch();
         display_msg("You died...");
 
         clear_msgs();
         flush_msg_buffer();
-
-        display_map();
-        display_char_status();
 
         getch();
         do_quit();
