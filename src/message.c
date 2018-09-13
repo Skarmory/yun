@@ -28,7 +28,7 @@ void display_msg(char* msg)
 
     int msgsize = strlen(msg);
     bool handled = false;
-    
+
     while(!handled)
     {
         if(msgbuf_size == 0 && msgsize < MSGBOX_W)
@@ -54,16 +54,18 @@ void display_msg(char* msg)
             while(!isspace(msg[idx]) && idx >= 0)
                 idx--;
 
-            if(idx == -1)
+            if(idx == -1) // This string is somehow larger than the display area
             {
                 if(msgbuf_size == 0)
                 {
+                    // Copy as much of the message as possible into the buffer
                     memcpy(msgbuf, msg, MSGBOX_W-1);
                     msgbuf[MSGBOX_W] = '\0';
                     msgbuf_size = MSGBOX_W-1;
                     msgsize -= MSGBOX_W-1;
 
-                    msg = &msg[MSGBOX_W-1]; 
+                    // Push msg start pointer to the next position after the part copied into the buffer
+                    msg = &msg[MSGBOX_W-1];
                 }
 
                 _flush_and_prompt();
@@ -74,13 +76,15 @@ void display_msg(char* msg)
             memcpy(substr, msg, idx);
             substr[idx] = '\0';
 
-            strcat(msgbuf, " ");
+            // Don't add a leading space to the message
+            if(msgbuf_size > 0)
+                strcat(msgbuf, " ");
             strcat(msgbuf, substr);
             msgbuf_size = idx;
             msgsize -= idx;
 
             _flush_and_prompt();
-            
+
             idx++;
             msgsize--;
 
