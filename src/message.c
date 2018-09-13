@@ -41,7 +41,8 @@ void display_msg(char* msg)
         else if((msgbuf_size + msgsize + 1) < MSGBOX_W) // Plus 1 to account for the space
         {
             // Compound multiple messages, so long as they fit in the buffer
-            sprintf(msgbuf, "%s %s", msgbuf, msg);
+            strcat(msgbuf, " ");
+            strcat(msgbuf, msg);
             msgbuf_size += (msgsize + 1);
             handled = true;
         }
@@ -73,7 +74,8 @@ void display_msg(char* msg)
             memcpy(substr, msg, idx);
             substr[idx] = '\0';
 
-            sprintf(msgbuf, "%s %s", msgbuf, substr);
+            strcat(msgbuf, " ");
+            strcat(msgbuf, substr);
             msgbuf_size = idx;
             msgsize -= idx;
 
