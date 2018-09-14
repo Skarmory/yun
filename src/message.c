@@ -24,7 +24,7 @@ void _flush_and_prompt(void)
 /* Write a message to the messages area */
 void display_msg(char* msg)
 {
-    logmsg(msg, MSGHIST);
+    log_msg(msg, MSGHIST);
 
     int msgsize = strlen(msg);
     bool handled = false;

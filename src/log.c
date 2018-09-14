@@ -13,7 +13,7 @@ void init_logs(void)
     debug_file = fopen(DEBUGLOG_FNAME, "w");
 }
 
-void logmsg(char* msg, int logtype)
+void log_msg(char* msg, int logtype)
 {
     switch(logtype)
     {

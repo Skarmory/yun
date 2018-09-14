@@ -5,7 +5,7 @@
 #define DEBUG   1
 
 void init_logs(void);
-void logmsg(char* msg, int logtype);
+void log_msg(char* msg, int logtype);
 void destroy_logs(void);
 
 #endif

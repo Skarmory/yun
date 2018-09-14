@@ -17,7 +17,7 @@ void __print_node(char* msg, struct PathNode* path)
 {
     char _msg[256];
     sprintf(_msg, "%s %d %d", msg, path->loc->x, path->loc->y);
-    logmsg(_msg, DEBUG);
+    log_msg(_msg, DEBUG);
 }
 
 float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
@@ -84,7 +84,7 @@ void __log_open(void)
     struct PathNode* tmp = _open_head;
 
     if(!tmp)
-        logmsg("No open nodes", DEBUG);
+        log_msg("No open nodes", DEBUG);
 
     while(tmp)
     {
@@ -115,7 +115,7 @@ void __log_closed(void)
     struct PathNode* tmp = _closed_head;
 
     if(!tmp)
-        logmsg("No closed nodes", DEBUG);
+        log_msg("No closed nodes", DEBUG);
 
     while(tmp)
     {
