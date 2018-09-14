@@ -99,7 +99,7 @@ void display_format_msg(char* format, ...)
     va_start(args, format);
 
     char msg[256];
-    vsnprintf(msg, 512, format, args);
+    vsnprintf(msg, 256, format, args);
     display_msg(msg);
 
     va_end(args);
