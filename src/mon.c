@@ -87,9 +87,7 @@ void mon_chk_dead(struct Mon* mon)
 {
     if(mon_is_dead(mon))
     {
-        char buf[256];
-        sprintf(buf, "The %s was slain.", mon->type->name);
-        display_msg(buf);
+        display_format_msg("The %s was slain.", mon->type->name);
         destroy_mon(mon);
     }
 }
