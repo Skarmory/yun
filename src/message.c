@@ -12,7 +12,16 @@
 #define MSGBOX_H 3
 
 char msgbuf[MSGBOX_W];
+char clearbuf[MSGBOX_W];
 int msgbuf_size = 0;
+
+/**
+ * Initialises the clear buf
+ */
+void init_msgs(void)
+{
+    memset(clearbuf, ' ', MSGBOX_W-1);
+}
 
 /**
  * Flushes current message buffer to the display and waits for user to give input
@@ -118,8 +127,6 @@ void display_format_msg(char* format, ...)
  */
 void clear_msgs(void)
 {
-    char clearbuf[MSGBOX_W]; // TODO: Pre-allocate this
-    memset(clearbuf, ' ', MSGBOX_W-1);
     mvprintw(MSGBOX_Y, MSGBOX_X, clearbuf);
     mvprintw(MSGBOX_Y+1, MSGBOX_X, clearbuf);
 }

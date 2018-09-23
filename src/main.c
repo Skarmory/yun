@@ -123,6 +123,7 @@ int main(int argc, char** argv)
     getch();
 
     init_logs();
+    init_msgs();
 
     new_player();
     new_game();
