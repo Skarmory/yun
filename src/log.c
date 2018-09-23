@@ -8,12 +8,20 @@ const char* DEBUGLOG_FNAME = "debug.log";
 FILE* msghist_file;
 FILE* debug_file;
 
+/**
+ * Opens and overwrites all the logging files.
+ *
+ * This should be called only once at startup.
+ */
 void init_logs(void)
 {
     msghist_file = fopen(MSGHIST_FNAME, "w");
     debug_file = fopen(DEBUGLOG_FNAME, "w");
 }
 
+/**
+ * Write a message to the given log file.
+ */
 void log_msg(char* msg, int logtype)
 {
     switch(logtype)
@@ -29,6 +37,9 @@ void log_msg(char* msg, int logtype)
     }
 }
 
+/**
+ * Write a formatted message with variable args to the given log file.
+ */
 void log_format_msg(char* format, int logtype, ...)
 {
     va_list args;
@@ -41,6 +52,11 @@ void log_format_msg(char* format, int logtype, ...)
     va_end(args);
 }
 
+/**
+ * Closes all opened log files.
+ *
+ * This should only be called once at shutdown
+ */
 void destroy_logs(void)
 {
     fclose(msghist_file);

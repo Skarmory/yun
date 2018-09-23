@@ -19,6 +19,8 @@ $(GAME): $(OBJS)
 clean:
 	@rm -f $(OBJS)
 	@rm -f $(DEPS)
+
+fullclean: clean
 	@rm -f $(GAME)
 
 -include $(DEPS)
