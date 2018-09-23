@@ -20,7 +20,9 @@ struct Race races[] =
     RACE('l', "troll", "troll", "Orgrimmar", "Darkspear Leader Vol'jin", RA_TROLL, FA_HORDE, STATUPS(1, 2, 0, 2, 0))
 };
 
-// Gets the bitmask for a given race
+/**
+ * Gets the bitmask for a given race
+ */
 int get_race_mask(char race)
 {
     switch(race)
@@ -46,7 +48,9 @@ int get_race_mask(char race)
     }
 }
 
-// Get race index by character (index corresponds to location in the races array)
+/*
+ * Get race index by character (index corresponds to location in the races array)
+ */
 int get_race_idx(char race)
 {
     switch(race)

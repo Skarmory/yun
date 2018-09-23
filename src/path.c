@@ -13,6 +13,11 @@ struct PathNode* _closed_tail;
 
 extern struct PathNode* get_first_path_node(struct PathNode* node);
 
+//TODO: Create array of path nodes or add path nodes to struct Location
+
+/**
+ * Debug print method
+ */
 void __print_node(char* msg, struct PathNode* path)
 {
     char _msg[256];
@@ -20,6 +25,9 @@ void __print_node(char* msg, struct PathNode* path)
     log_msg(_msg, DEBUG);
 }
 
+/**
+ * Evaluates a node's cost
+ */
 float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
 {
     float mod = 0.0f;
@@ -41,6 +49,9 @@ float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
     return dist2 + mod;
 }
 
+/**
+ * Create a path node with fields initialised to default values
+ */
 struct PathNode* _new_path_node(struct Location* loc, struct Location* start, struct Location* dest, int path_bits)
 {
     struct PathNode* p = (struct PathNode*)malloc(sizeof(struct PathNode));
@@ -51,6 +62,10 @@ struct PathNode* _new_path_node(struct Location* loc, struct Location* start, st
     return p;
 }
 
+/**
+ * Check if node is in the closed list
+ * TODO: This is very inefficient.
+ */
 struct PathNode* _in_closed(struct Location* loc)
 {
     struct PathNode* tmp = _closed_head;
@@ -65,6 +80,10 @@ struct PathNode* _in_closed(struct Location* loc)
     return NULL;
 }
 
+/**
+ * Check if node is in the open list
+ * TODO: This is very inefficient.
+ */
 struct PathNode* _in_open(struct Location* loc)
 {
     struct PathNode* tmp = _open_head;
@@ -79,6 +98,9 @@ struct PathNode* _in_open(struct Location* loc)
     return NULL;
 }
 
+/**
+ * Debug print method
+ */
 void __log_open(void)
 {
     struct PathNode* tmp = _open_head;
@@ -93,6 +115,9 @@ void __log_open(void)
     }
 }
 
+/**
+ * Debug print method
+ */
 void _add_open(struct PathNode* node)
 {
     if(_open_tail)
@@ -109,7 +134,9 @@ void _add_open(struct PathNode* node)
     _open_tail->pathlist_next = NULL;
 }
 
-
+/**
+ * Debug print method
+ */
 void __log_closed(void)
 {
     struct PathNode* tmp = _closed_head;
@@ -125,6 +152,9 @@ void __log_closed(void)
     }
 }
 
+/**
+ * Add node to the closed list
+ */
 void _add_closed(struct PathNode* node)
 {
     if(_closed_tail)
@@ -141,21 +171,9 @@ void _add_closed(struct PathNode* node)
     _closed_tail->pathlist_next = NULL;
 }
 
-struct PathNode* _get_open(void)
-{
-    struct PathNode* tmp = _open_head;
-    if(!tmp)
-        return NULL;
-
-    _open_head = _open_head->pathlist_next;
-
-    if(!_open_head)
-        _open_tail = NULL;
-
-    return tmp;
-}
-
-// Go through the open linked list and return the PathNode with the lowest score
+/**
+ * Go through the open linked list and return the PathNode with the lowest score
+ */
 struct PathNode* _get_best_open(void)
 {
     struct PathNode *ret, *ret_prev, *prev, *cur;
@@ -210,6 +228,9 @@ struct PathNode* _get_best_open(void)
     return ret;
 }
 
+/**
+ * Draws a visualisation of the path being constructed
+ */
 void _debug_draw_path(void)
 {
     display_map();
@@ -243,7 +264,9 @@ void _debug_draw_path(void)
     refresh();
 }
 
-/* A* algorithm constructing shortest path */
+/**
+ * A* algorithm constructing shortest path
+ */
 struct PathNode* _find_path(struct Location* start, struct Location* dest, int path_bits)
 {
     struct PathNode* global_best;
@@ -256,21 +279,21 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
         // Set global best node seen so far
         if(!global_best || best_node->cost_to_end < global_best->cost_to_end)
             global_best = best_node;
-        
+
         // Reached destination, return
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
             return best_node;
 
         _add_closed(best_node);
 
-        struct Location*** neighbours = (struct Location***) malloc(sizeof(struct Location**)); 
+        struct Location*** neighbours = (struct Location***) malloc(sizeof(struct Location**));
         int ncount = get_neighbours(best_node->loc, neighbours);
-        
+
         struct Location* loc;
         for(int i = 0; i < ncount; i++)
         {
             loc = (*neighbours)[i];
-            
+
             // Check for invalid location
             if((!loc_in_bounds(loc->x, loc->y) || !loc_is_pathable(loc->x, loc->y, path_bits))  && (loc->x != dest->x || loc->y != dest->y))
                 continue;
@@ -306,7 +329,9 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
     return global_best;
 }
 
-/* Free the two path node lists */
+/**
+ * Free the two path node lists
+ */
 void _free_path_lists(void)
 {
     while((_open_tail = _open_head) != NULL)
@@ -322,7 +347,9 @@ void _free_path_lists(void)
     }
 }
 
-/* Returns the next location in the shortest path from start to dest */
+/**
+ * Returns the next location in the shortest path from start to dest
+ */
 struct Location* next_path_loc(struct Location* start, struct Location* dest, int path_bits)
 {
     _open_head = NULL;

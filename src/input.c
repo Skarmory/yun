@@ -10,6 +10,11 @@
 #include "message.h"
 #include "ui.h"
 
+/**
+ * Automatically determine the action of a player given a movement command
+ *
+ * Will attempt to attack a monster if possible, otherwise will attempt to move
+ */
 bool _do_smart_action(int x, int y)
 {
     if(cmap->locs[x][y].mon == NULL)
@@ -19,6 +24,11 @@ bool _do_smart_action(int x, int y)
 
 }
 
+/**
+ * Takes user input and calls the correct functionality
+ *
+ * Loops on a blocking input until user gives a command that causes a turn update
+ */
 void handle_input(void)
 {
     // loop until player has made some valid turn advancing input
@@ -55,6 +65,8 @@ void handle_input(void)
                 break;
             case 'c':
                 display_char_info_screen();
+                break;
+            default:
                 break;
 
         }

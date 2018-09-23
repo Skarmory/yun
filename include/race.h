@@ -22,6 +22,9 @@
 #define RA_TAUREN_IDX   6
 #define RA_TROLL_IDX    7
 
+/**
+ * Struct containing the data about the player race
+ */
 struct Race
 {
     char hotkey;

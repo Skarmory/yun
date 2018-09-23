@@ -6,6 +6,11 @@
 #define MT_GHOUL 0
 #define MT_PLAYER 1
 
+/**
+ * Struct containing data about the type of a monster (not an individual monster)
+ *
+ * e.g. human, ghoul, night elf, etc.
+ */
 struct MonType
 {
     char* name; // Name of this type of mon
@@ -15,7 +20,6 @@ struct MonType
     int attr; // symbol attributes
     struct Weapon* base_weapon;
     int strength, agility, intelligence, spirit, stamina;
-    short primary, secondary, tertiary;
     int pathing;
 };
 

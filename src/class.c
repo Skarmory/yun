@@ -3,45 +3,52 @@
 #include "colour.h"
 #include "stats.h"
 
-#define CLS(name, pl, mhk, allow, smask, statups, pst, sst, tst) \
+#define CLS(name, pl, mhk, allow, smask, statups, statscales) \
     {\
-        name, pl, mhk, allow, smask, statups, pst, sst, tst\
+        name, pl, mhk, allow, smask, statups, statscales\
     }
 
 #define STATUPS(str, agi, in, spi, stam) \
     str, agi, in, spi, stam              \
 
+#define STATSCA(str, agi, in, spi, stam) STATUPS(str, agi, in, spi, stam)
 
+/**
+ * Array of all the player class types
+ */
 struct Class classes[] = 
 {
     CLS("druid", "druids", 'd', RA_NELF | RA_TAUREN, CLS_DRUID, 
-        STATUPS(2, 2, 2, 1, 1), INTELLIGENCE, SPIRIT, STAMINA),
+        STATUPS(2, 2, 2, 1, 1), STATSCA(0.5f, 0.5f, 0.75f, 0.5f, 0.75f)),
 
     CLS("hunter", "hunters", 'h', RA_DWARF | RA_NELF | RA_ORC | RA_TAUREN | RA_TROLL, CLS_HUNTER, 
-        STATUPS(1, 3, 1, 1, 2), AGILITY, INTELLIGENCE, STAMINA),
+        STATUPS(1, 3, 1, 1, 2), STATSCA(0.3f, 1.0f, 0.7f, 0.5f, 0.5f)),
 
     CLS("mage", "magi", 'm', RA_HUMAN | RA_DWARF | RA_GNOME | RA_FORSAKEN | RA_TROLL, CLS_MAGE, 
-        STATUPS(1, 1, 3, 2, 1), INTELLIGENCE, SPIRIT, STAMINA),
+        STATUPS(1, 1, 3, 2, 1), STATSCA(0.1f, 0.1f, 2.0f, 0.5f, 0.2f)),
 
     CLS("rogue", "rogues", 'r', RA_HUMAN | RA_DWARF | RA_NELF | RA_GNOME | RA_ORC | RA_FORSAKEN | RA_TROLL, CLS_ROGUE, 
-        STATUPS(1, 3, 1, 1, 2), AGILITY, STRENGTH, SPIRIT),
+        STATUPS(1, 3, 1, 1, 2), STATSCA(0.5f, 1.5f, 0.35f, 0.35f, 0.3f)),
 
     CLS("paladin", "paladins", 'p', RA_HUMAN | RA_DWARF, CLS_PALADIN, 
-        STATUPS(2, 1, 1, 1, 3), STRENGTH, STAMINA, INTELLIGENCE),
+        STATUPS(2, 1, 1, 1, 3), STATSCA(0.75f, 0.35f, 0.75f, 0.45f, 0.75f)),
 
     CLS("priest", "priests", 'i', RA_HUMAN | RA_DWARF | RA_NELF | RA_FORSAKEN | RA_TROLL, CLS_PRIEST, 
-        STATUPS(1, 1, 2, 3, 1), SPIRIT, INTELLIGENCE, STAMINA),
+        STATUPS(1, 1, 2, 3, 1), STATSCA(0.15f, 0.25f, 0.65f, 1.5f, 0.5f)),
 
     CLS("shaman", "shamans", 's', RA_ORC | RA_TAUREN | RA_TROLL, CLS_SHAMAN, 
-        STATUPS(2, 1, 3, 1, 1), INTELLIGENCE, SPIRIT, AGILITY),
+        STATUPS(2, 1, 3, 1, 1), STATSCA(0.75f, 0.75f, 0.75f, 0.35f, 0.4f)),
 
     CLS("warlock", "warlocks", 'l', RA_HUMAN | RA_GNOME | RA_ORC | RA_FORSAKEN, CLS_WARLOCK, 
-        STATUPS(1, 1, 3, 1, 2), INTELLIGENCE, STAMINA, SPIRIT),
+        STATUPS(1, 1, 3, 1, 2), STATSCA(0.15f, 0.25f, 1.5f, 0.6f, 0.5f)),
 
     CLS("warrior", "warriors", 'w', RA_HUMAN | RA_DWARF | RA_NELF | RA_GNOME | RA_ORC | RA_FORSAKEN | RA_TAUREN | RA_TROLL, CLS_WARRIOR, 
-        STATUPS(3, 1, 1, 1, 2), STRENGTH, STAMINA, AGILITY)
+        STATUPS(3, 1, 1, 1, 2), STATSCA(1.0f, 0.5f, 0.1f, 0.4f, 1.0f))
 };
 
+/**
+ * Return the colour associated with given class based on how WoW addons defined them
+ */
 int get_class_colour(const struct Class* cls)
 {
     if(!cls)
@@ -72,6 +79,9 @@ int get_class_colour(const struct Class* cls)
     }
 } 
 
+/**
+ * Return class index into class array by given class' unique char
+ */
 int get_class_idx(char cls)
 {
     switch(cls)

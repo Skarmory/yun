@@ -1,6 +1,9 @@
 #include <ncurses.h>
 #include "colour.h"
 
+/**
+ * Enable ncurses colours and create 256 colour pairs where background is black
+ */
 void init_colours(void)
 {
     start_color();

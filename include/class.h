@@ -21,17 +21,20 @@
 #define CLS_WARLOCK_IDX 7
 #define CLS_WARRIOR_IDX 8
 
+/**
+ * Struct containing data about player's profession
+ */
 struct Class 
 {
     char* name;
     char* name_plural;
-    char hotkey;
+    char  hotkey;
 
     short allow_races;
     short selfmask;
 
     short strength_up, agility_up, intelligence_up, spirit_up, stamina_up;
-    short primary_stat, secondary_stat, tertiary_stat;
+    float strength_scale, agility_scale, intelligence_scale, spirit_scale, stamina_scale;
 };
 
 extern struct Class classes[];

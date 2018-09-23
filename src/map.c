@@ -6,7 +6,9 @@
 
 struct Map* cmap;
 
-/* Creates the map and sets map locations to default values */
+/**
+ * Creates the map and sets map locations to default values
+ */
 void init_map(void)
 {
     cmap = (struct Map*) malloc(sizeof(struct Map));
@@ -28,8 +30,28 @@ void init_map(void)
     }
 }
 
+/**
+ * Safely deletes the map
+ */
+void destroy_map(void)
+{
+    if(cmap != NULL)
+    {
+        for(int r = 0; r < cmap->room_count; r++)
+            free(cmap->rooms[r]);
 
-/* Draw map using ncurses */
+        free(cmap->rooms);
+
+        for(int x = 0; x < MCOLS; x++)
+            free(cmap->locs[x]);
+
+        free(cmap->locs);
+    }
+}
+
+/**
+ * Draw map using ncurses
+ */
 void display_map(void)
 {
     for(int i = 0; i < MCOLS; ++i)
@@ -50,7 +72,9 @@ void display_map(void)
     refresh();
 }
 
-/* Add monster to the level */
+/**
+ * Add monster to the level
+ */
 void add_mon(struct Mon* mon)
 {
     int x = mon->x;
@@ -62,7 +86,9 @@ void add_mon(struct Mon* mon)
     cmap->monlist = mon;
 }
 
-/* Remove monster from the level */
+/*
+ * Remove monster from the level
+ */
 bool rm_mon(struct Mon* mon)
 {
     struct Mon* curr = cmap->monlist;
@@ -89,7 +115,9 @@ bool rm_mon(struct Mon* mon)
     return false;
 }
 
-/* Does map boundary check */
+/*
+ * Does map boundary check
+ */
 bool loc_in_bounds(int x, int y)
 {
     if(x < 0 || x >= MCOLS || y < 0 || y >= MROWS)
@@ -97,23 +125,33 @@ bool loc_in_bounds(int x, int y)
     return true;
 }
 
+/**
+ * Check if a location has a mon
+ */
 bool loc_has_mon(int x, int y)
 {
     return cmap->locs[x][y].mon != NULL;
 }
 
+/**
+ * Check if location is pathable given sample path bits
+ */
 bool loc_is_pathable(int x, int y, int path_bits)
 {
     return cmap->locs[x][y].pathing & path_bits;
 }
 
-/* Check if given x, y location is a valid move */
+/**
+ * Check if given x, y location is a valid move
+ */
 bool valid_move(int x, int y, int path_bits)
 {
     return loc_in_bounds(x, y) && loc_is_pathable(x, y, path_bits) && !loc_has_mon(x, y);
 }
 
-/* Change monster location */
+/**
+ * Change monster location
+ */
 bool move_mon(struct Mon* mon, int newx, int newy)
 {
     if(!valid_move(newx, newy, mon->pathing))
@@ -127,7 +165,9 @@ bool move_mon(struct Mon* mon, int newx, int newy)
     return true;
 }
 
-/* Get an array of the neighbouring locations to given location */
+/*
+ * Get an array of the neighbouring locations to given location
+ */
 int get_neighbours(struct Location* loc, struct Location*** locs)
 {
     *locs = (struct Location**)malloc(sizeof(struct Location*) * 8);
@@ -156,19 +196,3 @@ int get_neighbours(struct Location* loc, struct Location*** locs)
     return count;
 }
 
-/* Safely deletes the map */
-void destroy_map(void)
-{
-    if(cmap != NULL)
-    {
-        for(int r = 0; r < cmap->room_count; r++)
-            free(cmap->rooms[r]);
-
-        free(cmap->rooms);
-
-        for(int x = 0; x < MCOLS; x++)
-            free(cmap->locs[x]);
-
-        free(cmap->locs);
-    }
-}

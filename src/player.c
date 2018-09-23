@@ -10,6 +10,10 @@
 
 struct Player* you;
 
+/**
+ * Create a new player.
+ * There should only ever be one player (i.e. don't call this more than once)
+ */
 void new_player(void)
 {
     you = (struct Player*)malloc(sizeof(struct Player));
@@ -20,6 +24,9 @@ void new_player(void)
     you->race = NULL;
 }
 
+/**
+ * Destroy the player
+ */
 void destroy_player(void)
 {
     if(you != NULL)
@@ -29,10 +36,14 @@ void destroy_player(void)
         free(you->race);
         if(you->mon != NULL)
             free(you->mon);
-        free(you); 
+        free(you);
     }
 }
 
+/**
+ * Check if the player is dead.
+ * If so, print out death message and quit the game
+ */
 void player_chk_dead(void)
 {
     if(mon_is_dead(you->mon))

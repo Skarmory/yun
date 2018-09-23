@@ -4,18 +4,31 @@
 #include "player.h"
 #include <stdio.h>
 
+/**
+ * Get the stat scalar mod based on significane for a given mon
+ */
 float _get_mod(struct Mon* mon, short stat)
 {
-    if(mon->stats.primary == stat)
-        return PRIMARY_MOD;
-    else if(mon->stats.secondary == stat)
-        return SECONDARY_MOD;
-    else if(mon->stats.tertiary == stat)
-        return TERTIARY_MOD;
-    else
-        return OTHER_MOD;
+    switch(stat)
+    {
+        case STRENGTH:
+            return mon->stats.strength.scale;
+        case AGILITY:
+            return mon->stats.agility.scale;
+        case INTELLIGENCE:
+            return mon->stats.intelligence.scale;
+        case SPIRIT:
+            return mon->stats.spirit.scale;
+        case STAMINA:
+            return mon->stats.stamina.scale;
+        default:
+            return 0.0f; // How did you even get here?
+    }
 }
 
+/**
+ * Increase the stats governed by strength
+ */
 void _update_strength(struct Mon* mon)
 {
     int str = MSTAT(mon, strength, strength);
@@ -27,6 +40,9 @@ void _update_strength(struct Mon* mon)
     MSTAT(mon, strength, parry_chance) = invstr * mod * 0.5f;
 }
 
+/**
+ * Increase the stats governed by agility
+ */
 void _update_agility(struct Mon* mon)
 {
     int agi = MSTAT(mon, agility, agility);
@@ -38,6 +54,9 @@ void _update_agility(struct Mon* mon)
     MSTAT(mon, agility, dodge_chance) = invagi * mod * 0.5f;
 }
 
+/**
+ * Increase the stats governed by intelligence
+ */
 void _update_intelligence(struct Mon* mon)
 {
     int in = MSTAT(mon, intelligence, intelligence);
@@ -53,6 +72,9 @@ void _update_intelligence(struct Mon* mon)
     MSTAT(mon, intelligence, spell_pen) = invin * mod * 0.75f;
 }
 
+/**
+ * Increase the stats governed by spirit
+ */
 void _update_spirit(struct Mon* mon)
 {
     int spi = MSTAT(mon, spirit, spirit);
@@ -65,6 +87,9 @@ void _update_spirit(struct Mon* mon)
     MSTAT(mon, spirit, resist) = invspi * mod * 0.75f;
 }
 
+/**
+ * Increase the stats governed by stamina
+ */
 void _update_stamina(struct Mon* mon)
 {
     int sta = MSTAT(mon, stamina, stamina);
@@ -80,6 +105,11 @@ void _update_stamina(struct Mon* mon)
     MSTAT(mon, stamina, block_amount) = sta * mod * 0.2f;
 }
 
+/**
+ * Sets given stat to given value for given mon
+ *
+ * Updates the governed stats of given stat of given mon
+ */
 void set_stat(struct Mon* mon, int stat, int amount)
 {
     switch(stat)
@@ -112,6 +142,13 @@ void set_stat(struct Mon* mon, int stat, int amount)
     }
 }
 
+/**
+ * Modifies given stat by given amount for given mon.
+ *
+ * If base, then update the base stat by this amount
+ *
+ * Updates governed stats
+ */
 void add_stat(struct Mon* mon, int stat, int amount, bool base)
 {
     switch(stat)

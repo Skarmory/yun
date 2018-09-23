@@ -8,6 +8,9 @@
 #include "util.h"
 #include "stats.h"
 
+/**
+ * Print out the character creation choices made so far
+ */
 void print_picked(void)
 {
     int col;
@@ -28,6 +31,9 @@ void print_picked(void)
     attroff(COLOR_PAIR(col));
 }
 
+/**
+ * Print character creation current choice to make
+ */
 void print_options(int what, short mask)
 {
     int menu_col = 60, menu_row = 1;
@@ -61,7 +67,7 @@ void print_options(int what, short mask)
                     mvprintw(menu_row, menu_col, "%c - %s", races[i].hotkey, races[i].noun);
                     menu_row++;
 
-                    attroff(COLOR_PAIR(col)); 
+                    attroff(COLOR_PAIR(col));
                 }
             }
 
@@ -79,6 +85,13 @@ void print_options(int what, short mask)
     mvprintw(menu_row, menu_col, "q - quit");
 }
 
+/**
+ * Logic for picking a class
+ *
+ * Loops on blocking input until player makes a valid choice
+ *
+ * Set stats based on choice
+ */
 void pick_class(void)
 {
     clear();
@@ -109,9 +122,11 @@ void pick_class(void)
     }
     while(!picked);
 
-    you->mon->stats.primary = you->cls->primary_stat;
-    you->mon->stats.secondary = you->cls->secondary_stat;
-    you->mon->stats.tertiary = you->cls->tertiary_stat;
+    you->mon->stats.strength.scale = you->cls->strength_scale;
+    you->mon->stats.agility.scale = you->cls->agility_scale;
+    you->mon->stats.intelligence.scale = you->cls->intelligence_scale;
+    you->mon->stats.spirit.scale = you->cls->spirit_scale;
+    you->mon->stats.stamina.scale = you->cls->stamina_scale;
 
     add_stat(you->mon, STRENGTH, you->cls->strength_up, true);
     add_stat(you->mon, AGILITY, you->cls->agility_up, true);
@@ -120,6 +135,13 @@ void pick_class(void)
     add_stat(you->mon, STAMINA, you->cls->stamina_up, true);
 }
 
+/**
+ * Logic for picking a race
+ *
+ * Loops on blocking input until player makes a valid choice
+ *
+ * Sets stats based on selection
+ */
 void pick_race(void)
 {
     clear();
@@ -166,6 +188,9 @@ void pick_race(void)
     add_stat(you->mon, STAMINA, you->race->stamina_up, true);
 }
 
+/**
+ * Prompt player to confirm their character
+ */
 void confirm_character(void)
 {
     clear();
@@ -189,6 +214,11 @@ void confirm_character(void)
    while(true);
 }
 
+/**
+ * Goes through the character creation process.
+ *
+ * Should only be called once during a new game creation
+ */
 void do_char_creation(void)
 {
     struct passwd* pd = getpwuid(getuid());

@@ -14,6 +14,9 @@
 char msgbuf[MSGBOX_W];
 int msgbuf_size = 0;
 
+/**
+ * Flushes current message buffer to the display and waits for user to give input
+ */
 void _flush_and_prompt(void)
 {
     flush_msg_buffer();
@@ -21,7 +24,9 @@ void _flush_and_prompt(void)
     getch();
 }
 
-/* Write a message to the messages area */
+/**
+ * Write a message to the messages area
+ */
 void display_msg(char* msg)
 {
     log_msg(msg, MSGHIST);
@@ -93,6 +98,9 @@ void display_msg(char* msg)
     }
 }
 
+/**
+ * Displays a message using a standard C format string and arguments
+ */
 void display_format_msg(char* format, ...)
 {
     va_list args;
@@ -105,14 +113,20 @@ void display_format_msg(char* format, ...)
     va_end(args);
 }
 
+/**
+ * Blanks the message area of the UI
+ */
 void clear_msgs(void)
 {
-    char clearbuf[MSGBOX_W];
+    char clearbuf[MSGBOX_W]; // TODO: Pre-allocate this
     memset(clearbuf, ' ', MSGBOX_W-1);
     mvprintw(MSGBOX_Y, MSGBOX_X, clearbuf);
     mvprintw(MSGBOX_Y+1, MSGBOX_X, clearbuf);
 }
 
+/**
+ * Write message buffer to the message area of the UI, the clears the message buffer
+ */
 void flush_msg_buffer(void)
 {
     mvprintw(MSGBOX_Y, MSGBOX_X, msgbuf);

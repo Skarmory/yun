@@ -7,6 +7,16 @@
 #include "log.h"
 #include "mon_ai.h"
 
+#define SET_MINION_STAT_SCALES(mon) \
+    mon->stats.strength.scale = 0.5f; \
+    mon->stats.agility.scale = 0.5f; \
+    mon->stats.intelligence.scale = 0.5f; \
+    mon->stats.spirit.scale = 0.5f; \
+    mon->stats.stamina.scale = 0.5f;
+
+/**
+ * Create a monster of given type at given position and return it
+ */
 struct Mon* new_mon(int mtype, int x, int y)
 {
     struct Mon* mon = (struct Mon*) malloc(sizeof(struct Mon));
@@ -18,9 +28,7 @@ struct Mon* new_mon(int mtype, int x, int y)
     mon->pathing = mon->type->pathing;
     mon->weapon = NULL;
 
-    mon->stats.primary = mon->type->primary;
-    mon->stats.secondary = mon->type->secondary;
-    mon->stats.tertiary = mon->type->tertiary;
+    SET_MINION_STAT_SCALES(mon);
 
     MSTAT(mon, stamina, max_health) = 1;
     MSTAT(mon, stamina, health) = 1;
@@ -49,12 +57,18 @@ struct Mon* new_mon(int mtype, int x, int y)
     return mon;
 }
 
+/**
+ * Destroy monster
+ */
 void destroy_mon(struct Mon* mon)
 {
     rm_mon(mon);
     free(mon);
 }
 
+/**
+ * Update all active mons
+ */
 void update_mons(void)
 {
     struct Mon* mon = cmap->monlist;
@@ -66,11 +80,17 @@ void update_mons(void)
     }
 }
 
+/**
+ * Return true if monster has ability to use a particular pathing type
+ */
 bool mon_has_pathing_attr(struct Mon* mon, int path_attr)
 {
    return mon->pathing & path_attr;
 }
 
+/**
+ *  Return monster's weapon
+ */
 struct Weapon* mon_get_weapon(struct Mon* mon)
 {
     if(!mon->weapon)
@@ -78,11 +98,17 @@ struct Weapon* mon_get_weapon(struct Mon* mon)
     return mon->weapon;
 }
 
+/**
+ * Return true if this monster is dead
+ */
 bool mon_is_dead(struct Mon* mon)
 {
     return HP(mon) <= 0;
 }
 
+/**
+ * Check if monster is dead. If dead, print out death message and destroy it
+ */
 void mon_chk_dead(struct Mon* mon)
 {
     if(mon_is_dead(mon))

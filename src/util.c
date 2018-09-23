@@ -9,6 +9,9 @@
 #include "map.h"
 #include "log.h"
 
+/**
+ * Fills in the special format character with the correct game specific string
+ */
 void convert_arg(char c, char* buf)
 {
     switch(c)
@@ -31,6 +34,9 @@ void convert_arg(char c, char* buf)
     }
 }
 
+/**
+ * Handles game shut down. Destroys everything, ends ncurses, and prints a message out to stdout.
+ */
 void do_quit(void)
 {
     char exit_msg[512];
@@ -48,6 +54,9 @@ void do_quit(void)
     exit(0);
 }
 
+/**
+ * Get a random int between given range inclusive
+ */
 int random_int(int lo, int hi)
 {
     return lo + (rand() % (hi - lo + 1));

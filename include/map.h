@@ -10,6 +10,9 @@
 
 #define WALKABLE 0x00000001
 
+/**
+ * Contains information about a square on the map
+ */
 struct Location
 {
     int x, y;
@@ -18,6 +21,9 @@ struct Location
     char terrain;
 };
 
+/**
+ * Contains the map data
+ */
 struct Map
 {
     struct Location** locs;
@@ -27,6 +33,7 @@ struct Map
 };
 
 void init_map(void);
+void destroy_map(void);
 void display_map(void);
 void add_mon(struct Mon* mon);
 bool rm_mon(struct Mon* mon);
@@ -38,7 +45,6 @@ bool loc_is_pathable(int x, int y, int path_bits);
 bool valid_move(int x, int y, int path_bits);
 
 int get_neighbours(struct Location* loc, struct Location*** neighbours);
-void destroy_map(void);
 
 extern struct Map* cmap;
 

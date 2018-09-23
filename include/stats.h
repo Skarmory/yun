@@ -17,15 +17,12 @@
 
 #define STAT_MAX      99
 #define INV_STAT_MAX  (1.f/99.f)
-#define PRIMARY_MOD   1.0f
-#define SECONDARY_MOD 0.85f
-#define TERTIARY_MOD  0.65f
-#define OTHER_MOD     0.45f
 
 struct Mon;
 
-// Strength increases attack power, armour pen, and parry chanc.
-// It is the affinity stat for warriors and paladins
+/**
+ * Strength increases attack power, armour pen, and parry chance.
+ */
 struct Strength
 {
     int base_strength;
@@ -33,10 +30,12 @@ struct Strength
     int attack_power;
     float armour_pen;
     float parry_chance;
+    float scale;
 };
 
-// Agility increases attack power, physical crit, and dodge chance.
-// It is the affinity stat for rogues and hunters
+/**
+ * Agility increases attack power, physical crit, and dodge chance
+ */
 struct Agility
 {
     int base_agility;
@@ -44,10 +43,12 @@ struct Agility
     int attack_power;
     float crit_chance;
     float dodge_chance;
+    float scale;
 };
 
-// Intelligence increases mana pool, spellpower, spell crit, and spell pen.
-// It is the affinity stat for mages, warlocks, and shamans.
+/**
+ * Intelligence increases mana pool, spellpower, spell crit, and spell pen.
+ */
 struct Intelligence
 {
     int base_intelligence;
@@ -57,10 +58,12 @@ struct Intelligence
     int spell_power;
     int spell_crit_chance;
     int spell_pen;
+    float scale;
 };
 
-// Stamina increases health, block chance, critical block chance, and block amount.
-// It is the only "primary stat" that no class has an affinity for. It is equally good for all classes.
+/**
+ * Stamina increases health, block chance, critical block chance, and block amount.
+ */
 struct Stamina
 {
     int base_stamina;
@@ -70,10 +73,12 @@ struct Stamina
     float block_chance;
     float crit_block_chance;
     int block_amount;
+    float scale;
 };
 
-// Spirit grants bonuses to mana and health regeneration, spellpower, and base resistance
-// It is the affinity stat for priests
+/**
+ * Spirit grants bonuses to mana and health regeneration, spellpower, and base resistance
+ */
 struct Spirit
 {
     int base_spirit;
@@ -82,8 +87,12 @@ struct Spirit
     int health_regen;
     int resist;
     int spell_power;
+    float scale;
 };
 
+/**
+ * Struct containing the stats data for a mon
+ */
 struct Stats
 {
     struct Strength strength;
@@ -91,8 +100,6 @@ struct Stats
     struct Intelligence intelligence;
     struct Stamina stamina;
     struct Spirit spirit;
-
-    short primary, secondary, tertiary;
 };
 
 void add_stat(struct Mon* mon, int stat, int amount, bool base);

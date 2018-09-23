@@ -9,6 +9,9 @@
 #define ATTK(dice, sides)\
     { dice, sides }
 
+/**
+ * Array of all the weapons in the game
+ */
 struct Weapon weapons[] =
 {
     WEAPON("longsword", ATTKS(ATTK(1, 6))),

@@ -6,6 +6,11 @@
 #include "message.h"
 #include <stdio.h>
 
+/**
+ * Do the actual damage calculation and reduce HP here
+ *
+ * "Roll" damage dice and minus HP from the defender
+ */
 void _do_attack(struct Mon* attacker, struct Mon* defender, int* dmg, struct Weapon* weapon)
 {
     *dmg = 0;
@@ -19,6 +24,9 @@ void _do_attack(struct Mon* attacker, struct Mon* defender, int* dmg, struct Wea
 
 }
 
+/**
+ * Damage a monster with the player's weapon. Check if the monster died and print results
+ */
 bool do_player_attack_mon(struct Mon* defender)
 {
     struct Weapon* weapon = mon_get_weapon(you->mon);
@@ -33,6 +41,9 @@ bool do_player_attack_mon(struct Mon* defender)
     return true;
 }
 
+/**
+ * Damage the player with a monster's weapon. Check if the player died and print results
+ */
 bool do_mon_attack_player(struct Mon* attacker)
 {
     struct Weapon* weapon = mon_get_weapon(attacker);
