@@ -1,6 +1,7 @@
 #ifndef MONTYPE_H
 #define MONTYPE_H
 
+struct Armour;
 struct Weapon;
 
 #define MT_GHOUL 0
@@ -18,6 +19,7 @@ struct MonType
     signed char fg; // foreground colour
     signed char bg; // background colour
     int attr; // symbol attributes
+    struct Armour* base_armour; // All creatures have a base armour for if they don't have equipment
     struct Weapon* base_weapon;
     int strength, agility, intelligence, spirit, stamina;
     int pathing;

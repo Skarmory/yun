@@ -3,6 +3,7 @@
 #include "class.h"
 #include "colour.h"
 #include "faction.h"
+#include "log.h"
 #include "mon.h"
 #include "player.h"
 #include "stats.h"

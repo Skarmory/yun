@@ -4,6 +4,7 @@
 #include "stats.h"
 
 struct MonType;
+struct Equipment;
 struct Weapon;
 
 #define HP(mon) mon->stats.stamina.health
@@ -20,7 +21,7 @@ struct Mon
     unsigned int x, y;
     int pathing;
     struct MonType* type;
-    struct Weapon* weapon;
+    struct Equipment* equipment;
     struct Stats stats;
 };
 
@@ -28,8 +29,9 @@ struct Mon* new_mon(int mtype, int x, int y);
 void destroy_mon(struct Mon*);
 void update_mons(void);
 bool mon_has_pathing_attr(struct Mon* mon, int path_attr);
-struct Weapon* mon_get_weapon(struct Mon* mon);
 bool mon_is_dead(struct Mon* mon);
+bool mon_dual_wielding(struct Mon* mon);
 void mon_chk_dead(struct Mon* mon);
+struct Weapon* mon_get_weapon(struct Mon* mon);
 
 #endif

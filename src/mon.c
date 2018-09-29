@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "equip.h"
 #include "log.h"
 #include "map.h"
 #include "message.h"
@@ -30,7 +31,7 @@ struct Mon* new_mon(int mtype, int x, int y)
     mon->x = x;
     mon->y = y;
     mon->pathing = mon->type->pathing;
-    mon->weapon = NULL;
+    mon->equipment = new_equipment();
 
     SET_MINION_STAT_SCALES(mon);
 
@@ -67,6 +68,7 @@ struct Mon* new_mon(int mtype, int x, int y)
 void destroy_mon(struct Mon* mon)
 {
     rm_mon(mon);
+    free_equipment(mon->equipment);
     free(mon);
 }
 
@@ -93,21 +95,19 @@ bool mon_has_pathing_attr(struct Mon* mon, int path_attr)
 }
 
 /**
- *  Return monster's weapon
- */
-struct Weapon* mon_get_weapon(struct Mon* mon)
-{
-    if(!mon->weapon)
-        return mon->type->base_weapon;
-    return mon->weapon;
-}
-
-/**
  * Return true if this monster is dead
  */
 bool mon_is_dead(struct Mon* mon)
 {
     return HP(mon) <= 0;
+}
+
+/**
+ * Return true if monster has two weapons equipped
+ */
+bool mon_dual_wielding(struct Mon* mon)
+{
+    return (mon->equipment->main_hand && mon->equipment->off_hand);
 }
 
 /**
@@ -120,4 +120,14 @@ void mon_chk_dead(struct Mon* mon)
         display_format_msg("The %s was slain.", mon->type->name);
         destroy_mon(mon);
     }
+}
+
+/**
+ * Get mon weapon if it has one, else return base montype weapon
+ */
+struct Weapon* mon_get_weapon(struct Mon* mon)
+{
+    if(mon->equipment->main_hand)
+        return mon->equipment->main_hand;
+    return mon->type->base_weapon;
 }
