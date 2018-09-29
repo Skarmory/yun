@@ -1,6 +1,6 @@
 #include "attack.h"
 
-#include "attack_data.h"
+#include "weapon.h"
 #include "log.h"
 #include "message.h"
 #include "mon.h"

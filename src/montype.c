@@ -3,6 +3,7 @@
 #include "colour.h"
 #include "mon_attr.h"
 #include "stats.h"
+#include "weapon.h"
 
 #include <ncurses.h>
 
