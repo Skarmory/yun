@@ -14,7 +14,7 @@ void print_options(int what, short mask);
 void pick_race(void);
 void pick_class(void);
 
-void confirm_charater(void);
+void confirm_character(void);
 void do_char_creation(void);
 
 #endif
