@@ -7,4 +7,6 @@ void do_quit(void);
 
 int random_int(int hi, int lo);
 
+int roll_d100(void);
+
 #endif

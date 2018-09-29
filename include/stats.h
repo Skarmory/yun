@@ -105,4 +105,6 @@ struct Stats
 void add_stat(struct Mon* mon, int stat, int amount, bool base);
 void set_stat(struct Mon* mon, int stat, int amount);
 
+bool stat_check(struct Mon* mon, int stat);
+
 #endif

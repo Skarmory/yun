@@ -61,3 +61,11 @@ int random_int(int lo, int hi)
 {
     return lo + (rand() % (hi - lo + 1));
 }
+
+/**
+ * Get a number between 1 and 100
+ */
+int roll_d100(void)
+{
+    return random_int(1, 100);
+}

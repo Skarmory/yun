@@ -2,6 +2,7 @@
 #include "mon.h"
 #include "log.h"
 #include "player.h"
+#include "util.h"
 #include <stdio.h>
 
 /**
@@ -179,4 +180,44 @@ void add_stat(struct Mon* mon, int stat, int amount, bool base)
             _update_stamina(mon);
             break;
     }
+}
+
+#define STRENGTH_CHECK(x) ( x < GET_MSTAT(mon, strength, strength)  )
+#define AGILITY_CHECK(x) ( x < GET_MSTAT(mon, agility, agility)  )
+#define INTELLIGENCE_CHECK(x) ( x < GET_MSTAT(mon, intelligence, intelligence)  )
+#define SPIRIT_CHECK(x) ( x < GET_MSTAT(mon, spirit, spirit)  )
+#define STAMINA_CHECK(x) ( x < GET_MSTAT(mon, stamina, stamina)  )
+
+/**
+ * Perform a stat check for given stat and return whether succeeded or failed
+ *
+ * Stat checks are d100-based (% based).
+ *
+ * Rolling a 1 is an automatic fail, and rolling 100 is an automatic success
+ */
+bool stat_check(struct Mon* mon, int stat)
+{
+    int roll = roll_d100();
+
+    if(roll == 1)
+        return false;
+
+    if(roll == 100)
+        return true;
+
+   switch(stat)
+   {
+       case STRENGTH:
+           return STRENGTH_CHECK(roll);
+       case AGILITY:
+           return AGILITY_CHECK(roll);
+       case INTELLIGENCE:
+           return INTELLIGENCE_CHECK(roll);
+       case SPIRIT:
+           return SPIRIT_CHECK(roll);
+       case STAMINA:
+           return STAMINA_CHECK(roll);
+        default:
+           return false;
+   }
 }
