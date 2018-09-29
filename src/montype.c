@@ -23,5 +23,5 @@
 struct MonType mon_type[] =
 {
     MON("ghoul", SYM('g', CLR_WHITE, CLR_BLACK, 0), WEAPON(W_CLAWS), STATS(5, 5, 5, 5, 5), GROUND),
-    MON("player", SYM('@', CLR_WHITE, CLR_BLACK, A_BOLD), WEAPON(W_LONGSWORD), STATS(10, 10, 10, 10, 10), GROUND)
+    MON("player", SYM('@', CLR_WHITE, CLR_BLACK, A_BOLD), WEAPON(W_LONGSWORD), STATS(50, 50, 50, 50, 50), GROUND)
 };
