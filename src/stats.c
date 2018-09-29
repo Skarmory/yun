@@ -66,7 +66,11 @@ void _update_intelligence(struct Mon* mon)
     float invin = in * INV_STAT_MAX;
     float mod = _get_mod(mon, INTELLIGENCE);
 
-    float mana_percent = MSTAT(mon, stamina, health) / MSTAT(mon, stamina, max_health);
+    float mana_percent;
+    if(MSTAT(mon,intelligence,max_mana) == 0)
+        mana_percent = 1.0f;
+    else
+        mana_percent = MSTAT(mon, intelligence, mana) / MSTAT(mon, intelligence, max_mana);
 
     MSTAT(mon, intelligence, max_mana) = in * mod;
     MSTAT(mon, intelligence, mana) = MSTAT(mon, intelligence, max_mana) * mana_percent;
@@ -99,7 +103,11 @@ void _update_stamina(struct Mon* mon)
     float invsta = sta * INV_STAT_MAX;
     float mod = _get_mod(mon, STAMINA);
 
-    float health_percent = MSTAT(mon, stamina, health) / MSTAT(mon, stamina, max_health);
+    float health_percent;
+    if(MSTAT(mon,stamina,max_health) == 0)
+        health_percent = 1.0f;
+    else
+        health_percent = MSTAT(mon, stamina, health) / MSTAT(mon, stamina, max_health);
 
     MSTAT(mon, stamina, max_health) = sta * mod;
     MSTAT(mon, stamina, health) = MSTAT(mon, stamina, max_health) * health_percent;
