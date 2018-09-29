@@ -9,11 +9,11 @@
 #define SPIRIT       3
 #define STAMINA      4
 
-#define PSTAT(s, t) you->mon->stats.s.t
-#define MSTAT(m, s, t) m->stats.s.t
+#define PSTAT(s, t) (you->mon->stats.s.t)
+#define MSTAT(m, s, t) (m->stats.s.t)
 
-#define GET_PSTAT(s, t) PSTAT(s, t) > STAT_MAX ? STAT_MAX : PSTAT(s, t)
-#define GET_MSTAT(m, s, t) MSTAT(m, s, t) > STAT_MAX ? STAT_MAX : MSTAT(m, s, t)
+#define GET_PSTAT(s, t) (PSTAT(s, t) > STAT_MAX ? STAT_MAX : PSTAT(s, t))
+#define GET_MSTAT(m, s, t) (MSTAT(m, s, t) > STAT_MAX ? STAT_MAX : MSTAT(m, s, t))
 
 #define STAT_MAX      99
 #define INV_STAT_MAX  (1.f/99.f)
