@@ -1,12 +1,18 @@
+#include "menu.h"
+
+#include "class.h"
+#include "colour.h"
+#include "faction.h"
+#include "mon.h"
+#include "player.h"
+#include "stats.h"
+#include "race.h"
+#include "util.h"
+
+#include <ncurses.h>
+#include <pwd.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <pwd.h>
-#include <ncurses.h>
-#include "menu.h"
-#include "player.h"
-#include "colour.h"
-#include "util.h"
-#include "stats.h"
 
 /**
  * Print out the character creation choices made so far

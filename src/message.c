@@ -1,10 +1,12 @@
 #include "message.h"
-#include <ncurses.h>
-#include <string.h>
-#include <stdbool.h>
-#include <ctype.h>
-#include "util.h"
+
 #include "log.h"
+#include "util.h"
+
+#include <ctype.h>
+#include <ncurses.h>
+#include <stdbool.h>
+#include <string.h>
 
 #define MSGBOX_X 0
 #define MSGBOX_Y 40

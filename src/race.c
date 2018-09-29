@@ -1,5 +1,7 @@
 #include "race.h"
 
+#include "faction.h"
+
 #define RACE(hk, noun, adj, home, lead, smask, fac, statups) \
     {\
       hk, noun, adj, home, lead, smask, fac, statups  \

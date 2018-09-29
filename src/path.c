@@ -1,10 +1,12 @@
 #include "path.h"
-#include "util.h"
+
 #include "log.h"
+#include "map.h"
+#include "util.h"
+
+#include <math.h>
 #include <ncurses.h>
 #include <stdlib.h>
-#include "math.h"
-#include "map.h"
 
 struct PathNode* _open_head;
 struct PathNode* _open_tail;

@@ -1,7 +1,10 @@
 #include "mapgen.h"
+
 #include "map.h"
-#include <stdlib.h>
+#include "room.h"
 #include "util.h"
+
+#include <stdlib.h>
 
 /* Draws a map by drawing square rooms at random locations, and with random dimensions. */
 void gen_rooms(void)

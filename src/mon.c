@@ -1,11 +1,15 @@
 #include "mon.h"
-#include <stdlib.h>
+
 #include <stdio.h>
-#include "util.h"
+#include <stdlib.h>
+
+#include "attack_data.h"
+#include "log.h"
 #include "map.h"
 #include "message.h"
-#include "log.h"
+#include "montype.h"
 #include "mon_ai.h"
+#include "util.h"
 
 #define SET_MINION_STAT_SCALES(mon) \
     mon->stats.strength.scale = 0.5f; \

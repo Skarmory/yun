@@ -1,8 +1,6 @@
 #ifndef RACE_H
 #define RACE_H
 
-#include "faction.h"
-
 // Race masks 
 #define RA_HUMAN    0x00000001
 #define RA_DWARF    0x00000002

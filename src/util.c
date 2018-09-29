@@ -1,13 +1,17 @@
 #include "util.h"
 
+#include "class.h"
+#include "faction.h"
+#include "log.h"
+#include "map.h"
+#include "mon.h"
+#include "player.h"
+#include "race.h"
+
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "player.h"
-#include "map.h"
-#include "log.h"
 
 /**
  * Fills in the special format character with the correct game specific string

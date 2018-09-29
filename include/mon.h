@@ -1,9 +1,10 @@
 #ifndef MON_H
 #define MON_H
 
-#include "montype.h"
-#include "attack_data.h"
 #include "stats.h"
+
+struct MonType;
+struct Weapon;
 
 #define HP(mon) mon->stats.stamina.health
 #define MAXHP(mon) mon->stats.stamina.max_health

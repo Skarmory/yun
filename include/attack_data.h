@@ -4,14 +4,7 @@
 #define W_LONGSWORD 0
 #define W_CLAWS     1
 
-/**
- * Struct containing data for an attack
- */
-struct Attack
-{
-    int num_dice;
-    int sides_per_die;
-};
+#include "attack.h"
 
 /**
  * Struct containing data about weaponry

@@ -1,12 +1,16 @@
 #include "player.h"
 
+#include "class.h"
+#include "map.h"
+#include "message.h"
+#include "mon.h"
+#include "montype.h"
+#include "race.h"
+#include "ui.h"
+#include "util.h"
+
 #include <ncurses.h>
 #include <stdlib.h>
-
-#include "ui.h"
-#include "map.h"
-#include "util.h"
-#include "message.h"
 
 struct Player* you;
 

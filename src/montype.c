@@ -1,7 +1,9 @@
 #include "montype.h"
+
+#include "colour.h"
 #include "mon_attr.h"
 #include "stats.h"
-#include "colour.h"
+
 #include <ncurses.h>
 
 #define MON(n, sym, weapon, stats, path) \

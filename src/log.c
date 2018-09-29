@@ -1,6 +1,7 @@
 #include "log.h"
-#include <stdio.h>
+
 #include <stdarg.h>
+#include <stdio.h>
 
 const char* MSGHIST_FNAME = "msghist.log"; 
 const char* DEBUGLOG_FNAME = "debug.log"; 

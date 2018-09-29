@@ -1,5 +1,8 @@
 #include "ncurses_ext.h"
+
 #include "log.h"
+
+#include <ncurses.h>
 
 /**
  * Prints a formatted string given (x, y) rather than (y, x), which is more common notation

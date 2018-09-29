@@ -1,26 +1,27 @@
-#include <stdlib.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdbool.h>
-#include <ncurses.h>
-#include <time.h>
-
-#include "player.h"
-#include "colour.h"
 #include "class.h"
-#include "race.h"
+#include "colour.h"
 #include "faction.h"
+#include "input.h"
+#include "log.h"
 #include "map.h"
 #include "mapgen.h"
-#include "montype.h"
-#include "mon.h"
-#include "input.h"
 #include "menu.h"
-#include "util.h"
 #include "message.h"
-#include "log.h"
-#include "ui.h"
+#include "mon.h"
+#include "montype.h"
 #include "mon_ai.h"
+#include "player.h"
+#include "race.h"
+#include "room.h"
+#include "ui.h"
+#include "util.h"
+
+#include <ncurses.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 

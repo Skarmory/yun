@@ -1,8 +1,12 @@
 #include "mon_ai.h"
-#include "player.h"
-#include "path.h"
+
 #include "attack.h"
 #include "log.h"
+#include "map.h"
+#include "mon.h"
+#include "path.h"
+#include "player.h"
+
 #include <stdio.h>
 
 /* Make decision for a given mon */

@@ -1,14 +1,15 @@
 #include "input.h"
 
-#include <stdbool.h>
-#include <ncurses.h>
-
-#include "player.h"
-#include "map.h"
-#include "util.h"
 #include "attack.h"
+#include "map.h"
 #include "message.h"
+#include "mon.h"
+#include "player.h"
 #include "ui.h"
+#include "util.h"
+
+#include <ncurses.h>
+#include <stdbool.h>
 
 /**
  * Automatically determine the action of a player given a movement command

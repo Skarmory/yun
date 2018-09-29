@@ -1,7 +1,7 @@
 #ifndef MON_AI_H
 #define MON_AI_H
 
-#include "map.h"
+struct Mon;
 
 void update_mon_ai(struct Mon* mon);
 

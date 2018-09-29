@@ -2,8 +2,9 @@
 #define MAP_H
 
 #include <stdbool.h>
-#include "mon.h"
-#include "room.h"
+
+struct Mon;
+struct Room;
 
 #define MROWS 40
 #define MCOLS 80

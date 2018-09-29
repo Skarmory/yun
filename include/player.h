@@ -1,10 +1,9 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "class.h"
-#include "race.h"
-#include "mon.h"
-#include "stats.h"
+struct Class;
+struct Race;
+struct Mon;
 
 /**
  * Struct containing information about the player

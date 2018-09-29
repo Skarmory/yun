@@ -1,12 +1,14 @@
 #include "stats.h"
-#include "mon.h"
+
 #include "log.h"
+#include "mon.h"
 #include "player.h"
 #include "util.h"
+
 #include <stdio.h>
 
 /**
- * Get the stat scalar mod based on significane for a given mon
+ * Get the stat scalar mod based on significance for a given mon
  */
 float _get_mod(struct Mon* mon, short stat)
 {

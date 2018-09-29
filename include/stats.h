@@ -3,6 +3,8 @@
 
 #include <stdbool.h>
 
+struct Mon;
+
 #define STRENGTH     0
 #define AGILITY      1
 #define INTELLIGENCE 2
@@ -17,8 +19,6 @@
 
 #define STAT_MAX      99
 #define INV_STAT_MAX  (1.f/99.f)
-
-struct Mon;
 
 /**
  * Strength increases attack power, armour pen, and parry chance.

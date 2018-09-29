@@ -1,8 +1,12 @@
 #include "map.h"
+
 #include "log.h"
-#include <stdlib.h>
-#include <curses.h>
+#include "mon.h"
+#include "montype.h"
 #include "util.h"
+
+#include <ncurses.h>
+#include <stdlib.h>
 
 struct Map* cmap;
 

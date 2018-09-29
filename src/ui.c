@@ -1,11 +1,17 @@
 #include "ui.h"
-#include "player.h"
+
+#include "class.h"
+#include "log.h"
 #include "map.h"
+#include "mon.h"
+#include "ncurses_ext.h"
+#include "player.h"
+#include "race.h"
+#include "stats.h"
+
+#include <ncurses.h>
 #include <stdio.h>
 #include <string.h>
-#include <ncurses.h>
-#include "ncurses_ext.h"
-#include "log.h"
 
 #define STATUS_X 0
 #define STATUS_Y 45

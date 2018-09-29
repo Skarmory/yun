@@ -1,10 +1,14 @@
 #include "attack.h"
-#include "player.h"
-#include "log.h"
-#include "util.h"
+
 #include "attack_data.h"
+#include "log.h"
 #include "message.h"
+#include "mon.h"
+#include "montype.h"
+#include "player.h"
 #include "stats.h"
+#include "util.h"
+
 #include <stdio.h>
 
 typedef enum attack_result
