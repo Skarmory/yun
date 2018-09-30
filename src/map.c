@@ -3,6 +3,8 @@
 #include "log.h"
 #include "mon.h"
 #include "montype.h"
+#include "ncurses_ext.h"
+#include "player.h"
 #include "util.h"
 
 #include <ncurses.h>
@@ -64,13 +66,12 @@ void display_map(void)
         struct Location* loc = &cmap->locs[i][j];
 
         if(loc->mon != NULL)
-        {
-            attron(loc->mon->type->attr);
-            mvaddch(j, i, loc->mon->type->sym);
-            attroff(loc->mon->type->attr);
-        }
+            if(mon_is_player(loc->mon))
+                draw_symbol(i, j, '@', loc->mon->type->fg, loc->mon->type->attr);
+            else
+                draw_symbol(i, j, loc->mon->type->sym, loc->mon->type->fg, loc->mon->type->attr);
         else
-            mvaddch(j, i, loc->terrain);
+            draw_symbol(i, j, loc->terrain, 0, 0);
     }
 
     refresh();
