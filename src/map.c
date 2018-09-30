@@ -66,13 +66,12 @@ void display_map(void)
         struct Location* loc = &cmap->locs[i][j];
 
         if(loc->mon != NULL)
-            if(mon_is_player(loc->mon))
-                draw_symbol(i, j, '@', loc->mon->type->fg, loc->mon->type->attr);
-            else
-                draw_symbol(i, j, loc->mon->type->sym, loc->mon->type->fg, loc->mon->type->attr);
+            draw_symbol(i, j, loc->mon->type->sym, loc->mon->type->fg, loc->mon->type->attr);
         else
             draw_symbol(i, j, loc->terrain, 0, 0);
     }
+
+    draw_symbol(you->mon->x, you->mon->y, '@', you->mon->type->fg, you->mon->type->attr);
 
     refresh();
 }
