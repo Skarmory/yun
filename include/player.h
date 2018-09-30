@@ -5,6 +5,8 @@ struct Class;
 struct Race;
 struct Mon;
 
+#define mon_is_player(m) (m == you->mon)
+
 /**
  * Struct containing information about the player
  */
