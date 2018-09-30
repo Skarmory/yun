@@ -5,6 +5,7 @@
 
 #define W_LONGSWORD 0
 #define W_CLAWS     1
+#define W_FISTS     2
 
 /**
  * Struct containing data about weaponry

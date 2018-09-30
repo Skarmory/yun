@@ -33,5 +33,6 @@ void free_weapon(struct Weapon* weapon)
 struct Weapon weapons[] =
 {
     WEAPON("longsword", ATTKS(ATTK(1, 6))),
-    WEAPON("claws", ATTKS(ATTK(2, 2)))
+    WEAPON("claws", ATTKS(ATTK(2, 2))),
+    WEAPON("fists", ATTKS(ATTK(1, 2)))
 };
