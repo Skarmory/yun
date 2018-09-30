@@ -1,6 +1,8 @@
 #ifndef RACE_H
 #define RACE_H
 
+struct MonType;
+
 // Race masks 
 #define RA_HUMAN    0x00000001
 #define RA_DWARF    0x00000002
@@ -32,12 +34,12 @@ struct Race
     char* leader;
     short selfmask;
     short faction;
-    short strength_up, agility_up, intelligence_up, spirit_up, stamina_up;
 };
 
 extern struct Race races[];
 
 int get_race_mask(char race);
 int get_race_idx(char race);
+struct MonType* get_race_montype(char race);
 
 #endif

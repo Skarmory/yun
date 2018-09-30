@@ -4,8 +4,15 @@
 struct Armour;
 struct Weapon;
 
-#define MT_GHOUL 0
-#define MT_PLAYER 1
+#define MT_GHOUL    0
+#define MT_HUMAN    1
+#define MT_DWARF    2
+#define MT_NELF     3
+#define MT_GNOME    4
+#define MT_ORC      5
+#define MT_FORSAKEN 6
+#define MT_TAUREN   7
+#define MT_TROLL    8
 
 /**
  * Struct containing data about the type of a monster (not an individual monster)

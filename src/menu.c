@@ -188,11 +188,7 @@ void pick_race(void)
     }
     while(!picked);
 
-    add_stat(you->mon, STRENGTH, you->race->strength_up, true);
-    add_stat(you->mon, AGILITY, you->race->agility_up, true);
-    add_stat(you->mon, INTELLIGENCE, you->race->intelligence_up, true);
-    add_stat(you->mon, SPIRIT, you->race->spirit_up, true);
-    add_stat(you->mon, STAMINA, you->race->stamina_up, true);
+    you->mon->type = get_race_montype(you->race->hotkey);
 }
 
 /**
