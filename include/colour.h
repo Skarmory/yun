@@ -19,6 +19,9 @@
 #define CLR_LCYAN   14
 #define CLR_LWHITE  15
 
+#define CLR_ORANGE  214
+#define CLR_DORANGE 208
+
 // specific
 #define CLR_DEFAULT  0
 #define CLR_ALLIANCE 21
@@ -33,6 +36,18 @@
 #define CLR_ROGUE    191
 #define CLR_HUNTER   113
 #define CLR_MAGE     75
+
+// mob difficulty class
+// grey - green - blue - purple - yellow - orange - red
+// This is more absolute difficulty than relative
+// i.e. a grey 'g' could be a 'ghoul' (one of the weakest 'g') but a red 'g' could be an 'infectious ghoul' (one of the strongest 'g')
+#define CLR_DC_1 CLR_DGREY
+#define CLR_DC_2 CLR_LGREEN
+#define CLR_DC_3 CLR_BLUE
+#define CLR_DC_4 CLR_YELLOW
+#define CLR_DC_5 CLR_ORANGE
+#define CLR_DC_6 CLR_LRED
+#define CLR_DC_7 CLR_LPURPLE
 
 void init_colours(void);
 
