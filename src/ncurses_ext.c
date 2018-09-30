@@ -5,6 +5,18 @@
 #include <ncurses.h>
 
 /**
+ * Draws a symbol with given colours at given location
+ */
+void draw_symbol(int x, int y, char sym, int colpair, int attr)
+{
+    attron(attr);
+    attron(COLOR_PAIR(colpair));
+    mvaddch(y, x, sym);
+    attroff(COLOR_PAIR(colpair));
+    attroff(attr);
+}
+
+/**
  * Prints a formatted string given (x, y) rather than (y, x), which is more common notation
  */
 void mvprintw_xy(int x, int y, char* str, ...)
