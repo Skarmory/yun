@@ -1,6 +1,8 @@
 #ifndef CLASS_H
 #define CLASS_H
 
+#include "defs.h"
+
 #define CLS_DRUID   0x00000001
 #define CLS_HUNTER  0x00000002
 #define CLS_MAGE    0x00000004
@@ -30,10 +32,10 @@ struct Class
     char* name_plural;
     char  hotkey;
 
-    short allow_races;
+    byte allow_races;
     short selfmask;
 
-    short strength_up, agility_up, intelligence_up, spirit_up, stamina_up;
+    byte strength_up, agility_up, intelligence_up, spirit_up, stamina_up;
     float strength_scale, agility_scale, intelligence_scale, spirit_scale, stamina_scale;
 };
 
