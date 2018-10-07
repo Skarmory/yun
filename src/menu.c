@@ -129,17 +129,6 @@ void pick_class(void)
     }
     while(!picked);
 
-    you->mon->stats.strength.scale = you->cls->strength_scale;
-    you->mon->stats.agility.scale = you->cls->agility_scale;
-    you->mon->stats.intelligence.scale = you->cls->intelligence_scale;
-    you->mon->stats.spirit.scale = you->cls->spirit_scale;
-    you->mon->stats.stamina.scale = you->cls->stamina_scale;
-
-    add_stat(you->mon, STRENGTH, you->cls->strength_up, true);
-    add_stat(you->mon, AGILITY, you->cls->agility_up, true);
-    add_stat(you->mon, INTELLIGENCE, you->cls->intelligence_up, true);
-    add_stat(you->mon, SPIRIT, you->cls->spirit_up, true);
-    add_stat(you->mon, STAMINA, you->cls->stamina_up, true);
 }
 
 /**
@@ -191,6 +180,27 @@ void pick_race(void)
     you->mon->type = get_race_montype(you->race->hotkey);
 }
 
+void _apply_stats(void)
+{
+    set_stat(you->mon, STRENGTH, you->mon->type->strength);
+    set_stat(you->mon, AGILITY, you->mon->type->agility);
+    set_stat(you->mon, INTELLIGENCE, you->mon->type->intelligence);
+    set_stat(you->mon, SPIRIT, you->mon->type->spirit);
+    set_stat(you->mon, STAMINA, you->mon->type->stamina);
+
+    you->mon->stats.strength.scale = you->cls->strength_scale;
+    you->mon->stats.agility.scale = you->cls->agility_scale;
+    you->mon->stats.intelligence.scale = you->cls->intelligence_scale;
+    you->mon->stats.spirit.scale = you->cls->spirit_scale;
+    you->mon->stats.stamina.scale = you->cls->stamina_scale;
+
+    add_stat(you->mon, STRENGTH, you->cls->strength_up, true);
+    add_stat(you->mon, AGILITY, you->cls->agility_up, true);
+    add_stat(you->mon, INTELLIGENCE, you->cls->intelligence_up, true);
+    add_stat(you->mon, SPIRIT, you->cls->spirit_up, true);
+    add_stat(you->mon, STAMINA, you->cls->stamina_up, true);
+}
+
 /**
  * Prompt player to confirm their character
  */
@@ -207,6 +217,7 @@ void confirm_character(void)
        switch(getch())
        {
            case 'y':
+               _apply_stats();
                return;
            case 'n':
                return;
