@@ -5,6 +5,7 @@
 #include "player.h"
 #include "util.h"
 
+#include <math.h>
 #include <stdio.h>
 
 /**
@@ -230,4 +231,18 @@ bool stat_check(struct Mon* mon, int stat)
         default:
            return false;
    }
+}
+
+bool dodge_check(struct Mon* mon)
+{
+    float agility_mod = MSTAT(mon, agility, scale);
+    float chance = atan(MSTAT(mon, agility, agility) * agility_mod * INV_STAT_MAX) / DODGE_MOD;
+
+    log_format_msg("Chance to dodge: %5.2f", DEBUG, chance * 100.0f);
+
+    float roll = roll_d100f();
+
+    log_format_msg("Rolled: %5.2f (needed: > %5.2f)", DEBUG, roll * 100.0f, (1.0f - chance) * 100.0f);
+
+    return roll > (1.0f - chance);
 }

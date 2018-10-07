@@ -50,10 +50,9 @@ attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
         return miss;
 
     // Check for defender dodge
-    roll = roll_d100();
-    log_format_msg("roll to dodge: %d (need > %d)", DEBUG, roll, 100 - (int)(MSTAT(defender, agility, dodge_chance) * 100));
-    if(roll > 100 - (int)(MSTAT(defender, agility, dodge_chance) * 100))
+    if(dodge_check(defender))
         return dodge;
+
 
     // Check for defender parry
     roll = roll_d100();

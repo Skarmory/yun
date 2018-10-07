@@ -5,6 +5,7 @@
 #include "faction.h"
 #include "log.h"
 #include "mon.h"
+#include "montype.h"
 #include "player.h"
 #include "stats.h"
 #include "race.h"

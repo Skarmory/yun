@@ -20,6 +20,9 @@ struct Mon;
 #define STAT_MAX      99
 #define INV_STAT_MAX  (1.f/99.f)
 
+#define DODGE_MOD 4
+#define PARRY_MOD 3
+
 /**
  * Strength increases attack power, armour pen, and parry chance.
  */
@@ -106,5 +109,6 @@ void add_stat(struct Mon* mon, int stat, int amount, bool base);
 void set_stat(struct Mon* mon, int stat, int amount);
 
 bool stat_check(struct Mon* mon, int stat);
+bool dodge_check(struct Mon* mon);
 
 #endif
