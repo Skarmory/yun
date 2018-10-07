@@ -9,4 +9,6 @@ int random_int(int hi, int lo);
 
 int roll_d100(void);
 
+float roll_d100f(void);
+
 #endif

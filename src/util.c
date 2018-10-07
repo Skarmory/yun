@@ -73,3 +73,11 @@ int roll_d100(void)
 {
     return random_int(1, 100);
 }
+
+/**
+ * Do percentile roll and return value between 0.01 and 1.0
+ */
+float roll_d100f(void)
+{
+    return (float)roll_d100() * 0.01f;
+}
