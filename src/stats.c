@@ -246,3 +246,17 @@ bool dodge_check(struct Mon* mon)
 
     return roll > (1.0f - chance);
 }
+
+bool parry_check(struct Mon* mon)
+{
+    float strength_mod = MSTAT(mon, strength, scale);
+    float chance = atan(MSTAT(mon, strength, strength) * strength_mod * INV_STAT_MAX) / PARRY_MOD;
+
+    log_format_msg("Chance to parry: %5.2f", DEBUG, chance * 100.0f);
+
+    float roll = roll_d100f();
+
+    log_format_msg("Rolled: %5.2f (needed: > %5.2f)", DEBUG, roll * 100.0f, (1.0f - chance) * 100.0f);
+
+    return roll > (1.0f - chance);
+}

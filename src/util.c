@@ -79,5 +79,5 @@ int roll_d100(void)
  */
 float roll_d100f(void)
 {
-    return (float)roll_d100() * 0.01f;
+    return (float)rand() / (float)RAND_MAX;
 }

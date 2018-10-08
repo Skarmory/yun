@@ -53,11 +53,8 @@ attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
     if(dodge_check(defender))
         return dodge;
 
-
     // Check for defender parry
-    roll = roll_d100();
-    log_format_msg("roll to parry: %d (need > %d)", DEBUG, roll, 100 - (int)(MSTAT(defender, strength, parry_chance) * 100));
-    if(roll > 100 - (int)(MSTAT(defender, strength, parry_chance) * 100))
+    if(parry_check(defender))
         return parry;
 
     // Check for defender block

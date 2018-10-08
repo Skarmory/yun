@@ -110,5 +110,6 @@ void set_stat(struct Mon* mon, int stat, int amount);
 
 bool stat_check(struct Mon* mon, int stat);
 bool dodge_check(struct Mon* mon);
+bool parry_check(struct Mon* mon);
 
 #endif
