@@ -8,8 +8,18 @@
 #include <math.h>
 #include <stdio.h>
 
+#define DODGE_MOD 4
+#define PARRY_MOD 3
+#define BLOCK_MOD 1.1f
+#define BLOCK_MOD2 3
+
+#define calc_dodge(mon)      (atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / DODGE_MOD)
+#define calc_parry(mon)      (atan(get_strength(mon) * _get_mod(mon, STRENGTH) * INV_STAT_MAX) / PARRY_MOD)
+#define calc_block(mon)      (log_base((get_stamina(mon) / BLOCK_MOD2) + 1, STAT_MAX) / BLOCK_MOD)
+#define calc_crit_block(mon) (calc_block(mon))
+
 /**
- * Get the stat scalar mod based on significance for a given mon
+ * Get the stat scalar mod
  */
 float _get_mod(struct Mon* mon, short stat)
 {
@@ -41,7 +51,7 @@ void _update_strength(struct Mon* mon)
 
     MSTAT(mon, strength, attack_power) = str * mod *  0.2f;
     MSTAT(mon, strength, armour_pen) = invstr * mod * 0.75f;
-    MSTAT(mon, strength, parry_chance) = invstr * mod * 0.5f;
+    get_parry(mon) = calc_parry(mon);
 }
 
 /**
@@ -55,7 +65,7 @@ void _update_agility(struct Mon* mon)
 
     MSTAT(mon, agility, attack_power) = agi * mod *  0.2f;
     MSTAT(mon, agility, crit_chance) = invagi * mod * 0.75f;
-    MSTAT(mon, agility, dodge_chance) = invagi * mod * 0.5f;
+    get_dodge(mon) = calc_dodge(mon);
 }
 
 /**
@@ -114,7 +124,7 @@ void _update_stamina(struct Mon* mon)
     MSTAT(mon, stamina, health) = MSTAT(mon, stamina, max_health) * health_percent;
     MSTAT(mon, stamina, block_chance) = invsta * mod * 0.75f;
     MSTAT(mon, stamina, crit_block_chance) = invsta * mod * 0.5f;
-    MSTAT(mon, stamina, block_amount) = sta * mod * 0.2f;
+    get_block(mon) = calc_block(mon);
 }
 
 /**
