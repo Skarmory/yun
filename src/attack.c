@@ -58,9 +58,7 @@ attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
         return parry;
 
     // Check for defender block
-    roll = roll_d100();
-    log_format_msg("roll to block: %d (need > %d)", DEBUG, roll, 100 - (int)(MSTAT(defender, stamina, block_chance) * 100));
-    if(roll > 100 - (int)(MSTAT(defender, stamina, block_chance) * 100))
+    if(block_check(defender))
     {
         // Check for crit block
         roll = roll_d100();
