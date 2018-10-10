@@ -90,21 +90,6 @@ struct Intelligence
 };
 
 /**
- * Stamina increases health, block chance, critical block chance, and block amount.
- */
-struct Stamina
-{
-    int base_stamina;
-    int stamina;
-    int max_health;
-    int health;
-    float block_chance;
-    float crit_block_chance;
-    int block_amount;
-    float scale;
-};
-
-/**
  * Spirit grants bonuses to mana and health regeneration, spellpower, and base resistance
  */
 struct Spirit
@@ -115,6 +100,20 @@ struct Spirit
     int health_regen;
     int resist;
     int spell_power;
+    float scale;
+};
+
+/**
+ * Stamina increases health, block chance, critical block chance, and block amount.
+ */
+struct Stamina
+{
+    int base_stamina;
+    int stamina;
+    int max_health;
+    int health;
+    float block_chance;
+    float crit_block_chance;
     float scale;
 };
 
