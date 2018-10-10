@@ -8,6 +8,7 @@
 #include "player.h"
 #include "race.h"
 
+#include <math.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,4 +81,12 @@ int roll_d100(void)
 float roll_d100f(void)
 {
     return (float)rand() / (float)RAND_MAX;
+}
+
+/**
+ * Compute log of x to a given base
+ */
+float log_base(int x, int base)
+{
+    return log(x) / log(base);
 }

@@ -11,4 +11,6 @@ int roll_d100(void);
 
 float roll_d100f(void);
 
+float log_base(int x, int base);
+
 #endif
