@@ -9,14 +9,23 @@
 #include <stdio.h>
 
 #define DODGE_MOD 4
-#define PARRY_MOD 3
+#define PARRY_MOD 8
 #define BLOCK_MOD 1.1f
 #define BLOCK_MOD2 3
+#define CRIT_BLOCK_MOD 3
+#define CRIT_MOD 1.5f
+#define ARMPEN_MOD 200.0f
+
+#define max(x, y) (((x) > (y) ? (x) : (y)))
 
 #define calc_dodge(mon)      (atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / DODGE_MOD)
 #define calc_parry(mon)      (atan(get_strength(mon) * _get_mod(mon, STRENGTH) * INV_STAT_MAX) / PARRY_MOD)
 #define calc_block(mon)      (log_base((get_stamina(mon) / BLOCK_MOD2) + 1, STAT_MAX) / BLOCK_MOD)
-#define calc_crit_block(mon) (calc_block(mon))
+#define calc_crit_block(mon) (calc_block(mon) / CRIT_BLOCK_MOD)
+
+#define calc_crit(mon)       (atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / CRIT_MOD)
+#define armpen_divisor(mon)  ((ARMPEN_MOD * (1.0f - ((float)get_strength(mon) / 999.0f))))
+#define calc_armpen(mon)     ((int)max(floor(((get_strength(mon) * get_strength(mon)) * _get_mod(mon, STRENGTH)) / armpen_divisor(mon)) - 1.0f, 0.0f))
 
 /**
  * Get the stat scalar mod
@@ -50,8 +59,8 @@ void _update_strength(struct Mon* mon)
     float mod = _get_mod(mon, STRENGTH);
 
     MSTAT(mon, strength, attack_power) = str * mod *  0.2f;
-    MSTAT(mon, strength, armour_pen) = invstr * mod * 0.75f;
     get_parry(mon) = calc_parry(mon);
+    get_armour_pen(mon) = calc_armpen(mon);
 }
 
 /**

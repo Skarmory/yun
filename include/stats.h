@@ -56,7 +56,7 @@ struct Strength
     int base_strength;
     int strength;
     int attack_power;
-    float armour_pen;
+    int armour_pen;
     float parry_chance;
     float scale;
 };
