@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "equip.h"
+#include "inventory.h"
 #include "log.h"
 #include "map.h"
 #include "message.h"
@@ -32,6 +33,7 @@ struct Mon* new_mon(int mtype, int x, int y)
     mon->y = y;
     mon->pathing = mon->type->pathing;
     mon->equipment = new_equipment();
+    mon->inventory = new_inventory();
 
     SET_MINION_STAT_SCALES(mon);
 
@@ -45,19 +47,6 @@ struct Mon* new_mon(int mtype, int x, int y)
     set_stat(mon, INTELLIGENCE, mon->type->intelligence);
     set_stat(mon, SPIRIT, mon->type->spirit);
     set_stat(mon, STAMINA, mon->type->stamina);
-    /*
-    MSTAT(mon, strength, base_strength) = mon->type->strength;
-    MSTAT(mon, agility, base_agility) = mon->type->agility;
-    MSTAT(mon, intelligence, base_intelligence) = mon->type->intelligence;
-    MSTAT(mon, spirit, base_spirit) = mon->type->spirit;
-    MSTAT(mon, stamina, base_stamina) = mon->type->stamina;
-
-    MSTAT(mon, strength, strength) = mon->type->strength;
-    MSTAT(mon, agility, agility) = mon->type->agility;
-    MSTAT(mon, intelligence, intelligence) = mon->type->intelligence;
-    MSTAT(mon, spirit, spirit) = mon->type->spirit;
-    MSTAT(mon, stamina, stamina) = mon->type->stamina;
-    */
 
     return mon;
 }

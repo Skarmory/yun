@@ -5,6 +5,7 @@
 
 struct MonType;
 struct Equipment;
+struct Inventory;
 struct Weapon;
 
 #define HP(mon) mon->stats.stamina.health
@@ -22,6 +23,7 @@ struct Mon
     int pathing;
     struct MonType* type;
     struct Equipment* equipment;
+    struct Inventory* inventory;
     struct Stats stats;
 };
 

@@ -7,6 +7,8 @@
 #define W_CLAWS     1
 #define W_FISTS     2
 
+struct Object;
+
 /**
  * Struct containing data about weaponry
  */
@@ -14,6 +16,8 @@ struct Weapon
 {
     char* name;
     struct Attack attk[1];
+
+    struct Object* obj;
 };
 
 struct Weapon* new_weapon(int weapon_type);

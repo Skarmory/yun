@@ -3,6 +3,8 @@
 
 #include "defs.h"
 
+struct Object;
+
 #define A_UNARMOURED 0
 
 struct Armour
@@ -13,7 +15,12 @@ struct Armour
     byte intelligence;
     byte spirit;
     byte stamina;
+
+    struct Object* obj;
 };
+
+struct Armour* new_armour(int armour_type);
+void free_armour(struct Armour* armour);
 
 extern struct Armour armours[];
 
