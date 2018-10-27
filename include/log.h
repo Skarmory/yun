@@ -7,6 +7,7 @@
 void init_logs(void);
 void log_msg(char* msg, int logtype);
 void log_format_msg(char* format, int logtype, ...);
+void log_scheck_fail(char* msg);
 void destroy_logs(void);
 
 #endif

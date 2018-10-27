@@ -3,8 +3,8 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-const char* MSGHIST_FNAME = "msghist.log"; 
-const char* DEBUGLOG_FNAME = "debug.log"; 
+const char* MSGHIST_FNAME = "msghist.log";
+const char* DEBUGLOG_FNAME = "debug.log";
 
 FILE* msghist_file;
 FILE* debug_file;
@@ -28,11 +28,11 @@ void log_msg(char* msg, int logtype)
     switch(logtype)
     {
         case MSGHIST:
-            fprintf(msghist_file, "%s\n", msg); 
+            fprintf(msghist_file, "%s\n", msg);
             fflush(msghist_file);
             break;
         case DEBUG:
-            fprintf(debug_file, "%s\n", msg); 
+            fprintf(debug_file, "%s\n", msg);
             fflush(debug_file);
             break;
     }
@@ -51,6 +51,14 @@ void log_format_msg(char* format, int logtype, ...)
     log_msg(msg, logtype);
 
     va_end(args);
+}
+
+/**
+ *
+ */
+void log_scheck_fail(char* msg)
+{
+    log_format_msg("[SANITY CHECK FAILURE] %s", DEBUG, msg);
 }
 
 /**
