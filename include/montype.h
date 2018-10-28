@@ -3,6 +3,7 @@
 
 struct Armour;
 struct Weapon;
+struct Symbol;
 
 #define MT_GHOUL    0
 #define MT_HUMAN    1
@@ -22,10 +23,7 @@ struct Weapon;
 struct MonType
 {
     char* name; // Name of this type of mon
-    char sym; // ascii symbol of this mon
-    signed char fg; // foreground colour
-    signed char bg; // background colour
-    int attr; // symbol attributes
+    struct Symbol* symbol;
     struct Armour* base_armour; // All creatures have a base armour for if they don't have equipment
     struct Weapon* base_weapon;
     int strength, agility, intelligence, spirit, stamina;

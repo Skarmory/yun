@@ -90,7 +90,6 @@ void _do_attack(struct Mon* attacker, struct Mon* defender, int* dmg, struct Wea
     }
 
     HP(defender) -= *dmg;
-
 }
 
 /**
