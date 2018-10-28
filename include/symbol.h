@@ -3,7 +3,8 @@
 
 #include "defs.h"
 
-#define SYM_MON_OFF 0
+#define SYM_MON_OFF    0
+#define SYM_WEAPON_OFF 9
 
 struct Symbol
 {
