@@ -49,6 +49,12 @@
 #define CLR_DC_6 CLR_LRED
 #define CLR_DC_7 CLR_LPURPLE
 
+// No colour. Specify for things that should not be seen (e.g. bare fists as a weapon shouldn't be as a symbol)
+#define CLR_NONE CLR_BLACK
+
+// Objects
+#define CLR_METAL CLR_WHITE
+
 void init_colours(void);
 
 #endif
