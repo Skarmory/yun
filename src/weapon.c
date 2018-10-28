@@ -1,6 +1,7 @@
 #include "weapon.h"
 
 #include "object.h"
+#include "symbol.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -22,6 +23,7 @@ struct Weapon* new_weapon(int weapon_type)
     memcpy(weapon->attk, weapons[weapon_type].attk, sizeof(weapons[weapon_type].attk));
 
     weapon->obj = (struct Object*) malloc(sizeof(struct Object));
+    weapon->obj->symbol = &symbols[SYM_WEAPON_OFF + weapon_type];
     weapon->obj->objtype_ptr.weapon = weapon;
     weapon->obj->objtype = WEAPON;
     weapon->obj->next = NULL;
