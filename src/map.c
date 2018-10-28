@@ -4,6 +4,7 @@
 #include "mon.h"
 #include "montype.h"
 #include "ncurses_ext.h"
+#include "object.h"
 #include "player.h"
 #include "symbol.h"
 #include "util.h"
@@ -33,6 +34,7 @@ void init_map(void)
             cmap->locs[i][j].terrain = ' ';
             cmap->locs[i][j].mon = NULL;
             cmap->locs[i][j].pathing = 0;
+            cmap->locs[i][j].objects = NULL;
         }
     }
 }
@@ -68,6 +70,8 @@ void display_map(void)
 
         if(loc->mon != NULL)
             draw_symbol(i, j, loc->mon->type->symbol->sym, loc->mon->type->symbol->fg, loc->mon->type->symbol->attr);
+        else if(loc->objects != NULL)
+            draw_symbol(i, j, loc->objects->symbol->sym, loc->objects->symbol->fg, loc->objects->symbol->attr);
         else
             draw_symbol(i, j, loc->terrain, 0, 0);
     }
