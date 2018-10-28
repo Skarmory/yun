@@ -7,6 +7,9 @@ struct Weapon;
 struct Armour;
 struct Symbol;
 
+#define OBJECT_WEAPON_OFF 0
+#define OBJECT_ARMOUR_OFF 3
+
 enum ObjectType
 {
     WEAPON,
@@ -20,6 +23,7 @@ enum ObjectType
  */
 struct Object
 {
+    char* name;
     struct Symbol* symbol;
     union
     {

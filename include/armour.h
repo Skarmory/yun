@@ -9,7 +9,6 @@ struct Object;
 
 struct Armour
 {
-    char* name;
     byte strength;
     byte agility;
     byte intelligence;
@@ -23,5 +22,6 @@ struct Armour* new_armour(int armour_type);
 void free_armour(struct Armour* armour);
 
 extern struct Armour armours[];
+extern char* armour_names[];
 
 #endif

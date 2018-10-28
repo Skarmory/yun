@@ -14,7 +14,6 @@ struct Object;
  */
 struct Weapon
 {
-    char* name;
     struct Attack attk[1];
 
     struct Object* obj;
@@ -24,5 +23,6 @@ struct Weapon* new_weapon(int weapon_type);
 void free_weapon(struct Weapon* weapon);
 
 extern struct Weapon weapons[];
+extern char* weapon_names[];
 
 #endif

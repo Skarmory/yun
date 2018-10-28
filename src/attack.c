@@ -5,6 +5,7 @@
 #include "message.h"
 #include "mon.h"
 #include "montype.h"
+#include "object.h"
 #include "player.h"
 #include "stats.h"
 #include "util.h"
@@ -104,7 +105,7 @@ bool do_player_attack_mon(struct Mon* defender)
     {
         case hit:
             _do_attack(you->mon, defender, &dmg, weapon);
-            display_format_msg("You hit the %s for %d (%dd%d) with your %s.", defender->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->name);
+            display_format_msg("You hit the %s for %d (%dd%d) with your %s.", defender->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->obj->name);
             mon_chk_dead(defender);
             break;
         case miss:
@@ -141,7 +142,7 @@ bool do_mon_attack_player(struct Mon* attacker)
     {
         case hit:
             _do_attack(attacker, you->mon, &dmg, weapon);
-            display_format_msg("The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->name);
+            display_format_msg("The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->obj->name);
             player_chk_dead();
             break;
         case miss:
