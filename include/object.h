@@ -1,8 +1,11 @@
 #ifndef OBJECT_H
 #define OBJECT_H
 
+#include "defs.h"
+
 struct Weapon;
 struct Armour;
+struct Symbol;
 
 enum ObjectType
 {
@@ -17,6 +20,7 @@ enum ObjectType
  */
 struct Object
 {
+    struct Symbol* symbol;
     union
     {
         struct Weapon* weapon;
