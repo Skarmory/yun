@@ -7,6 +7,9 @@
 #define W_CLAWS     1
 #define W_FISTS     2
 
+#define W_RANGE_START 0
+#define W_RANGE_END   3
+
 struct Object;
 
 /**

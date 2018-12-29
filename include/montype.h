@@ -15,6 +15,9 @@ struct Symbol;
 #define MT_TAUREN   7
 #define MT_TROLL    8
 
+#define MT_RANGE_START 0
+#define MT_RANGE_END   9
+
 /**
  * Struct containing data about the type of a monster (not an individual monster)
  *
@@ -22,13 +25,17 @@ struct Symbol;
  */
 struct MonType
 {
-    char* name; // Name of this type of mon
-    struct Symbol* symbol;
-    struct Armour* base_armour; // All creatures have a base armour for if they don't have equipment
-    struct Weapon* base_weapon;
-    int strength, agility, intelligence, spirit, stamina;
-    int pathing;
+    char*                name; // Name of this type of mon
+    struct Symbol*       symbol;
+    int                  base_armour_idx;
+    int                  base_weapon_idx;
+    const struct Armour* base_armour; // All creatures have a base armour for if they don't have equipment
+    const struct Weapon* base_weapon;
+    int                  strength, agility, intelligence, spirit, stamina;
+    int                  pathing;
 };
+
+void init_montypes(void);
 
 extern struct MonType mon_type[];
 

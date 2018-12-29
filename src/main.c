@@ -15,6 +15,7 @@
 #include "room.h"
 #include "ui.h"
 #include "util.h"
+#include "weapon.h"
 
 #include <ncurses.h>
 #include <stdbool.h>
@@ -125,13 +126,15 @@ int main(int argc, char** argv)
 
     init_logs();
     init_msgs();
+    init_montypes();
+    init_map();
 
     new_player();
     new_game();
 
-    init_map();
     gen_map();
 
+    // --------- DEBUG CODE START ----------
     struct Room* room = cmap->rooms[0];
     int startx = random_int(room->x + 1, room->x + room->w - 2);
     int starty = random_int(room->y + 1, room->y + room->h - 2);
@@ -149,6 +152,7 @@ int main(int argc, char** argv)
         struct Mon* ghoul = new_mon(MT_GHOUL, startx, starty);
         add_mon(ghoul);
     }
+    // ---------- DEBUG CODE END ----------
 
     main_loop();
 
