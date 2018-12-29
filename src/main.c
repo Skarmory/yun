@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 
     you->mon->x = startx;
     you->mon->y = starty;
-    add_mon(you->mon);
+    map_add_mon(you->mon);
 
     for(int i = 1; i < cmap->room_count - 1; i++)
     {
@@ -150,7 +150,7 @@ int main(int argc, char** argv)
         starty = random_int(room->y + 1, room->y + room->h - 2);
 
         struct Mon* ghoul = new_mon(MT_GHOUL, startx, starty);
-        add_mon(ghoul);
+        map_add_mon(ghoul);
     }
     // ---------- DEBUG CODE END ----------
 

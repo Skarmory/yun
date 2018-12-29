@@ -84,7 +84,7 @@ void display_map(void)
 /**
  * Add monster to the level
  */
-void add_mon(struct Mon* mon)
+void map_add_mon(struct Mon* mon)
 {
     int x = mon->x;
     int y = mon->y;
@@ -98,7 +98,7 @@ void add_mon(struct Mon* mon)
 /*
  * Remove monster from the level
  */
-bool rm_mon(struct Mon* mon)
+bool map_rm_mon(struct Mon* mon)
 {
     struct Mon* curr = cmap->monlist;
     struct Mon* prev = NULL;
@@ -127,7 +127,7 @@ bool rm_mon(struct Mon* mon)
 /**
  * Get the object at given map location
  */
-struct Object* map_loc_get_objects(int x, int y)
+struct Object* loc_get_objects(int x, int y)
 {
     return cmap->locs[x][y].objects;
 }
@@ -186,7 +186,7 @@ bool loc_is_pathable(int x, int y, int path_bits)
 /**
  * Check if given x, y location is a valid move
  */
-bool valid_move(int x, int y, int path_bits)
+bool loc_valid_move(int x, int y, int path_bits)
 {
     return loc_in_bounds(x, y) && loc_is_pathable(x, y, path_bits) && !loc_has_mon(x, y);
 }
@@ -194,9 +194,9 @@ bool valid_move(int x, int y, int path_bits)
 /**
  * Change monster location
  */
-bool move_mon(struct Mon* mon, int newx, int newy)
+bool map_move_mon(struct Mon* mon, int newx, int newy)
 {
-    if(!valid_move(newx, newy, mon->pathing))
+    if(!loc_valid_move(newx, newy, mon->pathing))
         return false;
 
     cmap->locs[mon->x][mon->y].mon = NULL;
@@ -210,7 +210,7 @@ bool move_mon(struct Mon* mon, int newx, int newy)
 /*
  * Get an array of the neighbouring locations to given location
  */
-int get_neighbours(struct Location* loc, struct Location*** locs)
+int loc_get_neighbours(struct Location* loc, struct Location*** locs)
 {
     *locs = (struct Location**)malloc(sizeof(struct Location*) * 8);
 

@@ -56,7 +56,7 @@ struct Mon* new_mon(int mtype, int x, int y)
  */
 void destroy_mon(struct Mon* mon)
 {
-    rm_mon(mon);
+    map_rm_mon(mon);
     free_equipment(mon->equipment);
     free(mon);
 }

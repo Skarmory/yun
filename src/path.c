@@ -40,7 +40,7 @@ float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
 
     // If this is not a valid move (e.g. other mon on this loc), assign a higher value than it's distance
     // This means the algorithm will explore other paths before checking further in this direction
-    if(!valid_move(path->loc->x, path->loc->y, path_bits))
+    if(!loc_valid_move(path->loc->x, path->loc->y, path_bits))
         mod = 100.0f;
 
     // Use distance squared to avoid sqrt
@@ -289,7 +289,7 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
         _add_closed(best_node);
 
         struct Location*** neighbours = (struct Location***) malloc(sizeof(struct Location**));
-        int ncount = get_neighbours(best_node->loc, neighbours);
+        int ncount = loc_get_neighbours(best_node->loc, neighbours);
 
         struct Location* loc;
         for(int i = 0; i < ncount; i++)
