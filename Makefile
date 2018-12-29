@@ -8,7 +8,7 @@ SRCS=$(wildcard src/*.c)
 OBJS=$(SRCS:.c=.o)
 DEPS=$(SRCS:.c=.d)
 
-.PHONY: clean
+.PHONY: clean fullclean $(GAME)
 
 $(GAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(GAME) $(LDFLAGS)
