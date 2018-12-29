@@ -114,7 +114,7 @@ void mon_chk_dead(struct Mon* mon)
 /**
  * Get mon weapon if it has one, else return base montype weapon
  */
-struct Weapon* mon_get_weapon(struct Mon* mon)
+const struct Weapon* mon_get_weapon(struct Mon* mon)
 {
     if(mon->equipment->main_hand)
         return mon->equipment->main_hand;

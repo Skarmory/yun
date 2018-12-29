@@ -81,7 +81,7 @@ attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
  *
  * "Roll" damage dice and minus HP from the defender
  */
-void _do_attack(struct Mon* attacker, struct Mon* defender, int* dmg, struct Weapon* weapon)
+void _do_attack(struct Mon* attacker, struct Mon* defender, int* dmg, const struct Weapon* weapon)
 {
     *dmg = 0;
 
@@ -98,7 +98,7 @@ void _do_attack(struct Mon* attacker, struct Mon* defender, int* dmg, struct Wea
  */
 bool do_player_attack_mon(struct Mon* defender)
 {
-    struct Weapon* weapon = mon_get_weapon(you->mon);
+    const struct Weapon* weapon = mon_get_weapon(you->mon);
     int dmg;
 
     switch(_get_attack_result(you->mon, defender))
@@ -135,7 +135,7 @@ bool do_player_attack_mon(struct Mon* defender)
  */
 bool do_mon_attack_player(struct Mon* attacker)
 {
-    struct Weapon* weapon = mon_get_weapon(attacker);
+    const struct Weapon* weapon = mon_get_weapon(attacker);
     int dmg;
 
     switch(_get_attack_result(attacker, you->mon))

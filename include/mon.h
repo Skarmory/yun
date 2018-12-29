@@ -21,7 +21,7 @@ struct Mon
     struct Mon* next; // linked list for mons on the level
     unsigned int x, y;
     int pathing;
-    struct MonType* type;
+    const struct MonType* type;
     struct Equipment* equipment;
     struct Inventory* inventory;
     struct Stats stats;
@@ -34,6 +34,6 @@ bool mon_has_pathing_attr(struct Mon* mon, int path_attr);
 bool mon_is_dead(struct Mon* mon);
 bool mon_dual_wielding(struct Mon* mon);
 void mon_chk_dead(struct Mon* mon);
-struct Weapon* mon_get_weapon(struct Mon* mon);
+const struct Weapon* mon_get_weapon(struct Mon* mon);
 
 #endif
