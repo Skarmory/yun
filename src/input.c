@@ -4,6 +4,7 @@
 #include "map.h"
 #include "message.h"
 #include "mon.h"
+#include "object.h"
 #include "player.h"
 #include "ui.h"
 #include "util.h"
@@ -22,7 +23,27 @@ bool _do_smart_action(int x, int y)
         return move_mon(you->mon, x, y);
     else
         return do_player_attack_mon(cmap->locs[x][y].mon);
+}
 
+/**
+ * Try to pick up an object from the floor
+ */
+bool _pick_up_object(void)
+{
+    struct Object* obj = map_loc_get_objects(you->mon->x, you->mon->y);
+
+    if(obj == NULL)
+    {
+       display_msg("There is nothing here");
+       return false;
+    }
+
+    struct Location* loc = &cmap->locs[you->mon->x][you->mon->y];
+    loc_rm_obj(loc, obj);
+
+    display_format_msg("You picked up a %s", obj->name);
+
+    return true;
 }
 
 /**
@@ -67,9 +88,15 @@ void handle_input(void)
             case 'c':
                 display_char_info_screen();
                 break;
+            case ',':
+                went = _pick_up_object();
+                break;
             default:
                 break;
 
         }
+
+        if(!went)
+            flush_msg_buffer();
     } while(!went);
 }

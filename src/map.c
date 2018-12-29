@@ -132,6 +132,31 @@ struct Object* map_loc_get_objects(int x, int y)
     return cmap->locs[x][y].objects;
 }
 
+bool loc_rm_obj(struct Location* loc, struct Object* obj)
+{
+    struct Object* curr = loc->objects;
+    struct Object* prev = NULL;
+
+    while(curr)
+    {
+       if(curr == obj)
+       {
+            // Check if this is head of monlist
+            if(prev)
+                prev->next = curr->next;
+            else
+                loc->objects = curr->next;
+
+            return true;
+       }
+
+       prev = curr;
+       curr = curr->next;
+    }
+
+    return false;
+}
+
 /*
  * Does map boundary check
  */
