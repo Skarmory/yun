@@ -124,6 +124,14 @@ bool rm_mon(struct Mon* mon)
     return false;
 }
 
+/**
+ * Get the object at given map location
+ */
+struct Object* map_loc_get_objects(int x, int y)
+{
+    return cmap->locs[x][y].objects;
+}
+
 /*
  * Does map boundary check
  */
@@ -204,4 +212,3 @@ int get_neighbours(struct Location* loc, struct Location*** locs)
 
     return count;
 }
-
