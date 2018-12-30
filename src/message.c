@@ -1,6 +1,8 @@
 #include "message.h"
 
 #include "log.h"
+#include "map.h"
+#include "ui.h"
 #include "util.h"
 
 #include <ctype.h>
@@ -32,6 +34,12 @@ void _flush_and_prompt(void)
 {
     flush_msg_buffer();
     mvprintw(MSGBOX_Y+1, MSGBOX_X, "-- more --");
+
+    // Redraw visual info
+    // This will show the partial updates for the turn up to this prompt
+    display_map();
+    display_char_status();
+
     getch();
 }
 

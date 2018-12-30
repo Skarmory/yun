@@ -132,6 +132,21 @@ struct Object* loc_get_objects(int x, int y)
     return cmap->locs[x][y].objects;
 }
 
+/**
+ * Add object to given map location
+ */
+bool loc_add_obj(struct Location* loc, struct Object* obj)
+{
+    // push object onto location object linked list
+    obj->next = loc->objects;
+    loc->objects = obj;
+
+    return true;
+}
+
+/**
+ * Remove object from given map location
+ */
 bool loc_rm_obj(struct Location* loc, struct Object* obj)
 {
     struct Object* curr = loc->objects;

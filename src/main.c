@@ -89,10 +89,6 @@ void main_loop(void)
     {
         handle_input();
 
-        // Update ui after player makes a move
-        display_map();
-        display_char_status();
-
         update_mons();
 
         clear_msgs();

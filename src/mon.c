@@ -70,8 +70,8 @@ void update_mons(void)
 
     while(mon)
     {
-       update_mon_ai(mon);
-       mon = mon->next;
+        update_mon_ai(mon);
+        mon = mon->next;
     }
 }
 
