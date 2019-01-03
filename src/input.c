@@ -1,6 +1,7 @@
 #include "input.h"
 
 #include "attack.h"
+#include "inventory.h"
 #include "map.h"
 #include "message.h"
 #include "mon.h"
@@ -94,12 +95,22 @@ void handle_input(void)
             case ',':
                 went = _pick_up_object();
                 break;
+            case 'i':
+                {
+                    // Debug print inventory count
+                    struct Inventory* inv = you->mon->inventory;
+                    display_format_msg("Inventory %d/%d", inv->size, inv->capacity);
+                    break;
+                }
             default:
                 break;
 
         }
 
         if(!went)
+        {
+            clear_msgs();
             flush_msg_buffer();
+        }
     } while(!went);
 }

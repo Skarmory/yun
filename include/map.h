@@ -42,6 +42,7 @@ void map_add_mon(struct Mon* mon);
 bool map_rm_mon(struct Mon* mon);
 bool map_move_mon(struct Mon* mon, int newx, int newy);
 
+bool loc_add_obj(struct Location* loc, struct Object* obj);
 bool loc_rm_obj(struct Location* loc, struct Object* obj);
 bool loc_in_bounds(int x, int y);
 bool loc_has_mon(int x, int y);

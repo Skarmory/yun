@@ -139,6 +139,13 @@ int main(int argc, char** argv)
     you->mon->y = starty;
     map_add_mon(you->mon);
 
+    // Testing longsword
+    struct Weapon* longsword = new_weapon(W_LONGSWORD);
+    startx = random_int(room->x + 1, room->x + room->w - 2);
+    starty = random_int(room->y + 1, room->y + room->h - 2);
+    loc_add_obj(&cmap->locs[startx][starty], longsword->obj);
+    //cmap->locs[startx][starty].objects = longsword->obj;
+
     for(int i = 1; i < cmap->room_count - 1; i++)
     {
         room = cmap->rooms[i];
