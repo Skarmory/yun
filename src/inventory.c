@@ -3,13 +3,16 @@
 #include <stdlib.h>
 
 #include "log.h"
+#include "message.h"
 #include "object.h"
+
+#define DEFAULT_INVENTORY_SIZE 16
 
 struct Inventory* new_inventory(void)
 {
     struct Inventory* inventory = (struct Inventory*) malloc(sizeof(struct Inventory));
 
-    inventory->capacity = 0;
+    inventory->capacity = DEFAULT_INVENTORY_SIZE;
     inventory->size = 0;
     inventory->objects = NULL;
 
@@ -59,4 +62,32 @@ bool sanity_check_inventory(struct Inventory* inventory)
     }
 
     return ret;
+}
+
+/**
+ * Attempt to add an object into the inventory.
+ */
+bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
+{
+    if(inventory->size >= inventory->capacity)
+    {
+        display_msg("Cannot fit any more items.");
+        return false;
+    }
+
+    display_format_msg("You picked up a %s.", obj->name);
+
+    if(inventory->objects == NULL)
+    {
+        inventory->objects = obj;
+    }
+    else
+    {
+        obj->next = inventory->objects;
+        inventory->objects = obj;
+    }
+
+    inventory->size++;
+
+    return true;
 }

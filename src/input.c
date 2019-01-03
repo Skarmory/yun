@@ -34,14 +34,17 @@ bool _pick_up_object(void)
 
     if(obj == NULL)
     {
-       display_msg("There is nothing here");
+       display_msg("There is nothing here.");
        return false;
+    }
+
+    if(!inventory_add_obj(you->mon->inventory, obj))
+    {
+        return false;
     }
 
     struct Location* loc = &cmap->locs[you->mon->x][you->mon->y];
     loc_rm_obj(loc, obj);
-
-    display_format_msg("You picked up a %s", obj->name);
 
     return true;
 }
