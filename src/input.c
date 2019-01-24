@@ -96,12 +96,8 @@ void handle_input(void)
                 went = _pick_up_object();
                 break;
             case 'i':
-                {
-                    // Debug print inventory count
-                    struct Inventory* inv = you->mon->inventory;
-                    display_format_msg("Inventory %d/%d", inv->size, inv->capacity);
-                    break;
-                }
+                display_char_inventory();
+                break;
             default:
                 break;
 

@@ -1,10 +1,12 @@
 #include "ui.h"
 
 #include "class.h"
+#include "inventory.h"
 #include "log.h"
 #include "map.h"
 #include "mon.h"
 #include "ncurses_ext.h"
+#include "object.h"
 #include "player.h"
 #include "race.h"
 #include "stats.h"
@@ -16,6 +18,14 @@
 #define STATUS_X 0
 #define STATUS_Y 45
 #define STATUS_W 80
+
+void _input_wait_and_redraw(void)
+{
+    getch();
+    clear();
+    display_map();
+    display_char_status();
+}
 
 /*
  * Prints a simple view of the player's stats at the bottom of the game area.
@@ -49,10 +59,29 @@ void display_char_info_screen(void)
     mvprintw_xy(1, 8, "Parry%: %05.2f  Dodge%: %05.2f  SP:     %05d  SP:     %05d  CritBlock%: %05.2f", PSTAT(strength, parry_chance) * 100.f, PSTAT(agility, dodge_chance) * 100.f, PSTAT(intelligence, spell_power), PSTAT(spirit, spell_power), PSTAT(stamina, crit_block_chance) * 100.f);
     mvprintw_xy(1, 9, "                              SCrit%: %05.2f  SRes%:  %05.2f", PSTAT(intelligence, spell_crit_chance) * 100.f, PSTAT(spirit, resist) * 100.f);
 
-    getch();
+    _input_wait_and_redraw();
+}
 
+/**
+ * Displays items in the player's inventory
+ */
+void display_char_inventory(void)
+{
     clear();
 
-    display_map();
-    display_char_status();
+    int y = 0;
+    mvprintwa(1, y, A_BOLD, "Inventory");
+    y += 2;
+
+    struct Inventory* youinv = you->mon->inventory;
+
+    // TODO: Remove hardcoded 40, it's just for debugging currently
+    struct Object* obj = youinv->objects;
+    while(obj && y <= 40)
+    {
+        mvprintw_xy(1, y++, "%s", obj->name);
+        obj = obj->next;
+    }
+
+    _input_wait_and_redraw();
 }
