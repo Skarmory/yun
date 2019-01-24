@@ -294,11 +294,11 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
         if(!global_best || best_node->cost_to_end < global_best->cost_to_end)
             global_best = best_node;
 
+        _add_closed(best_node);
+
         // Reached destination, return
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
             return best_node;
-
-        _add_closed(best_node);
 
         struct Location*** neighbours = (struct Location***) malloc(sizeof(struct Location**));
         int ncount = loc_get_neighbours(best_node->loc, neighbours);
