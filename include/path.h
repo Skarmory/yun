@@ -21,18 +21,4 @@ struct PathNode
 
 struct Location* next_path_loc(struct Location* start, struct Location* dest, int path_bits);
 
-/**
- * Walk back through the linked list and get the first node.
- */
-inline struct PathNode* get_first_path_node(struct PathNode* node)
-{
-    if(!node->prev)
-        return node;
-
-    while(node->prev->prev)
-        node = node->prev;
-
-    return node;
-}
-
 #endif

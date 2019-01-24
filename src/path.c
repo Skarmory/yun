@@ -13,9 +13,21 @@ struct PathNode* _open_tail;
 struct PathNode* _closed_head;
 struct PathNode* _closed_tail;
 
-extern struct PathNode* get_first_path_node(struct PathNode* node);
-
 //TODO: Create array of path nodes or add path nodes to struct Location
+
+/**
+ * Walk back through the linked list and get the first node.
+ */
+struct PathNode* _get_first_path_node(struct PathNode* node)
+{
+    if(!node->prev)
+        return node;
+
+    while(node->prev->prev)
+        node = node->prev;
+
+    return node;
+}
 
 /**
  * Debug print method
@@ -367,7 +379,7 @@ struct Location* next_path_loc(struct Location* start, struct Location* dest, in
 
     if((node = _find_path(start, dest, path_bits)) != NULL)
     {
-        ret = get_first_path_node(node)->loc;
+        ret = _get_first_path_node(node)->loc;
     }
 
     _free_path_lists();
