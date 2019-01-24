@@ -39,7 +39,7 @@ void destroy_player(void)
         free(you->cls);
         free(you->race);
         if(you->mon != NULL)
-            free(you->mon);
+            destroy_mon(you->mon);
         free(you);
     }
 }

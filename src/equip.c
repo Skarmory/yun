@@ -20,4 +20,6 @@ void free_equipment(struct Equipment* equipment)
 
     if(equipment->off_hand)
         free_weapon(equipment->off_hand);
+
+    free(equipment);
 }

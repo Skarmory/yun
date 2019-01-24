@@ -58,6 +58,7 @@ void destroy_mon(struct Mon* mon)
 {
     map_rm_mon(mon);
     free_equipment(mon->equipment);
+    free_inventory(mon->inventory);
     free(mon);
 }
 
