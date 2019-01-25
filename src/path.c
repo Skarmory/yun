@@ -283,8 +283,8 @@ void _debug_draw_path(void)
  */
 struct PathNode* _find_path(struct Location* start, struct Location* dest, int path_bits)
 {
-    struct PathNode* global_best;
-    struct PathNode* best_node;
+    struct PathNode* global_best = NULL;
+    struct PathNode* best_node = NULL;
 
     while(_open_head)
     {
