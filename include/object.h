@@ -35,4 +35,9 @@ struct Object
     struct Object* next;
 };
 
+/**
+ * Calls the correct free function depending on object type
+ */
+void free_obj(struct Object* obj);
+
 #endif
