@@ -39,7 +39,10 @@ void destroy_player(void)
         free(you->cls);
         free(you->race);
         if(you->mon != NULL)
+        {
+            map_rm_mon(you->mon);
             destroy_mon(you->mon);
+        }
         free(you);
     }
 }
