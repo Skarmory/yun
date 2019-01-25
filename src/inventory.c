@@ -21,6 +21,13 @@ struct Inventory* new_inventory(void)
 
 void free_inventory(struct Inventory* inventory)
 {
+    struct Object* tmp;
+    while((tmp = inventory->objects) != NULL)
+    {
+        inventory->objects = inventory->objects->next;
+        free_obj(tmp);
+    }
+
     free(inventory);
 }
 
@@ -77,15 +84,8 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 
     display_format_msg("You picked up a %s.", obj->name);
 
-    if(inventory->objects == NULL)
-    {
-        inventory->objects = obj;
-    }
-    else
-    {
-        obj->next = inventory->objects;
-        inventory->objects = obj;
-    }
+    obj->next = inventory->objects;
+    inventory->objects = obj;
 
     inventory->size++;
 
