@@ -35,6 +35,16 @@ void init_montypes(void)
     }
 }
 
+void uninit_montypes(void)
+{
+    for(unsigned int idx = MT_RANGE_START; idx < MT_RANGE_END; idx++)
+    {
+        // Create base armour and weapons for each mon type
+        free_armour(mon_type[idx].base_armour);
+        free_weapon(mon_type[idx].base_weapon);
+    }
+}
+
 /**
  * Array containing all the mon types in the game
  */
