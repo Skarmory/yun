@@ -5,6 +5,7 @@
 #include "log.h"
 #include "map.h"
 #include "mon.h"
+#include "montype.h"
 #include "player.h"
 #include "race.h"
 
@@ -53,6 +54,7 @@ void do_quit(void)
     destroy_player();
     destroy_map();
     destroy_logs();
+    uninit_montypes();
     endwin();
     use_default_colors();
     puts(exit_msg);
