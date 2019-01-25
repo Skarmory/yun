@@ -14,6 +14,16 @@
 
 struct Map* cmap;
 
+void _map_free_all_mons(void)
+{
+    struct Mon* tmp;
+    while((tmp = cmap->monlist) != NULL)
+    {
+        cmap->monlist = cmap->monlist->next;
+        destroy_mon(tmp);
+    }
+}
+
 /**
  * Creates the map and sets map locations to default values
  */
@@ -46,16 +56,32 @@ void destroy_map(void)
 {
     if(cmap != NULL)
     {
+        _map_free_all_mons();
+
         for(int r = 0; r < cmap->room_count; r++)
             free(cmap->rooms[r]);
 
         free(cmap->rooms);
 
         for(int x = 0; x < MCOLS; x++)
+        {
+            for(int y = 0; y < MROWS; y++)
+            {
+                struct Object* tmp;
+                while((tmp = cmap->locs[x][y].objects) != NULL)
+                {
+                    cmap->locs[x][y].objects = cmap->locs[x][y].objects->next;
+                    free_obj(tmp);
+                }
+            }
+
             free(cmap->locs[x]);
+        }
 
         free(cmap->locs);
     }
+
+    free(cmap);
 }
 
 /**
