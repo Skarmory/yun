@@ -12,7 +12,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
-struct Player* you;
+struct Player* you = NULL;
 
 /**
  * Create a new player.

@@ -46,7 +46,7 @@ void convert_arg(char c, char* buf)
 void do_quit(void)
 {
     char exit_msg[512];
-    if(mon_is_dead(you->mon))
+    if(you && you->mon && mon_is_dead(you->mon))
         sprintf(exit_msg, "The dark void awaits you!");
     else
         sprintf(exit_msg, "Your curiosity will be the death of you.");

@@ -13,7 +13,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
-struct Map* cmap;
+struct Map* cmap = NULL;
 
 void _map_free_all_mons(void)
 {
@@ -33,6 +33,8 @@ void init_map(void)
     cmap = (struct Map*) malloc(sizeof(struct Map));
     cmap->locs = (struct Location**) malloc(sizeof(struct Location*) * MCOLS);
     cmap->monlist = NULL;
+    cmap->rooms = NULL;
+    cmap->room_count = 0;
 
     for(int i = 0; i < MCOLS; ++i)
     {
@@ -83,9 +85,8 @@ void destroy_map(void)
         }
 
         free(cmap->locs);
+        free(cmap);
     }
-
-    free(cmap);
 }
 
 /**
