@@ -1,5 +1,6 @@
 #include "path.h"
 
+#include "globals.h"
 #include "log.h"
 #include "map.h"
 #include "util.h"
@@ -10,11 +11,6 @@
 #include <stdlib.h>
 
 struct PathNode* _open_head;
-struct PathNode* _open_tail;
-struct PathNode* _closed_head;
-struct PathNode* _closed_tail;
-
-//TODO: Create array of path nodes or add path nodes to struct Location
 
 /**
  * Walk back through the linked list and get the first node.
@@ -28,16 +24,6 @@ struct PathNode* _get_first_path_node(struct PathNode* node)
         node = node->prev;
 
     return node;
-}
-
-/**
- * Debug print method
- */
-void __print_node(char* msg, struct PathNode* path)
-{
-    char _msg[256];
-    sprintf(_msg, "%s %d %d", msg, path->loc->x, path->loc->y);
-    log_msg(_msg, DEBUG);
 }
 
 /**
@@ -64,113 +50,37 @@ float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
     return dist2 + mod;
 }
 
-/**
- * Check if node is in the closed list
- * TODO: This is very inefficient.
- */
-struct PathNode* _in_closed(struct Location* loc)
-{
-    struct PathNode* tmp = _closed_head;
-    while(tmp)
-    {
-        if((loc->x == tmp->loc->x) && (loc->y == tmp->loc->y))
-            return tmp;
-
-        tmp = tmp->pathlist_next;
-    }
-
-    return NULL;
-}
-
-/**
- * Check if node is in the open list
- * TODO: This is very inefficient.
- */
-struct PathNode* _in_open(struct Location* loc)
-{
-    struct PathNode* tmp = _open_head;
-    while(tmp)
-    {
-        if((loc->x == tmp->loc->x) && (loc->y == tmp->loc->y))
-            return tmp;
-
-        tmp = tmp->pathlist_next;
-    }
-
-    return NULL;
-}
-
-/**
- * Debug print method
- */
-void __log_open(void)
-{
-    struct PathNode* tmp = _open_head;
-
-    if(!tmp)
-        log_msg("No open nodes", DEBUG);
-
-    while(tmp)
-    {
-        __print_node("open", tmp);
-        tmp = tmp->pathlist_next;
-    }
-}
-
-/**
- * Debug print method
- */
 void _add_open(struct PathNode* node)
 {
-    if(_open_tail)
-    {
-        _open_tail->pathlist_next = node;
-        _open_tail = _open_tail->pathlist_next;
-    }
-    else if(!_open_head)
+    node->state = OPEN;
+
+    if(!_open_head)
     {
         _open_head = node;
-        _open_tail = node;
+        return;
     }
-
-    _open_tail->pathlist_next = NULL;
-}
-
-/**
- * Debug print method
- */
-void __log_closed(void)
-{
-    struct PathNode* tmp = _closed_head;
-
-    if(!tmp)
-        log_msg("No closed nodes", DEBUG);
-
-    while(tmp)
+    else if(node->cost_to_end < _open_head->cost_to_end)
     {
-        __print_node("closed", tmp);
-
-        tmp = tmp->pathlist_next;
+        node->pathlist_next = _open_head;
+        _open_head = node;
+        return;
     }
-}
 
-/**
- * Add node to the closed list
- */
-void _add_closed(struct PathNode* node)
-{
-    if(_closed_tail)
+    struct PathNode* prev = _open_head;
+    while(prev->pathlist_next)
     {
-        _closed_tail->pathlist_next = node;
-        _closed_tail = _closed_tail->pathlist_next;
-    }
-    else if(!_closed_head)
-    {
-        _closed_head = node;
-        _closed_tail = node;
+        if(prev->pathlist_next && node->cost_to_end < prev->pathlist_next->cost_to_end)
+        {
+            node->pathlist_next = prev->pathlist_next;
+            prev->pathlist_next = node;
+            return;
+        }
+
+        prev = prev->pathlist_next;
     }
 
-    _closed_tail->pathlist_next = NULL;
+    prev->pathlist_next = node;
+    node->pathlist_next = NULL;
 }
 
 /**
@@ -178,92 +88,12 @@ void _add_closed(struct PathNode* node)
  */
 struct PathNode* _get_best_open(void)
 {
-    struct PathNode *ret, *ret_prev, *prev, *cur;
+    struct PathNode* best = _open_head;
+    _open_head = _open_head->pathlist_next;
 
-    // Check for empty or single element list
-    if(_open_head == _open_tail)
-    {
-        ret = _open_head;
-        ret->pathlist_next = NULL;
-        _open_head = NULL;
-        _open_tail = NULL;
-        return ret;
-    }
+    best->pathlist_next = NULL;
 
-    ret_prev = NULL; 
-    prev = NULL;
-    ret = _open_head; 
-    cur = _open_head;
-
-    // Go through and keep track of best value in ret, and the previous node in ret_prev
-    // ret_prev tracked so we can relink the list together once we remove ret
-    while(cur)
-    {
-        if(cur->cost_to_end < ret->cost_to_end)
-        {
-            ret_prev = prev;
-            ret = cur;
-        }
-
-        prev = cur;
-        cur = cur->pathlist_next;
-    }
-
-    if(ret == _open_head)
-    {
-        if(_open_head == _open_tail)
-            _open_tail = NULL;
-
-        _open_head = _open_head->pathlist_next;
-    }
-    else
-    {
-        ret_prev->pathlist_next = ret->pathlist_next;
-        if(ret == _open_tail)
-        {
-            _open_tail = ret_prev;
-        }
-    }
-
-    ret->pathlist_next = NULL;
-
-    return ret;
-}
-
-/**
- * Draws a visualisation of the path being constructed
- */
-void _debug_draw_path(void)
-{
-    display_map();
-
-    struct PathNode* tmp = _closed_head;
-    attron(COLOR_PAIR(1));
-
-    while(tmp)
-    {
-        mvprintw(tmp->loc->y, tmp->loc->x, "X");
-
-        tmp = tmp->pathlist_next;
-    }
-
-    attroff(COLOR_PAIR(1));
-
-    tmp = _open_head;
-    attron(COLOR_PAIR(2));
-
-    while(tmp)
-    {
-        mvprintw(tmp->loc->y,tmp->loc->x, "O");
-        tmp = tmp->pathlist_next;
-    }
-
-    attroff(COLOR_PAIR(2));
-
-    char c = getch();
-    if(c == 'q')
-        do_quit();
-    refresh();
+    return best;
 }
 
 /**
@@ -282,8 +112,6 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
         if(!global_best || best_node->cost_to_end < global_best->cost_to_end)
             global_best = best_node;
 
-        _add_closed(best_node);
-
         // Reached destination, return
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
             return best_node;
@@ -300,9 +128,18 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
             if((!loc_in_bounds(loc->x, loc->y) || !loc_is_pathable(loc->x, loc->y, path_bits))  && (loc->x != dest->x || loc->y != dest->y))
                 continue;
 
-            struct PathNode* p;
+            struct PathNode* p = loc->path_node;
 
-            if((p = _in_closed(loc)) != NULL)
+            // Check to see if this is a stale node (if it was last visited in a previous turn or a previous pathing request this turn)
+            // Set it to a fresh state
+            if(p->turn_visited != current_turn_number || p->gen_id != best_node->gen_id)
+            {
+                p->turn_visited = current_turn_number;
+                p->state = UNVISITED;
+                p->gen_id = best_node->gen_id;
+            }
+
+            if(p->state == CLOSED)
             {
                 // Check if this new path is more cost-efficient
                 // If it is, we can reassign the path to this closed node
@@ -312,16 +149,16 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
                     p->cost_from_start = best_node->cost_from_start + 1;
                 }
             }
-            else if((p = _in_open(loc)) == NULL)
+            else if(p->state == UNVISITED)
             {
                 // This location has not been visited yet
                 // Add to open list
-                p = (*neighbours)[i]->path_node;
                 p->pathlist_next = NULL;
                 p->next = NULL;
                 p->prev = best_node; 
                 p->cost_from_start = best_node->cost_from_start + 1;
                 p->cost_to_end = _evaluate(p, dest, path_bits);
+
                 _add_open(p);
             }
         }
@@ -333,24 +170,6 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
     return global_best;
 }
 
-/**
- * Free the two path node lists
- */
-void _free_path_lists(void)
-{
-    while((_open_tail = _open_head) != NULL)
-    {
-        _open_head = _open_head->pathlist_next;
-        free(_open_tail);
-    }
-
-    while((_closed_tail = _closed_head) != NULL)
-    {
-        _closed_head = _closed_head->pathlist_next;
-        free(_closed_tail);
-    }
-}
-
 struct PathNode* new_path_node(struct Location* loc)
 {
     struct PathNode* node = (struct PathNode*) malloc(sizeof(struct PathNode));
@@ -360,7 +179,9 @@ struct PathNode* new_path_node(struct Location* loc)
     node->prev = NULL;
     node->cost_to_end = FLT_MAX;
     node->cost_from_start = FLT_MAX;
-    node->state = NodeState::UNVISITED;
+    node->state = UNVISITED;
+    node->gen_id = -1;
+    node->turn_visited = -1;
 
     return node;
 }
@@ -371,9 +192,6 @@ struct PathNode* new_path_node(struct Location* loc)
 struct Location* next_path_loc(struct Location* start, struct Location* dest, int path_bits)
 {
     _open_head = NULL;
-    _open_tail = NULL;
-    _closed_head = NULL;
-    _closed_tail = NULL;
 
     struct PathNode* node = start->path_node;
     node->pathlist_next = NULL;
@@ -381,6 +199,8 @@ struct Location* next_path_loc(struct Location* start, struct Location* dest, in
     node->next = NULL;
     node->cost_from_start = 0.0f;
     node->cost_to_end = _evaluate(node, dest, path_bits);
+    node->turn_visited = current_turn_number;
+    node->gen_id = ++current_path_gen_id;
 
     _add_open(node);
 

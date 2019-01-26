@@ -1,6 +1,7 @@
 #include "class.h"
 #include "colour.h"
 #include "faction.h"
+#include "globals.h"
 #include "input.h"
 #include "log.h"
 #include "map.h"
@@ -76,6 +77,8 @@ void new_game(void)
 
     getch();
     clear();
+
+    current_turn_number = 0;
 }
 
 void main_loop(void)
@@ -87,6 +90,11 @@ void main_loop(void)
 
     do
     {
+        current_turn_number++;
+
+        // Reset path generation info
+        current_path_gen_id = -1;
+
         handle_input();
 
         update_mons();
