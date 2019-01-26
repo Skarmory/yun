@@ -6,6 +6,7 @@
 #include "ncurses_ext.h"
 #include "object.h"
 #include "player.h"
+#include "path.h"
 #include "symbol.h"
 #include "util.h"
 
@@ -42,6 +43,7 @@ void init_map(void)
             cmap->locs[i][j].x = i;
             cmap->locs[i][j].y = j;
             cmap->locs[i][j].terrain = ' ';
+            cmap->locs[i][j].path_node = new_path_node(&cmap->locs[i][j]);
             cmap->locs[i][j].mon = NULL;
             cmap->locs[i][j].pathing = 0;
             cmap->locs[i][j].objects = NULL;
@@ -73,6 +75,8 @@ void destroy_map(void)
                     cmap->locs[x][y].objects = cmap->locs[x][y].objects->next;
                     free_obj(tmp);
                 }
+
+                free(cmap->locs[x][y].path_node);
             }
 
             free(cmap->locs[x]);

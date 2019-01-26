@@ -6,6 +6,7 @@
 struct Mon;
 struct Room;
 struct Object;
+struct PathNode;
 
 #define MROWS 40
 #define MCOLS 80
@@ -19,6 +20,7 @@ struct Location
 {
     int x, y;
     int pathing;
+    struct PathNode* path_node;
     struct Mon* mon;
     struct Object* objects;
     char terrain;

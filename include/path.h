@@ -19,6 +19,7 @@ struct PathNode
     float cost_from_start;
 };
 
+struct PathNode* new_path_node(struct Location* loc);
 struct Location* next_path_loc(struct Location* start, struct Location* dest, int path_bits);
 
 #endif

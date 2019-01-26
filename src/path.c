@@ -4,6 +4,7 @@
 #include "map.h"
 #include "util.h"
 
+#include <float.h>
 #include <math.h>
 #include <ncurses.h>
 #include <stdlib.h>
@@ -61,19 +62,6 @@ float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
     float dist2 = _x * _x + _y * _y;
 
     return dist2 + mod;
-}
-
-/**
- * Create a path node with fields initialised to default values
- */
-struct PathNode* _new_path_node(struct Location* loc, struct Location* start, struct Location* dest, int path_bits)
-{
-    struct PathNode* p = (struct PathNode*)malloc(sizeof(struct PathNode));
-    p->pathlist_next = NULL;
-    p->prev = NULL;
-    p->loc = loc;
-    p->cost_to_end = _evaluate(p, dest, path_bits);
-    return p;
 }
 
 /**
@@ -323,15 +311,17 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
                     p->prev = best_node;
                     p->cost_from_start = best_node->cost_from_start + 1;
                 }
-
             }
             else if((p = _in_open(loc)) == NULL)
             {
                 // This location has not been visited yet
                 // Add to open list
-                p = _new_path_node((*neighbours)[i], start, dest, path_bits);
+                p = (*neighbours)[i]->path_node;
+                p->pathlist_next = NULL;
+                p->next = NULL;
                 p->prev = best_node; 
                 p->cost_from_start = best_node->cost_from_start + 1;
+                p->cost_to_end = _evaluate(p, dest, path_bits);
                 _add_open(p);
             }
         }
@@ -361,6 +351,20 @@ void _free_path_lists(void)
     }
 }
 
+struct PathNode* new_path_node(struct Location* loc)
+{
+    struct PathNode* node = (struct PathNode*) malloc(sizeof(struct PathNode));
+    node->loc = loc;
+    node->pathlist_next = NULL;
+    node->next = NULL;
+    node->prev = NULL;
+    node->cost_to_end = FLT_MAX;
+    node->cost_from_start = FLT_MAX;
+    node->state = NodeState::UNVISITED;
+
+    return node;
+}
+
 /**
  * Returns the next location in the shortest path from start to dest
  */
@@ -371,18 +375,20 @@ struct Location* next_path_loc(struct Location* start, struct Location* dest, in
     _closed_head = NULL;
     _closed_tail = NULL;
 
-    struct PathNode* node = _new_path_node(start, start, dest, path_bits);
-    struct Location* ret = NULL;
-
+    struct PathNode* node = start->path_node;
+    node->pathlist_next = NULL;
+    node->prev = NULL;
+    node->next = NULL;
     node->cost_from_start = 0.0f;
+    node->cost_to_end = _evaluate(node, dest, path_bits);
+
     _add_open(node);
 
+    struct Location* ret = NULL;
     if((node = _find_path(start, dest, path_bits)) != NULL)
     {
         ret = _get_first_path_node(node)->loc;
     }
-
-    _free_path_lists();
 
     return ret;
 }
