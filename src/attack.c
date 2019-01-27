@@ -29,16 +29,16 @@ typedef enum attack_result
  */
 attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
 {
-    log_format_msg(">>> %s -> %s", DEBUG, attacker->type->name, defender->type->name);
+    log_format_msg(DEBUG, ">>> %s -> %s", attacker->type->name, defender->type->name);
 
     int str_diff = MSTAT(attacker, strength, strength) - MSTAT(defender, strength, strength);
     int agi_diff = MSTAT(attacker, agility, agility) - MSTAT(defender, agility, agility);
 
-    log_format_msg("%d + %d = %d", DEBUG, str_diff, agi_diff, str_diff + agi_diff);
+    log_format_msg(DEBUG, "%d + %d = %d", str_diff, agi_diff, str_diff + agi_diff);
 
     int roll = roll_d100();
 
-    log_format_msg("roll to hit: %d (need > %d)", DEBUG, roll, (5 - (str_diff + agi_diff) / 10));
+    log_format_msg(DEBUG, "roll to hit: %d (need > %d)", roll, (5 - (str_diff + agi_diff) / 10));
 
     // Check for guaranteed hit or miss
     if(roll < 5)
@@ -63,15 +63,15 @@ attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
     {
         // Check for crit block
         roll = roll_d100();
-        log_format_msg("roll to crit block: %d (need > %d)", DEBUG, roll, 100 - (int)(MSTAT(defender, stamina, crit_block_chance) * 100));
+        log_format_msg(DEBUG, "roll to crit block: %d (need > %d)", roll, 100 - (int)(MSTAT(defender, stamina, crit_block_chance) * 100));
         if(roll > 100 - (int)(MSTAT(defender, stamina, crit_block_chance) * 100))
             return crit_block;
 
         return block;
     }
 
-    log_msg("hit", DEBUG);
-    log_msg("<<<", DEBUG);
+    log_msg(DEBUG, "hit");
+    log_msg(DEBUG, "<<<");
 
     return hit;
 }

@@ -256,7 +256,7 @@ bool dodge_check(struct Mon* mon)
 {
     float roll = roll_d100f();
 
-    log_format_msg("Dodge check. Rolled: %5.2f (needed: > %5.2f)", DEBUG, roll * 100.0f, (1.0f - get_dodge(mon)) * 100.0f);
+    log_format_msg(DEBUG, "Dodge check. Rolled: %5.2f (needed: > %5.2f)", roll * 100.0f, (1.0f - get_dodge(mon)) * 100.0f);
 
     return roll > (1.0f - get_dodge(mon));
 }
@@ -265,7 +265,7 @@ bool parry_check(struct Mon* mon)
 {
     float roll = roll_d100f();
 
-    log_format_msg("Parry check. Rolled: %5.2f (needed: > %5.2f)", DEBUG, roll * 100.0f, (1.0f - get_parry(mon)) * 100.0f);
+    log_format_msg(DEBUG, "Parry check. Rolled: %5.2f (needed: > %5.2f)", roll * 100.0f, (1.0f - get_parry(mon)) * 100.0f);
 
     return roll > (1.0f - get_parry(mon));
 }
@@ -274,7 +274,7 @@ bool block_check(struct Mon* mon)
 {
     float roll = roll_d100f();
 
-    log_format_msg("Block check. Rolled: %5.2f (needed: > %5.2f)", DEBUG, roll * 100.0f, (1.0f - get_block(mon)) * 100.0f);
+    log_format_msg(DEBUG, "Block check. Rolled: %5.2f (needed: > %5.2f)", roll * 100.0f, (1.0f - get_block(mon)) * 100.0f);
 
     return roll > (1.0f - get_block(mon));
 }

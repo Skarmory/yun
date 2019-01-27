@@ -23,7 +23,7 @@ void init_logs(void)
 /**
  * Write a message to the given log file.
  */
-void log_msg(char* msg, int logtype)
+void log_msg(int logtype, char* msg)
 {
     switch(logtype)
     {
@@ -41,14 +41,14 @@ void log_msg(char* msg, int logtype)
 /**
  * Write a formatted message with variable args to the given log file.
  */
-void log_format_msg(char* format, int logtype, ...)
+void log_format_msg(int logtype, char* format, ...)
 {
     va_list args;
-    va_start(args, logtype);
+    va_start(args, format);
 
     char msg[256];
     vsnprintf(msg, 256, format, args);
-    log_msg(msg, logtype);
+    log_msg(logtype, msg);
 
     va_end(args);
 }
@@ -58,7 +58,7 @@ void log_format_msg(char* format, int logtype, ...)
  */
 void log_scheck_fail(char* msg)
 {
-    log_format_msg("[SANITY CHECK FAILURE] %s", DEBUG, msg);
+    log_format_msg(DEBUG, "[SANITY CHECK FAILURE] %s", msg);
 }
 
 /**

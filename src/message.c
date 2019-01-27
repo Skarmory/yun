@@ -48,7 +48,7 @@ void _flush_and_prompt(void)
  */
 void display_msg(char* msg)
 {
-    log_msg(msg, MSGHIST);
+    log_msg(MSGHIST, msg);
 
     int msgsize = strlen(msg);
     bool handled = false;
