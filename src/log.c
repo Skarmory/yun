@@ -66,7 +66,7 @@ void log_scheck_fail(char* msg)
  *
  * This should only be called once at shutdown
  */
-void destroy_logs(void)
+void uninit_logs(void)
 {
     fclose(msghist_file);
     fclose(debug_file);

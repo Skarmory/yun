@@ -21,7 +21,7 @@
 bool _do_smart_action(int x, int y)
 {
     if(cmap->locs[x][y].mon == NULL)
-        return map_move_mon(you->mon, x, y);
+        return map_move_mon(cmap, you->mon, x, y);
     else
         return do_player_attack_mon(cmap->locs[x][y].mon);
 }
@@ -31,7 +31,7 @@ bool _do_smart_action(int x, int y)
  */
 bool _pick_up_object(void)
 {
-    struct Object* obj = loc_get_objects(you->mon->x, you->mon->y);
+    struct Object* obj = map_get_objects(cmap, you->mon->x, you->mon->y);
 
     if(obj == NULL)
     {

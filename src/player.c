@@ -31,18 +31,13 @@ void new_player(void)
 /**
  * Destroy the player
  */
-void destroy_player(void)
+void free_player(void)
 {
     if(you != NULL)
     {
         you->faction = NULL;
         free(you->cls);
         free(you->race);
-        if(you->mon != NULL)
-        {
-            map_rm_mon(you->mon);
-            destroy_mon(you->mon);
-        }
         free(you);
     }
 }

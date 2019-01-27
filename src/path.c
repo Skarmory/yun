@@ -39,7 +39,7 @@ float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
 
     // If this is not a valid move (e.g. other mon on this loc), assign a higher value than it's distance
     // This means the algorithm will explore other paths before checking further in this direction
-    if(!loc_valid_move(path->loc->x, path->loc->y, path_bits))
+    if(!map_valid_move(cmap, path->loc->x, path->loc->y, path_bits))
         mod = 100.0f;
 
     // Use distance squared to avoid sqrt
@@ -117,7 +117,7 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
             return best_node;
 
         struct Location*** neighbours = (struct Location***) malloc(sizeof(struct Location**));
-        int ncount = loc_get_neighbours(best_node->loc, neighbours);
+        int ncount = map_loc_get_neighbours(cmap, best_node->loc, neighbours);
 
         struct Location* loc;
         for(int i = 0; i < ncount; i++)
@@ -125,7 +125,7 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
             loc = (*neighbours)[i];
 
             // Check for invalid location
-            if((!loc_in_bounds(loc->x, loc->y) || !loc_is_pathable(loc->x, loc->y, path_bits))  && (loc->x != dest->x || loc->y != dest->y))
+            if((!map_in_bounds(cmap, loc->x, loc->y) || !map_is_pathable(cmap, loc->x, loc->y, path_bits))  && (loc->x != dest->x || loc->y != dest->y))
                 continue;
 
             struct PathNode* p = loc->path_node;

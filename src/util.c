@@ -51,9 +51,11 @@ void do_quit(void)
     else
         sprintf(exit_msg, "Your curiosity will be the death of you.");
 
-    destroy_player();
-    destroy_map();
-    destroy_logs();
+    if(cmap)
+        free_map(cmap);
+
+    free_player();
+    uninit_logs();
     uninit_montypes();
     endwin();
     use_default_colors();

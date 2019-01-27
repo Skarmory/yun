@@ -54,7 +54,7 @@ struct Mon* new_mon(int mtype, int x, int y)
 /**
  * Destroy monster
  */
-void destroy_mon(struct Mon* mon)
+void free_mon(struct Mon* mon)
 {
     free_equipment(mon->equipment);
     free_inventory(mon->inventory);
@@ -107,8 +107,8 @@ void mon_chk_dead(struct Mon* mon)
     if(mon_is_dead(mon))
     {
         display_format_msg("The %s was slain.", mon->type->name);
-        map_rm_mon(mon);
-        destroy_mon(mon);
+        map_rm_mon(cmap, mon);
+        free_mon(mon);
     }
 }
 

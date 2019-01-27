@@ -22,7 +22,7 @@ struct Player
 };
 
 void new_player(void);
-void destroy_player(void);
+void free_player(void);
 void player_chk_dead(void);
 
 extern struct Player* you;

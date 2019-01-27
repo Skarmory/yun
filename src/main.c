@@ -131,7 +131,7 @@ int main(int argc, char** argv)
     init_logs();
     init_msgs();
     init_montypes();
-    init_map();
+    cmap = new_map();
 
     new_player();
     new_game();
@@ -145,7 +145,7 @@ int main(int argc, char** argv)
 
     you->mon->x = startx;
     you->mon->y = starty;
-    map_add_mon(you->mon);
+    map_add_mon(cmap, you->mon);
 
     // Testing longsword
     struct Weapon* longsword = new_weapon(W_LONGSWORD);
@@ -161,7 +161,7 @@ int main(int argc, char** argv)
         starty = random_int(room->y + 1, room->y + room->h - 2);
 
         struct Mon* ghoul = new_mon(MT_GHOUL, startx, starty);
-        map_add_mon(ghoul);
+        map_add_mon(cmap, ghoul);
     }
     // ---------- DEBUG CODE END ----------
 

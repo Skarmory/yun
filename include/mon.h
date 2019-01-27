@@ -28,7 +28,7 @@ struct Mon
 };
 
 struct Mon* new_mon(int mtype, int x, int y);
-void destroy_mon(struct Mon*);
+void free_mon(struct Mon*);
 void update_mons(void);
 bool mon_has_pathing_attr(struct Mon* mon, int path_attr);
 bool mon_is_dead(struct Mon* mon);

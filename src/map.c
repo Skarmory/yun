@@ -15,78 +15,77 @@
 
 struct Map* cmap = NULL;
 
-void _map_free_all_mons(void)
+void _map_free_all_mons(struct Map* map)
 {
     struct Mon* tmp;
-    while((tmp = cmap->monlist) != NULL)
+    while((tmp = map->monlist) != NULL)
     {
-        cmap->monlist = cmap->monlist->next;
-        destroy_mon(tmp);
+        map->monlist = map->monlist->next;
+        free_mon(tmp);
     }
 }
 
 /**
  * Creates the map and sets map locations to default values
  */
-void init_map(void)
+struct Map* new_map(void)
 {
-    cmap = (struct Map*) malloc(sizeof(struct Map));
-    cmap->locs = (struct Location**) malloc(sizeof(struct Location*) * MCOLS);
-    cmap->monlist = NULL;
-    cmap->rooms = NULL;
-    cmap->room_count = 0;
+    struct Map* map = (struct Map*) malloc(sizeof(struct Map));
+    map->locs = (struct Location**) malloc(sizeof(struct Location*) * MCOLS);
+    map->monlist = NULL;
+    map->rooms = NULL;
+    map->room_count = 0;
 
     for(int i = 0; i < MCOLS; ++i)
     {
-        cmap->locs[i] = (struct Location*) malloc(sizeof(struct Location) * MROWS);
+        map->locs[i] = (struct Location*) malloc(sizeof(struct Location) * MROWS);
 
         for(int j = 0; j < MROWS; ++j)
         {
-            cmap->locs[i][j].x = i;
-            cmap->locs[i][j].y = j;
-            cmap->locs[i][j].terrain = ' ';
-            cmap->locs[i][j].path_node = new_path_node(&cmap->locs[i][j]);
-            cmap->locs[i][j].mon = NULL;
-            cmap->locs[i][j].pathing = 0;
-            cmap->locs[i][j].objects = NULL;
+            map->locs[i][j].x = i;
+            map->locs[i][j].y = j;
+            map->locs[i][j].terrain = ' ';
+            map->locs[i][j].path_node = new_path_node(&map->locs[i][j]);
+            map->locs[i][j].mon = NULL;
+            map->locs[i][j].pathing = 0;
+            map->locs[i][j].objects = NULL;
         }
     }
+
+    return map;
 }
 
 /**
  * Safely deletes the map
  */
-void destroy_map(void)
+void free_map(struct Map* map)
 {
-    if(cmap != NULL)
+    _map_free_all_mons(map);
+
+    for(int r = 0; r < map->room_count; r++)
+        free(map->rooms[r]);
+
+    free(map->rooms);
+
+    for(int x = 0; x < MCOLS; x++)
     {
-        _map_free_all_mons();
-
-        for(int r = 0; r < cmap->room_count; r++)
-            free(cmap->rooms[r]);
-
-        free(cmap->rooms);
-
-        for(int x = 0; x < MCOLS; x++)
+        for(int y = 0; y < MROWS; y++)
         {
-            for(int y = 0; y < MROWS; y++)
+            struct Object* tmp;
+            while((tmp = map->locs[x][y].objects) != NULL)
             {
-                struct Object* tmp;
-                while((tmp = cmap->locs[x][y].objects) != NULL)
-                {
-                    cmap->locs[x][y].objects = cmap->locs[x][y].objects->next;
-                    free_obj(tmp);
-                }
-
-                free(cmap->locs[x][y].path_node);
+                map->locs[x][y].objects = map->locs[x][y].objects->next;
+                free_obj(tmp);
             }
 
-            free(cmap->locs[x]);
+            free(map->locs[x][y].path_node);
         }
 
-        free(cmap->locs);
-        free(cmap);
+        free(map->locs[x]);
     }
+
+    free(map->locs);
+    free(map);
 }
 
 /**
@@ -115,35 +114,35 @@ void display_map(void)
 /**
  * Add monster to the level
  */
-void map_add_mon(struct Mon* mon)
+void map_add_mon(struct Map* map, struct Mon* mon)
 {
     int x = mon->x;
     int y = mon->y;
-    cmap->locs[x][y].mon = mon;
+    map->locs[x][y].mon = mon;
 
     // push mon onto the list
-    mon->next = cmap->monlist;
-    cmap->monlist = mon;
+    mon->next = map->monlist;
+    map->monlist = mon;
 }
 
 /*
  * Remove monster from the level
  */
-bool map_rm_mon(struct Mon* mon)
+bool map_rm_mon(struct Map* map, struct Mon* mon)
 {
-    struct Mon* curr = cmap->monlist;
+    struct Mon* curr = map->monlist;
     struct Mon* prev = NULL;
     while(curr)
     {
        if(curr == mon)
        {
-            cmap->locs[mon->x][mon->y].mon = NULL;
+            map->locs[mon->x][mon->y].mon = NULL;
 
             // Check if this is head of monlist
             if(prev)
                 prev->next = curr->next;
             else
-                cmap->monlist = curr->next;
+                map->monlist = curr->next;
 
             return true;
        }
@@ -158,9 +157,9 @@ bool map_rm_mon(struct Mon* mon)
 /**
  * Get the object at given map location
  */
-struct Object* loc_get_objects(int x, int y)
+struct Object* map_get_objects(struct Map* map, int x, int y)
 {
-    return cmap->locs[x][y].objects;
+    return map->locs[x][y].objects;
 }
 
 /**
@@ -206,7 +205,7 @@ bool loc_rm_obj(struct Location* loc, struct Object* obj)
 /*
  * Does map boundary check
  */
-bool loc_in_bounds(int x, int y)
+bool map_in_bounds(struct Map* map, int x, int y)
 {
     if(x < 0 || x >= MCOLS || y < 0 || y >= MROWS)
         return false;
@@ -216,37 +215,37 @@ bool loc_in_bounds(int x, int y)
 /**
  * Check if a location has a mon
  */
-bool loc_has_mon(int x, int y)
+bool map_has_mon(struct Map* map, int x, int y)
 {
-    return cmap->locs[x][y].mon != NULL;
+    return map->locs[x][y].mon != NULL;
 }
 
 /**
  * Check if location is pathable given sample path bits
  */
-bool loc_is_pathable(int x, int y, int path_bits)
+bool map_is_pathable(struct Map* map, int x, int y, int path_bits)
 {
-    return cmap->locs[x][y].pathing & path_bits;
+    return map->locs[x][y].pathing & path_bits;
 }
 
 /**
  * Check if given x, y location is a valid move
  */
-bool loc_valid_move(int x, int y, int path_bits)
+bool map_valid_move(struct Map* map, int x, int y, int path_bits)
 {
-    return loc_in_bounds(x, y) && loc_is_pathable(x, y, path_bits) && !loc_has_mon(x, y);
+    return map_in_bounds(map, x, y) && map_is_pathable(map, x, y, path_bits) && !map_has_mon(map, x, y);
 }
 
 /**
  * Change monster location
  */
-bool map_move_mon(struct Mon* mon, int newx, int newy)
+bool map_move_mon(struct Map* map, struct Mon* mon, int newx, int newy)
 {
-    if(!loc_valid_move(newx, newy, mon->pathing))
+    if(!map_valid_move(map, newx, newy, mon->pathing))
         return false;
 
-    cmap->locs[mon->x][mon->y].mon = NULL;
-    cmap->locs[newx][newy].mon = mon;
+    map->locs[mon->x][mon->y].mon = NULL;
+    map->locs[newx][newy].mon = mon;
     mon->x = newx;
     mon->y = newy;
 
@@ -256,7 +255,7 @@ bool map_move_mon(struct Mon* mon, int newx, int newy)
 /*
  * Get an array of the neighbouring locations to given location
  */
-int loc_get_neighbours(struct Location* loc, struct Location*** locs)
+int map_loc_get_neighbours(struct Map* map, struct Location* loc, struct Location*** locs)
 {
     *locs = (struct Location**)malloc(sizeof(struct Location*) * 8);
 
@@ -271,9 +270,9 @@ int loc_get_neighbours(struct Location* loc, struct Location*** locs)
         if(_x == x && _y == y)
             continue;
 
-        if(loc_in_bounds(_x, _y))
+        if(map_in_bounds(map, _x, _y))
         {
-            (*locs)[count] = &cmap->locs[_x][_y];
+            (*locs)[count] = &map->locs[_x][_y];
             count++;
         }
     }
