@@ -1,6 +1,7 @@
 #include "ui.h"
 
 #include "class.h"
+#include "globals.h"
 #include "inventory.h"
 #include "log.h"
 #include "map.h"

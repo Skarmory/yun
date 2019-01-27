@@ -1,10 +1,12 @@
 #include "inventory.h"
 
+#include <ncurses.h>
 #include <stdlib.h>
 
 #include "log.h"
 #include "message.h"
 #include "object.h"
+#include "ui.h"
 
 #define DEFAULT_INVENTORY_SIZE 16
 
@@ -90,4 +92,17 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
     inventory->size++;
 
     return true;
+}
+
+bool manage_inventory(void)
+{
+    bool went = false;
+
+    do
+    {
+        display_char_inventory();
+    }
+    while(getch() != UI_CLOSE);
+
+    return went;
 }

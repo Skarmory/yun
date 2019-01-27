@@ -18,5 +18,7 @@ void free_inventory(struct Inventory* inventory);
 bool sanity_check_inventory(struct Inventory* inventory);
 bool inventory_add_obj(struct Inventory* inventory, struct Object* obj);
 
+bool manage_inventory(void);
+
 #endif
 

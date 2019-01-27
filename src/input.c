@@ -96,11 +96,10 @@ void handle_input(void)
                 went = _pick_up_object();
                 break;
             case 'i':
-                display_char_inventory();
+                went = manage_inventory();
                 break;
             default:
                 break;
-
         }
 
         if(!went)
