@@ -20,6 +20,12 @@
 #define STATUS_Y 45
 #define STATUS_W 80
 
+void interactive_screen(UIDrawFunc func, struct UIState* state)
+{
+    func(state);
+    state->input = getch();
+}
+
 void display_main_screen(void)
 {
     display_map();
@@ -64,7 +70,7 @@ void display_char_info_screen(void)
 /**
  * Displays items in the player's inventory
  */
-void display_char_inventory(void)
+void display_char_inventory(struct UIState* state)
 {
     struct Inventory* youinv = you->mon->inventory;
 

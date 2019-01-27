@@ -1,6 +1,5 @@
 #include "inventory.h"
 
-#include <ncurses.h>
 #include <stdlib.h>
 
 #include "log.h"
@@ -97,12 +96,13 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 bool manage_inventory(void)
 {
     bool went = false;
+    struct UIState state;
 
     do
     {
-        display_char_inventory();
+        interactive_screen(&display_char_inventory, &state);
     }
-    while(getch() != UI_CLOSE);
+    while(state.input != UI_CLOSE);
 
     return went;
 }

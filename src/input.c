@@ -97,15 +97,19 @@ void handle_input(void)
                 break;
             case 'i':
                 went = manage_inventory();
+                clear();
                 break;
             default:
                 break;
+            default:
+                continue;
         }
 
         if(!went)
         {
             clear_msgs();
             flush_msg_buffer();
+            display_main_screen();
         }
     } while(!went);
 }
