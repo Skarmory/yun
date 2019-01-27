@@ -251,34 +251,3 @@ bool map_move_mon(struct Map* map, struct Mon* mon, int newx, int newy)
 
     return true;
 }
-
-/*
- * Get an array of the neighbouring locations to given location
- */
-int map_loc_get_neighbours(struct Map* map, struct Location* loc, struct Location*** locs)
-{
-    *locs = (struct Location**)malloc(sizeof(struct Location*) * 8);
-
-    int x = loc->x;
-    int y = loc->y;
-
-    int count = 0;
-
-    for(int _x = x-1; _x < x+2; _x++)
-    for(int _y = y-1; _y < y+2; _y++)
-    {
-        if(_x == x && _y == y)
-            continue;
-
-        if(map_in_bounds(map, _x, _y))
-        {
-            (*locs)[count] = &map->locs[_x][_y];
-            count++;
-        }
-    }
-
-    if(count < 8)
-        *locs = realloc(locs, count * sizeof(struct Location*));
-
-    return count;
-}

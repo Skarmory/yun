@@ -116,19 +116,15 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
             return best_node;
 
-        struct Location*** neighbours = (struct Location***) malloc(sizeof(struct Location**));
-        int ncount = map_loc_get_neighbours(cmap, best_node->loc, neighbours);
-
-        struct Location* loc;
-        for(int i = 0; i < ncount; i++)
+        for(int _x = best_node->loc->x - 1; _x < best_node->loc->x + 2; _x++)
+        for(int _y = best_node->loc->y - 1; _y < best_node->loc->y + 2; _y++)
         {
-            loc = (*neighbours)[i];
-
             // Check for invalid location
-            if((!map_in_bounds(cmap, loc->x, loc->y) || !map_is_pathable(cmap, loc->x, loc->y, path_bits))  && (loc->x != dest->x || loc->y != dest->y))
+            if((_x == best_node->loc->x && _y == best_node->loc->y) ||
+               ((!map_in_bounds(cmap, _x, _y) || !map_is_pathable(cmap, _x, _y, path_bits)) && (_x != dest->x || _y != dest->y)))
                 continue;
 
-            struct PathNode* p = loc->path_node;
+            struct PathNode* p = cmap->locs[_x][_y].path_node;
 
             // Check to see if this is a stale node (if it was last visited in a previous turn or a previous pathing request this turn)
             // Set it to a fresh state
@@ -162,9 +158,6 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
                 _add_open(p);
             }
         }
-
-        free(*neighbours);
-        free(neighbours);
     }
 
     return global_best;
