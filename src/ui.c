@@ -59,7 +59,7 @@ void display_char_info_screen(void)
     mvprintw_xy(1, 8, "Parry%: %05.2f  Dodge%: %05.2f  SP:     %05d  SP:     %05d  CritBlock%: %05.2f", PSTAT(strength, parry_chance) * 100.f, PSTAT(agility, dodge_chance) * 100.f, PSTAT(intelligence, spell_power), PSTAT(spirit, spell_power), PSTAT(stamina, crit_block_chance) * 100.f);
     mvprintw_xy(1, 9, "                              SCrit%: %05.2f  SRes%:  %05.2f", PSTAT(intelligence, spell_crit_chance) * 100.f, PSTAT(spirit, resist) * 100.f);
 
-    _input_wait_and_redraw();
+    mvprintw_xy(1, screen_rows-1, "q = close inventory");
 }
 
 /**
@@ -67,21 +67,23 @@ void display_char_info_screen(void)
  */
 void display_char_inventory(void)
 {
+    struct Inventory* youinv = you->mon->inventory;
+
+    int y;
+    int displayable_rows = screen_rows - 4;
+
     clear();
 
-    int y = 0;
+    y = 0;
     mvprintwa(1, y, A_BOLD, "Inventory");
     y += 2;
 
-    struct Inventory* youinv = you->mon->inventory;
-
-    // TODO: Remove hardcoded 40, it's just for debugging currently
     struct Object* obj = youinv->objects;
-    while(obj && y <= 40)
+    while(obj && y <= displayable_rows)
     {
         mvprintw_xy(1, y++, "%s", obj->name);
         obj = obj->next;
     }
 
-    _input_wait_and_redraw();
+    mvprintw_xy(1, screen_rows-1, "q: close inventory");
 }

@@ -30,8 +30,6 @@
 void new_game(void);
 void main_loop(void);
 
-int rows, cols;
-
 void new_game(void)
 {
     do_char_creation();
@@ -42,11 +40,11 @@ void new_game(void)
 
     clear();
 
-    int row = rows/2 - 20;
+    int row = screen_rows/2 - 20;
 
     while(fgets(buf, sizeof(buf), intro) != NULL)
     {
-        int col = cols/2 - 38;
+        int col = screen_cols/2 - 38;
 
         for(int i = 0; i < SIZE(buf) && buf[i] != '\0'; ++i)
         {
@@ -121,10 +119,10 @@ int main(int argc, char** argv)
     init_colours();
 
     attron(COLOR_PAIR(CLR_DEFAULT));
-    getmaxyx(stdscr, rows, cols);
+    getmaxyx(stdscr, screen_rows, screen_cols);
 
     // some intro text
-    mvprintw(rows/2, cols/2 - 7, "Welcome to Naxx");
+    mvprintw(screen_rows/2, screen_cols/2 - 7, "Welcome to Naxx");
     refresh();
     getch();
 
