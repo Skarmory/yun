@@ -19,10 +19,8 @@
 #define STATUS_Y 45
 #define STATUS_W 80
 
-void _input_wait_and_redraw(void)
+void display_main_screen(void)
 {
-    getch();
-    clear();
     display_map();
     display_char_status();
 }

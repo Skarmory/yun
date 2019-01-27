@@ -94,14 +94,14 @@ void main_loop(void)
         current_path_gen_id = -1;
 
         handle_input();
+        display_main_screen();
 
         update_mons();
 
         clear_msgs();
         flush_msg_buffer();
 
-        display_map();
-        display_char_status();
+        display_main_screen();
     }
     while(true);
 }
