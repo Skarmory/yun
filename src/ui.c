@@ -53,7 +53,7 @@ void display_char_info_screen(void)
     mvprintw_xy(1, 1, "Class: %s", you->cls->name);
     mvprintw_xy(1, 2, "Race:  %s", you->race->noun);
 
-    mvprintwa(1, 5, A_BOLD, "Strength       Agility        Intelligence   Spirit         Stamina");
+    mvprintwa_xy(1, 5, A_BOLD, "Strength       Agility        Intelligence   Spirit         Stamina");
     mvprintw_xy(1, 6, "AP:     %05d  AP:     %05d  Mana:   %05d  HRegen: %03d/t  HP:         %05d", PSTAT(strength, attack_power), PSTAT(agility, attack_power), PSTAT(intelligence, max_mana), PSTAT(spirit, health_regen), PSTAT(stamina, max_health));
     mvprintw_xy(1, 7, "ArmPen: %03d  Crit%:  %05.2f  SpePen: %05d  MRegen: %03d/t  Block%:     %05.2f", PSTAT(strength, armour_pen), PSTAT(agility, crit_chance) * 100.f, PSTAT(intelligence, spell_pen), PSTAT(spirit, mana_regen), PSTAT(stamina, block_chance) * 100.f);
     mvprintw_xy(1, 8, "Parry%: %05.2f  Dodge%: %05.2f  SP:     %05d  SP:     %05d  CritBlock%: %05.2f", PSTAT(strength, parry_chance) * 100.f, PSTAT(agility, dodge_chance) * 100.f, PSTAT(intelligence, spell_power), PSTAT(spirit, spell_power), PSTAT(stamina, crit_block_chance) * 100.f);
@@ -73,7 +73,7 @@ void display_char_inventory(struct UIList* inv_list)
     clear();
 
     y = 0;
-    mvprintwa(1, y, A_BOLD, "Inventory");
+    mvprintwa_xy(1, y, A_BOLD, "Inventory");
     y += 2;
 
     struct Object* obj = (struct Object*)inv_list->head;
@@ -81,7 +81,7 @@ void display_char_inventory(struct UIList* inv_list)
     {
         if(obj == inv_list->current_selection)
         {
-            mvprintwa(1, y++, COLOR_PAIR(30), "%s", obj->name);
+            mvprintwa_xy(1, y++, COLOR_PAIR(30), "%s", obj->name);
         }
         else
         {
