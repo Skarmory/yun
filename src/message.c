@@ -46,9 +46,10 @@ void _flush_and_prompt(void)
 /**
  * Write a message to the messages area
  */
-void display_msg(char* msg)
+void display_msg(bool should_log, char* msg)
 {
-    log_msg(MSGHIST, msg);
+    if(should_log)
+        log_msg(MSGHIST, msg);
 
     int msgsize = strlen(msg);
     bool handled = false;
@@ -120,14 +121,14 @@ void display_msg(char* msg)
 /**
  * Displays a message using a standard C format string and arguments
  */
-void display_format_msg(char* format, ...)
+void display_fmsg(bool should_log, char* format, ...)
 {
     va_list args;
     va_start(args, format);
 
     char msg[256];
     vsnprintf(msg, 256, format, args);
-    display_msg(msg);
+    display_msg(should_log, msg);
 
     va_end(args);
 }

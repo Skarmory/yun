@@ -106,7 +106,7 @@ void mon_chk_dead(struct Mon* mon)
 {
     if(mon_is_dead(mon))
     {
-        display_format_msg("The %s was slain.", mon->type->name);
+        display_fmsg_log("The %s was slain.", mon->type->name);
         map_rm_mon(cmap, mon);
         free_mon(mon);
     }

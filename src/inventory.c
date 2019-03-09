@@ -83,11 +83,11 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 {
     if(inventory->size >= inventory->capacity)
     {
-        display_msg("Cannot fit any more items.");
+        display_msg_log("Cannot fit any more items.");
         return false;
     }
 
-    display_format_msg("You picked up a %s.", obj->name);
+    display_fmsg_log("You picked up a %s.", obj->name);
 
     obj->next = inventory->objects;
     inventory->objects = obj;

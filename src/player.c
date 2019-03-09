@@ -57,7 +57,7 @@ void player_chk_dead(void)
         display_char_status();
 
         getch();
-        display_msg("You died...");
+        display_msg_log("You died...");
 
         clear_msgs();
         flush_msg_buffer();

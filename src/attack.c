@@ -105,23 +105,23 @@ bool do_player_attack_mon(struct Mon* defender)
     {
         case hit:
             _do_attack(you->mon, defender, &dmg, weapon);
-            display_format_msg("You hit the %s for %d (%dd%d) with your %s.", defender->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->obj->name);
+            display_fmsg_log("You hit the %s for %d (%dd%d) with your %s.", defender->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->obj->name);
             mon_chk_dead(defender);
             break;
         case miss:
-            display_msg("You missed.");
+            display_msg_log("You missed.");
             break;
         case dodge:
-            display_format_msg("The %s dodged.", defender->type->name);
+            display_fmsg_log("The %s dodged.", defender->type->name);
             break;
         case parry:
-            display_format_msg("The %s parried.", defender->type->name);
+            display_fmsg_log("The %s parried.", defender->type->name);
             break;
         case block:
-            display_format_msg("The %s blocked.", defender->type->name);
+            display_fmsg_log("The %s blocked.", defender->type->name);
             break;
         case crit_block:
-            display_format_msg("The %s blocked.", defender->type->name);
+            display_fmsg_log("The %s blocked.", defender->type->name);
             break;
         default:
             break;
@@ -142,25 +142,25 @@ bool do_mon_attack_player(struct Mon* attacker)
     {
         case hit:
             _do_attack(attacker, you->mon, &dmg, weapon);
-            display_format_msg("The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->obj->name);
+            display_fmsg_log("The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->obj->name);
             player_chk_dead();
             break;
         case miss:
-            display_msg("You missed.");
+            display_msg_log("You missed.");
             break;
         case dodge:
-            display_msg("You dodged.");
+            display_msg_log("You dodged.");
             break;
         case parry:
-            display_msg("You parried.");
+            display_msg_log("You parried.");
             break;
         case block:
             // TODO: Determine blocked damage
-            display_msg("You blocked.");
+            display_msg_log("You blocked.");
             break;
         case crit_block:
             // TODO: Determine blocked damage
-            display_msg("You blocked.");
+            display_msg_log("You blocked.");
             break;
         default:
             break;

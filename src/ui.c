@@ -6,6 +6,7 @@
 #include "inventory.h"
 #include "log.h"
 #include "map.h"
+#include "message.h"
 #include "mon.h"
 #include "ncurses_ext.h"
 #include "object.h"
@@ -20,6 +21,19 @@
 #define STATUS_X 0
 #define STATUS_Y 45
 #define STATUS_W 80
+
+#define YES 'y'
+#define NO  'n'
+
+bool prompt_yn(const char* msg)
+{
+    display_fmsg_nolog("%s [yn] (n)", msg);
+    flush_msg_buffer();
+    bool decision = getch() == YES;
+    display_fmsg_log("%s [yn] (n) %c", msg, decision ? YES : NO);
+    flush_msg_buffer();
+    return decision;
+}
 
 void display_main_screen(void)
 {

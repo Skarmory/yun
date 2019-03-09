@@ -35,7 +35,7 @@ bool _pick_up_object(void)
 
     if(obj == NULL)
     {
-       display_msg("There is nothing here.");
+       display_msg_log("There is nothing here.");
        return false;
     }
 
@@ -79,13 +79,14 @@ void handle_input(void)
                 );
                 break;
             case 'q':
-                do_quit();
+                if(prompt_yn("Really quit?"))
+                    do_quit();
                 break;
             case 'm':
-                display_msg("This is a message that is going to be larger than the display area of the message box so this ought be split up into multiple messages");
+                display_msg_log("This is a message that is going to be larger than the display area of the message box so this ought be split up into multiple messages");
                 break;
             case 'M':
-                display_msg("This_is_a_message_that_is_going_to_be_larger_than_the_display_area_of_the_message_box_so_this_ought_be_split_up_into_multiple_messages");
+                display_msg_log("This_is_a_message_that_is_going_to_be_larger_than_the_display_area_of_the_message_box_so_this_ought_be_split_up_into_multiple_messages");
                 break;
             case 'c':
                 display_char_info_screen();
