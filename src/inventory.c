@@ -1,10 +1,14 @@
 #include "inventory.h"
 
+#include <ncurses.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "log.h"
 #include "message.h"
+#include "mon.h"
 #include "object.h"
+#include "player.h"
 #include "ui.h"
 
 #define DEFAULT_INVENTORY_SIZE 16
@@ -96,13 +100,19 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 bool manage_inventory(void)
 {
     bool went = false;
-    struct UIState state;
 
+    struct UIList list;
+    list.head = you->mon->inventory->objects;
+    list.count = you->mon->inventory->size;
+    list.current_selection = list.head;
+
+    char input;
     do
     {
-        interactive_screen(&display_char_inventory, &state);
+        display_char_inventory(&list);
+        input = getch();
     }
-    while(state.input != UI_CLOSE);
+    while(input != 'q');
 
     return went;
 }

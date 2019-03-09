@@ -1,6 +1,7 @@
 #include "ui.h"
 
 #include "class.h"
+#include "colour.h"
 #include "globals.h"
 #include "inventory.h"
 #include "log.h"
@@ -19,12 +20,6 @@
 #define STATUS_X 0
 #define STATUS_Y 45
 #define STATUS_W 80
-
-void interactive_screen(UIDrawFunc func, struct UIState* state)
-{
-    func(state);
-    state->input = getch();
-}
 
 void display_main_screen(void)
 {
@@ -70,10 +65,8 @@ void display_char_info_screen(void)
 /**
  * Displays items in the player's inventory
  */
-void display_char_inventory(struct UIState* state)
+void display_char_inventory(struct UIList* inv_list)
 {
-    struct Inventory* youinv = you->mon->inventory;
-
     int y;
     int displayable_rows = screen_rows - 4;
 
@@ -83,10 +76,18 @@ void display_char_inventory(struct UIState* state)
     mvprintwa(1, y, A_BOLD, "Inventory");
     y += 2;
 
-    struct Object* obj = youinv->objects;
-    while(obj && y <= displayable_rows)
+    struct Object* obj = (struct Object*)inv_list->head;
+    while(obj && y < displayable_rows)
     {
-        mvprintw_xy(1, y++, "%s", obj->name);
+        if(obj == inv_list->current_selection)
+        {
+            mvprintwa(1, y++, COLOR_PAIR(30), "%s", obj->name);
+        }
+        else
+        {
+            mvprintw_xy(1, y++, "%s", obj->name);
+        }
+
         obj = obj->next;
     }
 
