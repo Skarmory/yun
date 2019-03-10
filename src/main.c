@@ -134,7 +134,7 @@ int main(int argc, char** argv)
     new_player();
     new_game();
 
-    gen_map();
+    gen_map(cmap);
 
     // --------- DEBUG CODE START ----------
     struct Room* room = cmap->rooms[0];

@@ -7,10 +7,10 @@
 #include <stdlib.h>
 
 /* Draws a map by drawing square rooms at random locations, and with random dimensions. */
-void gen_rooms(void)
+void gen_rooms(struct Map* map)
 {
     int attempts = 200;
-    cmap->rooms = (struct Room**)malloc(sizeof(struct Room*) * attempts);
+    map->rooms = (struct Room**)malloc(sizeof(struct Room*) * attempts);
 
     int rcount = -1;
     for(int i = 0; i < attempts; i++)
@@ -25,7 +25,7 @@ void gen_rooms(void)
 
         for(int r = 0; r <= rcount; r++)
         {
-            struct Room* tmp = cmap->rooms[r];
+            struct Room* tmp = map->rooms[r];
 
             if(
                 (((x >= tmp->x) && (x <= (tmp->x + tmp->w))) ||
@@ -43,8 +43,8 @@ void gen_rooms(void)
         {
             rcount++;
 
-            cmap->rooms[rcount] = (struct Room*)malloc(sizeof(struct Room));
-            struct Room* room = cmap->rooms[rcount];
+            map->rooms[rcount] = (struct Room*)malloc(sizeof(struct Room));
+            struct Room* room = map->rooms[rcount];
 
             room->x = x;
             room->y = y;
@@ -54,74 +54,73 @@ void gen_rooms(void)
             // Draw vertical walls
             for(int tmp = 0; tmp < h; tmp++)
             {
-                cmap->locs[x][y+tmp].terrain = '|';
-                cmap->locs[x][y+tmp].pathing = 0;
-                cmap->locs[x+w-1][y+tmp].terrain = '|';
-                cmap->locs[x+w-1][y+tmp].pathing = 0;
+                map->locs[x][y+tmp].terrain = '|';
+                map->locs[x][y+tmp].pathing = 0;
+                map->locs[x+w-1][y+tmp].terrain = '|';
+                map->locs[x+w-1][y+tmp].pathing = 0;
             }
 
             // Draw horizontal walls
             for(int tmp = 0; tmp < w; tmp++)
             {
-                cmap->locs[x+tmp][y].terrain = '-';
-                cmap->locs[x+tmp][y].pathing = 0;
-                cmap->locs[x+tmp][y+h-1].terrain = '-';
-                cmap->locs[x+tmp][y+h-1].pathing = 0;
+                map->locs[x+tmp][y].terrain = '-';
+                map->locs[x+tmp][y].pathing = 0;
+                map->locs[x+tmp][y+h-1].terrain = '-';
+                map->locs[x+tmp][y+h-1].pathing = 0;
             }
 
             // Fill in with floor
             for(int tmpx = 1; tmpx < w-1; tmpx++)
             for(int tmpy = 1; tmpy < h-1; tmpy++)
             {
-                cmap->locs[x + tmpx][y + tmpy].terrain = '.';
-                cmap->locs[x + tmpx][y + tmpy].pathing |= WALKABLE;
+                map->locs[x + tmpx][y + tmpy].terrain = '.';
+                map->locs[x + tmpx][y + tmpy].pathing |= WALKABLE;
             }
         }
     }
 
-    cmap->rooms = realloc(cmap->rooms, sizeof(struct Room*) * (rcount+1));
-    cmap->room_count = rcount + 1;
+    map->rooms = realloc(map->rooms, sizeof(struct Room*) * (rcount+1));
+    map->room_count = rcount + 1;
 }
 
 /* Check if a location is a valid starting node for a maze
  * Valid maze starting nodes are solid rock surrounded by 8 other solid rock */
-bool _is_maze_snode(struct Location* loc)
+bool _is_maze_snode(struct Map* map, struct Location* loc)
 {
     int x = loc->x;
     int y = loc->y;
 
-    if(x == 0 || x == MCOLS - 1 || y == 0 || y == MROWS - 1 || cmap->locs[x][y].terrain != ' ')
+    if(x == 0 || x == MCOLS - 1 || y == 0 || y == MROWS - 1 || map->locs[x][y].terrain != ' ')
         return false;
 
-    if(cmap->locs[x-1][y-1].terrain == ' ' && cmap->locs[x][y-1].terrain == ' ' && cmap->locs[x+1][y-1].terrain == ' ' &&
-       cmap->locs[x-1][y].terrain   == ' ' && cmap->locs[x+1][y].terrain == ' ' &&
-       cmap->locs[x-1][y+1].terrain == ' ' && cmap->locs[x][y+1].terrain == ' ' && cmap->locs[x+1][y+1].terrain == ' ')
+    if(map->locs[x-1][y-1].terrain == ' ' && map->locs[x][y-1].terrain == ' ' && map->locs[x+1][y-1].terrain == ' ' &&
+       map->locs[x-1][y].terrain   == ' ' && map->locs[x+1][y].terrain == ' ' &&
+       map->locs[x-1][y+1].terrain == ' ' && map->locs[x][y+1].terrain == ' ' && map->locs[x+1][y+1].terrain == ' ')
         return true;
 
     return false;
 }
 
 /* Finds a maze starting node */
-bool _get_maze_snode(struct Location** tmp)
+struct Location* _get_maze_snode(struct Map* map)
 {
     for(int x = 0; x < MCOLS; x++)
     for(int y = 0; y < MROWS; y++)
     {
-        if(_is_maze_snode(&cmap->locs[x][y]))
+        if(_is_maze_snode(map, &map->locs[x][y]))
         {
-            *tmp = &(cmap->locs[x][y]);
-            return true;
+            return &(map->locs[x][y]);
         }
     }
 
-    return false;
+    return NULL;
 }
 
 /* Checks to see if a location is a viable maze node
  * Valid maze nodes need to have only 1 connection to another corridor tile.
  * They can also only have 2 of 4 diagonal squares as corridor tiles so long as those tiles
  * are orthogonal to the single connecting corridor tile. */
-bool _is_valid_maze_node(struct Location* loc)
+bool _is_valid_maze_node(struct Map* map, struct Location* loc)
 {
     if(loc->terrain != ' ')
         return false;
@@ -133,28 +132,28 @@ bool _is_valid_maze_node(struct Location* loc)
 
     struct Location* conn;
 
-    if(cmap->locs[loc->x-1][loc->y].terrain == '#')
+    if(map->locs[loc->x-1][loc->y].terrain == '#')
     {
         conn_count++;
-        conn = &cmap->locs[loc->x-1][loc->y];
+        conn = &map->locs[loc->x-1][loc->y];
     }
 
-    if(cmap->locs[loc->x+1][loc->y].terrain == '#')
+    if(map->locs[loc->x+1][loc->y].terrain == '#')
     {
         conn_count++;
-        conn = &cmap->locs[loc->x+1][loc->y];
+        conn = &map->locs[loc->x+1][loc->y];
     }
 
-    if(cmap->locs[loc->x][loc->y-1].terrain == '#')
+    if(map->locs[loc->x][loc->y-1].terrain == '#')
     {
         conn_count++;
-        conn = &cmap->locs[loc->x][loc->y-1];
+        conn = &map->locs[loc->x][loc->y-1];
     }
 
-    if(cmap->locs[loc->x][loc->y+1].terrain == '#')
+    if(map->locs[loc->x][loc->y+1].terrain == '#')
     {
         conn_count++;
-        conn = &cmap->locs[loc->x][loc->y+1];
+        conn = &map->locs[loc->x][loc->y+1];
     }
 
     if(conn_count > 1)
@@ -165,26 +164,26 @@ bool _is_valid_maze_node(struct Location* loc)
 
     if(xoff == -1)
     {
-        if(cmap->locs[loc->x-1][loc->y-1].terrain == '#' ||
-           cmap->locs[loc->x-1][loc->y+1].terrain == '#')
+        if(map->locs[loc->x-1][loc->y-1].terrain == '#' ||
+           map->locs[loc->x-1][loc->y+1].terrain == '#')
             return false;
     }
     else if(xoff == 1)
     {
-        if(cmap->locs[loc->x+1][loc->y-1].terrain == '#' ||
-           cmap->locs[loc->x+1][loc->y+1].terrain == '#')
+        if(map->locs[loc->x+1][loc->y-1].terrain == '#' ||
+           map->locs[loc->x+1][loc->y+1].terrain == '#')
             return false;
     }
     else if(yoff == 1)
     {
-        if(cmap->locs[loc->x-1][loc->y+1].terrain == '#' ||
-           cmap->locs[loc->x+1][loc->y+1].terrain == '#')
+        if(map->locs[loc->x-1][loc->y+1].terrain == '#' ||
+           map->locs[loc->x+1][loc->y+1].terrain == '#')
             return false;
     }
     else
     {
-        if(cmap->locs[loc->x-1][loc->y-1].terrain == '#' ||
-           cmap->locs[loc->x+1][loc->y-1].terrain == '#')
+        if(map->locs[loc->x-1][loc->y-1].terrain == '#' ||
+           map->locs[loc->x+1][loc->y-1].terrain == '#')
             return false;
     }
 
@@ -194,7 +193,7 @@ bool _is_valid_maze_node(struct Location* loc)
 /* Attempts to get a location at random orthogonal to a maze node to continue the maze with.
  * It will fall back to just checking every single orthogonal direction if the randomly picked
  * direction is not valid. */
-bool _get_valid_maze_node(struct Location* loc, struct Location** next)
+struct Location* _get_valid_maze_node(struct Map* map, struct Location* loc)
 {
     int x = loc->x;
     int y = loc->y;
@@ -216,45 +215,46 @@ bool _get_valid_maze_node(struct Location* loc, struct Location** next)
             yoff= 1; break;
     }
 
-    *next = &cmap->locs[x + xoff][y + yoff];
-    if(_is_valid_maze_node(*next))
-        return true;
+    struct Location* next;
+    next = &map->locs[x + xoff][y + yoff];
+    if(_is_valid_maze_node(map, next))
+        return next;
 
-    *next = &cmap->locs[x+1][y];
-    if(_is_valid_maze_node(*next))
-        return true;
+    next = &map->locs[x+1][y];
+    if(_is_valid_maze_node(map, next))
+        return next;
 
-    *next = &cmap->locs[x-1][y];
-    if(_is_valid_maze_node(*next))
-        return true;
+    next = &map->locs[x-1][y];
+    if(_is_valid_maze_node(map, next))
+        return next;
 
-    *next = &cmap->locs[x][y+1];
-    if(_is_valid_maze_node(*next))
-        return true;
+    next = &map->locs[x][y+1];
+    if(_is_valid_maze_node(map, next))
+        return next;
 
-    *next = &cmap->locs[x][y-1];
-    if(_is_valid_maze_node(*next))
-        return true;
+    next = &map->locs[x][y-1];
+    if(_is_valid_maze_node(map, next))
+        return next;
 
-    return false;
+    return NULL;
 }
 
 /* Recursive algorithm to carve out a maze in the level. */
-void _flood_fill_maze(struct Location* loc)
+void _flood_fill_maze(struct Map* map, struct Location* loc)
 {
     struct Location* next;
 
-    while(_get_valid_maze_node(loc, &next))
+    while((next = _get_valid_maze_node(map, loc)))
     {
         next->terrain = '#';
         next->pathing |= WALKABLE;
-        _flood_fill_maze(next);
+        _flood_fill_maze(map, next);
     }
 }
 
 /* Checks if a given location is a deadend.
  * Deadends have only one connecting corridor tile */
-bool _is_maze_deadend(struct Location* loc)
+bool _is_maze_deadend(struct Map* map, struct Location* loc)
 {
     int x = loc->x;
     int y = loc->y;
@@ -267,16 +267,16 @@ bool _is_maze_deadend(struct Location* loc)
 
     int conn_count = 0;
 
-    if(cmap->locs[x-1][y].terrain == '#' || cmap->locs[x-1][y].terrain == '.')
+    if(map->locs[x-1][y].terrain == '#' || map->locs[x-1][y].terrain == '.')
         conn_count++;
 
-    if(cmap->locs[x+1][y].terrain == '#' || cmap->locs[x+1][y].terrain == '.')
+    if(map->locs[x+1][y].terrain == '#' || map->locs[x+1][y].terrain == '.')
         conn_count++;
 
-    if(cmap->locs[x][y+1].terrain == '#' || cmap->locs[x][y+1].terrain == '.')
+    if(map->locs[x][y+1].terrain == '#' || map->locs[x][y+1].terrain == '.')
         conn_count++;
 
-    if(cmap->locs[x][y-1].terrain == '#' || cmap->locs[x][y-1].terrain == '.')
+    if(map->locs[x][y-1].terrain == '#' || map->locs[x][y-1].terrain == '.')
         conn_count++;
 
     if(conn_count > 1)
@@ -287,71 +287,71 @@ bool _is_maze_deadend(struct Location* loc)
 
 /* Finds and sets the input arg to the first deadend it finds.
  * Returns true if it finds a deadend. */
-bool _get_maze_deadend(struct Location** loc)
+struct Location* _get_maze_deadend(struct Map* map)
 {
     for(int x = 0; x < MCOLS; x++)
     for(int y = 0; y < MROWS; y++)
     {
-        if(_is_maze_deadend(&cmap->locs[x][y]))
+        if(_is_maze_deadend(map, &map->locs[x][y]))
         {
-            *loc = &cmap->locs[x][y];
-            return true;
+            return &map->locs[x][y];
         }
     }
 
-    return false;
+    return NULL;
 }
 
 /* Finds the next deadend node next to the given one, and sets the input arg to it.
  * Returns true if it finds a deadend */
-bool _get_next_deadend_node(struct Location* loc, struct Location** next)
+struct Location* _get_next_deadend_node(struct Map* map, struct Location* loc)
 {
+    struct Location* next;
     int x = loc->x;
     int y = loc->y;
 
-    *next = &cmap->locs[x-1][y];
-    if(_is_maze_deadend(*next))
-        return true;
+    next = &map->locs[x-1][y];
+    if(_is_maze_deadend(map, next))
+        return next;
 
-    *next = &cmap->locs[x+1][y];
-    if(_is_maze_deadend(*next))
-        return true;
+    next = &map->locs[x+1][y];
+    if(_is_maze_deadend(map, next))
+        return next;
 
-    *next = &cmap->locs[x][y-1];
-    if(_is_maze_deadend(*next))
-        return true;
+    next = &map->locs[x][y-1];
+    if(_is_maze_deadend(map, next))
+        return next;
 
-    *next = &cmap->locs[x][y+1];
-    if(_is_maze_deadend(*next))
-        return true;
+    next = &map->locs[x][y+1];
+    if(_is_maze_deadend(map, next))
+        return next;
 
-    return false;
+    return NULL;
 }
 
 /* Recursively fills in deadend corridors until only connected corridors remain. */
-void _back_fill_deadends(struct Location* loc)
+void _back_fill_deadends(struct Map* map, struct Location* loc)
 {
     struct Location* next;
-    while(_get_next_deadend_node(loc, &next))
+    while((next = _get_next_deadend_node(map, loc)))
     {
         next->terrain = ' ';
         next->pathing = 0;
-        _back_fill_deadends(next);
+        _back_fill_deadends(map, next);
     }
 }
 
 /* Picks wall sections on each wall at random until it finds one that has a corridor next to it.
  * It converts that wall section into an entryway into the room.
  * TODO: Generate a door object in the entryway tile */
-void _make_doors(void)
+void _make_doors(struct Map* map)
 {
     struct Room* room;
 
     struct Location** connectors = (struct Location**) malloc(sizeof(struct Location*) * (10 * 2 + 8 * 2));
 
-    for(int i = 0; i < cmap->room_count; i++)
+    for(int i = 0; i < map->room_count; i++)
     {
-        room = cmap->rooms[i];
+        room = map->rooms[i];
 
         int cidx = 0;
         int x, y;
@@ -363,9 +363,9 @@ void _make_doors(void)
         {
             for(; x < (room->x + room->w - 1); x++)
             {
-                if(cmap->locs[x][y-1].terrain == '#')
+                if(map->locs[x][y-1].terrain == '#')
                 {
-                    connectors[cidx] = &cmap->locs[x][y];
+                    connectors[cidx] = &map->locs[x][y];
                     cidx++;
                 }
             }
@@ -378,9 +378,9 @@ void _make_doors(void)
         {
             for(; x < (room->x + room->w - 1); x++)
             {
-                if(cmap->locs[x][y+1].terrain == '#')
+                if(map->locs[x][y+1].terrain == '#')
                 {
-                    connectors[cidx] = &cmap->locs[x][y];
+                    connectors[cidx] = &map->locs[x][y];
                     cidx++;
                 }
             }
@@ -393,9 +393,9 @@ void _make_doors(void)
         {
             for(; y < (room->y + room->h - 1); y++)
             {
-                if(cmap->locs[x-1][y].terrain == '#')
+                if(map->locs[x-1][y].terrain == '#')
                 {
-                    connectors[cidx] = &cmap->locs[x][y];
+                    connectors[cidx] = &map->locs[x][y];
                     cidx++;
                 }
             }
@@ -408,9 +408,9 @@ void _make_doors(void)
         {
             for(; y < (room->y + room->h - 1); y++)
             {
-                if(cmap->locs[x+1][y].terrain == '#')
+                if(map->locs[x+1][y].terrain == '#')
                 {
-                    connectors[cidx] = &cmap->locs[x][y];
+                    connectors[cidx] = &map->locs[x][y];
                     cidx++;
                 }
             }
@@ -426,30 +426,30 @@ void _make_doors(void)
 }
 
 /* Generate the maze of corridors, adds entryways into rooms, and fills in the deadends */
-void gen_maze(void)
+void gen_maze(struct Map* map)
 {
     struct Location* tmp;
 
-    while(_get_maze_snode(&tmp))
+    while((tmp = _get_maze_snode(map)))
     {
         tmp->terrain = '#';
         tmp->pathing |= WALKABLE;
-        _flood_fill_maze(tmp);
+        _flood_fill_maze(map, tmp);
     }
 
-    _make_doors();
+    _make_doors(map);
 
-    while(_get_maze_deadend(&tmp))
+    while((tmp = _get_maze_deadend(map)))
     {
         tmp->terrain = ' ';
         tmp->pathing = 0;
-        _back_fill_deadends(tmp);
+        _back_fill_deadends(map, tmp);
     }
 }
 
 /* Call this to generate a map that contains rooms and a load of connecting corridors */
-void gen_map(void)
+void gen_map(struct Map* map)
 {
-    gen_rooms();
-    gen_maze();
+    gen_rooms(map);
+    gen_maze(map);
 }
