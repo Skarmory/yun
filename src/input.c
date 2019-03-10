@@ -39,13 +39,18 @@ bool _pick_up_object(void)
        return false;
     }
 
+    //TODO: Give selection from all objects on floor
+    struct Object* chosen = obj;
+
+    // Unlink object from Location
+    loc_rm_obj(&cmap->locs[you->mon->x][you->mon->y], chosen);
+
     if(!inventory_add_obj(you->mon->inventory, obj))
     {
+        // Failed to add to inventory, relink with Location
+        loc_add_obj(&cmap->locs[you->mon->x][you->mon->y], chosen);
         return false;
     }
-
-    struct Location* loc = &cmap->locs[you->mon->x][you->mon->y];
-    loc_rm_obj(loc, obj);
 
     return true;
 }
