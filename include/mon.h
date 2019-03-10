@@ -1,6 +1,7 @@
 #ifndef MON_H
 #define MON_H
 
+#include "list.h"
 #include "stats.h"
 
 struct MonType;
@@ -13,18 +14,21 @@ struct Weapon;
 #define MANA(mon) mon->stats.intelligence.mana
 #define MAXMANA(mon) mon->stats.intelligence.max_mana
 
+typedef struct ListEntry MonList;
+
 /**
  * Struct that contains individual monster data
  */
 struct Mon
 {
-    struct Mon* next; // linked list for mons on the level
     unsigned int x, y;
     int pathing;
     const struct MonType* type;
     struct Equipment* equipment;
     struct Inventory* inventory;
     struct Stats stats;
+
+    MonList map_mons; // linked list for mons on the level
 };
 
 struct Mon* new_mon(int mtype, int x, int y);

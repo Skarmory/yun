@@ -1,5 +1,6 @@
 #include "map.h"
 
+#include "list.h"
 #include "log.h"
 #include "mon.h"
 #include "montype.h"
@@ -17,12 +18,17 @@ struct Map* cmap = NULL;
 
 void _map_free_all_mons(struct Map* map)
 {
-    struct Mon* tmp;
-    while((tmp = map->monlist) != NULL)
+    if(!map->monlist)
+        return;
+
+    struct Mon* tmp = map->monlist;
+    while(list_next(tmp, struct Mon, map_mons))
     {
-        map->monlist = map->monlist->next;
-        free_mon(tmp);
+        tmp = list_next(tmp, struct Mon, map_mons);
+        free_mon(list_prev(tmp, struct Mon, map_mons));
     }
+
+    free_mon(tmp);
 }
 
 /**
@@ -121,7 +127,7 @@ void map_add_mon(struct Map* map, struct Mon* mon)
     map->locs[x][y].mon = mon;
 
     // push mon onto the list
-    mon->next = map->monlist;
+    list_add(mon, map->monlist, map_mons);
     map->monlist = mon;
 }
 
@@ -130,25 +136,25 @@ void map_add_mon(struct Map* map, struct Mon* mon)
  */
 bool map_rm_mon(struct Map* map, struct Mon* mon)
 {
-    struct Mon* curr = map->monlist;
-    struct Mon* prev = NULL;
-    while(curr)
+    if(mon == map->monlist)
     {
-       if(curr == mon)
-       {
+        map->monlist = list_next(map->monlist, struct Mon, map_mons);
+        list_rm(mon, map_mons);
+        return true;
+    }
+
+    struct Mon* check = map->monlist;
+    while(check)
+    {
+        if(check == mon)
+        {
             map->locs[mon->x][mon->y].mon = NULL;
 
-            // Check if this is head of monlist
-            if(prev)
-                prev->next = curr->next;
-            else
-                map->monlist = curr->next;
-
+            list_rm(mon, map_mons);
             return true;
-       }
+        }
 
-       prev = curr;
-       curr = curr->next;
+        check = list_next(check, struct Mon, map_mons);
     }
 
     return false;

@@ -27,13 +27,13 @@ struct Mon* new_mon(int mtype, int x, int y)
 {
     struct Mon* mon = (struct Mon*) malloc(sizeof(struct Mon));
 
-    mon->next = NULL;
     mon->type = &mon_type[mtype];
     mon->x = x;
     mon->y = y;
     mon->pathing = mon->type->pathing;
     mon->equipment = new_equipment();
     mon->inventory = new_inventory();
+    list_init(mon->map_mons);
 
     SET_MINION_STAT_SCALES(mon);
 
@@ -71,7 +71,7 @@ void update_mons(void)
     while(mon)
     {
         update_mon_ai(mon);
-        mon = mon->next;
+        mon = list_next(mon, struct Mon, map_mons);
     }
 }
 
