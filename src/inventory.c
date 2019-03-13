@@ -32,7 +32,7 @@ void free_inventory(struct Inventory* inventory)
     {
         next = list_next(curr, struct Object, obj_list);
 
-        list_rm(curr, obj_list);
+        list_rm(&curr->obj_list);
         free_obj(curr);
 
         curr = next;
@@ -94,7 +94,7 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 
     display_fmsg_log("You picked up a %s.", obj->name);
 
-    list_add(obj, inventory->objects, obj_list);
+    list_add(&obj->obj_list, inventory->objects ? &inventory->objects->obj_list : NULL);
     inventory->objects = obj;
 
     inventory->size++;

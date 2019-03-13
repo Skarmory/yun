@@ -23,7 +23,7 @@ void _map_free_all_mons(struct Map* map)
     while(curr)
     {
         next = list_next(curr, struct Mon, map_mons);
-        list_rm(curr, map_mons);
+        list_rm(&curr->map_mons);
         free_mon(curr);
         curr = next;
     }
@@ -82,7 +82,7 @@ void free_map(struct Map* map)
             {
                 next = list_next(curr, struct Object, obj_list);
 
-                list_rm(curr, obj_list);
+                list_rm(&curr->obj_list);
                 free_obj(curr);
 
                 curr = next;
@@ -131,7 +131,7 @@ void map_add_mon(struct Map* map, struct Mon* mon)
     map->locs[x][y].mon = mon;
 
     // push mon onto the list
-    list_add(mon, map->monlist, map_mons);
+    list_add(&mon->map_mons, map->monlist ? &map->monlist->map_mons : NULL);
     map->monlist = mon;
 }
 
@@ -147,10 +147,10 @@ bool map_rm_mon(struct Map* map, struct Mon* mon)
         {
             map->locs[mon->x][mon->y].mon = NULL;
 
-            if(list_is_head(curr, map_mons))
+            if(list_is_head(&curr->map_mons))
                 map->monlist = list_next(curr, struct Mon, map_mons);
 
-            list_rm(mon, map_mons);
+            list_rm(&mon->map_mons);
             return true;
         }
 
@@ -174,7 +174,7 @@ struct Object* map_get_objects(struct Map* map, int x, int y)
 bool loc_add_obj(struct Location* loc, struct Object* obj)
 {
     // push object onto location object linked list
-    list_add(obj, loc->objects, obj_list);
+    list_add(&obj->obj_list, loc->objects ? &loc->objects->obj_list : NULL);
     loc->objects = obj;
 
     return true;
@@ -190,10 +190,10 @@ bool loc_rm_obj(struct Location* loc, struct Object* obj)
     {
         if(curr == obj)
         {
-            if(list_is_head(curr, obj_list))
+            if(list_is_head(&curr->obj_list))
                 loc->objects = list_next(curr, struct Object, obj_list);
 
-            list_rm(curr, obj_list);
+            list_rm(&curr->obj_list);
             return true;
         }
 

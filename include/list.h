@@ -1,58 +1,52 @@
 #ifndef LIST_ENTRY_H
 #define LIST_ENTRY_H
 
-#define list_init(list)\
-    do\
-    {\
-        (list).next = NULL;\
-        (list).prev = NULL;\
-    }\
-    while(0)
-
-#define list_elem(ptr, type, list_name)\
-    (type*)((char*)(ptr) - (unsigned long)(&((type*)0)->list_name))
-
-#define list_prev(ptr, type, list_name)\
-    (ptr->list_name.prev ? (type*)((char*)(ptr->list_name.prev) - (unsigned long)(&((type*)0)->list_name)) : NULL)
-
-#define list_next(ptr, type, list_name)\
-    (ptr->list_name.next ? (type*)((char*)(ptr->list_name.next) - (unsigned long)(&((type*)0)->list_name)) : NULL)
-
-#define list_add(to_add, list_head, list_name)\
-    do\
-    {\
-        (to_add)->list_name.next = (to_add)->list_name.prev = NULL;\
-        if(list_head)\
-        {\
-            (to_add)->list_name.next = &((list_head)->list_name);\
-            (list_head)->list_name.prev = &((to_add)->list_name);\
-        }\
-        else\
-        {\
-            (list_head) = (to_add);\
-        }\
-    }\
-    while(0)
-
-#define list_rm(ptr, list_name)\
-    do\
-    {\
-        if((ptr)->list_name.prev)\
-            (ptr)->list_name.prev->next = (ptr)->list_name.next;\
-        if((ptr)->list_name.next)\
-            (ptr)->list_name.next->prev = (ptr)->list_name.prev;\
-        (ptr)->list_name.next = NULL;\
-        (ptr)->list_name.prev = NULL;\
-    }\
-    while(0)
-
-#define list_is_head(ptr, list_name)\
-    ((ptr)->list_name.prev == NULL)
+#include <stddef.h>
+#include <stdbool.h>
 
 struct ListEntry
 {
     struct ListEntry* next;
     struct ListEntry* prev;
 };
+
+#define container_of(ptr, type, member) (type*)((char*)(ptr) - (unsigned long)(&((type*)0)->member))
+
+#define list_elem(ptr, type, list_name) container_of(ptr, type, list_name)
+
+#define list_prev(ptr, type, list_name) (ptr->list_name.prev ? container_of((ptr)->list_name.prev, type, list_name) : NULL)
+
+#define list_next(ptr, type, list_name) (ptr->list_name.next ? container_of((ptr)->list_name.next, type, list_name) : NULL)
+
+static inline void list_init(struct ListEntry* list)
+{
+    list->prev = list->next = NULL;
+}
+
+static inline void list_add(struct ListEntry* add, struct ListEntry* head)
+{
+    add->next = add->prev = NULL;
+    if(head)
+    {
+        add->next = head;
+        head->prev = add;
+    }
+    else
+    {
+        head = add;
+    }
+}
+
+static inline void list_rm(struct ListEntry* entry)
+{
+    if(entry->prev) entry->prev->next = entry->next;
+    if(entry->next) entry->next->prev = entry->prev;
+    entry->prev = entry->next = NULL;
+}
+
+static inline bool list_is_head(struct ListEntry* entry)
+{
+    return entry->prev == NULL;
+}
 
 #endif

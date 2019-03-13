@@ -33,7 +33,7 @@ struct Mon* new_mon(int mtype, int x, int y)
     mon->pathing = mon->type->pathing;
     mon->equipment = new_equipment();
     mon->inventory = new_inventory();
-    list_init(mon->map_mons);
+    list_init(&mon->map_mons);
 
     SET_MINION_STAT_SCALES(mon);
 
