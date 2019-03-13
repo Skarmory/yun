@@ -1,5 +1,6 @@
 #include "weapon.h"
 
+#include "list.h"
 #include "object.h"
 #include "symbol.h"
 
@@ -26,7 +27,7 @@ struct Weapon* new_weapon(int weapon_type)
     weapon->obj->symbol = &symbols[SYM_WEAPON_OFF + weapon_type];
     weapon->obj->objtype_ptr.weapon = weapon;
     weapon->obj->objtype = WEAPON;
-    weapon->obj->next = NULL;
+    list_init(weapon->obj->obj_list);
 
     return weapon;
 }

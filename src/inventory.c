@@ -26,11 +26,16 @@ struct Inventory* new_inventory(void)
 
 void free_inventory(struct Inventory* inventory)
 {
-    struct Object* tmp;
-    while((tmp = inventory->objects) != NULL)
+    struct Object* curr = inventory->objects;
+    struct Object* next;
+    while(curr)
     {
-        inventory->objects = inventory->objects->next;
-        free_obj(tmp);
+        next = list_next(curr, struct Object, obj_list);
+
+        list_rm(curr, obj_list);
+        free_obj(curr);
+
+        curr = next;
     }
 
     free(inventory);
@@ -54,12 +59,12 @@ bool sanity_check_inventory(struct Inventory* inventory)
         ret = false;
     }
 
-    struct Object* tmp = inventory->objects;
     int counter = 0;
-    while(tmp && tmp->next)
+    struct Object* tmp = inventory->objects;
+    while(tmp)
     {
         counter++;
-        tmp = tmp->next;
+        tmp = list_next(tmp, struct Object, obj_list);
     }
 
     if(counter > inventory->size)
@@ -89,7 +94,7 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 
     display_fmsg_log("You picked up a %s.", obj->name);
 
-    obj->next = inventory->objects;
+    list_add(obj, inventory->objects, obj_list);
     inventory->objects = obj;
 
     inventory->size++;

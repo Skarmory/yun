@@ -18,17 +18,15 @@ struct Map* cmap = NULL;
 
 void _map_free_all_mons(struct Map* map)
 {
-    if(!map->monlist)
-        return;
-
-    struct Mon* tmp = map->monlist;
-    while(list_next(tmp, struct Mon, map_mons))
+    struct Mon* curr = map->monlist;
+    struct Mon* next;
+    while(curr)
     {
-        tmp = list_next(tmp, struct Mon, map_mons);
-        free_mon(list_prev(tmp, struct Mon, map_mons));
+        next = list_next(curr, struct Mon, map_mons);
+        list_rm(curr, map_mons);
+        free_mon(curr);
+        curr = next;
     }
-
-    free_mon(tmp);
 }
 
 /**
@@ -77,11 +75,17 @@ void free_map(struct Map* map)
     {
         for(int y = 0; y < MROWS; y++)
         {
-            struct Object* tmp;
-            while((tmp = map->locs[x][y].objects) != NULL)
+            struct Object* curr = map->locs[x][y].objects;
+            struct Object* next;
+
+            while(curr)
             {
-                map->locs[x][y].objects = map->locs[x][y].objects->next;
-                free_obj(tmp);
+                next = list_next(curr, struct Object, obj_list);
+
+                list_rm(curr, obj_list);
+                free_obj(curr);
+
+                curr = next;
             }
 
             free(map->locs[x][y].path_node);
@@ -136,25 +140,21 @@ void map_add_mon(struct Map* map, struct Mon* mon)
  */
 bool map_rm_mon(struct Map* map, struct Mon* mon)
 {
-    if(mon == map->monlist)
+    struct Mon* curr = map->monlist;
+    while(curr)
     {
-        map->monlist = list_next(map->monlist, struct Mon, map_mons);
-        list_rm(mon, map_mons);
-        return true;
-    }
-
-    struct Mon* check = map->monlist;
-    while(check)
-    {
-        if(check == mon)
+        if(curr == mon)
         {
             map->locs[mon->x][mon->y].mon = NULL;
+
+            if(list_is_head(curr, map_mons))
+                map->monlist = list_next(curr, struct Mon, map_mons);
 
             list_rm(mon, map_mons);
             return true;
         }
 
-        check = list_next(check, struct Mon, map_mons);
+        curr = list_next(curr, struct Mon, map_mons);
     }
 
     return false;
@@ -174,7 +174,7 @@ struct Object* map_get_objects(struct Map* map, int x, int y)
 bool loc_add_obj(struct Location* loc, struct Object* obj)
 {
     // push object onto location object linked list
-    obj->next = loc->objects;
+    list_add(obj, loc->objects, obj_list);
     loc->objects = obj;
 
     return true;
@@ -186,23 +186,18 @@ bool loc_add_obj(struct Location* loc, struct Object* obj)
 bool loc_rm_obj(struct Location* loc, struct Object* obj)
 {
     struct Object* curr = loc->objects;
-    struct Object* prev = NULL;
-
     while(curr)
     {
-       if(curr == obj)
-       {
-            // Check if this is head of monlist
-            if(prev)
-                prev->next = curr->next;
-            else
-                loc->objects = curr->next;
+        if(curr == obj)
+        {
+            if(list_is_head(curr, obj_list))
+                loc->objects = list_next(curr, struct Object, obj_list);
 
+            list_rm(curr, obj_list);
             return true;
-       }
+        }
 
-       prev = curr;
-       curr = curr->next;
+        curr = list_next(curr, struct Object, obj_list);
     }
 
     return false;

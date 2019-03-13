@@ -46,6 +46,9 @@
     }\
     while(0)
 
+#define list_is_head(ptr, list_name)\
+    ((ptr)->list_name.prev == NULL)
+
 struct ListEntry
 {
     struct ListEntry* next;

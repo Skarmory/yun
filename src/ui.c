@@ -102,7 +102,7 @@ void display_char_inventory(struct UIList* inv_list)
             mvprintw_xy(1, y++, "%s", obj->name);
         }
 
-        obj = obj->next;
+        obj = list_next(obj, struct Object, obj_list);
     }
 
     mvprintw_xy(1, screen_rows-1, "q: close inventory");
