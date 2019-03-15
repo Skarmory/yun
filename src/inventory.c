@@ -101,6 +101,22 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
     return true;
 }
 
+static bool _input_handled(struct UIList* list, bool* went)
+{
+    char in = getch();
+    switch(in)
+    {
+        case 'q':
+            return true;
+        case 'j':
+        case 'k':
+            //list->current_selection = ((struct Object*)list->current_selection)->next;
+            break;
+    }
+
+    return false;
+}
+
 bool manage_inventory(void)
 {
     bool went = false;
@@ -110,13 +126,14 @@ bool manage_inventory(void)
     list.count = you->mon->inventory->size;
     list.current_selection = list.head;
 
-    char input;
     do
     {
         display_char_inventory(&list);
-        input = getch();
+
+        if(_input_handled(&list, &went))
+            break;
     }
-    while(input != 'q');
+    while(true);
 
     return went;
 }
