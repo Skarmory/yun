@@ -38,6 +38,7 @@ void free_player(void)
         you->faction = NULL;
         free(you->cls);
         free(you->race);
+        free_mon(you->mon);
         free(you);
     }
 }
