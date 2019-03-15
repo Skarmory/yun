@@ -1,6 +1,8 @@
 #ifndef MAP_H
 #define MAP_H
 
+#include "defs.h"
+
 #include <stdbool.h>
 
 struct Mon;
@@ -22,7 +24,7 @@ struct Location
     int pathing;
     struct PathNode* path_node;
     struct Mon* mon;
-    struct Object* objects;
+    ObjList obj_list;
     char terrain;
 };
 
@@ -34,7 +36,8 @@ struct Map
     struct Location** locs;
     struct Room** rooms;
     int room_count;
-    struct Mon* monlist; // the monsters on this level
+
+    MonList mon_list;
 };
 
 void display_map(void);
@@ -48,7 +51,7 @@ bool map_in_bounds(struct Map* map, int x, int y);
 bool map_has_mon(struct Map* map, int x, int y);
 bool map_is_pathable(struct Map* map, int x, int y, int path_bits);
 bool map_valid_move(struct Map* map, int x, int y, int path_bits);
-struct Object* map_get_objects(struct Map* map, int x, int y);
+ObjList* map_get_objects(struct Map* map, int x, int y);
 
 bool loc_add_obj(struct Location* loc, struct Object* obj);
 bool loc_rm_obj(struct Location* loc, struct Object* obj);

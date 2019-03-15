@@ -90,7 +90,8 @@ void display_char_inventory(struct UIList* inv_list)
     mvprintwa_xy(1, y, A_BOLD, "Inventory");
     y += 2;
 
-    struct Object* obj = (struct Object*)inv_list->head;
+    struct Object* obj = list_head(inv_list->head, struct Object, obj_list_entry);
+
     while(obj && y < displayable_rows)
     {
         if(obj == inv_list->current_selection)
@@ -102,7 +103,7 @@ void display_char_inventory(struct UIList* inv_list)
             mvprintw_xy(1, y++, "%s", obj->name);
         }
 
-        obj = list_next(obj, struct Object, obj_list);
+        obj = list_next(obj, struct Object, obj_list_entry);
     }
 
     mvprintw_xy(1, screen_rows-1, "q: close inventory");

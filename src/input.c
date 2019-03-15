@@ -31,21 +31,21 @@ bool _do_smart_action(int x, int y)
  */
 bool _pick_up_object(void)
 {
-    struct Object* obj = map_get_objects(cmap, you->mon->x, you->mon->y);
+    ObjList* obj_list = map_get_objects(cmap, you->mon->x, you->mon->y);
 
-    if(obj == NULL)
+    if(obj_list->head == NULL)
     {
        display_msg_log("There is nothing here.");
        return false;
     }
 
     //TODO: Give selection from all objects on floor
-    struct Object* chosen = obj;
+    struct Object* chosen = list_head(obj_list, struct Object, obj_list_entry);
 
     // Unlink object from Location
     loc_rm_obj(&cmap->locs[you->mon->x][you->mon->y], chosen);
 
-    if(!inventory_add_obj(you->mon->inventory, obj))
+    if(!inventory_add_obj(you->mon->inventory, chosen))
     {
         // Failed to add to inventory, relink with Location
         loc_add_obj(&cmap->locs[you->mon->x][you->mon->y], chosen);

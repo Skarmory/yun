@@ -1,13 +1,15 @@
 #ifndef UI_H
 #define UI_H
 
+#include "list.h"
+
 #include <stdbool.h>
 
 struct UIList
 {
-    void* head;
-    int   count;
-    void* current_selection;
+    struct List* head;
+    int          count;
+    void*        current_selection;
 };
 
 bool prompt_yn(const char* msg);

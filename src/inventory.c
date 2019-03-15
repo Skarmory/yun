@@ -19,20 +19,20 @@ struct Inventory* new_inventory(void)
 
     inventory->capacity = DEFAULT_INVENTORY_SIZE;
     inventory->size = 0;
-    inventory->objects = NULL;
+    list_init(&inventory->obj_list);
 
     return inventory;
 }
 
 void free_inventory(struct Inventory* inventory)
 {
-    struct Object* curr = inventory->objects;
+    struct Object* curr = list_head(&inventory->obj_list, struct Object, obj_list_entry);
     struct Object* next;
     while(curr)
     {
-        next = list_next(curr, struct Object, obj_list);
+        next = list_next(curr, struct Object, obj_list_entry);
 
-        list_rm(&curr->obj_list);
+        list_rm(&curr->obj_list_entry, &inventory->obj_list);
         free_obj(curr);
 
         curr = next;
@@ -53,18 +53,18 @@ bool sanity_check_inventory(struct Inventory* inventory)
         ret = false;
     }
 
-    if(inventory->size > 0 && inventory->objects == NULL)
+    if(inventory->size > 0 && inventory->obj_list.head == NULL)
     {
         log_scheck_fail("Inventory size is >0 but objects is null");
         ret = false;
     }
 
     int counter = 0;
-    struct Object* tmp = inventory->objects;
+    struct Object* tmp = list_head(&inventory->obj_list, struct Object, obj_list_entry);
     while(tmp)
     {
         counter++;
-        tmp = list_next(tmp, struct Object, obj_list);
+        tmp = list_next(tmp, struct Object, obj_list_entry);
     }
 
     if(counter > inventory->size)
@@ -94,8 +94,7 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 
     display_fmsg_log("You picked up a %s.", obj->name);
 
-    list_add(&obj->obj_list, inventory->objects ? &inventory->objects->obj_list : NULL);
-    inventory->objects = obj;
+    list_add(&obj->obj_list_entry, &inventory->obj_list);
 
     inventory->size++;
 
@@ -107,7 +106,7 @@ bool manage_inventory(void)
     bool went = false;
 
     struct UIList list;
-    list.head = you->mon->inventory->objects;
+    list.head = &you->mon->inventory->obj_list;
     list.count = you->mon->inventory->size;
     list.current_selection = list.head;
 

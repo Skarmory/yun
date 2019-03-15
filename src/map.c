@@ -18,12 +18,12 @@ struct Map* cmap = NULL;
 
 void _map_free_all_mons(struct Map* map)
 {
-    struct Mon* curr = map->monlist;
+    struct Mon* curr = list_head(&map->mon_list, struct Mon, map_mons);
     struct Mon* next;
     while(curr)
     {
         next = list_next(curr, struct Mon, map_mons);
-        list_rm(&curr->map_mons);
+        list_rm(&curr->map_mons, &map->mon_list);
         free_mon(curr);
         curr = next;
     }
@@ -36,9 +36,9 @@ struct Map* new_map(void)
 {
     struct Map* map = (struct Map*) malloc(sizeof(struct Map));
     map->locs = (struct Location**) malloc(sizeof(struct Location*) * MCOLS);
-    map->monlist = NULL;
     map->rooms = NULL;
     map->room_count = 0;
+    list_init(&map->mon_list);
 
     for(int i = 0; i < MCOLS; ++i)
     {
@@ -52,7 +52,7 @@ struct Map* new_map(void)
             map->locs[i][j].path_node = new_path_node(&map->locs[i][j]);
             map->locs[i][j].mon = NULL;
             map->locs[i][j].pathing = 0;
-            map->locs[i][j].objects = NULL;
+            list_init(&map->locs[i][j].obj_list);
         }
     }
 
@@ -75,14 +75,14 @@ void free_map(struct Map* map)
     {
         for(int y = 0; y < MROWS; y++)
         {
-            struct Object* curr = map->locs[x][y].objects;
+            struct Object* curr = list_head(&map->locs[x][y].obj_list, struct Object, obj_list_entry);
             struct Object* next;
 
             while(curr)
             {
-                next = list_next(curr, struct Object, obj_list);
+                next = list_next(curr, struct Object, obj_list_entry);
 
-                list_rm(&curr->obj_list);
+                list_rm(&curr->obj_list_entry, &map->locs[x][y].obj_list);
                 free_obj(curr);
 
                 curr = next;
@@ -107,11 +107,12 @@ void display_map(void)
     for(int j = 0; j < MROWS; ++j)
     {
         struct Location* loc = &cmap->locs[i][j];
+        struct Object* obj = list_head(&loc->obj_list, struct Object, obj_list_entry);
 
-        if(loc->mon != NULL)
+        if(loc->mon)
             draw_symbol(i, j, loc->mon->type->symbol->sym, loc->mon->type->symbol->fg, loc->mon->type->symbol->attr);
-        else if(loc->objects != NULL)
-            draw_symbol(i, j, loc->objects->symbol->sym, loc->objects->symbol->fg, loc->objects->symbol->attr);
+        else if(obj)
+            draw_symbol(i, j, obj->symbol->sym, obj->symbol->fg, obj->symbol->attr);
         else
             draw_symbol(i, j, loc->terrain, 0, 0);
     }
@@ -131,8 +132,7 @@ void map_add_mon(struct Map* map, struct Mon* mon)
     map->locs[x][y].mon = mon;
 
     // push mon onto the list
-    list_add(&mon->map_mons, map->monlist ? &map->monlist->map_mons : NULL);
-    map->monlist = mon;
+    list_add(&mon->map_mons, &map->mon_list);
 }
 
 /*
@@ -140,17 +140,14 @@ void map_add_mon(struct Map* map, struct Mon* mon)
  */
 bool map_rm_mon(struct Map* map, struct Mon* mon)
 {
-    struct Mon* curr = map->monlist;
+    struct Mon* curr = list_head(&map->mon_list, struct Mon, map_mons);
     while(curr)
     {
         if(curr == mon)
         {
             map->locs[mon->x][mon->y].mon = NULL;
 
-            if(list_is_head(&curr->map_mons))
-                map->monlist = list_next(curr, struct Mon, map_mons);
-
-            list_rm(&mon->map_mons);
+            list_rm(&mon->map_mons, &map->mon_list);
             return true;
         }
 
@@ -163,9 +160,9 @@ bool map_rm_mon(struct Map* map, struct Mon* mon)
 /**
  * Get the object at given map location
  */
-struct Object* map_get_objects(struct Map* map, int x, int y)
+ObjList* map_get_objects(struct Map* map, int x, int y)
 {
-    return map->locs[x][y].objects;
+    return &map->locs[x][y].obj_list;
 }
 
 /**
@@ -174,8 +171,7 @@ struct Object* map_get_objects(struct Map* map, int x, int y)
 bool loc_add_obj(struct Location* loc, struct Object* obj)
 {
     // push object onto location object linked list
-    list_add(&obj->obj_list, loc->objects ? &loc->objects->obj_list : NULL);
-    loc->objects = obj;
+    list_add(&obj->obj_list_entry, &loc->obj_list);
 
     return true;
 }
@@ -185,19 +181,16 @@ bool loc_add_obj(struct Location* loc, struct Object* obj)
  */
 bool loc_rm_obj(struct Location* loc, struct Object* obj)
 {
-    struct Object* curr = loc->objects;
+    struct Object* curr = list_head(&loc->obj_list, struct Object, obj_list_entry);
     while(curr)
     {
         if(curr == obj)
         {
-            if(list_is_head(&curr->obj_list))
-                loc->objects = list_next(curr, struct Object, obj_list);
-
-            list_rm(&curr->obj_list);
+            list_rm(&curr->obj_list_entry, &loc->obj_list);
             return true;
         }
 
-        curr = list_next(curr, struct Object, obj_list);
+        curr = list_next(curr, struct Object, obj_list_entry);
     }
 
     return false;

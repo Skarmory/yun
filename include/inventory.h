@@ -1,6 +1,8 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
+#include "defs.h"
+
 #include <stdbool.h>
 
 struct Object;
@@ -10,7 +12,7 @@ struct Inventory
     int capacity;
     int size;
 
-    struct Object* objects;
+    ObjList obj_list;
 };
 
 struct Inventory* new_inventory(void);

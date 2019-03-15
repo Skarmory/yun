@@ -2,7 +2,6 @@
 #define OBJECT_H
 
 #include "defs.h"
-#include "list.h"
 
 struct Weapon;
 struct Armour;
@@ -10,8 +9,6 @@ struct Symbol;
 
 #define OBJECT_WEAPON_OFF 0
 #define OBJECT_ARMOUR_OFF 3
-
-typedef struct ListEntry ObjList;
 
 enum ObjectType
 {
@@ -35,7 +32,7 @@ struct Object
     } objtype_ptr;
 
     enum ObjectType objtype;
-    ObjList         obj_list;
+    ObjListEntry    obj_list_entry;
 };
 
 /**
