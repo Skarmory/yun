@@ -109,8 +109,18 @@ static bool _input_handled(struct UIList* list, bool* went)
         case 'q':
             return true;
         case 'j':
+            {
+                struct Object* curr = (struct Object*)list->current_selection;
+                if(curr && list_next(curr, struct Object, obj_list_entry))
+                    list->current_selection = list_next(curr, struct Object, obj_list_entry);
+            }
+            break;
         case 'k':
-            //list->current_selection = ((struct Object*)list->current_selection)->next;
+            {
+                struct Object* curr = (struct Object*)list->current_selection;
+                if(curr && list_prev(curr, struct Object, obj_list_entry))
+                    list->current_selection = list_prev(curr, struct Object, obj_list_entry);
+            }
             break;
     }
 
@@ -124,7 +134,7 @@ bool manage_inventory(void)
     struct UIList list;
     list.head = &you->mon->inventory->obj_list;
     list.count = you->mon->inventory->size;
-    list.current_selection = list.head;
+    list.current_selection = list_head((ObjList*)list.head, struct Object, obj_list_entry);
 
     do
     {
