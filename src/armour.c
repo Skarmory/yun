@@ -19,6 +19,7 @@ struct Armour* new_armour(int armour_type)
 
     armour->obj = (struct Object*) malloc(sizeof(struct Object));
     armour->obj->name = armour_names[armour_type];
+    armour->obj->desc = armour_descs[armour_type];
     armour->obj->objtype_ptr.armour = armour;
     armour->obj->objtype = ARMOUR;
     list_entry_init(&armour->obj->obj_list_entry);
@@ -37,6 +38,12 @@ struct Armour armours[] =
     ARMOUR(0, 0, 0, 0, 0)
 };
 
-char* armour_names[] = {
+char* armour_names[] =
+{
     "Unarmoured"
+};
+
+char* armour_descs[] =
+{
+    "An unarmoured fighter relies on their dexterity and agility to evade strikes rather than enduring through their opponent's attacks. However, a single failure could be fatal."
 };

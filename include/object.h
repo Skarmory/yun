@@ -24,6 +24,7 @@ enum ObjectType
 struct Object
 {
     char* name;
+    char* desc;
     struct Symbol* symbol;
     union
     {

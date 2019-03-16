@@ -27,5 +27,6 @@ void free_weapon(struct Weapon* weapon);
 
 extern struct Weapon weapons[];
 extern char* weapon_names[];
+extern char* weapon_descs[];
 
 #endif

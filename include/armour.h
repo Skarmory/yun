@@ -23,5 +23,6 @@ void free_armour(struct Armour* armour);
 
 extern struct Armour armours[];
 extern char* armour_names[];
+extern char* armour_descs[];
 
 #endif

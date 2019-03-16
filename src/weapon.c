@@ -24,6 +24,7 @@ struct Weapon* new_weapon(int weapon_type)
 
     weapon->obj = (struct Object*) malloc(sizeof(struct Object));
     weapon->obj->name = weapon_names[weapon_type];
+    weapon->obj->desc = weapon_descs[weapon_type];
     weapon->obj->symbol = &symbols[SYM_WEAPON_OFF + weapon_type];
     weapon->obj->objtype_ptr.weapon = weapon;
     weapon->obj->objtype = WEAPON;
@@ -48,8 +49,16 @@ struct Weapon weapons[] =
     WEAPON(ATTKS(ATTK(1, 2)))
 };
 
-char* weapon_names[] = {
+char* weapon_names[] =
+{
     "longsword",
     "claws",
     "fists"
+};
+
+char* weapon_descs[] =
+{
+    "A one-handed sword with a long blade. This is a popular choice for many adventurers for its durability, reliability, and simplicity.",
+    "The sharp natural weapons of most wild beastss and horrors that stalk the land. Can shred cloth and light armour with ease.",
+    "The last resort for most adventurers, but can still be deadly when the owner is trained in pugilism."
 };
