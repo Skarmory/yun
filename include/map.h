@@ -53,6 +53,11 @@ bool map_is_pathable(struct Map* map, int x, int y, int path_bits);
 bool map_valid_move(struct Map* map, int x, int y, int path_bits);
 ObjList* map_get_objects(struct Map* map, int x, int y);
 
+static inline struct Location* map_get_loc(struct Map* map, int x, int y)
+{
+    return &map->locs[x][y];
+}
+
 bool loc_add_obj(struct Location* loc, struct Object* obj);
 bool loc_rm_obj(struct Location* loc, struct Object* obj);
 
