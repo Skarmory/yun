@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "log.h"
+#include "map.h"
 #include "message.h"
 #include "mon.h"
 #include "object.h"
@@ -12,6 +13,11 @@
 #include "ui.h"
 
 #define DEFAULT_INVENTORY_SIZE 16
+
+typedef struct _PendingActions
+{
+    ObjList to_drop;
+} PendingActions;
 
 struct Inventory* new_inventory(void)
 {
@@ -124,13 +130,21 @@ bool inventory_has_obj(struct Inventory* inventory, struct Object* obj)
     return false;
 }
 
-static bool _input_handled(struct UIList* list, bool* went)
+static bool _input_handled(struct Inventory* inventory, PendingActions* pending_actions, struct UIList* list, bool* went)
 {
     char in = getch();
     switch(in)
     {
         case 'q':
             return true;
+        case 'd':
+            {
+                struct Object* curr = (struct Object*)list->current_selection;
+                list->current_selection = list_next(curr, struct Object, obj_list_entry);
+                list_rm(&curr->obj_list_entry, &inventory->obj_list);
+                list_add(&curr->obj_list_entry, &pending_actions->to_drop);
+            }
+            break;
         case 'j':
             {
                 struct Object* curr = (struct Object*)list->current_selection;
@@ -150,8 +164,28 @@ static bool _input_handled(struct UIList* list, bool* went)
     return false;
 }
 
+static void _resolve_actions(struct Inventory* inventory, PendingActions* pending)
+{
+    // Drop items
+    struct Object* curr = list_head(&pending->to_drop, struct Object, obj_list_entry);
+    struct Object* next;
+    while(curr)
+    {
+        next = list_next(curr, struct Object, obj_list_entry);
+
+        inventory_rm_obj(inventory, curr);
+        loc_add_obj(map_get_loc(cmap, you->mon->x, you->mon->y), curr);
+        display_fmsg_log("You dropped a %s.", curr->name);
+
+        curr = next;
+    }
+}
+
 bool manage_inventory(void)
 {
+    PendingActions pending;
+    list_init(&pending.to_drop);
+
     bool went = false;
 
     struct UIList list;
@@ -163,10 +197,12 @@ bool manage_inventory(void)
     {
         display_char_inventory(&list);
 
-        if(_input_handled(&list, &went))
+        if(_input_handled(you->mon->inventory, &pending, &list, &went))
             break;
     }
     while(true);
+
+    _resolve_actions(you->mon->inventory, &pending);
 
     return went;
 }
