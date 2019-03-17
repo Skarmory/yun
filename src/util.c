@@ -40,6 +40,27 @@ void convert_arg(char c, char* buf)
     }
 }
 
+int strrfindi(char* haystack, char needle, int start)
+{
+    int ret = -1;
+
+    if(strlen(haystack) >= start)
+    {
+        char* curr = haystack + start;
+
+        do
+        {
+            if(*curr == needle)
+                return (int)(curr - haystack) + 1;
+
+            --curr;
+        }
+        while(curr >= haystack);
+    }
+
+    return ret;
+}
+
 /**
  * Handles game shut down. Destroys everything, ends ncurses, and prints a message out to stdout.
  */

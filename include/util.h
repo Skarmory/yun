@@ -3,6 +3,8 @@
 
 void convert_arg(char c, char* buf);
 
+int strrfindi(char* haystack, char needle, int start);
+
 void do_quit(void);
 
 int random_int(int hi, int lo);
