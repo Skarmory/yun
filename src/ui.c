@@ -132,14 +132,17 @@ void display_char_inventory(struct UIList* inv_list)
     }
 
     struct Object* selected_obj = (struct Object*)inv_list->current_selection;
-    int x_off = 32;
-    const int desc_width = 64;
+    if(selected_obj)
+    {
+        int x_off = 32;
+        const int desc_width = 64;
 
-    y = 0;
-    mvprintwa_xy(x_off, y, A_BOLD, "Description");
-    y+=2;
+        y = 0;
+        mvprintwa_xy(x_off, y, A_BOLD, "Description");
+        y+=2;
 
-    _textbox(x_off, y, desc_width, 0, selected_obj->desc);
+        _textbox(x_off, y, desc_width, 0, selected_obj->desc);
+    }
 
     mvprintw_xy(1, screen_rows-1, "q: close inventory");
 }
