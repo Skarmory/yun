@@ -18,7 +18,7 @@
  *
  * Will attempt to attack a monster if possible, otherwise will attempt to move
  */
-bool _do_smart_action(int x, int y)
+static bool _do_smart_action(int x, int y)
 {
     if(cmap->locs[x][y].mon == NULL)
         return map_move_mon(cmap, you->mon, x, y);
@@ -29,7 +29,7 @@ bool _do_smart_action(int x, int y)
 /**
  * Try to pick up an object from the floor
  */
-bool _pick_up_object(void)
+static bool _pick_up_object(void)
 {
     ObjList* obj_list = map_get_objects(cmap, you->mon->x, you->mon->y);
 
@@ -51,6 +51,8 @@ bool _pick_up_object(void)
         loc_add_obj(&cmap->locs[you->mon->x][you->mon->y], chosen);
         return false;
     }
+
+    display_fmsg_log("You picked up a %s.", chosen->name);
 
     return true;
 }
