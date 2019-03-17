@@ -13,6 +13,7 @@
 #include "player.h"
 #include "race.h"
 #include "stats.h"
+#include "util.h"
 
 #include <ncurses.h>
 #include <stdio.h>
@@ -24,6 +25,30 @@
 
 #define YES 'y'
 #define NO  'n'
+
+static void _textbox(int x, int y, int w, int h, char* text)
+{
+    int stridx   = 0;
+    int textlen  = strlen(text);
+
+    // Print text
+    while(stridx < textlen)
+    {
+        int chars = w;
+        if((stridx + w) < textlen)
+        {
+            chars = strrfindi(text, ' ', stridx + w);
+
+            if(chars == -1)
+                chars = w;
+            else
+                chars -= stridx;
+        }
+
+        mvprintwn_xy(chars, x, y++, text + stridx);
+        stridx += chars;
+    }
+}
 
 bool prompt_yn(const char* msg)
 {
@@ -105,6 +130,16 @@ void display_char_inventory(struct UIList* inv_list)
 
         obj = list_next(obj, struct Object, obj_list_entry);
     }
+
+    struct Object* selected_obj = (struct Object*)inv_list->current_selection;
+    int x_off = 32;
+    const int desc_width = 64;
+
+    y = 0;
+    mvprintwa_xy(x_off, y, A_BOLD, "Description");
+    y+=2;
+
+    _textbox(x_off, y, desc_width, 0, selected_obj->desc);
 
     mvprintw_xy(1, screen_rows-1, "q: close inventory");
 }
