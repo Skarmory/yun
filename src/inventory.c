@@ -100,6 +100,30 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
     return true;
 }
 
+bool inventory_rm_obj(struct Inventory* inventory, struct Object* obj)
+{
+    if(!inventory_has_obj(inventory, obj))
+        return false;
+
+    list_rm(&obj->obj_list_entry, &inventory->obj_list);
+    inventory->size--;
+
+    return true;
+}
+
+bool inventory_has_obj(struct Inventory* inventory, struct Object* obj)
+{
+    struct Object* curr = list_head(&inventory->obj_list, struct Object, obj_list_entry);
+    while(curr)
+    {
+        if(curr == obj)
+            return true;
+        curr = list_next(curr, struct Object, obj_list_entry);
+    }
+
+    return false;
+}
+
 static bool _input_handled(struct UIList* list, bool* went)
 {
     char in = getch();
