@@ -144,5 +144,5 @@ void display_char_inventory(struct UIList* inv_list)
         _textbox(x_off, y, desc_width, 0, selected_obj->desc);
     }
 
-    mvprintw_xy(1, screen_rows-1, "q: close inventory");
+    mvprintw_xy(1, screen_rows-1, "q: close inventory / d: drop object");
 }

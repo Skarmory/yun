@@ -140,9 +140,12 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
         case 'd':
             {
                 struct Object* curr = (struct Object*)list->current_selection;
-                list->current_selection = list_next(curr, struct Object, obj_list_entry);
-                list_rm(&curr->obj_list_entry, &inventory->obj_list);
-                list_add(&curr->obj_list_entry, &pending_actions->to_drop);
+                if(curr)
+                {
+                    list->current_selection = list_next(curr, struct Object, obj_list_entry);
+                    list_rm(&curr->obj_list_entry, &inventory->obj_list);
+                    list_add(&curr->obj_list_entry, &pending_actions->to_drop);
+                }
             }
             break;
         case 'j':
