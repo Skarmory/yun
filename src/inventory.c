@@ -215,7 +215,16 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
 
         inventory_rm_obj(inventory, curr);
         loc_add_obj(map_get_loc(cmap, you->mon->x, you->mon->y), curr);
-        display_fmsg_log("You dropped a %s.", curr->name);
+
+        if(equipment_is_equipped(equipment, curr) && curr->objtype == OBJ_TYPE_WEAPON)
+        {
+            equipment_unequip_obj(equipment, curr);
+            display_fmsg_log("You thrown down your %s.", curr->name);
+        }
+        else
+        {
+            display_fmsg_log("You dropped a %s.", curr->name);
+        }
 
         curr = next;
     }
@@ -224,7 +233,7 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
     if(pending->to_equip)
     {
         // Unequip item in slot and store back into inventory
-        struct Object* unequipped = equipment_unequip_obj(equipment, pending->to_equip_slot);
+        struct Object* unequipped = equipment_unequip_slot(equipment, pending->to_equip_slot);
         bool success = equipment_equip_obj(equipment, pending->to_equip, pending->to_equip_slot);
 
         if(success)

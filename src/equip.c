@@ -60,7 +60,26 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
     return false;
 }
 
-struct Object* equipment_unequip_obj(struct Equipment* equipment, enum EquipmentSlot slot)
+struct Object* equipment_unequip_obj(struct Equipment* equipment, struct Object* obj)
+{
+    if(obj->objtype == OBJ_TYPE_WEAPON)
+    {
+        if(obj->objtype_ptr.weapon == equipment->main_hand)
+        {
+            equipment->main_hand = NULL;
+            return obj;
+        }
+        if(obj->objtype_ptr.weapon == equipment->off_hand)
+        {
+            equipment->off_hand = NULL;
+            return obj;
+        }
+    }
+
+    return NULL;
+}
+
+struct Object* equipment_unequip_slot(struct Equipment* equipment, enum EquipmentSlot slot)
 {
     struct Object* unequipped = NULL;
     switch(slot)

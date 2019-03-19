@@ -25,6 +25,7 @@ void free_equipment(struct Equipment* equipment);
 
 bool equipment_is_equipped(struct Equipment* equipment, struct Object* obj);
 bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum EquipmentSlot slot);
-struct Object* equipment_unequip_obj(struct Equipment* equipment, enum EquipmentSlot slot);
+struct Object* equipment_unequip_obj(struct Equipment* equipment, struct Object* obj);
+struct Object* equipment_unequip_slot(struct Equipment* equipment, enum EquipmentSlot slot);
 
 #endif
