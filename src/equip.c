@@ -102,3 +102,17 @@ struct Object* equipment_unequip_slot(struct Equipment* equipment, enum Equipmen
 
     return unequipped;
 }
+
+enum EquipmentSlot equipment_slot_by_obj(struct Equipment* equipment, struct Object* obj)
+{
+    if(obj->objtype == OBJ_TYPE_WEAPON)
+    {
+        if(obj->objtype_ptr.weapon == equipment->main_hand)
+            return EQUIP_SLOT_MAIN_HAND;
+
+        if(obj->objtype_ptr.weapon == equipment->off_hand)
+            return EQUIP_SLOT_OFF_HAND;
+    }
+
+    return EQUIP_SLOT_MAX;
+}
