@@ -9,8 +9,9 @@ struct Object;
 
 enum EquipmentSlot
 {
-    MAIN_HAND,
-    OFF_HAND
+    EQUIP_SLOT_MAIN_HAND,
+    EQUIP_SLOT_OFF_HAND,
+    EQUIP_SLOT_MAX
 };
 
 struct Equipment

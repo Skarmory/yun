@@ -27,12 +27,12 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
         {
             switch(slot)
             {
-                case MAIN_HAND:
+                case EQUIP_SLOT_MAIN_HAND:
                 {
                     equipment->main_hand = obj->objtype_ptr.weapon;
                     return true;
                 }
-                case OFF_HAND:
+                case EQUIP_SLOT_OFF_HAND:
                 {
                     equipment->off_hand = obj->objtype_ptr.weapon;
                     return true;
@@ -52,14 +52,14 @@ struct Object* equipment_unequip_obj(struct Equipment* equipment, enum Equipment
     struct Object* unequipped = NULL;
     switch(slot)
     {
-        case MAIN_HAND:
+        case EQUIP_SLOT_MAIN_HAND:
             if(equipment->main_hand)
             {
                 unequipped = equipment->main_hand->obj;
                 equipment->main_hand = NULL;
             }
             break;
-        case OFF_HAND:
+        case EQUIP_SLOT_OFF_HAND:
             if(equipment->off_hand)
             {
                 unequipped = equipment->off_hand->obj;
