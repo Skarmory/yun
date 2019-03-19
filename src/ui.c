@@ -2,6 +2,7 @@
 
 #include "class.h"
 #include "colour.h"
+#include "equip.h"
 #include "globals.h"
 #include "inventory.h"
 #include "log.h"
@@ -139,7 +140,7 @@ void display_char_info_screen(void)
 /**
  * Displays items in the player's inventory
  */
-void display_char_inventory(struct UIList* inv_list)
+void display_char_inventory(struct Inventory* inventory, struct Equipment* equipment, struct Object** highlighted)
 {
     int y;
     int displayable_rows = screen_rows - 4;
@@ -150,24 +151,25 @@ void display_char_inventory(struct UIList* inv_list)
     mvprintwa_xy(1, y, A_BOLD, "Inventory");
     y += 2;
 
-    struct Object* obj = list_head(inv_list->head, struct Object, obj_list_entry);
+    struct Object* obj = list_head(&inventory->obj_list, struct Object, obj_list_entry);
 
     while(obj && y < displayable_rows)
     {
-        if(obj == inv_list->current_selection)
+        bool equipped = equipment_is_equipped(equipment, obj);
+
+        if(highlighted && obj == *highlighted)
         {
-            mvprintwa_xy(1, y++, COLOR_PAIR(30), "%s", obj->name);
+            mvprintwa_xy(1, y++, COLOR_PAIR(30), "%s%s", obj->name, equipped ? " (equipped)" : "");
         }
         else
         {
-            mvprintw_xy(1, y++, "%s", obj->name);
+            mvprintw_xy(1, y++, "%s%s", obj->name, equipped ? " (equipped)" : "");
         }
 
         obj = list_next(obj, struct Object, obj_list_entry);
     }
 
-    struct Object* selected_obj = (struct Object*)inv_list->current_selection;
-    if(selected_obj)
+    if(highlighted && *highlighted)
     {
         int x_off = 32;
         const int desc_width = 64;
@@ -176,7 +178,7 @@ void display_char_inventory(struct UIList* inv_list)
         mvprintwa_xy(x_off, y, A_BOLD, "Description");
         y+=2;
 
-        _textbox(x_off, y, desc_width, 0, selected_obj->desc);
+        _textbox(x_off, y, desc_width, 0, (*highlighted)->desc);
     }
 
     mvprintw_xy(1, screen_rows-1, "q: close inventory / d: drop object / e: equip object");

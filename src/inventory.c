@@ -133,7 +133,7 @@ bool inventory_has_obj(struct Inventory* inventory, struct Object* obj)
     return false;
 }
 
-static bool _input_handled(struct Inventory* inventory, PendingActions* pending_actions, struct UIList* list, bool* went)
+static bool _input_handled(struct Inventory* inventory, PendingActions* pending_actions, struct Object** highlighted, bool* went)
 {
     char in = getch();
     switch(in)
@@ -142,21 +142,25 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
             return true;
         case 'd':
             {
-                struct Object* curr = (struct Object*)list->current_selection;
-                if(curr)
+                if(highlighted && *highlighted)
                 {
-                    list->current_selection = list_next(curr, struct Object, obj_list_entry);
-                    list_rm(&curr->obj_list_entry, &inventory->obj_list);
-                    list_add(&curr->obj_list_entry, &pending_actions->to_drop);
+                    struct Object* drop = *highlighted;
+
+                    if(list_next(*highlighted, struct Object, obj_list_entry))
+                        *highlighted = list_next(*highlighted, struct Object, obj_list_entry);
+                    else
+                        *highlighted = list_prev(*highlighted, struct Object, obj_list_entry);
+
+                    list_rm(&drop->obj_list_entry, &inventory->obj_list);
+                    list_add(&drop->obj_list_entry, &pending_actions->to_drop);
                 }
             }
             break;
         case 'e':
             {
-                struct Object* curr = (struct Object*)list->current_selection;
-                if(curr)
+                if(highlighted && *highlighted)
                 {
-                    if(curr->objtype == OBJ_TYPE_WEAPON)
+                    if((*highlighted)->objtype == OBJ_TYPE_WEAPON)
                     {
                         struct List handedness_options;
                         list_init(&handedness_options);
@@ -175,7 +179,7 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
                         pending_actions->to_equip_slot = prompt_choice("Choose slot", &handedness_options);
                     }
 
-                    pending_actions->to_equip = curr;
+                    pending_actions->to_equip = *highlighted;
                     *went = true;
                     return true;
                 }
@@ -183,16 +187,16 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
             break;
         case 'j':
             {
-                struct Object* curr = (struct Object*)list->current_selection;
-                if(curr && list_next(curr, struct Object, obj_list_entry))
-                    list->current_selection = list_next(curr, struct Object, obj_list_entry);
+                if(highlighted && *highlighted)
+                    if(list_next(*highlighted, struct Object, obj_list_entry))
+                        *highlighted = list_next(*highlighted, struct Object, obj_list_entry);
             }
             break;
         case 'k':
             {
-                struct Object* curr = (struct Object*)list->current_selection;
-                if(curr && list_prev(curr, struct Object, obj_list_entry))
-                    list->current_selection = list_prev(curr, struct Object, obj_list_entry);
+                if(highlighted && *highlighted)
+                    if(list_prev(*highlighted, struct Object, obj_list_entry))
+                        *highlighted = list_prev(*highlighted, struct Object, obj_list_entry);
             }
             break;
     }
@@ -249,16 +253,13 @@ bool manage_inventory(void)
     pending.to_equip = NULL;
 
     bool went = false;
-
-    struct UIList list;
-    list.head = &you->mon->inventory->obj_list;
-    list.current_selection = list_head((ObjList*)list.head, struct Object, obj_list_entry);
+    struct Object* highlighted = list_head(&you->mon->inventory->obj_list, struct Object, obj_list_entry);
 
     do
     {
-        display_char_inventory(&list);
+        display_char_inventory(you->mon->inventory, you->mon->equipment, &highlighted);
 
-        if(_input_handled(you->mon->inventory, &pending, &list, &went))
+        if(_input_handled(you->mon->inventory, &pending, &highlighted, &went))
             break;
     }
     while(true);
