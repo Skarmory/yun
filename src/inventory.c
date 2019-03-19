@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "equip.h"
 #include "log.h"
 #include "map.h"
 #include "message.h"
@@ -16,7 +17,9 @@
 
 typedef struct _PendingActions
 {
-    ObjList to_drop;
+    ObjList            to_drop;
+    struct Object*     to_equip;
+    enum EquipmentSlot to_equip_slot;
 } PendingActions;
 
 struct Inventory* new_inventory(void)
@@ -148,6 +151,38 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
                 }
             }
             break;
+        case 'e':
+            {
+                struct Object* curr = (struct Object*)list->current_selection;
+                if(curr)
+                {
+                    log_msg(DEBUG, "equip");
+                    if(curr->objtype == WEAPON)
+                    {
+                        log_msg(DEBUG, "is_weapon");
+                        struct List handedness_options;
+                        list_init(&handedness_options);
+
+                        struct UIOption main_hand;
+                        snprintf(main_hand.option_name, g_option_name_max_size, "%s", "main hand");
+                        list_entry_init(&main_hand.option_list_entry);
+
+                        struct UIOption off_hand;
+                        snprintf(off_hand.option_name, g_option_name_max_size, "%s", "off hand");
+                        list_entry_init(&off_hand.option_list_entry);
+
+                        list_add(&off_hand.option_list_entry, &handedness_options);
+                        list_add(&main_hand.option_list_entry, &handedness_options);
+
+                        pending_actions->to_equip_slot = prompt_choice("Choose slot", &handedness_options);
+                    }
+
+                    pending_actions->to_equip = curr;
+                    *went = true;
+                    return true;
+                }
+            }
+            break;
         case 'j':
             {
                 struct Object* curr = (struct Object*)list->current_selection;
@@ -167,7 +202,7 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
     return false;
 }
 
-static void _resolve_actions(struct Inventory* inventory, PendingActions* pending)
+static void _resolve_actions(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending)
 {
     // Drop items
     struct Object* curr = list_head(&pending->to_drop, struct Object, obj_list_entry);
@@ -182,12 +217,38 @@ static void _resolve_actions(struct Inventory* inventory, PendingActions* pendin
 
         curr = next;
     }
+
+    // Equip items
+    if(pending->to_equip)
+    {
+        // Unequip item in slot and store back into inventory
+        struct Object* unequipped = equipment_unequip_obj(equipment, pending->to_equip_slot);
+        bool success = equipment_equip_obj(equipment, pending->to_equip, pending->to_equip_slot);
+
+        if(success)
+        {
+            if(unequipped)
+                display_fmsg_log("You unequipped your %s.", unequipped->name);
+            display_fmsg_log("You equipped your %s.", pending->to_equip->name);
+        }
+        else
+        {
+            display_fmsg_log("You equipped your %s.",   pending->to_equip->name);
+
+            // Failed to equip the item, roll back to previous state
+            if(unequipped)
+            {
+                equipment_equip_obj(equipment, unequipped, pending->to_equip_slot);
+            }
+        }
+    }
 }
 
 bool manage_inventory(void)
 {
     PendingActions pending;
     list_init(&pending.to_drop);
+    pending.to_equip = NULL;
 
     bool went = false;
 
@@ -204,7 +265,7 @@ bool manage_inventory(void)
     }
     while(true);
 
-    _resolve_actions(you->mon->inventory, &pending);
+    _resolve_actions(you->mon->inventory, you->mon->equipment, &pending);
 
     return went;
 }

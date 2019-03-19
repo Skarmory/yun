@@ -5,10 +5,18 @@
 
 #include <stdbool.h>
 
+#define g_option_name_max_size 32
+
 struct UIList
 {
     struct List* head;
     void*        current_selection;
+};
+
+struct UIOption
+{
+    char   option_name[g_option_name_max_size];
+    struct ListEntry option_list_entry;
 };
 
 bool prompt_yn(const char* msg);
