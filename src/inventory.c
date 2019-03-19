@@ -156,10 +156,8 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
                 struct Object* curr = (struct Object*)list->current_selection;
                 if(curr)
                 {
-                    log_msg(DEBUG, "equip");
-                    if(curr->objtype == WEAPON)
+                    if(curr->objtype == OBJ_TYPE_WEAPON)
                     {
-                        log_msg(DEBUG, "is_weapon");
                         struct List handedness_options;
                         list_init(&handedness_options);
 

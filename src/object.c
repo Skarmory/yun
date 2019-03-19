@@ -12,8 +12,8 @@ void free_obj(struct Object* obj)
     {
         switch(obj->objtype)
         {
-           case WEAPON: free_weapon(obj->objtype_ptr.weapon); return;
-           case ARMOUR: free_armour(obj->objtype_ptr.armour); return;
+           case OBJ_TYPE_WEAPON: free_weapon(obj->objtype_ptr.weapon); return;
+           case OBJ_TYPE_ARMOUR: free_armour(obj->objtype_ptr.armour); return;
         }
     }
 }

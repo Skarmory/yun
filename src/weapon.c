@@ -27,7 +27,7 @@ struct Weapon* new_weapon(int weapon_type)
     weapon->obj->desc = weapon_descs[weapon_type];
     weapon->obj->symbol = &symbols[SYM_WEAPON_OFF + weapon_type];
     weapon->obj->objtype_ptr.weapon = weapon;
-    weapon->obj->objtype = WEAPON;
+    weapon->obj->objtype = OBJ_TYPE_WEAPON;
     list_entry_init(&weapon->obj->obj_list_entry);
 
     return weapon;

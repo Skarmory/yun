@@ -23,7 +23,7 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
 {
     switch(obj->objtype)
     {
-        case WEAPON:
+        case OBJ_TYPE_WEAPON:
         {
             switch(slot)
             {
@@ -41,7 +41,7 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
         }
         break;
 
-        case ARMOUR:
+        case OBJ_TYPE_ARMOUR:
             break;
     }
     return false;

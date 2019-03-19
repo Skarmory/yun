@@ -12,8 +12,8 @@ struct Symbol;
 
 enum ObjectType
 {
-    WEAPON,
-    ARMOUR
+    OBJ_TYPE_WEAPON,
+    OBJ_TYPE_ARMOUR
 };
 
 /**
