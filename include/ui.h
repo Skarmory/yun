@@ -12,6 +12,8 @@ struct UIList
 };
 
 bool prompt_yn(const char* msg);
+int  prompt_choice(const char* title, struct List* choices);
+
 void display_main_screen(void);
 void display_char_status(void);
 void display_char_info_screen(void);
