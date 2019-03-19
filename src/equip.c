@@ -19,6 +19,19 @@ void free_equipment(struct Equipment* equipment)
     free(equipment);
 }
 
+bool equipment_is_equipped(struct Equipment* equipment, struct Object* obj)
+{
+    switch(obj->objtype)
+    {
+        case OBJ_TYPE_WEAPON:
+        {
+            return (equipment->main_hand == obj->objtype_ptr.weapon || equipment->off_hand == obj->objtype_ptr.weapon);
+        }
+    }
+
+    return false;
+}
+
 bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum EquipmentSlot slot)
 {
     switch(obj->objtype)
