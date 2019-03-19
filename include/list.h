@@ -14,6 +14,7 @@ struct ListEntry
 
 struct List
 {
+    int count;
     struct ListEntry* head;
     struct ListEntry* tail;
 };
@@ -43,6 +44,7 @@ static inline void list_debug_size(struct List* list)
 
 static inline void list_init(struct List* list)
 {
+    list->count = 0;
     list->head = list->tail = NULL;
 }
 
@@ -64,6 +66,7 @@ static inline void list_add(struct ListEntry* add, struct List* list)
         list->tail = add;
     }
 
+    ++list->count;
     list->head = add;
 }
 
@@ -80,6 +83,7 @@ static inline void list_rm(struct ListEntry* entry, struct List* list)
     else
         list->tail = entry->prev;
 
+    --list->count;
     entry->prev = entry->next = NULL;
 }
 
