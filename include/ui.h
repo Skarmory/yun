@@ -8,7 +8,6 @@
 struct UIList
 {
     struct List* head;
-    int          count;
     void*        current_selection;
 };
 

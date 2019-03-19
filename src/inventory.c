@@ -193,7 +193,6 @@ bool manage_inventory(void)
 
     struct UIList list;
     list.head = &you->mon->inventory->obj_list;
-    list.count = you->mon->inventory->size;
     list.current_selection = list_head((ObjList*)list.head, struct Object, obj_list_entry);
 
     do
