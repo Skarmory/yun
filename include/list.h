@@ -29,17 +29,15 @@ struct List
 
 #define list_head(list_ptr, entry_type, list_name) ((list_ptr)->head ? list_elem((list_ptr)->head, entry_type, list_name) : NULL)
 
-static inline void list_debug_size(struct List* list)
+static inline void list_debug_ptr(struct List* list)
 {
     int counter = 0;
     struct ListEntry* entry = list->head;
     while(entry)
     {
-        ++counter;
+        log_format_msg(DEBUG, "%d: %p", counter++, entry);
         entry = entry->next;
     }
-
-    log_format_msg(DEBUG, "\tsize: %d", counter);
 }
 
 static inline void list_init(struct List* list)
