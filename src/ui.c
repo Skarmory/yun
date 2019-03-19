@@ -52,9 +52,12 @@ static void _textbox(int x, int y, int w, int h, char* text)
 
 bool prompt_yn(const char* msg)
 {
+    clear_msgs();
     display_fmsg_nolog("%s [yn] (n)", msg);
     flush_msg_buffer();
+
     bool decision = getch() == YES;
+
     display_fmsg_log("%s [yn] (n) %c", msg, decision ? YES : NO);
     flush_msg_buffer();
     return decision;
