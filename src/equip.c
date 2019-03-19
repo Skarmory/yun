@@ -16,12 +16,6 @@ struct Equipment* new_equipment(void)
 
 void free_equipment(struct Equipment* equipment)
 {
-    if(equipment->main_hand)
-        free_weapon(equipment->main_hand);
-
-    if(equipment->off_hand)
-        free_weapon(equipment->off_hand);
-
     free(equipment);
 }
 
