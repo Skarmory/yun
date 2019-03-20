@@ -98,6 +98,7 @@ void handle_input(void)
                 break;
             case 'c':
                 went = character_screen_handler();
+                clear();
                 break;
             case ',':
                 went = _pick_up_object();
