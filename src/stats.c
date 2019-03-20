@@ -8,29 +8,64 @@
 #include <math.h>
 #include <stdio.h>
 
-#define DODGE_MOD 4
-#define PARRY_MOD 8
-#define BLOCK_MOD 1.1f
-#define BLOCK_MOD2 3
-#define CRIT_BLOCK_MOD 3
-#define CRIT_MOD 1.5f
-#define ARMPEN_MOD 200.0f
+const int   c_dodge_mod      = 4;
+const int   c_parry_mod      = 8;
+const float c_block_mod      = 1.1f;
+const int   c_block_mod_2    = 3;
+const int   c_crit_block_mod = 3;
+const float c_crit_mod       = 1.5f;
+const float c_armpen_mod     = 200.0f;
 
 #define max(x, y) (((x) > (y) ? (x) : (y)))
 
-#define calc_dodge(mon)      (atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / DODGE_MOD)
-#define calc_parry(mon)      (atan(get_strength(mon) * _get_mod(mon, STRENGTH) * INV_STAT_MAX) / PARRY_MOD)
-#define calc_block(mon)      (log_base((get_stamina(mon) / BLOCK_MOD2) + 1, STAT_MAX) / BLOCK_MOD)
-#define calc_crit_block(mon) (calc_block(mon) / CRIT_BLOCK_MOD)
+static inline float _get_mod(struct Mon* mon, short stat);
+static inline float _armpen_divisor(struct Mon* mon);
+static inline float _calc_dodge(struct Mon* mon);
+static inline float _calc_parry(struct Mon* mon);
+static inline float _calc_block(struct Mon* mon);
+static inline float _calc_crit_block(struct Mon* mon);
+static inline float _calc_crit(struct Mon* mon);
+static inline int   _calc_armpen(struct Mon* mon);
 
-#define calc_crit(mon)       (atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / CRIT_MOD)
-#define armpen_divisor(mon)  ((ARMPEN_MOD * (1.0f - ((float)get_strength(mon) / 999.0f))))
-#define calc_armpen(mon)     ((int)max(floor(((get_strength(mon) * get_strength(mon)) * _get_mod(mon, STRENGTH)) / armpen_divisor(mon)) - 1.0f, 0.0f))
+static inline float _armpen_divisor(struct Mon* mon)
+{
+    return c_armpen_mod * (1.0f - ((float)get_strength(mon) / 999.0f));
+}
+
+static inline float _calc_dodge(struct Mon* mon)
+{
+    return atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / c_dodge_mod;
+}
+
+static inline float _calc_parry(struct Mon* mon)
+{
+    return atan(get_strength(mon) * _get_mod(mon, STRENGTH) * INV_STAT_MAX) / c_parry_mod;
+}
+
+static inline float _calc_block(struct Mon* mon)
+{
+    return log_base((get_stamina(mon) / c_block_mod_2) + 1, STAT_MAX) / c_block_mod;
+}
+
+static inline float _calc_crit_block(struct Mon* mon)
+{
+    return _calc_block(mon) / c_crit_block_mod;
+}
+
+static inline float _calc_crit(struct Mon* mon)
+{
+    return atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / c_crit_mod;
+}
+
+static inline int _calc_armpen(struct Mon* mon)
+{
+    return (int) max(floor(((get_strength(mon) * get_strength(mon)) * _get_mod(mon, STRENGTH)) / _armpen_divisor(mon)) - 1.0f, 0.0f);
+}
 
 /**
  * Get the stat scalar mod
  */
-float _get_mod(struct Mon* mon, short stat)
+static float _get_mod(struct Mon* mon, short stat)
 {
     switch(stat)
     {
@@ -52,21 +87,21 @@ float _get_mod(struct Mon* mon, short stat)
 /**
  * Increase the stats governed by strength
  */
-void _update_strength(struct Mon* mon)
+static void _update_strength(struct Mon* mon)
 {
     int str = MSTAT(mon, strength, strength);
     float invstr = str * INV_STAT_MAX;
     float mod = _get_mod(mon, STRENGTH);
 
     MSTAT(mon, strength, attack_power) = str * mod *  0.2f;
-    get_parry(mon) = calc_parry(mon);
-    get_armour_pen(mon) = calc_armpen(mon);
+    get_parry(mon) = _calc_parry(mon);
+    get_armour_pen(mon) = _calc_armpen(mon);
 }
 
 /**
  * Increase the stats governed by agility
  */
-void _update_agility(struct Mon* mon)
+static void _update_agility(struct Mon* mon)
 {
     int agi = MSTAT(mon, agility, agility);
     float invagi = agi * INV_STAT_MAX;
@@ -74,13 +109,13 @@ void _update_agility(struct Mon* mon)
 
     MSTAT(mon, agility, attack_power) = agi * mod *  0.2f;
     MSTAT(mon, agility, crit_chance) = invagi * mod * 0.75f;
-    get_dodge(mon) = calc_dodge(mon);
+    get_dodge(mon) = _calc_dodge(mon);
 }
 
 /**
  * Increase the stats governed by intelligence
  */
-void _update_intelligence(struct Mon* mon)
+static void _update_intelligence(struct Mon* mon)
 {
     int in = MSTAT(mon, intelligence, intelligence);
     float invin = in * INV_STAT_MAX;
@@ -102,7 +137,7 @@ void _update_intelligence(struct Mon* mon)
 /**
  * Increase the stats governed by spirit
  */
-void _update_spirit(struct Mon* mon)
+static void _update_spirit(struct Mon* mon)
 {
     int spi = MSTAT(mon, spirit, spirit);
     float invspi = spi * INV_STAT_MAX;
@@ -117,7 +152,7 @@ void _update_spirit(struct Mon* mon)
 /**
  * Increase the stats governed by stamina
  */
-void _update_stamina(struct Mon* mon)
+static void _update_stamina(struct Mon* mon)
 {
     int sta = MSTAT(mon, stamina, stamina);
     float invsta = sta * INV_STAT_MAX;
@@ -133,7 +168,7 @@ void _update_stamina(struct Mon* mon)
     MSTAT(mon, stamina, health) = MSTAT(mon, stamina, max_health) * health_percent;
     MSTAT(mon, stamina, block_chance) = invsta * mod * 0.75f;
     MSTAT(mon, stamina, crit_block_chance) = invsta * mod * 0.5f;
-    get_block(mon) = calc_block(mon);
+    get_block(mon) = _calc_block(mon);
 }
 
 /**
