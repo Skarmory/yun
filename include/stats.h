@@ -5,11 +5,14 @@
 
 struct Mon;
 
-#define STRENGTH     0
-#define AGILITY      1
-#define INTELLIGENCE 2
-#define SPIRIT       3
-#define STAMINA      4
+enum Stat
+{
+    STAT_STRENGTH,
+    STAT_AGILITY,
+    STAT_INTELLIGENCE,
+    STAT_SPIRIT,
+    STAT_STAMINA
+};
 
 #define STAT_MAX      99
 #define INV_STAT_MAX  (1.f/99.f)

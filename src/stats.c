@@ -34,12 +34,12 @@ static inline float _armpen_divisor(struct Mon* mon)
 
 static inline float _calc_dodge(struct Mon* mon)
 {
-    return atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / c_dodge_mod;
+    return atan(get_agility(mon) * _get_mod(mon, STAT_AGILITY) * INV_STAT_MAX) / c_dodge_mod;
 }
 
 static inline float _calc_parry(struct Mon* mon)
 {
-    return atan(get_strength(mon) * _get_mod(mon, STRENGTH) * INV_STAT_MAX) / c_parry_mod;
+    return atan(get_strength(mon) * _get_mod(mon, STAT_STRENGTH) * INV_STAT_MAX) / c_parry_mod;
 }
 
 static inline float _calc_block(struct Mon* mon)
@@ -54,12 +54,12 @@ static inline float _calc_crit_block(struct Mon* mon)
 
 static inline float _calc_crit(struct Mon* mon)
 {
-    return atan(get_agility(mon) * _get_mod(mon, AGILITY) * INV_STAT_MAX) / c_crit_mod;
+    return atan(get_agility(mon) * _get_mod(mon, STAT_AGILITY) * INV_STAT_MAX) / c_crit_mod;
 }
 
 static inline int _calc_armpen(struct Mon* mon)
 {
-    return (int) max(floor(((get_strength(mon) * get_strength(mon)) * _get_mod(mon, STRENGTH)) / _armpen_divisor(mon)) - 1.0f, 0.0f);
+    return (int) max(floor(((get_strength(mon) * get_strength(mon)) * _get_mod(mon, STAT_STRENGTH)) / _armpen_divisor(mon)) - 1.0f, 0.0f);
 }
 
 /**
@@ -69,19 +69,19 @@ static float _get_mod(struct Mon* mon, short stat)
 {
     switch(stat)
     {
-        case STRENGTH:
+        case STAT_STRENGTH:
             return mon->stats.strength.scale;
-        case AGILITY:
+        case STAT_AGILITY:
             return mon->stats.agility.scale;
-        case INTELLIGENCE:
+        case STAT_INTELLIGENCE:
             return mon->stats.intelligence.scale;
-        case SPIRIT:
+        case STAT_SPIRIT:
             return mon->stats.spirit.scale;
-        case STAMINA:
+        case STAT_STAMINA:
             return mon->stats.stamina.scale;
-        default:
-            return 0.0f; // How did you even get here?
     }
+
+    return 0.0f;
 }
 
 /**
@@ -91,7 +91,7 @@ static void _update_strength(struct Mon* mon)
 {
     int str = MSTAT(mon, strength, strength);
     float invstr = str * INV_STAT_MAX;
-    float mod = _get_mod(mon, STRENGTH);
+    float mod = _get_mod(mon, STAT_STRENGTH);
 
     MSTAT(mon, strength, attack_power) = str * mod *  0.2f;
     get_parry(mon) = _calc_parry(mon);
@@ -105,7 +105,7 @@ static void _update_agility(struct Mon* mon)
 {
     int agi = MSTAT(mon, agility, agility);
     float invagi = agi * INV_STAT_MAX;
-    float mod = _get_mod(mon, AGILITY);
+    float mod = _get_mod(mon, STAT_AGILITY);
 
     MSTAT(mon, agility, attack_power) = agi * mod *  0.2f;
     MSTAT(mon, agility, crit_chance) = invagi * mod * 0.75f;
@@ -119,7 +119,7 @@ static void _update_intelligence(struct Mon* mon)
 {
     int in = MSTAT(mon, intelligence, intelligence);
     float invin = in * INV_STAT_MAX;
-    float mod = _get_mod(mon, INTELLIGENCE);
+    float mod = _get_mod(mon, STAT_INTELLIGENCE);
 
     float mana_percent;
     if(MSTAT(mon,intelligence,max_mana) == 0)
@@ -141,7 +141,7 @@ static void _update_spirit(struct Mon* mon)
 {
     int spi = MSTAT(mon, spirit, spirit);
     float invspi = spi * INV_STAT_MAX;
-    float mod = _get_mod(mon, SPIRIT);
+    float mod = _get_mod(mon, STAT_SPIRIT);
 
     MSTAT(mon, spirit, spell_power) = spi * mod * 0.2f;
     MSTAT(mon, spirit, mana_regen) = spi * mod * 0.1f;
@@ -156,7 +156,7 @@ static void _update_stamina(struct Mon* mon)
 {
     int sta = MSTAT(mon, stamina, stamina);
     float invsta = sta * INV_STAT_MAX;
-    float mod = _get_mod(mon, STAMINA);
+    float mod = _get_mod(mon, STAT_STAMINA);
 
     float health_percent;
     if(MSTAT(mon,stamina,max_health) == 0)
@@ -180,27 +180,27 @@ void set_stat(struct Mon* mon, int stat, int amount)
 {
     switch(stat)
     {
-        case STRENGTH:
+        case STAT_STRENGTH:
             MSTAT(mon, strength, strength) = amount;
             MSTAT(mon, strength, base_strength) = amount;
             _update_strength(mon);
             break;
-        case AGILITY:
+        case STAT_AGILITY:
             MSTAT(mon, agility, agility) = amount;
             MSTAT(mon, agility, base_agility) = amount;
             _update_agility(mon);
             break;
-        case INTELLIGENCE:
+        case STAT_INTELLIGENCE:
             MSTAT(mon, intelligence, intelligence) = amount;
             MSTAT(mon, intelligence, base_intelligence) = amount;
             _update_intelligence(mon);
             break;
-        case SPIRIT:
+        case STAT_SPIRIT:
             MSTAT(mon, spirit, spirit) = amount;
             MSTAT(mon, spirit, base_spirit) = amount;
             _update_spirit(mon);
             break;
-        case STAMINA:
+        case STAT_STAMINA:
             MSTAT(mon, stamina, stamina) = amount;
             MSTAT(mon, stamina, base_stamina) = amount;
             _update_stamina(mon);
@@ -219,27 +219,27 @@ void add_stat(struct Mon* mon, int stat, int amount, bool base)
 {
     switch(stat)
     {
-        case STRENGTH:
+        case STAT_STRENGTH:
             if(base) MSTAT(mon, strength, base_strength) += amount;
             MSTAT(mon, strength, strength) += amount;
             _update_strength(mon);
             break;
-        case AGILITY:
+        case STAT_AGILITY:
             if(base) MSTAT(mon, agility, base_agility) += amount;
             MSTAT(mon, agility, agility) += amount;
             _update_agility(mon);
             break;
-        case INTELLIGENCE:
+        case STAT_INTELLIGENCE:
             if(base) MSTAT(mon, intelligence, base_intelligence) += amount;
             MSTAT(mon, intelligence, intelligence) += amount;
             _update_intelligence(mon);
             break;
-        case SPIRIT:
+        case STAT_SPIRIT:
             if(base) MSTAT(mon, spirit, base_spirit) += amount;
             MSTAT(mon, spirit, spirit) += amount;
             _update_spirit(mon);
             break;
-        case STAMINA:
+        case STAT_STAMINA:
             if(base) MSTAT(mon, stamina, base_stamina) += amount;
             MSTAT(mon, stamina, stamina) += amount;
             _update_stamina(mon);
@@ -291,15 +291,15 @@ bool stat_check(struct Mon* mon, int stat)
 
    switch(stat)
    {
-       case STRENGTH:
+       case STAT_STRENGTH:
            return strength_check(roll, mon);
-       case AGILITY:
+       case STAT_AGILITY:
            return agility_check(roll, mon);
-       case INTELLIGENCE:
+       case STAT_INTELLIGENCE:
            return intelligence_check(roll, mon);
-       case SPIRIT:
+       case STAT_SPIRIT:
            return spirit_check(roll, mon);
-       case STAMINA:
+       case STAT_STAMINA:
            return stamina_check(roll, mon);
    }
 

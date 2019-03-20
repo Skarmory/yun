@@ -42,11 +42,11 @@ struct Mon* new_mon(int mtype, int x, int y)
     MSTAT(mon, intelligence, max_mana) = 1;
     MSTAT(mon, intelligence, mana) = 1;
 
-    set_stat(mon, STRENGTH, mon->type->strength);
-    set_stat(mon, AGILITY, mon->type->agility);
-    set_stat(mon, INTELLIGENCE, mon->type->intelligence);
-    set_stat(mon, SPIRIT, mon->type->spirit);
-    set_stat(mon, STAMINA, mon->type->stamina);
+    set_stat(mon, STAT_STRENGTH, mon->type->strength);
+    set_stat(mon, STAT_AGILITY, mon->type->agility);
+    set_stat(mon, STAT_INTELLIGENCE, mon->type->intelligence);
+    set_stat(mon, STAT_SPIRIT, mon->type->spirit);
+    set_stat(mon, STAT_STAMINA, mon->type->stamina);
 
     return mon;
 }
