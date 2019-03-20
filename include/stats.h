@@ -133,6 +133,12 @@ void add_stat(struct Mon* mon, int stat, int amount, bool base);
 void set_stat(struct Mon* mon, int stat, int amount);
 
 bool stat_check(struct Mon* mon, int stat);
+bool strength_check(int roll, struct Mon*);
+bool agility_check(int roll, struct Mon*);
+bool intelligence_check(int roll, struct Mon*);
+bool spirit_check(int roll, struct Mon*);
+bool stamina_check(int roll, struct Mon*);
+
 bool dodge_check(struct Mon* mon);
 bool parry_check(struct Mon* mon);
 bool block_check(struct Mon* mon);

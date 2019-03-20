@@ -247,11 +247,30 @@ void add_stat(struct Mon* mon, int stat, int amount, bool base)
     }
 }
 
-#define STRENGTH_CHECK(x) ( x < GET_MSTAT(mon, strength, strength)  )
-#define AGILITY_CHECK(x) ( x < GET_MSTAT(mon, agility, agility)  )
-#define INTELLIGENCE_CHECK(x) ( x < GET_MSTAT(mon, intelligence, intelligence)  )
-#define SPIRIT_CHECK(x) ( x < GET_MSTAT(mon, spirit, spirit)  )
-#define STAMINA_CHECK(x) ( x < GET_MSTAT(mon, stamina, stamina)  )
+bool inline strength_check(int roll, struct Mon* mon)
+{
+   return roll < get_strength(mon);
+}
+
+bool inline agility_check(int roll, struct Mon* mon)
+{
+    return roll < get_agility(mon);
+}
+
+bool inline intelligence_check(int roll, struct Mon* mon)
+{
+    return roll < get_intelligence(mon);
+}
+
+bool inline spirit_check(int roll, struct Mon* mon)
+{
+    return roll < get_spirit(mon);
+}
+
+bool inline stamina_check(int roll, struct Mon* mon)
+{
+    return roll < get_stamina(mon);
+}
 
 /**
  * Perform a stat check for given stat and return whether succeeded or failed
@@ -273,18 +292,18 @@ bool stat_check(struct Mon* mon, int stat)
    switch(stat)
    {
        case STRENGTH:
-           return STRENGTH_CHECK(roll);
+           return strength_check(roll, mon);
        case AGILITY:
-           return AGILITY_CHECK(roll);
+           return agility_check(roll, mon);
        case INTELLIGENCE:
-           return INTELLIGENCE_CHECK(roll);
+           return intelligence_check(roll, mon);
        case SPIRIT:
-           return SPIRIT_CHECK(roll);
+           return spirit_check(roll, mon);
        case STAMINA:
-           return STAMINA_CHECK(roll);
-        default:
-           return false;
+           return stamina_check(roll, mon);
    }
+
+   return false;
 }
 
 bool dodge_check(struct Mon* mon)
