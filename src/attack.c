@@ -14,12 +14,12 @@
 
 typedef enum attack_result
 {
-    hit = 0,
-    miss = 1,
-    dodge = 2,
-    parry = 3,
-    block = 4,
-    crit_block = 5
+    AR_HIT,
+    AR_MISS,
+    AR_DODGE,
+    AR_PARRY,
+    AR_BLOCK,
+    AR_CRIT_BLOCK
 } attack_result;
 
 /**
@@ -27,7 +27,7 @@ typedef enum attack_result
  *
  * Takes into account mon dodge/block etc not just hit
  */
-attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
+static attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
 {
     log_format_msg(DEBUG, ">>> %s -> %s", attacker->type->name, defender->type->name);
 
@@ -42,21 +42,21 @@ attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
 
     // Check for guaranteed hit or miss
     if(roll < 5)
-        return miss;
+        return AR_MISS;
     if(roll > 95)
-        return hit;
+        return AR_HIT;
 
     // Check if hit
     if(roll < (5 - (str_diff + agi_diff) / 10))
-        return miss;
+        return AR_MISS;
 
     // Check for defender dodge
     if(dodge_check(defender))
-        return dodge;
+        return AR_DODGE;
 
     // Check for defender parry
     if(parry_check(defender))
-        return parry;
+        return AR_PARRY;
 
     // Check for defender block
     if(block_check(defender))
@@ -65,15 +65,15 @@ attack_result _get_attack_result(struct Mon* attacker, struct Mon* defender)
         roll = roll_d100();
         log_format_msg(DEBUG, "roll to crit block: %d (need > %d)", roll, 100 - (int)(MSTAT(defender, stamina, crit_block_chance) * 100));
         if(roll > 100 - (int)(MSTAT(defender, stamina, crit_block_chance) * 100))
-            return crit_block;
+            return AR_CRIT_BLOCK;
 
-        return block;
+        return AR_BLOCK;
     }
 
     log_msg(DEBUG, "hit");
     log_msg(DEBUG, "<<<");
 
-    return hit;
+    return AR_HIT;
 }
 
 /**
@@ -103,27 +103,25 @@ bool do_player_attack_mon(struct Mon* defender)
 
     switch(_get_attack_result(you->mon, defender))
     {
-        case hit:
+        case AR_HIT:
             _do_attack(you->mon, defender, &dmg, weapon);
             display_fmsg_log("You hit the %s for %d (%dd%d) with your %s.", defender->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->obj->name);
             mon_chk_dead(defender);
             break;
-        case miss:
+        case AR_MISS:
             display_msg_log("You missed.");
             break;
-        case dodge:
+        case AR_DODGE:
             display_fmsg_log("The %s dodged.", defender->type->name);
             break;
-        case parry:
+        case AR_PARRY:
             display_fmsg_log("The %s parried.", defender->type->name);
             break;
-        case block:
+        case AR_BLOCK:
             display_fmsg_log("The %s blocked.", defender->type->name);
             break;
-        case crit_block:
-            display_fmsg_log("The %s blocked.", defender->type->name);
-            break;
-        default:
+        case AR_CRIT_BLOCK:
+            display_fmsg_log("The %s blocked. You stagger.", defender->type->name);
             break;
     }
 
@@ -140,29 +138,27 @@ bool do_mon_attack_player(struct Mon* attacker)
 
     switch(_get_attack_result(attacker, you->mon))
     {
-        case hit:
+        case AR_HIT:
             _do_attack(attacker, you->mon, &dmg, weapon);
             display_fmsg_log("The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, dmg, weapon->attk->num_dice, weapon->attk->sides_per_die, weapon->obj->name);
             player_chk_dead();
             break;
-        case miss:
+        case AR_MISS:
             display_msg_log("You missed.");
             break;
-        case dodge:
+        case AR_DODGE:
             display_msg_log("You dodged.");
             break;
-        case parry:
+        case AR_PARRY:
             display_msg_log("You parried.");
             break;
-        case block:
+        case AR_BLOCK:
             // TODO: Determine blocked damage
             display_msg_log("You blocked.");
             break;
-        case crit_block:
+        case AR_CRIT_BLOCK:
             // TODO: Determine blocked damage
-            display_msg_log("You blocked.");
-            break;
-        default:
+            display_fmsg_log("You blocked. The %s staggers.", attacker->type->name);
             break;
     }
 
