@@ -17,12 +17,13 @@ struct UIOption
     struct ListEntry option_list_entry;
 };
 
+void draw_textbox(int x, int y, int w, int h, char* text);
+
 bool prompt_yn(const char* msg);
 int  prompt_choice(const char* title, struct List* choices);
 
 void display_main_screen(void);
 void display_char_status(void);
 void display_char_info_screen(void);
-void display_char_inventory(struct Inventory* inventory, struct Equipment* equipment, struct Object** highlighted);
 
 #endif

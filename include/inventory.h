@@ -22,7 +22,5 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj);
 bool inventory_rm_obj(struct Inventory* inventory, struct Object* obj);
 bool inventory_has_obj(struct Inventory* inventory, struct Object* obj);
 
-bool manage_inventory(void);
-
 #endif
 

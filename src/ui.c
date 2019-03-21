@@ -27,14 +27,8 @@
 #define YES 'y'
 #define NO  'n'
 
-const char* equipped_text  = "equipped";
-const char* main_hand_text = "main hand";
-const char* off_hand_text  = "off hand";
-const int   extra_text_len = 32;
-const int   desc_x = 36;
-const int   desc_width = 64;
 
-static void _textbox(int x, int y, int w, int h, char* text)
+void draw_textbox(int x, int y, int w, int h, char* text)
 {
     int stridx   = 0;
     int textlen  = strlen(text);
@@ -122,72 +116,4 @@ void display_char_status(void)
     );
 
     mvprintw(STATUS_Y, STATUS_X, tmp);
-}
-
-static void _create_extra_text(char* extra_text_string, struct Object* obj, struct Equipment* equipment)
-{
-    memset(extra_text_string, '\0', extra_text_len);
-    bool equipped           = equipment_is_equipped(equipment, obj);
-    enum EquipmentSlot slot = equipment_slot_by_obj(equipment, obj);
-
-    if(equipped)
-    {
-        int idx = 0;
-        snprintf(extra_text_string, extra_text_len, "(%s", equipped_text);
-        idx = strlen(extra_text_string);
-
-        if(slot == EQUIP_SLOT_MAIN_HAND)
-            snprintf(extra_text_string + idx, extra_text_len - idx, ", %s", main_hand_text);
-        else if(slot == EQUIP_SLOT_OFF_HAND)
-            snprintf(extra_text_string + idx, extra_text_len - idx, ", %s", off_hand_text);
-
-        idx = strlen(extra_text_string);
-        snprintf(extra_text_string + idx, extra_text_len - idx, ")");
-    }
-}
-
-/**
- * Displays items in the player's inventory
- */
-void display_char_inventory(struct Inventory* inventory, struct Equipment* equipment, struct Object** highlighted)
-{
-    int y;
-    int displayable_rows = screen_rows - 4;
-
-    clear();
-
-    y = 0;
-    mvprintwa_xy(1, y, A_BOLD, "Inventory");
-    y += 2;
-
-    struct Object* obj = list_head(&inventory->obj_list, struct Object, obj_list_entry);
-
-    while(obj && y < displayable_rows)
-    {
-        char extra_text[32];
-        _create_extra_text(extra_text, obj, equipment);
-
-        if(highlighted && obj == *highlighted)
-        {
-            mvprintwa_xy(1, y++, COLOR_PAIR(30), "%s %s", obj->name, extra_text);
-        }
-        else
-        {
-            mvprintw_xy(1, y++, "%s %s", obj->name, extra_text);
-        }
-
-        obj = list_next(obj, struct Object, obj_list_entry);
-    }
-
-    if(highlighted && *highlighted)
-    {
-
-        y = 0;
-        mvprintwa_xy(desc_x, y, A_BOLD, "Description");
-        y+=2;
-
-        _textbox(desc_x, y, desc_width, 0, (*highlighted)->desc);
-    }
-
-    mvprintw_xy(1, screen_rows-1, "q: close inventory / d: drop object / e: equip object");
 }

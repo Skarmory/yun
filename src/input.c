@@ -2,6 +2,7 @@
 
 #include "attack.h"
 #include "inventory.h"
+#include "inventory.ui.h"
 #include "map.h"
 #include "message.h"
 #include "mon.h"
@@ -104,7 +105,7 @@ void handle_input(void)
                 went = _pick_up_object();
                 break;
             case 'i':
-                went = manage_inventory();
+                went = display_inventory_player();
                 clear();
                 break;
             case ' ':
