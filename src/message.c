@@ -85,7 +85,7 @@ void display_msg(bool should_log, char* msg)
                 {
                     // Copy as much of the message as possible into the buffer
                     memcpy(msgbuf, msg, MSGBOX_W-1);
-                    msgbuf[MSGBOX_W] = '\0';
+                    msgbuf[MSGBOX_W-1] = '\0';
                     msgbuf_size = MSGBOX_W-1;
                     msgsize -= MSGBOX_W-1;
 
