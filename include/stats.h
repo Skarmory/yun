@@ -1,5 +1,5 @@
-#ifndef STATS_H
-#define STATS_H
+#ifndef NAXX_STATS_H
+#define NAXX_STATS_H
 
 #include <stdbool.h>
 

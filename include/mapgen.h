@@ -1,5 +1,5 @@
-#ifndef MAPGEN_H
-#define MAPGEN_H
+#ifndef NAXX_MAPGEN_H
+#define NAXX_MAPGEN_H
 
 struct Map;
 

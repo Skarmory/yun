@@ -1,5 +1,5 @@
-#ifndef WEAPON_H
-#define WEAPON_H
+#ifndef NAXX_WEAPON_H
+#define NAXX_WEAPON_H
 
 #include "attack.h"
 

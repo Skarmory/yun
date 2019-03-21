@@ -1,5 +1,5 @@
-#ifndef LOG_H
-#define LOG_H
+#ifndef NAXX_LOG_H
+#define NAXX_LOG_H
 
 #define MSGHIST 0
 #define DEBUG   1

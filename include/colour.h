@@ -1,5 +1,5 @@
-#ifndef COLOUR_H
-#define COLOUR_H
+#ifndef NAXX_COLOUR_H
+#define NAXX_COLOUR_H
 
 // basic colours
 #define CLR_BLACK   0

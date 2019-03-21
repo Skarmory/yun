@@ -1,5 +1,5 @@
-#ifndef attack_h
-#define attack_h
+#ifndef NAXX_ATTACK_H
+#define NAXX_ATTACK_H
 
 #include <stdbool.h>
 

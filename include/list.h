@@ -1,5 +1,5 @@
-#ifndef LIST_ENTRY_H
-#define LIST_ENTRY_H
+#ifndef NAXX_LIST_ENTRY_H
+#define NAXX_LIST_ENTRY_H
 
 #include "log.h"
 

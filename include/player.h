@@ -1,5 +1,5 @@
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef NAXX_PLAYER_H
+#define NAXX_PLAYER_H
 
 struct Class;
 struct Race;

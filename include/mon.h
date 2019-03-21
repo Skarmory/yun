@@ -1,5 +1,5 @@
-#ifndef MON_H
-#define MON_H
+#ifndef NAXX_MON_H
+#define NAXX_MON_H
 
 #include "defs.h"
 #include "stats.h"

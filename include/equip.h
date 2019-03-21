@@ -1,5 +1,5 @@
-#ifndef EQUIP_H
-#define EQUIP_H
+#ifndef NAXX_EQUIP_H
+#define NAXX_EQUIP_H
 
 #include <stdbool.h>
 

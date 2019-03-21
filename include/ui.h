@@ -1,5 +1,5 @@
-#ifndef UI_H
-#define UI_H
+#ifndef NAXX_UI_H
+#define NAXX_UI_H
 
 #include "list.h"
 

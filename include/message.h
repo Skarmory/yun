@@ -1,5 +1,5 @@
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef NAXX_MESSAGE_H
+#define NAXX_MESSAGE_H
 
 #include <stdbool.h>
 

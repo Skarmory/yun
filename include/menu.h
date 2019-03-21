@@ -1,7 +1,5 @@
-// Character creation menu logic
-
-#ifndef MENU_H
-#define MENU_H
+#ifndef NAXX_MENU_H
+#define NAXX_MENU_H
 
 #define PICK_CLASS 0
 #define PICK_RACE  1

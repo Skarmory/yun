@@ -1,5 +1,5 @@
-#ifndef PATH_H
-#define PATH_H
+#ifndef NAXX_PATH_H
+#define NAXX_PATH_H
 
 struct Location;
 

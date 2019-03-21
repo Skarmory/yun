@@ -1,5 +1,5 @@
-#ifndef NCURSES_EXT
-#define NCURSES_EXT
+#ifndef NAXX_NCURSES_EXT
+#define NAXX_NCURSES_EXT
 
 void draw_symbol(int x, int y, char sym, int colpair, int attr);
 void mvprintw_xy(int x, int y, char* str, ...);

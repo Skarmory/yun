@@ -1,5 +1,5 @@
-#ifndef DEFS_H
-#define DEFS_H
+#ifndef NAXX_DEFS_H
+#define NAXX_DEFS_H
 
 #include "list.h"
 

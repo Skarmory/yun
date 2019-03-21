@@ -1,5 +1,5 @@
-#ifndef MONTYPE_H
-#define MONTYPE_H
+#ifndef NAXX_MONTYPE_H
+#define NAXX_MONTYPE_H
 
 struct Armour;
 struct Weapon;

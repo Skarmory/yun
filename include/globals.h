@@ -1,5 +1,5 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef NAXX_GLOBALS_H
+#define NAXX_GLOBALS_H
 
 extern int current_turn_number;
 extern int current_path_gen_id;

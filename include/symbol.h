@@ -1,5 +1,5 @@
-#ifndef SYMBOL_H
-#define SYMBOL_H
+#ifndef NAXX_SYMBOL_H
+#define NAXX_SYMBOL_H
 
 #include "defs.h"
 

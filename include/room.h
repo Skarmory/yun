@@ -1,5 +1,5 @@
-#ifndef ROOM_H
-#define ROOM_H
+#ifndef NAXX_ROOM_H
+#define NAXX_ROOM_H
 
 struct Room
 {

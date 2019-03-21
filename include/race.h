@@ -1,5 +1,5 @@
-#ifndef RACE_H
-#define RACE_H
+#ifndef NAXX_RACE_H
+#define NAXX_RACE_H
 
 struct MonType;
 

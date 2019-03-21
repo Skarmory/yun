@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef NAXX_UTIL_H
+#define NAXX_UTIL_H
 
 void convert_arg(char c, char* buf);
 

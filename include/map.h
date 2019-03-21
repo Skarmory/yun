@@ -1,5 +1,5 @@
-#ifndef MAP_H
-#define MAP_H
+#ifndef NAXX_MAP_H
+#define NAXX_MAP_H
 
 #include "defs.h"
 

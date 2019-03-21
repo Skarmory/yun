@@ -1,5 +1,5 @@
-#ifndef CLASS_H
-#define CLASS_H
+#ifndef NAXX_CLASS_H
+#define NAXX_CLASS_H
 
 #include "defs.h"
 

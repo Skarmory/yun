@@ -1,5 +1,5 @@
-#ifndef ARMOUR_H
-#define ARMOUR_H
+#ifndef NAXX_ARMOUR_H
+#define NAXX_ARMOUR_H
 
 #include "defs.h"
 

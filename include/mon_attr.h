@@ -1,5 +1,5 @@
-#ifndef MON_ATTR_H
-#define MON_ATTR_H
+#ifndef NAXX_MON_ATTR_H
+#define NAXX_MON_ATTR_H
 
 // Pathing info
 #define GROUND 0x00000001
