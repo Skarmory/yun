@@ -17,3 +17,8 @@ void free_obj(struct Object* obj)
         }
     }
 }
+
+bool obj_is_equipment(struct Object* obj)
+{
+    return (obj->objtype == OBJ_TYPE_ARMOUR || obj->objtype == OBJ_TYPE_WEAPON);
+}

@@ -3,6 +3,8 @@
 
 #include "defs.h"
 
+#include <stdbool.h>
+
 struct Weapon;
 struct Armour;
 struct Symbol;
@@ -40,5 +42,6 @@ struct Object
  * Calls the correct free function depending on object type
  */
 void free_obj(struct Object* obj);
+bool obj_is_equipment(struct Object* obj);
 
 #endif
