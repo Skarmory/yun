@@ -32,10 +32,10 @@ typedef enum _AttackResult
  */
 static AttackResult _get_attack_result(struct Mon* attacker, struct Mon* defender)
 {
-    log_format_msg(DEBUG, ">>> %s -> %s", attacker->type->name, defender->type->name);
+    log_format_msg(DEBUG, ">>> %s(%d) -> %s(%d)", attacker->type->name, get_health(attacker), defender->type->name, get_health(defender));
 
-    int str_diff = MSTAT(attacker, strength, strength) - MSTAT(defender, strength, strength);
-    int agi_diff = MSTAT(attacker, agility, agility) - MSTAT(defender, agility, agility);
+    int str_diff = get_strength(attacker) - get_strength(defender);
+    int agi_diff = get_agility(attacker) - get_agility(defender);
 
     log_format_msg(DEBUG, "%d + %d = %d", str_diff, agi_diff, str_diff + agi_diff);
 
@@ -66,10 +66,10 @@ static AttackResult _get_attack_result(struct Mon* attacker, struct Mon* defende
     {
         // Check for crit block
         float rollf = roll_d100f();
-        log_format_msg(DEBUG, "roll to crit block: %d (need > %d)", rollf * 100.0f, 100.0f - (MSTAT(defender, stamina, crit_block_chance) * 100.0f));
+        log_format_msg(DEBUG, "roll to crit block: %5.2f (need > %5.2f)", rollf * 100.0f, 100.0f - (get_crit_block(defender) * 100.0f));
 
         //if(roll > 100.0f - (MSTAT(defender, stamina, crit_block_chance) * 100.0f))
-        if(rollf > MSTAT(defender, stamina, crit_block_chance))
+        if(rollf > get_crit_block(defender))
             return AR_CRIT_BLOCK;
 
         return AR_BLOCK;
@@ -106,12 +106,10 @@ static inline void _display_hit_text(struct Mon* attacker, struct Mon* defender,
     if(mon_is_player(attacker))
     {
         display_fmsg_log("You hit the %s for %d (%dd%d) with your %s.", defender->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, attacker_weapon->obj->name);
-        mon_chk_dead(defender);
     }
     else if(mon_is_player(defender))
     {
         display_fmsg_log("The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, attacker_weapon->obj->name);
-        player_chk_dead();
     }
     else
     {
@@ -214,26 +212,31 @@ bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
                 _display_hit_text(attacker, defender, damage);
             }
             break;
+
         case AR_MISS:
             {
                 _display_miss_text(attacker, defender);
             }
             break;
+
         case AR_DODGE:
             {
                 _display_dodge_text(attacker, defender);
             }
             break;
+
         case AR_PARRY:
             {
                 _display_parry_text(attacker, defender);
             }
             break;
+
         case AR_BLOCK:
             {
                 _display_block_text(attacker, defender);
             }
             break;
+
         case AR_CRIT_BLOCK:
             {
                 _display_crit_block_text(attacker, defender);
@@ -242,6 +245,10 @@ bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
     }
 
     HP(defender) -= damage;
+    if(mon_is_player(defender))
+        player_chk_dead();
+    else
+        mon_chk_dead(defender);
 
     return true;
 }

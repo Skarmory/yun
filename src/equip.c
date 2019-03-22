@@ -115,6 +115,7 @@ struct Object* equipment_unequip_obj(struct Equipment* equipment, struct Object*
             equipment->main_hand = NULL;
             return obj;
         }
+
         if(obj->objtype_ptr.weapon == equipment->off_hand)
         {
             equipment->off_hand = NULL;
@@ -176,6 +177,7 @@ struct Object* equipment_unequip_slot(struct Equipment* equipment, enum Equipmen
                 equipment->main_hand = NULL;
             }
             break;
+
         case EQUIP_SLOT_OFF_HAND:
             if(equipment->off_hand)
             {
