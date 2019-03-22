@@ -20,7 +20,7 @@ struct UIOption
 void draw_textbox(int x, int y, int w, int h, char* text);
 
 bool prompt_yn(const char* msg);
-int  prompt_choice(const char* title, struct List* choices);
+char prompt_choice(const char* title, struct List* choices);
 
 void display_main_screen(void);
 void display_char_status(void);

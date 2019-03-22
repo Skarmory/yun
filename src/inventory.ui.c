@@ -127,7 +127,11 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
                         list_add(&off_hand.option_list_entry, &handedness_options);
                         list_add(&main_hand.option_list_entry, &handedness_options);
 
-                        pending_actions->to_equip_slot = prompt_choice("Choose slot", &handedness_options);
+                        char choice = prompt_choice("Choose slot", &handedness_options);
+                        if(choice == 'a')
+                            pending_actions->to_equip_slot = EQUIP_SLOT_MAIN_HAND;
+                        else if(choice == 'b')
+                            pending_actions->to_equip_slot = EQUIP_SLOT_OFF_HAND;
                     }
 
                     pending_actions->to_equip = *highlighted;

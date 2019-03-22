@@ -65,9 +65,8 @@ bool prompt_yn(const char* msg)
     return decision;
 }
 
-int prompt_choice(const char* title, struct List* choices)
+char prompt_choice(const char* title, struct List* choices)
 {
-    log_msg(DEBUG, "prompt_choice");
     struct UIOption* option = list_head(choices, struct UIOption, option_list_entry);
     char option_id = 'a';
     char last_option_id;
@@ -85,7 +84,7 @@ int prompt_choice(const char* title, struct List* choices)
         option = list_next(option, struct UIOption, option_list_entry);
     }
 
-    last_option_id = option_id;
+    last_option_id = option_id-1;
 
     char choice;
     do
@@ -94,7 +93,7 @@ int prompt_choice(const char* title, struct List* choices)
     }
     while(choice < 'a' || choice > last_option_id);
 
-    return choice - 'a';
+    return choice;
 }
 
 void display_main_screen(void)
