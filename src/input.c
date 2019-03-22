@@ -25,7 +25,7 @@ static bool _do_smart_action(int x, int y)
     if(cmap->locs[x][y].mon == NULL)
         return map_move_mon(cmap, you->mon, x, y);
     else
-        return do_player_attack_mon(cmap->locs[x][y].mon);
+        return do_attack_mon_mon(you->mon, cmap->locs[x][y].mon);
 }
 
 /**

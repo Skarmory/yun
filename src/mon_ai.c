@@ -25,7 +25,7 @@ void update_mon_ai(struct Mon* mon)
    if(next_loc->x == youloc->x && next_loc->y == youloc->y)
    {
        // Attack the player
-       do_mon_attack_player(mon);
+       do_attack_mon_mon(mon, you->mon);
    }
    else
    {

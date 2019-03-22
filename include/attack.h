@@ -14,7 +14,6 @@ struct Attack
     int sides_per_die;
 };
 
-bool do_player_attack_mon(struct Mon* defender);
-bool do_mon_attack_player(struct Mon* attacker);
+bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender);
 
 #endif
