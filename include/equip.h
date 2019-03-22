@@ -9,6 +9,12 @@ struct Object;
 
 enum EquipmentSlot
 {
+    EQUIP_SLOT_HEAD,
+    EQUIP_SLOT_SHOULDERS,
+    EQUIP_SLOT_CHEST,
+    EQUIP_SLOT_HANDS,
+    EQUIP_SLOT_LEGS,
+    EQUIP_SLOT_FEET,
     EQUIP_SLOT_MAIN_HAND,
     EQUIP_SLOT_OFF_HAND,
     EQUIP_SLOT_MAX
@@ -16,6 +22,12 @@ enum EquipmentSlot
 
 struct Equipment
 {
+    struct Armour* head;
+    struct Armour* shoulders;
+    struct Armour* chest;
+    struct Armour* hands;
+    struct Armour* legs;
+    struct Armour* feet;
     struct Weapon* main_hand;
     struct Weapon* off_hand;  // This will be null unless dual wielding
 };
