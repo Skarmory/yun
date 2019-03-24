@@ -128,15 +128,22 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
                         list_add(&main_hand.option_list_entry, &handedness_options);
 
                         char choice = prompt_choice("Choose slot", &handedness_options);
+                        if(choice == 27)
+                        {
+                            *went = false;
+                            return false;
+                        }
+
                         if(choice == 'a')
                             pending_actions->to_equip_slot = EQUIP_SLOT_MAIN_HAND;
                         else if(choice == 'b')
                             pending_actions->to_equip_slot = EQUIP_SLOT_OFF_HAND;
+
+                        pending_actions->to_equip = *highlighted;
+                        *went = true;
+                        return true;
                     }
 
-                    pending_actions->to_equip = *highlighted;
-                    *went = true;
-                    return true;
                 }
             }
             break;
