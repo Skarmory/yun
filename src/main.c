@@ -1,3 +1,4 @@
+#include "armour.h"
 #include "class.h"
 #include "colour.h"
 #include "faction.h"
@@ -154,6 +155,16 @@ int main(int argc, char** argv)
     {
         longsword = new_weapon(W_LONGSWORD);
         loc_add_obj(&cmap->locs[startx][starty], longsword->obj);
+    }
+
+    struct Armour* armour;
+    for(int armour_idx = A_MAGISTERS_CROWN; armour_idx <= A_VALOR_BOOTS; ++armour_idx)
+    {
+        startx = random_int(room->x + 1, room->x + room->w - 2);
+        starty = random_int(room->y + 1, room->y + room->h - 2);
+
+        armour = new_armour(armour_idx);
+        loc_add_obj(&cmap->locs[startx][starty], armour->obj);
     }
 
     for(int i = 1; i < cmap->room_count - 1; i++)

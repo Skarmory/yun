@@ -25,4 +25,36 @@ struct Symbol symbols[] = {
 
     // Armours
     SYM('[', CLR_NONE,    CLR_BLACK, 0), // Unarmoured
+
+    // Cloth
+    SYM('[', CLR_LPURPLE, CLR_BLACK, A_BOLD), // Magister's
+    SYM('[', CLR_LPURPLE, CLR_BLACK, A_BOLD), // Magister's
+    SYM('[', CLR_LPURPLE, CLR_BLACK, A_BOLD), // Magister's
+    SYM('[', CLR_LPURPLE, CLR_BLACK, A_BOLD), // Magister's
+    SYM('[', CLR_LPURPLE, CLR_BLACK, A_BOLD), // Magister's
+    SYM('[', CLR_LPURPLE, CLR_BLACK, A_BOLD), // Magister's
+
+    // Leather
+    SYM('[', CLR_DGREY, CLR_BLACK, A_BOLD), // Shadowcraft
+    SYM('[', CLR_DGREY, CLR_BLACK, A_BOLD), // Shadowcraft
+    SYM('[', CLR_DGREY, CLR_BLACK, A_BOLD), // Shadowcraft
+    SYM('[', CLR_DGREY, CLR_BLACK, A_BOLD), // Shadowcraft
+    SYM('[', CLR_DGREY, CLR_BLACK, A_BOLD), // Shadowcraft
+    SYM('[', CLR_DGREY, CLR_BLACK, A_BOLD), // Shadowcraft
+
+    // Mail
+    SYM('[', CLR_BROWN, CLR_BLACK, A_BOLD), // Beaststalker's
+    SYM('[', CLR_BROWN, CLR_BLACK, A_BOLD), // Beaststalker's
+    SYM('[', CLR_BROWN, CLR_BLACK, A_BOLD), // Beaststalker's
+    SYM('[', CLR_BROWN, CLR_BLACK, A_BOLD), // Beaststalker's
+    SYM('[', CLR_BROWN, CLR_BLACK, A_BOLD), // Beaststalker's
+    SYM('[', CLR_BROWN, CLR_BLACK, A_BOLD), // Beaststalker's
+
+    // Plate
+    SYM('[', CLR_METAL, CLR_BLACK, A_BOLD), // Valor
+    SYM('[', CLR_METAL, CLR_BLACK, A_BOLD), // Valor
+    SYM('[', CLR_METAL, CLR_BLACK, A_BOLD), // Valor
+    SYM('[', CLR_METAL, CLR_BLACK, A_BOLD), // Valor
+    SYM('[', CLR_METAL, CLR_BLACK, A_BOLD), // Valor
+    SYM('[', CLR_METAL, CLR_BLACK, A_BOLD)  // Valor
 };
