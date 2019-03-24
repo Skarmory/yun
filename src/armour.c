@@ -4,8 +4,8 @@
 
 #include "object.h"
 
-#define ARMOUR(str, agi, in, spi, sta)\
-    { str, agi, in, spi, sta, NULL }
+#define ARMOUR(val, slot, str, agi, in, spi, sta)\
+    { val, slot, str, agi, in, spi, sta, NULL }
 
 struct Armour* new_armour(int armour_type)
 {

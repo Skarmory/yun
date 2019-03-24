@@ -281,3 +281,17 @@ enum EquipmentSlot equipment_slot_by_obj(struct Equipment* equipment, struct Obj
 
     return EQUIP_SLOT_MAX;
 }
+
+int equipment_armour_total(struct Equipment* equipment)
+{
+    int armour = 0;
+
+    armour += (equipment->head ? equipment->head->armour_value : 0);
+    armour += (equipment->shoulders ? equipment->shoulders->armour_value : 0);
+    armour += (equipment->chest ? equipment->chest->armour_value : 0);
+    armour += (equipment->hands ? equipment->hands->armour_value : 0);
+    armour += (equipment->legs ? equipment->legs->armour_value : 0);
+    armour += (equipment->feet ? equipment->feet->armour_value : 0);
+
+    return armour;
+}

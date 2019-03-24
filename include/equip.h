@@ -41,4 +41,6 @@ struct Object* equipment_unequip_obj(struct Equipment* equipment, struct Object*
 struct Object* equipment_unequip_slot(struct Equipment* equipment, enum EquipmentSlot slot);
 enum EquipmentSlot equipment_slot_by_obj(struct Equipment* equipment, struct Object* obj);
 
+int equipment_armour_total(struct Equipment* equipment);
+
 #endif

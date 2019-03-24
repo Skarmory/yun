@@ -2,6 +2,7 @@
 #define NAXX_ARMOUR_H
 
 #include "defs.h"
+#include "equip.h"
 
 struct Object;
 
@@ -9,6 +10,8 @@ struct Object;
 
 struct Armour
 {
+    int armour_value;
+    enum EquipmentSlot slot;
     byte strength;
     byte agility;
     byte intelligence;
