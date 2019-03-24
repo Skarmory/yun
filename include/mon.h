@@ -35,6 +35,7 @@ void update_mons(void);
 bool mon_has_pathing_attr(struct Mon* mon, int path_attr);
 bool mon_is_dead(struct Mon* mon);
 bool mon_dual_wielding(struct Mon* mon);
+bool mon_shield_wielding(struct Mon* mon);
 void mon_chk_dead(struct Mon* mon);
 const struct Weapon* mon_get_weapon(struct Mon* mon);
 

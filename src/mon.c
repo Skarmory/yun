@@ -10,6 +10,7 @@
 #include "message.h"
 #include "montype.h"
 #include "mon_ai.h"
+#include "object.h"
 #include "util.h"
 #include "weapon.h"
 
@@ -97,6 +98,11 @@ bool mon_is_dead(struct Mon* mon)
 bool mon_dual_wielding(struct Mon* mon)
 {
     return (mon->equipment->main_hand && mon->equipment->off_hand);
+}
+
+bool mon_shield_wielding(struct Mon* mon)
+{
+    return (mon->equipment->off_hand && mon->equipment->off_hand->objtype == OBJ_TYPE_ARMOUR);
 }
 
 /**
