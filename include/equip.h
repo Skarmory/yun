@@ -29,7 +29,7 @@ struct Equipment
     struct Armour* legs;
     struct Armour* feet;
     struct Weapon* main_hand;
-    struct Weapon* off_hand;  // This will be null unless dual wielding
+    struct Object* off_hand; // This will be null unless dual wielding
 };
 
 struct Equipment* new_equipment(void);

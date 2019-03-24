@@ -9,6 +9,12 @@
 struct Equipment* new_equipment(void)
 {
     struct Equipment* equipment = (struct Equipment*) malloc(sizeof(struct Equipment));
+    equipment->head = NULL;
+    equipment->shoulders = NULL;
+    equipment->chest = NULL;
+    equipment->hands = NULL;
+    equipment->legs = NULL;
+    equipment->feet = NULL;
     equipment->main_hand = NULL;
     equipment->off_hand = NULL;
 
