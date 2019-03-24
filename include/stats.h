@@ -23,24 +23,28 @@ enum Stat
 #define GET_PSTAT(s, t)     (PSTAT(s, t) > STAT_MAX ? STAT_MAX : PSTAT(s, t))
 #define GET_MSTAT(m, s, t)  (MSTAT(m, s, t) > STAT_MAX ? STAT_MAX : MSTAT(m, s, t))
 
-#define get_strength(m)     (GET_MSTAT(m, strength, strength))
-#define get_armour_pen(m)   (MSTAT(m, strength, armour_pen))
-#define get_parry(m)        (MSTAT(m, strength, parry_chance))
+#define get_strength(m)              (GET_MSTAT(m, strength, strength))
+#define get_armour_pen(m)            (MSTAT(m, strength, armour_pen))
+#define get_parry(m)                 (MSTAT(m, strength, parry_chance))
+#define get_strength_attack_power(m) (MSTAT(m, strength, attack_power))
 
-#define get_agility(m)      (GET_MSTAT(m, agility, agility))
-#define get_crit(m)         (MSTAT(m, agility, crit_chance))
-#define get_dodge(m)        (MSTAT(m, agility, dodge_chance))
+#define get_agility(m)              (GET_MSTAT(m, agility, agility))
+#define get_crit(m)                 (MSTAT(m, agility, crit_chance))
+#define get_dodge(m)                (MSTAT(m, agility, dodge_chance))
+#define get_agility_attack_power(m) (MSTAT(m, agility, attack_power))
 
-#define get_intelligence(m) (GET_MSTAT(m, intelligence, intelligence))
-#define get_mana(m)         (MSTAT(m, intelligence, mana))
-#define get_max_mana(m)     (MSTAT(m, intelligence, max_mana))
-#define get_spell_crit(m)   (MSTAT(m, intelligence, spell_crit_chance))
-#define get_spell_pen(m)    (MSTAT(m, intelligence, spell_pen))
+#define get_intelligence(m)             (GET_MSTAT(m, intelligence, intelligence))
+#define get_mana(m)                     (MSTAT(m, intelligence, mana))
+#define get_max_mana(m)                 (MSTAT(m, intelligence, max_mana))
+#define get_intelligence_spell_power(m) (MSTAT(m, intelligence, spell_power))
+#define get_spell_crit(m)               (MSTAT(m, intelligence, spell_crit_chance))
+#define get_spell_pen(m)                (MSTAT(m, intelligence, spell_pen))
 
-#define get_spirit(m)       (GET_MSTAT(m, spirit, spirit))
-#define get_mana_regen(m)   (MSTAT(m, spirit, mana_regen))
-#define get_health_regen(m) (MSTAT(m, spirit, health_regen))
-#define get_resist(m)       (MSTAT(m, spirit, resist))
+#define get_spirit(m)             (GET_MSTAT(m, spirit, spirit))
+#define get_mana_regen(m)         (MSTAT(m, spirit, mana_regen))
+#define get_health_regen(m)       (MSTAT(m, spirit, health_regen))
+#define get_spirit_spell_power(m) (MSTAT(m, spirit, spell_power))
+#define get_resist(m)             (MSTAT(m, spirit, resist))
 
 #define get_stamina(m)      (GET_MSTAT(m, stamina, stamina))
 #define get_health(m)       (MSTAT(m, stamina, health))
@@ -48,7 +52,7 @@ enum Stat
 #define get_block(m)        (MSTAT(m, stamina, block_chance))
 #define get_crit_block(m)   (MSTAT(m, stamina, crit_block_chance))
 
-#define get_attack_power(m) (MSTAT(m, strength, attack_power) + MSTAT(m, agility, attack_power))
+#define get_attack_power(m) (get_strength_attack_power(m) + get_agility_attack_power(m))
 #define get_spell_power(m)  (MSTAT(m, intelligence, spell_power) + MSTAT(m, spirit, spell_power))
 
 /**
@@ -145,5 +149,6 @@ bool stamina_check(int roll, struct Mon*);
 bool dodge_check(struct Mon* mon);
 bool parry_check(struct Mon* mon);
 bool block_check(struct Mon* mon);
+bool crit_block_check(struct Mon* mon);
 
 #endif
