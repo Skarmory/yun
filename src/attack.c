@@ -1,6 +1,7 @@
 #include "attack.h"
 
-#include "weapon.h"
+#include "armour.h"
+#include "equip.h"
 #include "log.h"
 #include "message.h"
 #include "mon.h"
@@ -9,11 +10,15 @@
 #include "player.h"
 #include "stats.h"
 #include "util.h"
+#include "weapon.h"
 
 #include <stdio.h>
 
 const int c_certain_miss_threshold = 5;
 const int c_certain_hit_threshold = 95;
+const int c_attack_power_divisor  = 12;
+const int c_armour_value_divisor  = 50;
+const int c_armour_value_log_base = 5;
 
 typedef enum _AttackResult
 {
@@ -62,14 +67,10 @@ static AttackResult _get_attack_result(struct Mon* attacker, struct Mon* defende
         return AR_PARRY;
 
     // Check for defender block
-    if(block_check(defender))
+    if(mon_shield_wielding(defender) && block_check(defender))
     {
         // Check for crit block
-        float rollf = roll_d100f();
-        log_format_msg(DEBUG, "roll to crit block: %5.2f (need > %5.2f)", rollf * 100.0f, 100.0f - (get_crit_block(defender) * 100.0f));
-
-        //if(roll > 100.0f - (MSTAT(defender, stamina, crit_block_chance) * 100.0f))
-        if(rollf > get_crit_block(defender))
+        if(crit_block_check(defender))
             return AR_CRIT_BLOCK;
 
         return AR_BLOCK;
@@ -81,12 +82,17 @@ static AttackResult _get_attack_result(struct Mon* attacker, struct Mon* defende
     return AR_HIT;
 }
 
+static int _attack_power_damage(struct Mon* attacker)
+{
+    return (get_attack_power(attacker) / c_attack_power_divisor) + 1;
+}
+
 /**
  * Do the actual damage calculation and reduce HP here
  *
  * "Roll" damage dice and minus HP from the defender
  */
-static int _do_attack(struct Mon* attacker, struct Mon* defender)
+static int _attack_damage(struct Mon* attacker, struct Mon* defender)
 {
     int dmg = 0;
     const struct Weapon* weapon = mon_get_weapon(you->mon);
@@ -96,7 +102,14 @@ static int _do_attack(struct Mon* attacker, struct Mon* defender)
         dmg += random_int(1, weapon->attk->sides_per_die);
     }
 
+    dmg += _attack_power_damage(attacker);
+
     return dmg;
+}
+
+static inline float _calc_armour_reduction(struct Mon* attacker, struct Mon* defender)
+{
+    return log_base(((equipment_armour_total(defender->equipment) - get_armour_pen(attacker)) / c_armour_value_divisor) + 1, c_armour_value_log_base);
 }
 
 static inline void _display_hit_text(struct Mon* attacker, struct Mon* defender, int damage)
@@ -105,15 +118,15 @@ static inline void _display_hit_text(struct Mon* attacker, struct Mon* defender,
 
     if(mon_is_player(attacker))
     {
-        display_fmsg_log("You hit the %s for %d (%dd%d) with your %s.", defender->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, attacker_weapon->obj->name);
+        display_fmsg_log("You hit the %s for %d (%dd%d + %d) with your %s.", defender->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, _attack_power_damage(attacker), attacker_weapon->obj->name);
     }
     else if(mon_is_player(defender))
     {
-        display_fmsg_log("The %s hit you for %d (%dd%d) with its %s.", attacker->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, attacker_weapon->obj->name);
+        display_fmsg_log("The %s hit you for %d (%dd%d + %d) with its %s.", attacker->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, _attack_power_damage(attacker), attacker_weapon->obj->name);
     }
     else
     {
-        display_fmsg_log("The %s hit the %s for %d (%dd%d) with its %s.", attacker->type->name, defender->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, attacker_weapon->obj->name);
+        display_fmsg_log("The %s hit the %s for %d (%dd%d + %d) with its %s.", attacker->type->name, defender->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, _attack_power_damage(attacker), attacker_weapon->obj->name);
         mon_chk_dead(defender);
     }
 }
@@ -156,7 +169,7 @@ static inline void _display_parry_text(struct Mon* attacker, struct Mon* defende
     {
         display_fmsg_log("The %s parried.", defender->type->name);
     }
-    if(mon_is_player(defender))
+    else if(mon_is_player(defender))
     {
         display_msg_log("You parried.");
     }
@@ -172,7 +185,7 @@ static inline void _display_block_text(struct Mon* attacker, struct Mon* defende
     {
         display_fmsg_log("The %s blocked.", defender->type->name);
     }
-    if(mon_is_player(defender))
+    else if(mon_is_player(defender))
     {
         display_msg_log("You blocked.");
     }
@@ -208,7 +221,8 @@ bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
     {
         case AR_HIT:
             {
-                damage = _do_attack(attacker, defender);
+                damage = _attack_damage(attacker, defender);
+                damage *= (1.0f - _calc_armour_reduction(attacker, defender));
                 _display_hit_text(attacker, defender, damage);
             }
             break;
@@ -233,12 +247,18 @@ bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
 
         case AR_BLOCK:
             {
+                damage = _attack_damage(attacker, defender);
+                damage -= defender->equipment->off_hand->objtype_ptr.armour->armour_value;
+                damage *= (1.0f - _calc_armour_reduction(attacker, defender));
                 _display_block_text(attacker, defender);
             }
             break;
 
         case AR_CRIT_BLOCK:
             {
+                damage = _attack_damage(attacker, defender);
+                damage -= defender->equipment->off_hand->objtype_ptr.armour->armour_value;
+                damage *= (1.0f - _calc_armour_reduction(attacker, defender));
                 _display_crit_block_text(attacker, defender);
             }
             break;
