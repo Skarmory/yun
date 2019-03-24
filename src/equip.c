@@ -32,7 +32,7 @@ bool equipment_is_equipped(struct Equipment* equipment, struct Object* obj)
     {
         case OBJ_TYPE_WEAPON:
         {
-            return (equipment->main_hand == obj->objtype_ptr.weapon || equipment->off_hand == obj->objtype_ptr.weapon);
+            return (equipment->main_hand == obj->objtype_ptr.weapon || equipment->off_hand == obj);
         }
 
         case OBJ_TYPE_ARMOUR:
@@ -64,7 +64,7 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
 
             case EQUIP_SLOT_OFF_HAND:
             {
-                equipment->off_hand = obj->objtype_ptr.weapon;
+                equipment->off_hand = obj;
                 return true;
             }
 
@@ -122,7 +122,7 @@ struct Object* equipment_unequip_obj(struct Equipment* equipment, struct Object*
             return obj;
         }
 
-        if(obj->objtype_ptr.weapon == equipment->off_hand)
+        if(obj == equipment->off_hand)
         {
             equipment->off_hand = NULL;
             return obj;
@@ -187,7 +187,7 @@ struct Object* equipment_unequip_slot(struct Equipment* equipment, enum Equipmen
         case EQUIP_SLOT_OFF_HAND:
             if(equipment->off_hand)
             {
-                unequipped = equipment->off_hand->obj;
+                unequipped = equipment->off_hand;
                 equipment->off_hand = NULL;
             }
             break;
@@ -254,7 +254,7 @@ enum EquipmentSlot equipment_slot_by_obj(struct Equipment* equipment, struct Obj
         if(obj->objtype_ptr.weapon == equipment->main_hand)
             return EQUIP_SLOT_MAIN_HAND;
 
-        if(obj->objtype_ptr.weapon == equipment->off_hand)
+        if(obj == equipment->off_hand)
             return EQUIP_SLOT_OFF_HAND;
     }
 
