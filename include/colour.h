@@ -19,6 +19,7 @@
 #define CLR_LCYAN   14
 #define CLR_LWHITE  15
 
+#define CLR_BROWN   94
 #define CLR_ORANGE  214
 #define CLR_DORANGE 208
 
