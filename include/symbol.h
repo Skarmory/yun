@@ -5,13 +5,14 @@
 
 #define SYM_MON_OFF    0
 #define SYM_WEAPON_OFF 9
+#define SYM_ARMOUR_OFF 12
 
 struct Symbol
 {
     char sym;
     byte fg;
     byte bg;
-    byte attr;
+    unsigned int attr;
 };
 
 extern struct Symbol symbols[];

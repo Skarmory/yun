@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include "object.h"
+#include "symbol.h"
 
 #define ARMOUR(val, slot, str, agi, in, spi, sta)\
     { val, slot, str, agi, in, spi, sta, NULL }
@@ -20,6 +21,7 @@ struct Armour* new_armour(int armour_type)
     armour->obj = (struct Object*) malloc(sizeof(struct Object));
     armour->obj->name = armour_names[armour_type];
     armour->obj->desc = armour_descs[armour_type];
+    armour->obj->symbol = &symbols[SYM_ARMOUR_OFF + armour_type];
     armour->obj->objtype_ptr.armour = armour;
     armour->obj->objtype = OBJ_TYPE_ARMOUR;
     list_entry_init(&armour->obj->obj_list_entry);

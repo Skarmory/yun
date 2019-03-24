@@ -2,6 +2,8 @@
 
 #include "colour.h"
 
+#include <ncurses.h>
+
 #define SYM(s, fg, bg, attr) { s, fg, bg, attr }
 
 struct Symbol symbols[] = {
@@ -20,5 +22,7 @@ struct Symbol symbols[] = {
     SYM(')', CLR_METAL,    CLR_BLACK, 0), // longsword
     SYM(')', CLR_NONE,     CLR_BLACK, 0), // claws
     SYM(')', CLR_NONE,     CLR_BLACK, 0), // fists
-};
 
+    // Armours
+    SYM('[', CLR_NONE,    CLR_BLACK, 0), // Unarmoured
+};
