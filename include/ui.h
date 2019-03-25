@@ -19,7 +19,7 @@ struct UIOption
     struct ListEntry option_list_entry;
 };
 
-void draw_textbox(int x, int y, int w, int h, char* text);
+void draw_textbox(int x, int y, int w, int h, const char* text);
 
 bool prompt_yn(const char* msg);
 char prompt_choice_list(const char* title, struct List* choices);

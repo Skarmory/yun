@@ -3,7 +3,7 @@
 
 void convert_arg(char c, char* buf);
 
-int strrfindi(char* haystack, char needle, int start);
+int strrfindi(const char* haystack, const char needle, int start);
 
 void do_quit(void);
 

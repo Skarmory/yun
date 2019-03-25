@@ -31,7 +31,7 @@ void mvprintw_xy(int x, int y, char* str, ...)
     va_end(args);
 }
 
-void mvprintwn_xy(int count, int x, int y, char* str, ...)
+void mvprintwn_xy(int count, int x, int y, const char* str, ...)
 {
     va_list args;
     va_start(args, str);
@@ -46,7 +46,7 @@ void mvprintwn_xy(int count, int x, int y, char* str, ...)
 /**
  * Prints a formatted string given (x, y) that had a particular ncurses attribute turned on
  */
-void mvprintwa_xy(int x, int y, int attr, char* str, ...)
+void mvprintwa_xy(int x, int y, int attr, const char* str, ...)
 {
     va_list args;
     va_start(args, str);

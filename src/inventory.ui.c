@@ -115,7 +115,6 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
                     {
                         case OBJ_TYPE_WEAPON:
                         {
-
                             char* handedness[2] = { "main hand", "off hand" };
                             char choice = prompt_choice_array("Choose slot", handedness, 2);
                             if(choice == g_key_escape)

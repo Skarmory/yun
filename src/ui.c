@@ -28,7 +28,7 @@
 #define NO  'n'
 
 
-void draw_textbox(int x, int y, int w, int h, char* text)
+void draw_textbox(int x, int y, int w, int h, const char* text)
 {
     int stridx   = 0;
     int textlen  = strlen(text);
