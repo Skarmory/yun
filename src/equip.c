@@ -49,6 +49,23 @@ bool equipment_is_equipped(struct Equipment* equipment, struct Object* obj)
     return false;
 }
 
+bool equipment_slot_free(struct Equipment* equipment, enum EquipmentSlot slot)
+{
+    switch(slot)
+    {
+        case EQUIP_SLOT_HEAD:      return equipment->head == NULL;
+        case EQUIP_SLOT_SHOULDERS: return equipment->shoulders == NULL;
+        case EQUIP_SLOT_CHEST:     return equipment->chest == NULL;
+        case EQUIP_SLOT_HANDS:     return equipment->hands == NULL;
+        case EQUIP_SLOT_LEGS:      return equipment->legs == NULL;
+        case EQUIP_SLOT_FEET:      return equipment->feet == NULL;
+        case EQUIP_SLOT_MAIN_HAND: return equipment->main_hand == NULL;
+        case EQUIP_SLOT_OFF_HAND:  return equipment->off_hand == NULL;
+        case EQUIP_SLOT_MAX:       return false;
+    }
+    return false;
+}
+
 bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum EquipmentSlot slot)
 {
     if(obj_is_equipment(obj))
