@@ -52,6 +52,31 @@ void draw_textbox(int x, int y, int w, int h, const char* text)
     }
 }
 
+void draw_textbox_border(int x, int y, int w, int h, const char* text)
+{
+    int _w = w + 4;
+    int _h = h + 4;
+
+    for(int _x = x; _x < (x+_w-1); ++_x)
+    {
+        draw_symbol(_x, y, '-', 0, 0);
+        draw_symbol(_x, (y+_h-1), '-', 0, 0);
+    }
+
+    for(int _y = y; _y < (y+_h-1); ++_y)
+    {
+        draw_symbol(x, _y, '|', 0, 0);
+        draw_symbol((x+_w-1), _y, '|', 0, 0);
+    }
+
+    draw_symbol(x, y, '+', 0, 0);
+    draw_symbol(x+_w-1, y+_h-1, '+', 0, 0);
+    draw_symbol(x+_w-1, y, '+', 0, 0);
+    draw_symbol(x, y+_h-1, '+', 0, 0);
+
+    draw_textbox(x+2, y+2, _w-2, _h-2, text);
+}
+
 bool prompt_yn(const char* msg)
 {
     clear_msgs();
