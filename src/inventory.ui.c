@@ -102,7 +102,7 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
                     else
                         *highlighted = list_prev(*highlighted, struct Object, obj_list_entry);
 
-                    list_rm(&drop->obj_list_entry, &inventory->obj_list);
+                    inventory_rm_obj(inventory, drop);
                     list_add(&drop->obj_list_entry, &pending_actions->to_drop);
                 }
             }
