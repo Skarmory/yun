@@ -12,6 +12,8 @@ struct Armour* new_armour(int armour_type)
 {
     struct Armour* armour = (struct Armour*) malloc(sizeof(struct Armour));
 
+    armour->armour_value = armours[armour_type].armour_value;
+    armour->slot = armours[armour_type].slot;
     armour->strength = armours[armour_type].strength;
     armour->agility = armours[armour_type].agility;
     armour->intelligence = armours[armour_type].intelligence;
