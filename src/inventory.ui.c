@@ -111,37 +111,29 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
             {
                 if(highlighted && *highlighted)
                 {
-                    if((*highlighted)->objtype == OBJ_TYPE_WEAPON)
+                    switch((*highlighted)->objtype)
                     {
-                        struct List handedness_options;
-                        list_init(&handedness_options);
-
-                        struct UIOption main_hand;
-                        snprintf(main_hand.option_name, g_option_name_max_size, "%s", "main hand");
-                        list_entry_init(&main_hand.option_list_entry);
-
-                        struct UIOption off_hand;
-                        snprintf(off_hand.option_name, g_option_name_max_size, "%s", "off hand");
-                        list_entry_init(&off_hand.option_list_entry);
-
-                        list_add(&off_hand.option_list_entry, &handedness_options);
-                        list_add(&main_hand.option_list_entry, &handedness_options);
-
-                        char choice = prompt_choice("Choose slot", &handedness_options);
-                        if(choice == 27)
+                        case OBJ_TYPE_WEAPON:
                         {
-                            *went = false;
-                            return false;
+
+                            char* handedness[2] = { "main hand", "off hand" };
+                            char choice = prompt_choice_array("Choose slot", handedness, 2);
+                            if(choice == g_key_escape)
+                            {
+                                *went = false;
+                                return false;
+                            }
+
+                            pending_actions->to_equip_slot = (choice == 'a') ? EQUIP_SLOT_MAIN_HAND : EQUIP_SLOT_OFF_HAND;
+                            pending_actions->to_equip = *highlighted;
+
+                            *went = true;
+                            return true;
                         }
 
-                        if(choice == 'a')
-                            pending_actions->to_equip_slot = EQUIP_SLOT_MAIN_HAND;
-                        else if(choice == 'b')
-                            pending_actions->to_equip_slot = EQUIP_SLOT_OFF_HAND;
-
-                        pending_actions->to_equip = *highlighted;
-                        *went = true;
-                        return true;
+                        case OBJ_TYPE_ARMOUR:
+                        {
+                        }
                     }
 
                 }

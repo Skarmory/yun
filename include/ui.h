@@ -7,6 +7,8 @@
 
 #define g_option_name_max_size 32
 
+#define g_key_escape 27
+
 struct Equipment;
 struct Inventory;
 struct Object;
@@ -20,7 +22,8 @@ struct UIOption
 void draw_textbox(int x, int y, int w, int h, char* text);
 
 bool prompt_yn(const char* msg);
-char prompt_choice(const char* title, struct List* choices);
+char prompt_choice_list(const char* title, struct List* choices);
+char prompt_choice_array(const char* title, char** choices, int length);
 
 void display_main_screen(void);
 void display_char_status(void);
