@@ -1,5 +1,6 @@
 #include "inventory.ui.h"
 
+#include "armour.h"
 #include "equip.h"
 #include "globals.h"
 #include "inventory.h"
@@ -22,6 +23,8 @@ const char c_quit = 'q';
 const char* c_equipped_text  = "equipped";
 const char* c_main_hand_text = "main hand";
 const char* c_off_hand_text  = "off hand";
+const char* c_already_wearing_cannot_equip_text = "You are already wearing something in that slot.";
+const char* c_already_wearing_cannot_drop_text = "You cannot drop something you are wearing.";
 
 const int c_desc_x         = 36;
 const int c_desc_width     = 64;
@@ -80,7 +83,7 @@ static inline int _to_bits(char input)
     return 0;
 }
 
-static bool _input_handled(struct Inventory* inventory, PendingActions* pending_actions, struct Object** highlighted, bool* went, int allow_mask)
+static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending_actions, struct Object** highlighted, bool* went, int allow_mask)
 {
     char in = getch();
 
@@ -96,6 +99,15 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
                 if(highlighted && *highlighted)
                 {
                     struct Object* drop = *highlighted;
+
+                    // Cannot drop equipped armours
+                    if(equipment_is_equipped(equipment, drop) && drop->objtype == OBJ_TYPE_ARMOUR)
+                    {
+                        int len = strlen(c_already_wearing_cannot_drop_text);
+                        draw_textbox_border( (screen_cols/2) - len/2, (screen_rows/2)-8, len, 1, c_already_wearing_cannot_drop_text);
+                        getch();
+                        return false;
+                    }
 
                     if(list_next(*highlighted, struct Object, obj_list_entry))
                         *highlighted = list_next(*highlighted, struct Object, obj_list_entry);
@@ -125,31 +137,31 @@ static bool _input_handled(struct Inventory* inventory, PendingActions* pending_
 
                             pending_actions->to_equip_slot = (choice == 'a') ? EQUIP_SLOT_MAIN_HAND : EQUIP_SLOT_OFF_HAND;
                             pending_actions->to_equip = *highlighted;
-
                             *went = true;
                             return true;
                         }
 
                         case OBJ_TYPE_ARMOUR:
                         {
+                            pending_actions->to_equip_slot = (*highlighted)->objtype_ptr.armour->slot;
+                            pending_actions->to_equip = *highlighted;
+                            *went = true;
+                            return true;
                         }
                     }
-
                 }
             }
             break;
         case 'j':
             {
-                if(highlighted && *highlighted)
-                    if(list_next(*highlighted, struct Object, obj_list_entry))
-                        *highlighted = list_next(*highlighted, struct Object, obj_list_entry);
+                if(highlighted && *highlighted && list_next(*highlighted, struct Object, obj_list_entry))
+                    *highlighted = list_next(*highlighted, struct Object, obj_list_entry);
             }
             break;
         case 'k':
             {
-                if(highlighted && *highlighted)
-                    if(list_prev(*highlighted, struct Object, obj_list_entry))
-                        *highlighted = list_prev(*highlighted, struct Object, obj_list_entry);
+                if(highlighted && *highlighted && list_prev(*highlighted, struct Object, obj_list_entry))
+                    *highlighted = list_prev(*highlighted, struct Object, obj_list_entry);
             }
             break;
     }
@@ -185,24 +197,48 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
     // Equip items
     if(pending->to_equip)
     {
-        // Unequip item in slot and store back into inventory
-        struct Object* unequipped = equipment_unequip_slot(equipment, pending->to_equip_slot);
-        bool success = equipment_equip_obj(equipment, pending->to_equip, pending->to_equip_slot);
-
-        if(success)
+        switch(pending->to_equip->objtype)
         {
-            if(unequipped)
-                display_fmsg_log("You unequipped your %s.", unequipped->name);
-            display_fmsg_log("You equipped your %s.", pending->to_equip->name);
-        }
-        else
-        {
-            display_fmsg_log("You equipped your %s.",   pending->to_equip->name);
-
-            // Failed to equip the item, roll back to previous state
-            if(unequipped)
+            case OBJ_TYPE_WEAPON:
             {
-                equipment_equip_obj(equipment, unequipped, pending->to_equip_slot);
+                // Unequip item in slot and store back into inventory
+                struct Object* unequipped = equipment_unequip_slot(equipment, pending->to_equip_slot);
+                bool success = equipment_equip_obj(equipment, pending->to_equip, pending->to_equip_slot);
+
+                if(success)
+                {
+                    if(unequipped)
+                        display_fmsg_log("You unequipped your %s.", unequipped->name);
+                    display_fmsg_log("You equipped your %s.", pending->to_equip->name);
+                }
+                else
+                {
+                    display_fmsg_log("You equipped your %s.",   pending->to_equip->name);
+
+                    // Failed to equip the item, roll back to previous state
+                    if(unequipped)
+                    {
+                        equipment_equip_obj(equipment, unequipped, pending->to_equip_slot);
+                    }
+                }
+
+                break;
+            }
+
+            case OBJ_TYPE_ARMOUR:
+            {
+                if(equipment_slot_free(equipment, pending->to_equip_slot))
+                {
+                    equipment_equip_obj(equipment, pending->to_equip, pending->to_equip_slot);
+                    display_fmsg_log("You equipped %s.", pending->to_equip->name);
+                }
+                else
+                {
+                    log_format_msg(DEBUG, "Slot: %d", pending->to_equip_slot);
+                    display_msg_log("You are already wearing something there!");
+                }
+
+                break;
             }
         }
     }
@@ -264,7 +300,7 @@ bool display_inventory_player(void)
 
         mvprintw_xy(1, screen_rows-1, "q: close inventory / d: drop object / e: equip object");
 
-        if(_input_handled(you->mon->inventory, &pending, &highlighted, &went, c_allow_mask_own_inventory))
+        if(_input_handled(you->mon->inventory, you->mon->equipment, &pending, &highlighted, &went, c_allow_mask_own_inventory))
             break;
     }
     while(true);
@@ -284,7 +320,7 @@ void display_inventory_read_only(struct Mon* mon)
 
         mvprintw_xy(1, screen_rows-1, "q: close inventory");
 
-        if(_input_handled(NULL, NULL, NULL, NULL, c_allow_mask_read_only))
+        if(_input_handled(NULL, NULL, NULL, NULL, NULL, c_allow_mask_read_only))
             break;
     }
     while(getch() != c_quit);
