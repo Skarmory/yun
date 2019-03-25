@@ -2,7 +2,7 @@
 #define NAXX_ARMOUR_H
 
 #include "defs.h"
-#include "equip.h"
+#include "mon_equip.h"
 
 struct Object;
 

@@ -1,7 +1,7 @@
-#include "mapgen.h"
+#include "map_gen.h"
 
 #include "map.h"
-#include "room.h"
+#include "map_room.h"
 #include "util.h"
 
 #include <stdlib.h>

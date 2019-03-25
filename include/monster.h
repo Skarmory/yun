@@ -2,7 +2,7 @@
 #define NAXX_MON_H
 
 #include "defs.h"
-#include "stats.h"
+#include "mon_stats.h"
 
 struct MonType;
 struct Equipment;

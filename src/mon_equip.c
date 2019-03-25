@@ -1,8 +1,8 @@
-#include "equip.h"
+#include "mon_equip.h"
 
-#include "armour.h"
-#include "weapon.h"
 #include "object.h"
+#include "obj_armour.h"
+#include "obj_weapon.h"
 
 #include <stdlib.h>
 

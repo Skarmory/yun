@@ -1,4 +1,4 @@
-#include "weapon.h"
+#include "obj_weapon.h"
 
 #include "list.h"
 #include "object.h"

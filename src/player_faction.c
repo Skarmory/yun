@@ -1,4 +1,4 @@
-#include "faction.h"
+#include "player_faction.h"
 
 /**
  * Array of all factions

@@ -1,11 +1,11 @@
-#include "montype.h"
+#include "mon_type.h"
 
-#include "armour.h"
 #include "colour.h"
 #include "mon_attr.h"
-#include "stats.h"
+#include "mon_stats.h"
+#include "obj_armour.h"
+#include "obj_weapon.h"
 #include "symbol.h"
-#include "weapon.h"
 
 #include <ncurses.h>
 

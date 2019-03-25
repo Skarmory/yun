@@ -1,8 +1,8 @@
-#include "class.h"
+#include "player_class.h"
 
 #include "colour.h"
-#include "race.h"
-#include "stats.h"
+#include "mon_stats.h"
+#include "player_race.h"
 
 #define CLS(name, pl, mhk, allow, smask, statups, statscales) \
     {\

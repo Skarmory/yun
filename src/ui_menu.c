@@ -1,14 +1,14 @@
-#include "menu.h"
+#include "ui_menu.h"
 
-#include "class.h"
 #include "colour.h"
-#include "faction.h"
 #include "log.h"
-#include "mon.h"
-#include "montype.h"
+#include "monster.h"
+#include "mon_stats.h"
+#include "mon_type.h"
 #include "player.h"
-#include "stats.h"
-#include "race.h"
+#include "player_class.h"
+#include "player_faction.h"
+#include "player_race.h"
 #include "util.h"
 
 #include <ncurses.h>

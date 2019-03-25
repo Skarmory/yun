@@ -1,18 +1,18 @@
-#include "mon.h"
+#include "monster.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "equip.h"
-#include "inventory.h"
 #include "log.h"
 #include "map.h"
 #include "message.h"
-#include "montype.h"
 #include "mon_ai.h"
+#include "mon_equip.h"
+#include "mon_inventory.h"
+#include "mon_type.h"
 #include "object.h"
+#include "obj_weapon.h"
 #include "util.h"
-#include "weapon.h"
 
 #define SET_MINION_STAT_SCALES(mon) \
     mon->stats.strength.scale = 0.5f; \

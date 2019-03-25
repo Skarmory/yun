@@ -1,10 +1,10 @@
 #include "mon_ai.h"
 
-#include "attack.h"
 #include "log.h"
 #include "map.h"
-#include "mon.h"
-#include "path.h"
+#include "monster.h"
+#include "mon_attack.h"
+#include "pathing.h"
 #include "player.h"
 
 #include <stdio.h>

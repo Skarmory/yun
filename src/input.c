@@ -1,15 +1,15 @@
 #include "input.h"
 
-#include "attack.h"
-#include "inventory.h"
-#include "inventory.ui.h"
 #include "map.h"
 #include "message.h"
-#include "mon.h"
+#include "monster.h"
+#include "mon_attack.h"
+#include "mon_inventory.h"
 #include "object.h"
 #include "player.h"
-#include "stats.ui.h"
 #include "ui.h"
+#include "ui_inventory.h"
+#include "ui_stats.h"
 #include "util.h"
 
 #include <ncurses.h>

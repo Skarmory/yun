@@ -1,4 +1,4 @@
-#include "armour.h"
+#include "obj_armour.h"
 
 #include <stdlib.h>
 

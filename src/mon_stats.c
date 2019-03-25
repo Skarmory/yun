@@ -1,7 +1,7 @@
-#include "stats.h"
+#include "mon_stats.h"
 
 #include "log.h"
-#include "mon.h"
+#include "monster.h"
 #include "player.h"
 #include "util.h"
 

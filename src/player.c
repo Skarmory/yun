@@ -1,11 +1,11 @@
 #include "player.h"
 
-#include "class.h"
 #include "map.h"
 #include "message.h"
-#include "mon.h"
-#include "montype.h"
-#include "race.h"
+#include "monster.h"
+#include "mon_type.h"
+#include "player_class.h"
+#include "player_race.h"
 #include "ui.h"
 #include "util.h"
 

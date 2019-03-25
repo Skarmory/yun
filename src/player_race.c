@@ -1,7 +1,7 @@
-#include "race.h"
+#include "player_race.h"
 
-#include "faction.h"
-#include "montype.h"
+#include "mon_type.h"
+#include "player_faction.h"
 
 #include <stddef.h>
 

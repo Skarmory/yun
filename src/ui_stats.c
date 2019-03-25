@@ -1,14 +1,14 @@
-#include "stats.ui.h"
+#include "ui_stats.h"
 
 #include <ncurses.h>
 
-#include "class.h"
 #include "globals.h"
-#include "mon.h"
+#include "monster.h"
+#include "mon_stats.h"
 #include "ncurses_ext.h"
 #include "player.h"
-#include "race.h"
-#include "stats.h"
+#include "player_class.h"
+#include "player_race.h"
 
 const int x_off_strength     = 1;
 const int x_off_agility      = 17;

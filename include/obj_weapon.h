@@ -1,7 +1,7 @@
 #ifndef NAXX_WEAPON_H
 #define NAXX_WEAPON_H
 
-#include "attack.h"
+#include "mon_attack.h"
 
 #define W_LONGSWORD 0
 #define W_CLAWS     1

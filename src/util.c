@@ -1,13 +1,13 @@
 #include "util.h"
 
-#include "class.h"
-#include "faction.h"
 #include "log.h"
 #include "map.h"
-#include "mon.h"
-#include "montype.h"
+#include "monster.h"
+#include "mon_type.h"
 #include "player.h"
-#include "race.h"
+#include "player_class.h"
+#include "player_faction.h"
+#include "player_race.h"
 
 #include <math.h>
 #include <ncurses.h>

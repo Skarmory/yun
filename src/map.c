@@ -2,12 +2,12 @@
 
 #include "list.h"
 #include "log.h"
-#include "mon.h"
-#include "montype.h"
+#include "monster.h"
+#include "mon_type.h"
 #include "ncurses_ext.h"
 #include "object.h"
 #include "player.h"
-#include "path.h"
+#include "pathing.h"
 #include "symbol.h"
 #include "util.h"
 

@@ -1,14 +1,14 @@
-#include "inventory.h"
+#include "mon_inventory.h"
 
 #include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "equip.h"
 #include "log.h"
 #include "map.h"
 #include "message.h"
-#include "mon.h"
+#include "monster.h"
+#include "mon_equip.h"
 #include "object.h"
 #include "player.h"
 #include "ui.h"

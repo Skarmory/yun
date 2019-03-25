@@ -1,16 +1,16 @@
-#include "attack.h"
+#include "mon_attack.h"
 
-#include "armour.h"
-#include "equip.h"
 #include "log.h"
 #include "message.h"
-#include "mon.h"
-#include "montype.h"
+#include "monster.h"
+#include "mon_equip.h"
+#include "mon_stats.h"
+#include "mon_type.h"
 #include "object.h"
+#include "obj_armour.h"
+#include "obj_weapon.h"
 #include "player.h"
-#include "stats.h"
 #include "util.h"
-#include "weapon.h"
 
 #include <stdio.h>
 
