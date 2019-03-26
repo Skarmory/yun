@@ -35,7 +35,6 @@ struct Object
     } objtype_ptr;
 
     enum ObjectType objtype;
-    ObjListEntry    obj_list_entry;
 };
 
 /**

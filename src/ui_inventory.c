@@ -1,6 +1,7 @@
 #include "ui_inventory.h"
 
 #include "globals.h"
+#include "log.h"
 #include "map.h"
 #include "message.h"
 #include "monster.h"
@@ -42,7 +43,7 @@ const int c_allow_mask_own_inventory = ACTION_QUIT_BIT | ACTION_DROP_BIT | ACTIO
 
 typedef struct _PendingActions
 {
-    ObjList            to_drop;
+    List               to_drop;
     struct Object*     to_equip;
     enum EquipmentSlot to_equip_slot;
 } PendingActions;
@@ -83,7 +84,7 @@ static inline int _to_bits(char input)
     return 0;
 }
 
-static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending_actions, struct Object** highlighted, bool* went, int allow_mask)
+static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending_actions, ListNode** highlighted, bool* went, int allow_mask)
 {
     char in = getch();
 
@@ -98,7 +99,7 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
             {
                 if(highlighted && *highlighted)
                 {
-                    struct Object* drop = *highlighted;
+                    struct Object* drop = (struct Object*)(*highlighted)->data;
 
                     // Cannot drop equipped armours
                     if(equipment_is_equipped(equipment, drop) && drop->objtype == OBJ_TYPE_ARMOUR)
@@ -109,13 +110,13 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
                         return false;
                     }
 
-                    if(list_next(*highlighted, struct Object, obj_list_entry))
-                        *highlighted = list_next(*highlighted, struct Object, obj_list_entry);
+                    if((*highlighted)->next)
+                        *highlighted = (*highlighted)->next;
                     else
-                        *highlighted = list_prev(*highlighted, struct Object, obj_list_entry);
+                        *highlighted = (*highlighted)->prev;
 
                     inventory_rm_obj(inventory, drop);
-                    list_add(&drop->obj_list_entry, &pending_actions->to_drop);
+                    list_add(&pending_actions->to_drop, drop);
                 }
             }
             break;
@@ -123,12 +124,13 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
             {
                 if(highlighted && *highlighted)
                 {
-                    switch((*highlighted)->objtype)
+                    struct Object* obj = (struct Object*)(*highlighted)->data;
+                    switch(obj->objtype)
                     {
                         case OBJ_TYPE_WEAPON:
                         {
                             char* handedness[2] = { "main hand", "off hand" };
-                            char choice = prompt_choice_array("Choose slot", handedness, 2);
+                            char choice = prompt_choice("Choose slot", handedness, 2);
                             if(choice == g_key_escape)
                             {
                                 *went = false;
@@ -136,15 +138,15 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
                             }
 
                             pending_actions->to_equip_slot = (choice == 'a') ? EQUIP_SLOT_MAIN_HAND : EQUIP_SLOT_OFF_HAND;
-                            pending_actions->to_equip = *highlighted;
+                            pending_actions->to_equip = obj;
                             *went = true;
                             return true;
                         }
 
                         case OBJ_TYPE_ARMOUR:
                         {
-                            pending_actions->to_equip_slot = (*highlighted)->objtype_ptr.armour->slot;
-                            pending_actions->to_equip = *highlighted;
+                            pending_actions->to_equip_slot = obj->objtype_ptr.armour->slot;
+                            pending_actions->to_equip = obj;
                             *went = true;
                             return true;
                         }
@@ -154,14 +156,14 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
             break;
         case 'j':
             {
-                if(highlighted && *highlighted && list_next(*highlighted, struct Object, obj_list_entry))
-                    *highlighted = list_next(*highlighted, struct Object, obj_list_entry);
+                if(highlighted && *highlighted && (*highlighted)->next)
+                    *highlighted = (*highlighted)->next;
             }
             break;
         case 'k':
             {
-                if(highlighted && *highlighted && list_prev(*highlighted, struct Object, obj_list_entry))
-                    *highlighted = list_prev(*highlighted, struct Object, obj_list_entry);
+                if(highlighted && *highlighted && (*highlighted)->prev)
+                    *highlighted = (*highlighted)->prev;
             }
             break;
     }
@@ -172,26 +174,23 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
 static void _resolve_actions(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending)
 {
     // Drop items
-    struct Object* curr = list_head(&pending->to_drop, struct Object, obj_list_entry);
-    struct Object* next;
-    while(curr)
+    ListNode* node;
+    list_for_each(&pending->to_drop, node)
     {
-        next = list_next(curr, struct Object, obj_list_entry);
+        struct Object* obj = (struct Object*)node->data;
 
-        inventory_rm_obj(inventory, curr);
-        loc_add_obj(map_get_loc(cmap, you->mon->x, you->mon->y), curr);
+        inventory_rm_obj(inventory, obj);
+        loc_add_obj(map_get_loc(cmap, you->mon->x, you->mon->y), obj);
 
-        if(equipment_is_equipped(equipment, curr) && curr->objtype == OBJ_TYPE_WEAPON)
+        if(equipment_is_equipped(equipment, obj) && obj->objtype == OBJ_TYPE_WEAPON)
         {
-            equipment_unequip_obj(equipment, curr);
-            display_fmsg_log("You thrown down your %s.", curr->name);
+            equipment_unequip_obj(equipment, obj);
+            display_fmsg_log("You thrown down your %s.", obj->name);
         }
         else
         {
-            display_fmsg_log("You dropped a %s.", curr->name);
+            display_fmsg_log("You dropped a %s.", obj->name);
         }
-
-        curr = next;
     }
 
     // Equip items
@@ -244,7 +243,7 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
     }
 }
 
-static void _display_inventory(struct Inventory* inventory, struct Equipment* equipment, struct Object** highlighted)
+static void _display_inventory(struct Inventory* inventory, struct Equipment* equipment, ListNode** highlighted)
 {
     int y;
     int displayable_rows = screen_rows - 4;
@@ -255,23 +254,22 @@ static void _display_inventory(struct Inventory* inventory, struct Equipment* eq
     mvprintwa_xy(1, y, A_BOLD, "Inventory");
     y += 2;
 
-    struct Object* obj = list_head(&inventory->obj_list, struct Object, obj_list_entry);
-
-    while(obj && y < displayable_rows)
+    ListNode* node;
+    list_for_each(&inventory->obj_list, node)
     {
-        char extra_text[EXTRA_TEXT_LEN];
-        _create_extra_text(extra_text, obj, equipment);
+        if(y >= displayable_rows) break;
 
-        if(highlighted && obj == *highlighted)
+        char extra_text[EXTRA_TEXT_LEN];
+        _create_extra_text(extra_text, node->data, equipment);
+
+        if(highlighted && node == *highlighted)
         {
-            mvprintwa_xy(1, y++, COLOR_PAIR(30), "%s %s", obj->name, extra_text);
+            mvprintwa_xy(1, y++, COLOR_PAIR(30), "%s %s", ((struct Object*)node->data)->name, extra_text);
         }
         else
         {
-            mvprintw_xy(1, y++, "%s %s", obj->name, extra_text);
+            mvprintw_xy(1, y++, "%s %s", ((struct Object*)node->data)->name, extra_text);
         }
-
-        obj = list_next(obj, struct Object, obj_list_entry);
     }
 
     if(highlighted && *highlighted)
@@ -281,7 +279,7 @@ static void _display_inventory(struct Inventory* inventory, struct Equipment* eq
         mvprintwa_xy(c_desc_x, y, A_BOLD, "Description");
         y+=2;
 
-        draw_textbox(c_desc_x, y, c_desc_width, 0, (*highlighted)->desc);
+        draw_textbox(c_desc_x, y, c_desc_width, 0, ((struct Object*)(*highlighted)->data)->desc);
     }
 }
 
@@ -292,7 +290,7 @@ bool display_inventory_player(void)
     pending.to_equip = NULL;
 
     bool went = false;
-    struct Object* highlighted = list_head(&you->mon->inventory->obj_list, struct Object, obj_list_entry);
+    ListNode* highlighted = you->mon->inventory->obj_list.head;
 
     do
     {
@@ -312,7 +310,7 @@ bool display_inventory_player(void)
 
 void display_inventory_read_only(struct Mon* mon)
 {
-    struct Object* highlighted = list_head(&mon->inventory->obj_list, struct Object, obj_list_entry);
+    ListNode* highlighted = mon->inventory->obj_list.head;
 
     do
     {

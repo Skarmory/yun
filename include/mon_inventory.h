@@ -5,6 +5,7 @@
 
 #include <stdbool.h>
 
+struct List;
 struct Object;
 
 struct Inventory
@@ -12,7 +13,7 @@ struct Inventory
     int capacity;
     int size;
 
-    ObjList obj_list;
+    List obj_list;
 };
 
 struct Inventory* new_inventory(void);

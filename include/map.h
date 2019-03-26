@@ -5,10 +5,11 @@
 
 #include <stdbool.h>
 
+struct List;
 struct Mon;
-struct Room;
 struct Object;
 struct PathNode;
+struct Room;
 
 #define MROWS 40
 #define MCOLS 80
@@ -24,7 +25,7 @@ struct Location
     int pathing;
     struct PathNode* path_node;
     struct Mon* mon;
-    ObjList obj_list;
+    List obj_list;
     char terrain;
 };
 
@@ -36,8 +37,7 @@ struct Map
     struct Location** locs;
     struct Room** rooms;
     int room_count;
-
-    MonList mon_list;
+    List mon_list;
 };
 
 void display_map(void);
@@ -51,7 +51,7 @@ bool map_in_bounds(struct Map* map, int x, int y);
 bool map_has_mon(struct Map* map, int x, int y);
 bool map_is_pathable(struct Map* map, int x, int y, int path_bits);
 bool map_valid_move(struct Map* map, int x, int y, int path_bits);
-ObjList* map_get_objects(struct Map* map, int x, int y);
+List* map_get_objects(struct Map* map, int x, int y);
 
 static inline struct Location* map_get_loc(struct Map* map, int x, int y)
 {

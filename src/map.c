@@ -18,14 +18,11 @@ struct Map* cmap = NULL;
 
 void _map_free_all_mons(struct Map* map)
 {
-    struct Mon* curr = list_head(&map->mon_list, struct Mon, map_mons);
-    struct Mon* next;
-    while(curr)
+    ListNode *node, *n;
+    list_for_each_safe(&map->mon_list, node, n)
     {
-        next = list_next(curr, struct Mon, map_mons);
-        list_rm(&curr->map_mons, &map->mon_list);
-        free_mon(curr);
-        curr = next;
+        free_mon(node->data);
+        free(node);
     }
 }
 
@@ -75,17 +72,11 @@ void free_map(struct Map* map)
     {
         for(int y = 0; y < MROWS; y++)
         {
-            struct Object* curr = list_head(&map->locs[x][y].obj_list, struct Object, obj_list_entry);
-            struct Object* next;
-
-            while(curr)
+            ListNode *node, *n;
+            list_for_each_safe(&map->locs[x][y].obj_list, node, n)
             {
-                next = list_next(curr, struct Object, obj_list_entry);
-
-                list_rm(&curr->obj_list_entry, &map->locs[x][y].obj_list);
-                free_obj(curr);
-
-                curr = next;
+                free_obj(node->data);
+                free(node);
             }
 
             free(map->locs[x][y].path_node);
@@ -107,14 +98,20 @@ void display_map(void)
     for(int j = 0; j < MROWS; ++j)
     {
         struct Location* loc = &cmap->locs[i][j];
-        struct Object* obj = list_head(&loc->obj_list, struct Object, obj_list_entry);
+        struct Object* obj = loc->obj_list.head ? loc->obj_list.head->data : NULL;
 
         if(loc->mon)
+        {
             draw_symbol(i, j, loc->mon->type->symbol->sym, loc->mon->type->symbol->fg, loc->mon->type->symbol->attr);
+        }
         else if(obj)
+        {
             draw_symbol(i, j, obj->symbol->sym, obj->symbol->fg, obj->symbol->attr);
+        }
         else
+        {
             draw_symbol(i, j, loc->terrain, 0, 0);
+        }
     }
 
     draw_symbol(you->mon->x, you->mon->y, '@', you->mon->type->symbol->fg, you->mon->type->symbol->attr);
@@ -132,7 +129,7 @@ void map_add_mon(struct Map* map, struct Mon* mon)
     map->locs[x][y].mon = mon;
 
     // push mon onto the list
-    list_add(&mon->map_mons, &map->mon_list);
+    list_add(&map->mon_list, mon);
 }
 
 /*
@@ -140,18 +137,12 @@ void map_add_mon(struct Map* map, struct Mon* mon)
  */
 bool map_rm_mon(struct Map* map, struct Mon* mon)
 {
-    struct Mon* curr = list_head(&map->mon_list, struct Mon, map_mons);
-    while(curr)
+    ListNode* node = list_find(&map->mon_list, mon);
+    if(node)
     {
-        if(curr == mon)
-        {
-            map->locs[mon->x][mon->y].mon = NULL;
-
-            list_rm(&mon->map_mons, &map->mon_list);
-            return true;
-        }
-
-        curr = list_next(curr, struct Mon, map_mons);
+        map->locs[mon->x][mon->y].mon = NULL;
+        list_rm(&map->mon_list, node);
+        return true;
     }
 
     return false;
@@ -160,7 +151,7 @@ bool map_rm_mon(struct Map* map, struct Mon* mon)
 /**
  * Get the object at given map location
  */
-ObjList* map_get_objects(struct Map* map, int x, int y)
+List* map_get_objects(struct Map* map, int x, int y)
 {
     return &map->locs[x][y].obj_list;
 }
@@ -171,7 +162,7 @@ ObjList* map_get_objects(struct Map* map, int x, int y)
 bool loc_add_obj(struct Location* loc, struct Object* obj)
 {
     // push object onto location object linked list
-    list_add(&obj->obj_list_entry, &loc->obj_list);
+    list_add(&loc->obj_list, obj);
 
     return true;
 }
@@ -181,18 +172,12 @@ bool loc_add_obj(struct Location* loc, struct Object* obj)
  */
 bool loc_rm_obj(struct Location* loc, struct Object* obj)
 {
-    struct Object* curr = list_head(&loc->obj_list, struct Object, obj_list_entry);
-    while(curr)
+    ListNode* node = list_find(&loc->obj_list, obj);
+    if(node)
     {
-        if(curr == obj)
-        {
-            list_rm(&curr->obj_list_entry, &loc->obj_list);
-            return true;
-        }
-
-        curr = list_next(curr, struct Object, obj_list_entry);
+        list_rm(&loc->obj_list, node);
+        return true;
     }
-
     return false;
 }
 

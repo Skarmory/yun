@@ -90,38 +90,7 @@ bool prompt_yn(const char* msg)
     return decision;
 }
 
-char prompt_choice_list(const char* title, struct List* choices)
-{
-    struct UIOption* option = list_head(choices, struct UIOption, option_list_entry);
-    char option_id = 'a';
-    char last_option_id;
-
-    int x = (screen_cols / 2) - (g_option_name_max_size / 2);
-    int y = (screen_rows / 2) - (choices->count / 2);
-
-    mvprintwa_xy(x, y++, A_BOLD, "%s", title);
-
-    while(option && option_id <= 'z')
-    {
-        mvprintw_xy(x, y++, "%c - %s", option_id, option->option_name);
-
-        ++option_id;
-        option = list_next(option, struct UIOption, option_list_entry);
-    }
-
-    last_option_id = option_id-1;
-
-    char choice;
-    do
-    {
-        choice = getch();
-    }
-    while(choice < 'a' || choice > last_option_id);
-
-    return choice;
-}
-
-char prompt_choice_array(const char* title, char** choices, int length)
+char prompt_choice(const char* title, char** choices, int length)
 {
     char last_option_id = 'a' + length - 1;
 

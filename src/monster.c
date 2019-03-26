@@ -34,7 +34,6 @@ struct Mon* new_mon(int mtype, int x, int y)
     mon->pathing = mon->type->pathing;
     mon->equipment = new_equipment();
     mon->inventory = new_inventory();
-    list_entry_init(&mon->map_mons);
 
     SET_MINION_STAT_SCALES(mon);
 
@@ -67,12 +66,10 @@ void free_mon(struct Mon* mon)
  */
 void update_mons(void)
 {
-    struct Mon* mon = list_head(&cmap->mon_list, struct Mon, map_mons);
-
-    while(mon)
+    ListNode* node;
+    list_for_each(&cmap->mon_list, node)
     {
-        update_mon_ai(mon);
-        mon = list_next(mon, struct Mon, map_mons);
+        update_mon_ai(node->data);
     }
 }
 

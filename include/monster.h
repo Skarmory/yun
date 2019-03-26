@@ -25,8 +25,6 @@ struct Mon
     struct Equipment* equipment;
     struct Inventory* inventory;
     struct Stats stats;
-
-    MonListEntry map_mons; // linked list for mons on the level
 };
 
 struct Mon* new_mon(int mtype, int x, int y);

@@ -38,7 +38,7 @@ void free_player(void)
         you->faction = NULL;
         free(you->cls);
         free(you->race);
-        list_rm(&you->mon->map_mons, &cmap->mon_list);
+        list_rm(&cmap->mon_list, list_find(&cmap->mon_list, you->mon));
         free_mon(you->mon);
         free(you);
     }

@@ -33,7 +33,7 @@ static bool _do_smart_action(int x, int y)
  */
 static bool _pick_up_object(void)
 {
-    ObjList* obj_list = map_get_objects(cmap, you->mon->x, you->mon->y);
+    List* obj_list = map_get_objects(cmap, you->mon->x, you->mon->y);
 
     if(obj_list->head == NULL)
     {
@@ -42,7 +42,7 @@ static bool _pick_up_object(void)
     }
 
     //TODO: Give selection from all objects on floor
-    struct Object* chosen = list_head(obj_list, struct Object, obj_list_entry);
+    struct Object* chosen = (struct Object*)obj_list->head->data;
 
     // Unlink object from Location
     loc_rm_obj(&cmap->locs[you->mon->x][you->mon->y], chosen);

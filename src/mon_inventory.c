@@ -28,16 +28,11 @@ struct Inventory* new_inventory(void)
 
 void free_inventory(struct Inventory* inventory)
 {
-    struct Object* curr = list_head(&inventory->obj_list, struct Object, obj_list_entry);
-    struct Object* next;
-    while(curr)
+    ListNode *node, *n;
+    list_for_each_safe(&inventory->obj_list, node, n)
     {
-        next = list_next(curr, struct Object, obj_list_entry);
-
-        list_rm(&curr->obj_list_entry, &inventory->obj_list);
-        free_obj(curr);
-
-        curr = next;
+        free_obj(node->data);
+        free(node);
     }
 
     free(inventory);
@@ -62,11 +57,10 @@ bool sanity_check_inventory(struct Inventory* inventory)
     }
 
     int counter = 0;
-    struct Object* tmp = list_head(&inventory->obj_list, struct Object, obj_list_entry);
-    while(tmp)
+    ListNode* node;
+    list_for_each(&inventory->obj_list, node)
     {
-        counter++;
-        tmp = list_next(tmp, struct Object, obj_list_entry);
+        ++counter;
     }
 
     if(counter > inventory->size)
@@ -95,7 +89,7 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
         return false;
     }
 
-    list_add(&obj->obj_list_entry, &inventory->obj_list);
+    list_add(&inventory->obj_list, obj);
 
     inventory->size++;
 
@@ -104,10 +98,10 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 
 bool inventory_rm_obj(struct Inventory* inventory, struct Object* obj)
 {
-    if(!inventory_has_obj(inventory, obj))
-        return false;
+    ListNode* node = list_find(&inventory->obj_list, obj);
+    if(!node) return false;
 
-    list_rm(&obj->obj_list_entry, &inventory->obj_list);
+    list_rm(&inventory->obj_list, node);
     inventory->size--;
 
     return true;
@@ -115,13 +109,10 @@ bool inventory_rm_obj(struct Inventory* inventory, struct Object* obj)
 
 bool inventory_has_obj(struct Inventory* inventory, struct Object* obj)
 {
-    struct Object* curr = list_head(&inventory->obj_list, struct Object, obj_list_entry);
-    while(curr)
+    ListNode* node;
+    list_for_each(&inventory->obj_list, node)
     {
-        if(curr == obj)
-            return true;
-        curr = list_next(curr, struct Object, obj_list_entry);
+        if(node->data == obj) return true;
     }
-
     return false;
 }
