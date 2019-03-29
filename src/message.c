@@ -37,8 +37,7 @@ void _flush_and_prompt(void)
 
     // Redraw visual info
     // This will show the partial updates for the turn up to this prompt
-    display_map();
-    display_char_status();
+    display_main_screen();
 
     getch();
 }

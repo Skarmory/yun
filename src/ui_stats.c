@@ -76,5 +76,7 @@ bool character_screen_handler(void)
     }
     while(in != 'q');
 
+    clear();
+
     return false;
 }

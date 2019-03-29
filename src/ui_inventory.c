@@ -173,6 +173,8 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
 
 static void _resolve_actions(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending)
 {
+    clear();
+
     // Drop items
     ListNode* node;
     list_for_each(&pending->to_drop, node)

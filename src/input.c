@@ -99,14 +99,12 @@ void handle_input(void)
                 break;
             case 'c':
                 went = character_screen_handler();
-                clear();
                 break;
             case ',':
                 went = _pick_up_object();
                 break;
             case 'i':
                 went = display_inventory_player();
-                clear();
                 break;
             case ' ':
                 went = true;
