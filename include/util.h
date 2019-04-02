@@ -7,6 +7,8 @@ int strrfindi(const char* haystack, const char needle, int start);
 
 void do_quit(void);
 
+void sigint_handler(int _);
+
 int random_int(int hi, int lo);
 
 int roll_d100(void);

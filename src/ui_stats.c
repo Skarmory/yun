@@ -1,14 +1,14 @@
 #include "ui_stats.h"
 
-#include <ncurses.h>
-
 #include "globals.h"
 #include "monster.h"
 #include "mon_stats.h"
-#include "ncurses_ext.h"
 #include "player.h"
 #include "player_class.h"
 #include "player_race.h"
+#include "term.h"
+
+#include <stddef.h>
 
 const int x_off_strength     = 1;
 const int x_off_agility      = 17;
@@ -18,52 +18,50 @@ const int x_off_stamina      = 66;
 
 void _display_stats(struct Mon* mon)
 {
-    clear();
-
-    mvprintw_xy(1, 0, "Name:  %s", you->name);
-    mvprintw_xy(1, 1, "Class: %s", you->cls->name);
-    mvprintw_xy(1, 2, "Race:  %s", you->race->noun);
+    term_draw_ftext(2, 0, NULL, NULL, 0, "Name: %s", you->name);
+    term_draw_ftext(1, 1, NULL, NULL, 0, "Class: %s", you->cls->name);
+    term_draw_ftext(2, 2, NULL, NULL, 0, "Race: %s", you->race->noun);
 
     int y;
 
     // Strength
     y = 5;
-    mvprintwa_xy(x_off_strength, y++, A_BOLD, "Strength");
-    mvprintw_xy(x_off_strength, y++, "AP:       %3d", PSTAT(strength, attack_power));
-    mvprintw_xy(x_off_strength, y++, "ArmPen:   %3d", PSTAT(strength, armour_pen));
-    mvprintw_xy(x_off_strength, y++, "Parry%: %5.2f", PSTAT(strength, parry_chance));
+    term_draw_ftext(x_off_strength, y++, NULL, NULL, A_BOLD, "Strength");
+    term_draw_ftext(x_off_strength, y++, NULL, NULL, 0, "AP:       %3d", PSTAT(strength, attack_power));
+    term_draw_ftext(x_off_strength, y++, NULL, NULL, 0, "ArmPen:   %3d", PSTAT(strength, armour_pen));
+    term_draw_ftext(x_off_strength, y++, NULL, NULL, 0, "Parry%: %5.2f", PSTAT(strength, parry_chance));
 
     // Agility
     y = 5;
-    mvprintwa_xy(x_off_agility, y++, A_BOLD, "Agility");
-    mvprintw_xy(x_off_agility, y++, "AP:       %3d", PSTAT(agility, attack_power));
-    mvprintw_xy(x_off_agility, y++, "Crit%:  %5.2f", PSTAT(agility, crit_chance));
-    mvprintw_xy(x_off_agility, y++, "Dodge%: %5.2f", PSTAT(agility, dodge_chance));
+    term_draw_ftext(x_off_agility, y++, NULL, NULL, A_BOLD, "Agility");
+    term_draw_ftext(x_off_agility, y++, NULL, NULL, 0, "AP:       %3d", PSTAT(agility, attack_power));
+    term_draw_ftext(x_off_agility, y++, NULL, NULL, 0, "Crit%:  %5.2f", PSTAT(agility, crit_chance));
+    term_draw_ftext(x_off_agility, y++, NULL, NULL, 0, "Dodge%: %5.2f", PSTAT(agility, dodge_chance));
 
     // Intelligence
     y = 5;
-    mvprintwa_xy(x_off_intelligence, y++, A_BOLD, "Intelligence");
-    mvprintw_xy(x_off_intelligence, y++, "SP:        %3d", PSTAT(intelligence, spell_power));
-    mvprintw_xy(x_off_intelligence, y++, "SpCrit%: %5.2f", PSTAT(intelligence, spell_crit_chance));
-    mvprintw_xy(x_off_intelligence, y++, "Mana:      %3d", PSTAT(intelligence, max_mana));
-    mvprintw_xy(x_off_intelligence, y++, "SpPen:     %3d", PSTAT(intelligence, spell_pen));
+    term_draw_ftext(x_off_intelligence, y++, NULL, NULL, A_BOLD, "Intelligence");
+    term_draw_ftext(x_off_intelligence, y++, NULL, NULL, 0, "SP:        %3d", PSTAT(intelligence, spell_power));
+    term_draw_ftext(x_off_intelligence, y++, NULL, NULL, 0, "SpCrit%: %5.2f", PSTAT(intelligence, spell_crit_chance));
+    term_draw_ftext(x_off_intelligence, y++, NULL, NULL, 0, "Mana:      %3d", PSTAT(intelligence, max_mana));
+    term_draw_ftext(x_off_intelligence, y++, NULL, NULL, 0, "SpPen:     %3d", PSTAT(intelligence, spell_pen));
 
     // Spirit
     y = 5;
-    mvprintwa_xy(x_off_spirit, y++, A_BOLD, "Spirit");
-    mvprintw_xy(x_off_spirit, y++, "SP:       %3d", PSTAT(spirit, spell_power));
-    mvprintw_xy(x_off_spirit, y++, "SpRes%: %5.2f", PSTAT(spirit, resist));
-    mvprintw_xy(x_off_spirit, y++, "HRegen:   %3d", PSTAT(spirit, health_regen));
-    mvprintw_xy(x_off_spirit, y++, "MRegen:   %3d", PSTAT(spirit, mana_regen));
+    term_draw_ftext(x_off_spirit, y++, NULL, NULL, A_BOLD, "Spirit");
+    term_draw_ftext(x_off_spirit, y++, NULL, NULL, 0, "SP:       %3d", PSTAT(spirit, spell_power));
+    term_draw_ftext(x_off_spirit, y++, NULL, NULL, 0, "SpRes%: %5.2f", PSTAT(spirit, resist));
+    term_draw_ftext(x_off_spirit, y++, NULL, NULL, 0, "HRegen:   %3d", PSTAT(spirit, health_regen));
+    term_draw_ftext(x_off_spirit, y++, NULL, NULL, 0, "MRegen:   %3d", PSTAT(spirit, mana_regen));
 
     // Stamina
     y = 5;
-    mvprintwa_xy(x_off_stamina, y++, A_BOLD, "Stamina");
-    mvprintw_xy(x_off_stamina, y++, "HP:           %3d", PSTAT(stamina, max_health));
-    mvprintw_xy(x_off_stamina, y++, "Block%:     %5.2f", PSTAT(stamina, block_chance));
-    mvprintw_xy(x_off_stamina, y++, "CritBlock%: %5.2f", PSTAT(stamina, crit_block_chance));
+    term_draw_ftext(x_off_stamina, y++, NULL, NULL, A_BOLD, "Stamina");
+    term_draw_ftext(x_off_stamina, y++, NULL, NULL, 0, "HP:           %3d", PSTAT(stamina, max_health));
+    term_draw_ftext(x_off_stamina, y++, NULL, NULL, 0, "Block%:     %5.2f", PSTAT(stamina, block_chance));
+    term_draw_ftext(x_off_stamina, y++, NULL, NULL, 0, "CritBlock%: %5.2f", PSTAT(stamina, crit_block_chance));
 
-    mvprintw_xy(1, screen_rows-1, "q = close inventory");
+    term_draw_text(1, screen_rows-1, NULL, NULL, 0, "q = close character screen");
 }
 
 bool character_screen_handler(void)
@@ -71,12 +69,14 @@ bool character_screen_handler(void)
     char in;
     do
     {
+        term_clear();
         _display_stats(you->mon);
-        in = getch();
+        term_refresh();
+        in = term_getch();
     }
     while(in != 'q');
 
-    clear();
+    term_clear();
 
     return false;
 }

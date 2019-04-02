@@ -6,10 +6,10 @@
 #include "mon_type.h"
 #include "player_class.h"
 #include "player_race.h"
+#include "term.h"
 #include "ui.h"
 #include "util.h"
 
-#include <ncurses.h>
 #include <stdlib.h>
 
 struct Player* you = NULL;
@@ -58,13 +58,13 @@ void player_chk_dead(void)
         display_map();
         display_char_status();
 
-        getch();
+        term_getch();
         display_msg_log("You died...");
 
         clear_msgs();
         flush_msg_buffer();
 
-        getch();
+        term_getch();
         do_quit();
     }
 }

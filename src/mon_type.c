@@ -7,7 +7,7 @@
 #include "obj_weapon.h"
 #include "symbol.h"
 
-#include <ncurses.h>
+#include <stddef.h>
 
 #define MON(n, sym, bai, bwi, stats, path) \
     {                                    \

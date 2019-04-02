@@ -7,13 +7,14 @@
 #include "mon_inventory.h"
 #include "object.h"
 #include "player.h"
+#include "term.h"
 #include "ui.h"
 #include "ui_inventory.h"
 #include "ui_stats.h"
 #include "util.h"
 
-#include <ncurses.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 /**
  * Automatically determine the action of a player given a movement command
@@ -71,7 +72,7 @@ void handle_input(void)
     do
     {
         char ch;
-        switch(ch = getch()) // get movement
+        switch(ch = term_getch()) // get movement
         {
             case 'h':
             case 'j':

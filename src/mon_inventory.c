@@ -1,6 +1,5 @@
 #include "mon_inventory.h"
 
-#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 

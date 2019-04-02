@@ -9,12 +9,15 @@
 
 #define g_key_escape 27
 
+struct Colour;
 struct Equipment;
 struct Inventory;
 struct Object;
 
-void draw_textbox(int x, int y, int w, int h, const char* text);
-void draw_textbox_border(int x, int y, int w, int h, const char* text);
+typedef struct Colour Colour;
+
+void draw_textbox(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text);
+void draw_textbox_border(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text);
 
 bool prompt_yn(const char* msg);
 char prompt_choice(const char* title, char** choices, int length);

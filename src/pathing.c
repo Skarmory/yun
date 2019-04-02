@@ -7,7 +7,6 @@
 
 #include <float.h>
 #include <math.h>
-#include <ncurses.h>
 #include <stdlib.h>
 
 struct PathNode* _open_head;

@@ -11,7 +11,6 @@
 #include "player_race.h"
 #include "util.h"
 
-#include <ncurses.h>
 #include <pwd.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -22,21 +21,19 @@
 void print_picked(void)
 {
     int col;
-    mvprintw(1, 2, "   name: %s", !you->name ? "unknown" : you->name);
+    term_draw_ftext(1, 2, NULL, NULL, 0, "   name: %s", !you->name ? "unknown" : you->name);
 
-    mvprintw(2, 2, "  class: ");
     col = get_class_colour(you->cls);
-    attron(COLOR_PAIR(col));
-    mvprintw(2, 11, "%s", !you->cls ? "not chosen" : you->cls->name);
-    attroff(COLOR_PAIR(col));
+    term_draw_text(2, 2, NULL, NULL, 0, "  class: ");
+    term_draw_ftext(11, 2, COL(col), NULL, 0, "%s", !you->cls ? "not chosen" : you->cls->name);
 
     col = you->race ? you->race->faction == FA_ALLIANCE ? CLR_ALLIANCE : CLR_HORDE : CLR_DEFAULT;
-    mvprintw(3, 2, "   race: ", !you->race ? "not chosen" : you->race->noun);
-    mvprintw(4, 2, "faction: ", !you->faction ? "not chosen" : you->faction);
-    attron(COLOR_PAIR(col));
-    mvprintw(3, 11, "%s", !you->race ? "not chosen" : you->race->noun);
-    mvprintw(4, 11, "%s", !you->faction ? "not chosen" : you->faction);
-    attroff(COLOR_PAIR(col));
+
+    term_draw_text(2, 3, NULL, NULL, 0, "   race: ");
+    term_draw_ftext(11, 3, COL(col), NULL, 0, "%s", !you->race ? "not chosen" : you->race->noun);
+
+    term_draw_text(2, 4, NULL, NULL, 0, "faction: ");
+    term_draw_ftext(11, 4, COL(col), NULL, 0, "%s", !you->faction ? "not chosen" : you->faction);
 }
 
 /**
@@ -49,48 +46,44 @@ void print_options(int what, short mask)
     switch(what)
     {
         case PICK_CLASS:
-            mvprintw(menu_row, menu_col, "Choose your class");
+            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Choose your class");
             menu_row += 2;
             for(int i = 0; i < 9; i++, menu_row++)
             {
                 int col = get_class_colour(&classes[i]);
-                attron(COLOR_PAIR(col));
-                mvprintw(menu_row, menu_col, "%c - %s", classes[i].hotkey, classes[i].name);
-                attroff(COLOR_PAIR(col));
+                term_draw_ftext(menu_col, menu_row, col != CLR_DEFAULT ? COL(col) : NULL, NULL, 0, "%c - %s", classes[i].hotkey, classes[i].name);
             }
 
             break;
 
         case PICK_RACE:
-            mvprintw(menu_row, menu_col, "Choose your race");
+            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Choose your race");
             menu_row += 2;
             for(int i = 0; i < 8; i++)
             {
                 if(races[i].selfmask & mask)
                 {
                     int col = races[i].faction == FA_ALLIANCE ? CLR_ALLIANCE : CLR_HORDE;
+                    term_draw_ftext(menu_col, menu_row, col != CLR_DEFAULT ? COL(col) : NULL, NULL, 0, "%c - %s", races[i].hotkey, races[i].noun);
                     you->faction = factions[races[i].faction];
-                    attron(COLOR_PAIR(col));
-
-                    mvprintw(menu_row, menu_col, "%c - %s", races[i].hotkey, races[i].noun);
                     menu_row++;
-
-                    attroff(COLOR_PAIR(col));
                 }
             }
 
             break;
 
         case CONFIRM:
-            mvprintw(menu_row, menu_col, "Confirm this character and start new game?");
+            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Confirm this character and start a new game?");
             menu_row += 2;
-            mvprintw(menu_row++, menu_col, "y - Start game");
-            mvprintw(menu_row++, menu_col, "n - Choose again");
+            term_draw_text(menu_col, menu_row++, NULL, NULL, 0, "y - Start game");
+            term_draw_text(menu_col, menu_row++, NULL, NULL, 0, "n - Choose again");
             break;
     }
 
     menu_row++;
-    mvprintw(menu_row, menu_col, "q - quit");
+    term_draw_text(menu_col, menu_row, NULL, NULL, 0, "q - quit");
+
+    term_refresh();
 }
 
 /**
@@ -102,7 +95,7 @@ void print_options(int what, short mask)
  */
 void pick_class(void)
 {
-    clear();
+    term_clear();
 
     print_picked();
 
@@ -114,7 +107,7 @@ void pick_class(void)
 
     do
     {
-        char choice = getch();
+        char choice = term_getch();
         if(choice == 'q')
         {
             do_quit();
@@ -141,7 +134,7 @@ void pick_class(void)
  */
 void pick_race(void)
 {
-    clear();
+    term_clear();
 
     print_picked();
 
@@ -155,7 +148,7 @@ void pick_race(void)
 
     do
     {
-        char choice = getch();
+        char choice = term_getch();
         if(choice == 'q')
         {
             do_quit();
@@ -207,7 +200,7 @@ void _apply_stats(void)
  */
 void confirm_character(void)
 {
-    clear();
+    term_clear();
 
     print_picked();
 
@@ -215,7 +208,7 @@ void confirm_character(void)
 
    do
    {
-       switch(getch())
+       switch(term_getch())
        {
            case 'y':
                _apply_stats();

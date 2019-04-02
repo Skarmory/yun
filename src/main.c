@@ -15,11 +15,12 @@
 #include "player_class.h"
 #include "player_faction.h"
 #include "player_race.h"
+#include "symbol.h"
+#include "term.h"
 #include "ui.h"
 #include "ui_menu.h"
 #include "util.h"
 
-#include <ncurses.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -39,7 +40,7 @@ void new_game(void)
 
     char buf[256];
 
-    clear();
+    term_clear();
 
     int row = screen_rows/2 - 20;
 
@@ -58,14 +59,14 @@ void new_game(void)
 
                 for(int j = 0; j < SIZE(tmp) && tmp[j] != '\0'; ++j)
                 {
-                    mvaddch(row, col, tmp[j]);
+                    term_draw_symbol(col, row, NULL, NULL, 0, tmp[j]);
                     ++col;
                 }
 
                 ++i;
             }
 
-            mvaddch(row, col, buf[i]);
+            term_draw_symbol(col, row, NULL, NULL, 0, buf[i]);
             ++col;
         }
 
@@ -74,8 +75,9 @@ void new_game(void)
 
     fclose(intro);
 
-    getch();
-    clear();
+    term_refresh();
+    term_getch();
+    term_clear();
 
     current_turn_number = 0;
 }
@@ -84,8 +86,7 @@ void main_loop(void)
 {
     // Basic implementation for debugging
 
-    display_map();
-    display_char_status();
+    display_main_screen();
 
     do
     {
@@ -111,24 +112,17 @@ int main(int argc, char** argv)
 {
     srand(time(NULL));
 
-    // ncurses init funcs
-    initscr();
-    noecho();
-    raw();
-    curs_set(0);
-
-    init_colours();
-
-    attron(COLOR_PAIR(CLR_DEFAULT));
-    getmaxyx(stdscr, screen_rows, screen_cols);
+    init_logs();
+    term_init();
+    term_set_sigint_callback(&sigint_handler);
+    term_get_wh(&screen_cols, &screen_rows);
 
     // some intro text
-    mvprintw(screen_rows/2, screen_cols/2 - 7, "Welcome to Naxx");
-    refresh();
-    getch();
+    term_draw_text((screen_cols/2) - 7, screen_rows/2, NULL, NULL, 0, "Welcome to Naxx");
+    term_refresh();
+    term_getch();
 
-    init_logs();
-    init_msgs();
+    init_symbols();
     init_montypes();
     cmap = new_map();
 
@@ -136,6 +130,7 @@ int main(int argc, char** argv)
     new_game();
 
     gen_map(cmap);
+
 
     // --------- DEBUG CODE START ----------
     struct Room* room = cmap->rooms[0];

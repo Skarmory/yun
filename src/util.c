@@ -8,9 +8,10 @@
 #include "player_class.h"
 #include "player_faction.h"
 #include "player_race.h"
+#include "term.h"
+#include "ui.h"
 
 #include <math.h>
-#include <ncurses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -79,10 +80,15 @@ void do_quit(void)
 
     uninit_logs();
     uninit_montypes();
-    endwin();
-    use_default_colors();
+    term_uninit();
     puts(exit_msg);
     exit(0);
+}
+
+void sigint_handler(int _)
+{
+    if(prompt_yn("Really quit?"))
+        do_quit();
 }
 
 /**

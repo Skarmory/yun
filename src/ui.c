@@ -9,14 +9,12 @@
 #include "mon_equip.h"
 #include "mon_inventory.h"
 #include "mon_stats.h"
-#include "ncurses_ext.h"
 #include "object.h"
 #include "player.h"
 #include "player_class.h"
 #include "player_race.h"
 #include "util.h"
 
-#include <ncurses.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -27,9 +25,10 @@
 #define YES 'y'
 #define NO  'n'
 
-
-void draw_textbox(int x, int y, int w, int h, const char* text)
+void draw_textbox(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text)
 {
+    term_draw_area(x, y, w, h, fg, bg, 0, ' ');
+
     int stridx   = 0;
     int textlen  = strlen(text);
 
@@ -47,34 +46,36 @@ void draw_textbox(int x, int y, int w, int h, const char* text)
                 chars -= stridx;
         }
 
-        mvprintwn_xy(chars, x, y++, text + stridx);
+        term_draw_fntext(chars, x, y++, fg, bg, 0, "%s", text + stridx);
         stridx += chars;
     }
 }
 
-void draw_textbox_border(int x, int y, int w, int h, const char* text)
+void draw_textbox_border(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text)
 {
     int _w = w + 4;
     int _h = h + 4;
 
-    for(int _x = x; _x < (x+_w-1); ++_x)
+    term_draw_area(x, y, _w, _h, fg, bg, 0, ' ');
+
+    for(int _x = x + 1; _x < (x+_w-1); ++_x)
     {
-        draw_symbol(_x, y, '-', 0, 0);
-        draw_symbol(_x, (y+_h-1), '-', 0, 0);
+        term_draw_symbol(_x,        y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '=');
+        term_draw_symbol(_x, (y+_h-1), NULL, COL(CLR_DGREY), A_BOLD_BIT, '=');
     }
 
-    for(int _y = y; _y < (y+_h-1); ++_y)
+    for(int _y = y + 1; _y < (y+_h-1); ++_y)
     {
-        draw_symbol(x, _y, '|', 0, 0);
-        draw_symbol((x+_w-1), _y, '|', 0, 0);
+        term_draw_symbol(x,        _y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '|');
+        term_draw_symbol((x+_w-1), _y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '|');
     }
 
-    draw_symbol(x, y, '+', 0, 0);
-    draw_symbol(x+_w-1, y+_h-1, '+', 0, 0);
-    draw_symbol(x+_w-1, y, '+', 0, 0);
-    draw_symbol(x, y+_h-1, '+', 0, 0);
+    term_draw_symbol(x,           y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '+');
+    term_draw_symbol(x+_w-1, y+_h-1, NULL, COL(CLR_DGREY), A_BOLD_BIT, '+');
+    term_draw_symbol(x+_w-1,      y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '+');
+    term_draw_symbol(x,      y+_h-1, NULL, COL(CLR_DGREY), A_BOLD_BIT, '+');
 
-    draw_textbox(x+2, y+2, _w-2, _h-2, text);
+    draw_textbox(x+2, y+2, _w-3, _h-3, fg, bg, text);
 }
 
 bool prompt_yn(const char* msg)
@@ -83,7 +84,7 @@ bool prompt_yn(const char* msg)
     display_fmsg_nolog("%s [yn] (n)", msg);
     flush_msg_buffer();
 
-    bool decision = getch() == YES;
+    bool decision = term_getch() == YES;
 
     display_fmsg_log("%s [yn] (n) %c", msg, decision ? YES : NO);
     flush_msg_buffer();
@@ -97,17 +98,19 @@ char prompt_choice(const char* title, char** choices, int length)
     int x = (screen_cols / 2) - (g_option_name_max_size / 2);
     int y = (screen_rows / 2) - (length / 2);
 
-    mvprintwa_xy(x, y++, A_BOLD, "%s", title);
+    term_draw_ftext(x, y++, NULL, NULL, A_BOLD_BIT, "%s", title);
 
     for(int option_id = 0; option_id < length; ++option_id)
     {
-        mvprintw_xy(x, y++, "%c - %s", (char)('a' + option_id), choices[option_id]);
+        term_draw_ftext(x, y++, NULL, NULL, 0, "%c - %s", (char)('a' + option_id), choices[option_id]);
     }
+
+    term_refresh();
 
     char choice;
     do
     {
-        choice = getch();
+        choice = term_getch();
     }
     while(choice != g_key_escape && (choice < 'a' || choice > last_option_id));
 
@@ -118,6 +121,7 @@ void display_main_screen(void)
 {
     display_map();
     display_char_status();
+    term_refresh();
 }
 
 /*
@@ -132,5 +136,6 @@ void display_char_status(void)
         PSTAT(strength, strength), PSTAT(agility, agility), PSTAT(intelligence, intelligence), PSTAT(spirit, spirit), PSTAT(stamina, stamina)
     );
 
-    mvprintw(STATUS_Y, STATUS_X, tmp);
+    term_draw_text(STATUS_X, STATUS_Y, NULL, NULL, 0, tmp);
+    term_refresh();
 }

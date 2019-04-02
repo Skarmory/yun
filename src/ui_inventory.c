@@ -1,5 +1,6 @@
 #include "ui_inventory.h"
 
+#include "colour.h"
 #include "globals.h"
 #include "log.h"
 #include "map.h"
@@ -7,13 +8,12 @@
 #include "monster.h"
 #include "mon_equip.h"
 #include "mon_inventory.h"
-#include "ncurses_ext.h"
 #include "object.h"
 #include "obj_armour.h"
 #include "player.h"
+#include "term.h"
 #include "ui.h"
 
-#include <ncurses.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -27,8 +27,14 @@ const char* c_off_hand_text  = "off hand";
 const char* c_already_wearing_cannot_equip_text = "You are already wearing something in that slot.";
 const char* c_already_wearing_cannot_drop_text = "You cannot drop something you are wearing.";
 
-const int c_desc_x         = 36;
-const int c_desc_width     = 64;
+const int c_list_x = 1;
+const int c_list_y = 2;
+const int c_list_w = 36;
+
+const int c_desc_x = 36;
+const int c_desc_y = 2;
+const int c_desc_w = 64;
+const int c_desc_h = 5;
 
 enum Action
 {
@@ -86,7 +92,7 @@ static inline int _to_bits(char input)
 
 static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending_actions, ListNode** highlighted, bool* went, int allow_mask)
 {
-    char in = getch();
+    char in = term_getch();
 
     if((_to_bits(in) & allow_mask) == 0)
         return false;
@@ -105,8 +111,13 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
                     if(equipment_is_equipped(equipment, drop) && drop->objtype == OBJ_TYPE_ARMOUR)
                     {
                         int len = strlen(c_already_wearing_cannot_drop_text);
-                        draw_textbox_border( (screen_cols/2) - len/2, (screen_rows/2)-8, len, 1, c_already_wearing_cannot_drop_text);
-                        getch();
+                        int x = (screen_cols / 2) - (len / 2);
+                        int y = (screen_rows / 2) - 8;
+
+                        draw_textbox_border(x, y, len, 1, NULL, COL(CLR_DGREY), c_already_wearing_cannot_drop_text);
+                        term_refresh();
+                        term_getch();
+                        term_clear_area(x, y, len + 4, 5);
                         return false;
                     }
 
@@ -115,6 +126,7 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
                     else
                         *highlighted = (*highlighted)->prev;
 
+                    term_clear_area(c_list_x, c_list_y, c_desc_x, inventory->obj_list.count + 1);
                     inventory_rm_obj(inventory, drop);
                     list_add(&pending_actions->to_drop, drop);
                 }
@@ -173,7 +185,7 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
 
 static void _resolve_actions(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending)
 {
-    clear();
+    term_clear();
 
     // Drop items
     ListNode* node;
@@ -250,10 +262,8 @@ static void _display_inventory(struct Inventory* inventory, struct Equipment* eq
     int y;
     int displayable_rows = screen_rows - 4;
 
-    clear();
-
     y = 0;
-    mvprintwa_xy(1, y, A_BOLD, "Inventory");
+    term_draw_text(1, y, NULL, NULL, A_BOLD_BIT, "Inventory");
     y += 2;
 
     ListNode* node;
@@ -266,27 +276,29 @@ static void _display_inventory(struct Inventory* inventory, struct Equipment* eq
 
         if(highlighted && node == *highlighted)
         {
-            mvprintwa_xy(1, y++, COLOR_PAIR(30), "%s %s", ((struct Object*)node->data)->name, extra_text);
+            term_draw_ftext(1, y++, NULL, NULL, A_BOLD_BIT, "%s %s", ((struct Object*)node->data)->name, extra_text);
         }
         else
         {
-            mvprintw_xy(1, y++, "%s %s", ((struct Object*)node->data)->name, extra_text);
+            term_draw_ftext(1, y++, NULL, NULL, 0, "%s %s", ((struct Object*)node->data)->name, extra_text);
         }
     }
 
+    y = 0;
+    term_draw_text(c_desc_x, y, NULL, NULL, A_BOLD_BIT, "Description");
+    y+=2;
+
     if(highlighted && *highlighted)
-    {
+        draw_textbox(c_desc_x, y, c_desc_w, c_desc_h, NULL, NULL, ((struct Object*)(*highlighted)->data)->desc);
+    else
+        draw_textbox(c_desc_x, y, c_desc_w, c_desc_h, NULL, NULL, "");
 
-        y = 0;
-        mvprintwa_xy(c_desc_x, y, A_BOLD, "Description");
-        y+=2;
-
-        draw_textbox(c_desc_x, y, c_desc_width, 0, ((struct Object*)(*highlighted)->data)->desc);
-    }
 }
 
 bool display_inventory_player(void)
 {
+    term_clear();
+
     PendingActions pending;
     list_init(&pending.to_drop);
     pending.to_equip = NULL;
@@ -298,7 +310,9 @@ bool display_inventory_player(void)
     {
         _display_inventory(you->mon->inventory, you->mon->equipment, &highlighted);
 
-        mvprintw_xy(1, screen_rows-1, "q: close inventory / d: drop object / e: equip object");
+        term_draw_text(1, screen_rows-1, NULL, NULL, 0, "q: close inventory / d: drop object / e: equip object");
+
+        term_refresh();
 
         if(_input_handled(you->mon->inventory, you->mon->equipment, &pending, &highlighted, &went, c_allow_mask_own_inventory))
             break;
@@ -312,16 +326,20 @@ bool display_inventory_player(void)
 
 void display_inventory_read_only(struct Mon* mon)
 {
+    term_clear();
+
     ListNode* highlighted = mon->inventory->obj_list.head;
 
     do
     {
         _display_inventory(mon->inventory, mon->equipment, &highlighted);
 
-        mvprintw_xy(1, screen_rows-1, "q: close inventory");
+        term_draw_text(1, screen_rows-1, NULL, NULL, 0, "q: close inventory");
+
+        term_refresh();
 
         if(_input_handled(NULL, NULL, NULL, NULL, NULL, c_allow_mask_read_only))
             break;
     }
-    while(getch() != c_quit);
+    while(term_getch() != c_quit);
 }

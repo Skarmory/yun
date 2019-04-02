@@ -4,14 +4,13 @@
 #include "log.h"
 #include "monster.h"
 #include "mon_type.h"
-#include "ncurses_ext.h"
 #include "object.h"
 #include "player.h"
 #include "pathing.h"
 #include "symbol.h"
+#include "term.h"
 #include "util.h"
 
-#include <ncurses.h>
 #include <stdlib.h>
 
 struct Map* cmap = NULL;
@@ -102,21 +101,21 @@ void display_map(void)
 
         if(loc->mon)
         {
-            draw_symbol(i, j, loc->mon->type->symbol->sym, loc->mon->type->symbol->fg, loc->mon->type->symbol->attr);
+            term_draw_symbol(i, j, &loc->mon->type->symbol->fg, &loc->mon->type->symbol->bg, loc->mon->type->symbol->attr, loc->mon->type->symbol->sym);
         }
         else if(obj)
         {
-            draw_symbol(i, j, obj->symbol->sym, obj->symbol->fg, obj->symbol->attr);
+            term_draw_symbol(i, j, &obj->symbol->fg, &obj->symbol->bg, obj->symbol->attr, obj->symbol->sym);
         }
         else
         {
-            draw_symbol(i, j, loc->terrain, 0, 0);
+            term_draw_symbol(i, j, NULL, NULL, 0, loc->terrain);
         }
     }
 
-    draw_symbol(you->mon->x, you->mon->y, '@', you->mon->type->symbol->fg, you->mon->type->symbol->attr);
+    term_draw_symbol(you->mon->x, you->mon->y, &you->mon->type->symbol->fg, &you->mon->type->symbol->bg, you->mon->type->symbol->attr, '@');
 
-    refresh();
+    term_refresh();
 }
 
 /**

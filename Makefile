@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall -Iinclude
-LDFLAGS=-lncurses -lm
+LDFLAGS=-lm
 GAME=naxx
 
 INCL=$(wildcard include/*.h)

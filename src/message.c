@@ -2,12 +2,14 @@
 
 #include "log.h"
 #include "map.h"
+#include "term.h"
 #include "ui.h"
 #include "util.h"
 
 #include <ctype.h>
-#include <ncurses.h>
+#include <stdarg.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
 
 #define MSGBOX_X 0
@@ -16,16 +18,7 @@
 #define MSGBOX_H 3
 
 char msgbuf[MSGBOX_W];
-char clearbuf[MSGBOX_W];
 int msgbuf_size = 0;
-
-/**
- * Initialises the clear buf
- */
-void init_msgs(void)
-{
-    memset(clearbuf, ' ', MSGBOX_W-1);
-}
 
 /**
  * Flushes current message buffer to the display and waits for user to give input
@@ -33,13 +26,14 @@ void init_msgs(void)
 void _flush_and_prompt(void)
 {
     flush_msg_buffer();
-    mvprintw(MSGBOX_Y+1, MSGBOX_X, "-- more --");
+    term_draw_text(MSGBOX_X, MSGBOX_Y+1, NULL, NULL, 0, "-- more--");
 
     // Redraw visual info
     // This will show the partial updates for the turn up to this prompt
     display_main_screen();
 
-    getch();
+    term_getch();
+    clear_msgs();
 }
 
 /**
@@ -137,8 +131,8 @@ void display_fmsg(bool should_log, char* format, ...)
  */
 void clear_msgs(void)
 {
-    mvprintw(MSGBOX_Y, MSGBOX_X, clearbuf);
-    mvprintw(MSGBOX_Y+1, MSGBOX_X, clearbuf);
+    term_clear_area(MSGBOX_X, MSGBOX_Y, MSGBOX_W, MSGBOX_H);
+    term_refresh();
 }
 
 /**
@@ -146,9 +140,8 @@ void clear_msgs(void)
  */
 void flush_msg_buffer(void)
 {
-    mvprintw(MSGBOX_Y, MSGBOX_X, msgbuf);
+    term_draw_text(MSGBOX_X, MSGBOX_Y, NULL, NULL, 0, msgbuf);
+    term_refresh();
     msgbuf_size = 0;
-    memset(msgbuf, ' ', MSGBOX_W-1);
-    msgbuf[0] = '\0';
+    memset(msgbuf, '\0', MSGBOX_W-1);
 }
-
