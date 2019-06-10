@@ -1,6 +1,7 @@
 #include "list.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 
 List* list_new(void)
 {
@@ -13,11 +14,7 @@ List* list_new(void)
 
 void list_free(List* list)
 {
-    ListNode *node, *n;
-    list_for_each_safe(list, node, n)
-    {
-        free(node);
-    }
+    list_uninit(list);
     free(list);
 }
 
@@ -28,9 +25,18 @@ void list_init(List* list)
     list->tail = NULL;
 }
 
+void list_uninit(List* list)
+{
+    ListNode *node, *n;
+    list_for_each_safe(list, node, n)
+    {
+        free(node);
+    }
+}
+
 void list_add(List* list, void* data)
 {
-    ListNode* node = (ListNode*)malloc(sizeof(ListNode));
+    ListNode* node = malloc(sizeof(ListNode));
     node->data = data;
     node->next = NULL;
     node->prev = NULL;

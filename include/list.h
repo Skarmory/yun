@@ -18,6 +18,7 @@ typedef struct _List
 List* list_new(void);
 void list_free(List* list);
 void list_init(List* list);
+void list_uninit(List* list);
 void list_add(List* list, void* data);
 void list_rm(List* list, ListNode* node);
 ListNode* list_find(List* list, void* data);
