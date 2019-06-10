@@ -1,0 +1,31 @@
+# List of monsters in naxx
+
+# INFO
+# A monster is any individual creature that can be spawned in the game.
+# The data in this file represents the templates for monster instances.
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# name   - The name of a monster instance
+# type   - The type of this monster as found in "monster_types.txt"
+# desc   - The description of a monster instance
+# colour - The colour of the symbol [r;g;b]
+# health - Hit points of the creature
+# attack - An attack the creature can perform [name;damage]
+# armour - Amount of armour the creature has
+
+name:player
+type:player
+
+name:wretched ghoul
+type:ghoul
+desc:This was a human at one point, but its skin is flayed beyond recognition. Necromantic magics have twisted its nails into long claws.
+colour:50;50;50
+health:1
+attack:CLAW;1d4
+armour:0

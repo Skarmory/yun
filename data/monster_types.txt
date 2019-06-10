@@ -1,0 +1,26 @@
+# List of monster types in naxx.
+
+# INFO
+# A monster type is the general term for a set of characteristics
+# shared by various monsters. They imply an "is-a" relationship.
+# For example, "devouring ghoul" and "infectious ghoul" are both of
+# the "ghoul" monster type. 
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# name   - The name of the monster type
+# desc   - Description of the monster type
+# symbol - ASCII character for in-game drawing
+
+name:player
+desc:You
+symbol:@
+
+name:ghoul
+desc:Ghoul
+symbol:g
