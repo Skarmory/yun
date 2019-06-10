@@ -67,6 +67,7 @@ struct ParseFormat
 
 struct Parser
 {
+    enum ParserCode   last_code;
     Userdata_List     userdata;
     ParseFormat_List  parse_formats;
     struct ParseData  parse_data;
@@ -89,16 +90,38 @@ static void _parser_free_parse_formats(struct Parser* parser);
 static void _parser_free_userdata(struct Parser* parser);
 static enum ParserCode _parser_find_format(struct Parser* parser, const char* field_name, struct ParseFormat** format);
 struct FieldData* _field_get_value(struct Parser* parser, const char* field_name, const char* field_data_name);
-struct Parser* parser_new(void);
-void parser_free(struct Parser* parser);
-void parser_get_state(struct Parser* parser, struct ParseState* state);
-enum ParserCode parser_register_field(struct Parser* parser, char* field_name, char* field_data_format, parse_method method);
 
 void _print_metadata(struct Metadata* meta);
 void _print_format(struct ParseFormat* format);
 void _print_parse_data(struct Parser* parser);
 
 /* ----- PARSING HELPER METHODS ----- */
+
+bool open_file_and_parse_all(struct Parser* parser, const char* filename)
+{
+    FILE* file = fopen(filename, "r");
+
+    if(!file)
+    {
+        parser->last_code = PARSER_FILE_OPEN_FAIL;
+        return false;
+    }
+
+    char* line = NULL;
+    size_t sz = 0;
+
+    while(getline(&line, &sz, file) != -1)
+    {
+        parser->last_code = parser_parse(parser, line);
+        if(parser->last_code != PARSER_OK && parser->last_code != PARSER_NO_OP)
+            break;
+    }
+
+    free(line);
+    fclose(file);
+
+    return (parser->last_code == PARSER_OK || parser->last_code == PARSER_NO_OP);
+}
 
 static inline struct FieldData* _field_data_new(struct Metadata* meta)
 {
@@ -450,6 +473,11 @@ void* parser_get_userdata_active(struct Parser* parser)
 List* parser_get_userdata(struct Parser* parser)
 {
     return &parser->userdata;
+}
+
+enum ParserCode parser_get_last_code(struct Parser* parser)
+{
+    return parser->last_code;
 }
 
 int parser_field_get_int(struct Parser* parser, const char* field_name, const char* field_data_name)
