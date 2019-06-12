@@ -1,5 +1,6 @@
 #include "colour.h"
 #include "globals.h"
+#include "init.h"
 #include "input.h"
 #include "log.h"
 #include "map.h"
@@ -25,7 +26,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #define SIZE(x) sizeof(x)/sizeof(x[0])
 
@@ -110,27 +110,19 @@ void main_loop(void)
 
 int main(int argc, char** argv)
 {
-    srand(time(NULL));
-
-    init_logs();
-    term_init();
-    term_set_sigint_callback(&sigint_handler);
-    term_get_wh(&screen_cols, &screen_rows);
+    init_naxx();
 
     // some intro text
     term_draw_text((screen_cols/2) - 7, screen_rows/2, NULL, NULL, 0, "Welcome to Naxx");
     term_refresh();
     term_getch();
 
-    init_symbols();
-    init_montypes();
     cmap = new_map();
 
     new_player();
     new_game();
 
     gen_map(cmap);
-
 
     // --------- DEBUG CODE START ----------
     struct Room* room = cmap->rooms[0];

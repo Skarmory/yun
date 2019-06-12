@@ -1,5 +1,6 @@
 #include "util.h"
 
+#include "init.h"
 #include "log.h"
 #include "map.h"
 #include "monster.h"
@@ -78,9 +79,7 @@ void do_quit(void)
     if(cmap)
         free_map(cmap);
 
-    uninit_logs();
-    uninit_montypes();
-    term_uninit();
+    uninit_naxx();
     puts(exit_msg);
     exit(0);
 }
