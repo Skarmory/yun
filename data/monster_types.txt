@@ -17,10 +17,69 @@
 # desc   - Description of the monster type
 # symbol - ASCII character for in-game drawing
 
-name:player
-desc:You
+# ----- PLAYABLE -----
+
+name:human
+desc:Human
 symbol:@
+colour:0;0;255
+stats:1;1;1;1;1
+pathing:1
+
+name:night elf
+desc:Night Elf
+symbol:@
+colour:0;0;255
+stats:1;1;1;1;1
+pathing:1
+
+name:dwarf
+desc:Dwarf
+symbol:@
+colour:0;0;255
+stats:1;1;1;1;1
+pathing:1
+
+name:gnome
+desc:Gnome
+symbol:@
+colour:255;255;255
+stats:1;1;1;1;1
+pathing:1
+
+name:orc
+desc:Orc
+symbol:@
+colour:255;0;0
+stats:1;1;1;1;1
+pathing:1
+
+name:troll
+desc:Troll
+symbol:@
+colour:255;0;0
+stats:1;1;1;1;1
+pathing:1
+
+name:forsaken
+desc:Forsaken
+symbol:@
+colour:255;0;0
+stats:1;1;1;1;1
+pathing:1
+
+name:tauren
+desc:Tauren
+symbol:@
+colour:255;0;0
+stats:1;1;1;1;1
+pathing:1
+
+# ----- ENEMIES -----
 
 name:ghoul
 desc:Ghoul
 symbol:g
+colour:55;55;55
+stats:1;1;1;1;1
+pathing:1
