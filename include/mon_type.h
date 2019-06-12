@@ -5,19 +5,6 @@ struct Armour;
 struct Weapon;
 struct Symbol;
 
-#define MT_GHOUL    0
-#define MT_HUMAN    1
-#define MT_DWARF    2
-#define MT_NELF     3
-#define MT_GNOME    4
-#define MT_ORC      5
-#define MT_FORSAKEN 6
-#define MT_TAUREN   7
-#define MT_TROLL    8
-
-#define MT_RANGE_START 0
-#define MT_RANGE_END   9
-
 /**
  * Struct containing data about the type of a monster (not an individual monster)
  *
@@ -26,6 +13,7 @@ struct Symbol;
 struct MonType
 {
     char*                name; // Name of this type of mon
+    char*                desc;
     struct Symbol*       symbol;
     int                  base_armour_idx;
     int                  base_weapon_idx;
@@ -38,6 +26,9 @@ struct MonType
 void init_montypes(void);
 void uninit_montypes(void);
 
-extern struct MonType mon_type[];
+struct MonType* mon_type_lookup_by_name(const char* name);
+
+struct MonType* g_mon_type;
+int g_mon_type_count;
 
 #endif
