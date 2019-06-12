@@ -20,7 +20,7 @@ void _map_free_all_mons(struct Map* map)
     ListNode *node, *n;
     list_for_each_safe(&map->mon_list, node, n)
     {
-        free_mon(node->data);
+        mon_free(node->data);
         free(node);
     }
 }

@@ -21,7 +21,7 @@ struct Player* you = NULL;
 void new_player(void)
 {
     you = (struct Player*)malloc(sizeof(struct Player));
-    you->mon = new_mon(MT_HUMAN, 0, 0);
+    you->mon = mon_new(mon_type_lookup_by_name("human"), 0, 0);
     you->name = NULL;
     you->faction = NULL;
     you->cls = NULL;
@@ -39,7 +39,7 @@ void free_player(void)
         free(you->cls);
         free(you->race);
         list_rm(&cmap->mon_list, list_find(&cmap->mon_list, you->mon));
-        free_mon(you->mon);
+        mon_free(you->mon);
         free(you);
     }
 }

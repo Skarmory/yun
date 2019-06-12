@@ -27,8 +27,8 @@ struct Mon
     struct Stats stats;
 };
 
-struct Mon* new_mon(int mtype, int x, int y);
-void free_mon(struct Mon*);
+struct Mon* mon_new(struct MonType* type, int x, int y);
+void mon_free(struct Mon*);
 void update_mons(void);
 bool mon_has_pathing_attr(struct Mon* mon, int path_attr);
 bool mon_is_dead(struct Mon* mon);

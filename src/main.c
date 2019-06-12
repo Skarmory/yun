@@ -162,13 +162,14 @@ int main(int argc, char** argv)
         loc_add_obj(&cmap->locs[startx][starty], armour->obj);
     }
 
+    struct MonType* ghoul_type = mon_type_lookup_by_name("ghoul");
     for(int i = 1; i < cmap->room_count - 1; i++)
     {
         room = cmap->rooms[i];
         startx = random_int(room->x + 1, room->x + room->w - 2);
         starty = random_int(room->y + 1, room->y + room->h - 2);
 
-        struct Mon* ghoul = new_mon(MT_GHOUL, startx, starty);
+        struct Mon* ghoul = mon_new(ghoul_type, startx, starty);
         map_add_mon(cmap, ghoul);
     }
     // ---------- DEBUG CODE END ----------

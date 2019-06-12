@@ -24,14 +24,14 @@
 /**
  * Create a monster of given type at given position and return it
  */
-struct Mon* new_mon(int mtype, int x, int y)
+struct Mon* mon_new(struct MonType* type, int x, int y)
 {
-    struct Mon* mon = (struct Mon*) malloc(sizeof(struct Mon));
+    struct Mon* mon = malloc(sizeof(struct Mon));
 
-    mon->type = &mon_type[mtype];
+    mon->type = type;
     mon->x = x;
     mon->y = y;
-    mon->pathing = mon->type->pathing;
+    mon->pathing = type->pathing;
     mon->equipment = new_equipment();
     mon->inventory = new_inventory();
 
@@ -42,11 +42,11 @@ struct Mon* new_mon(int mtype, int x, int y)
     MSTAT(mon, intelligence, max_mana) = 1;
     MSTAT(mon, intelligence, mana) = 1;
 
-    set_stat(mon, STAT_STRENGTH, mon->type->strength);
-    set_stat(mon, STAT_AGILITY, mon->type->agility);
-    set_stat(mon, STAT_INTELLIGENCE, mon->type->intelligence);
-    set_stat(mon, STAT_SPIRIT, mon->type->spirit);
-    set_stat(mon, STAT_STAMINA, mon->type->stamina);
+    set_stat(mon, STAT_STRENGTH, type->strength);
+    set_stat(mon, STAT_AGILITY, type->agility);
+    set_stat(mon, STAT_INTELLIGENCE, type->intelligence);
+    set_stat(mon, STAT_SPIRIT, type->spirit);
+    set_stat(mon, STAT_STAMINA, type->stamina);
 
     return mon;
 }
@@ -54,7 +54,7 @@ struct Mon* new_mon(int mtype, int x, int y)
 /**
  * Destroy monster
  */
-void free_mon(struct Mon* mon)
+void mon_free(struct Mon* mon)
 {
     free_equipment(mon->equipment);
     free_inventory(mon->inventory);
@@ -111,7 +111,7 @@ void mon_chk_dead(struct Mon* mon)
     {
         display_fmsg_log("The %s was slain.", mon->type->name);
         map_rm_mon(cmap, mon);
-        free_mon(mon);
+        mon_free(mon);
     }
 }
 
