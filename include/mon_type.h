@@ -1,7 +1,7 @@
 #ifndef NAXX_MONTYPE_H
 #define NAXX_MONTYPE_H
 
-struct Armour;
+struct ArmourBase;
 struct Weapon;
 struct Symbol;
 
@@ -15,9 +15,8 @@ struct MonType
     char                 name[32]; // Name of this type of mon
     char                 desc[32];
     struct Symbol*       symbol;
-    int                  base_armour_idx;
     int                  base_weapon_idx;
-    struct Armour*       base_armour; // All creatures have a base armour for if they don't have equipment
+    struct ArmourBase*   base_armour; // All creatures have a base armour for if they don't have equipment
     struct Weapon*       base_weapon;
     int                  strength, agility, intelligence, spirit, stamina;
     int                  pathing;

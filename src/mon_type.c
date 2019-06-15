@@ -24,7 +24,7 @@ void init_montypes(void)
     for(unsigned int idx = 0; idx < g_mon_type_count; idx++)
     {
         // Create base armour and weapons for each mon type
-        g_mon_type[idx].base_armour = new_armour(g_mon_type[idx].base_armour_idx);
+        g_mon_type[idx].base_armour = armour_base_lookup_by_name("unarmoured");
         g_mon_type[idx].base_weapon = new_weapon(g_mon_type[idx].base_weapon_idx);
         g_mon_type[idx].symbol->bg = *COL(CLR_DEFAULT);
     }
@@ -35,7 +35,6 @@ void uninit_montypes(void)
     for(unsigned int idx = 0; idx < g_mon_type_count; idx++)
     {
         // Create base armour and weapons for each mon type
-        free_armour(g_mon_type[idx].base_armour);
         free_weapon(g_mon_type[idx].base_weapon);
         free(g_mon_type[idx].symbol);
     }
