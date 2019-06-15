@@ -1,0 +1,167 @@
+# List of armour found in naxx.
+
+# INFO
+# Armours are items that occupy one of the following slots:
+# head, shoulderss, chest, hands, legs, feet, or offhand (shields)
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# name         - The name of the armour
+# desc         - Description of the armour
+# slot         - Which slot the armour goes in
+# armour-value - The amount of armour points provided by the armour
+
+name:unarmoured
+desc:There is no armour protecting here!
+slot:head
+class:cloth
+armour-value:0
+
+name:magister's crown
+desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
+slot:head
+class:cloth
+armour-value:4
+
+name:magister's mantle
+desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
+slot:shoulders
+class:cloth
+armour-value:3
+
+name:magister's robe
+desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
+slot:chest
+class:cloth
+armour-value:6
+
+name:magister's gloves
+desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
+slot:hands
+class:cloth
+armour-value:3
+
+name:magister's leggings
+desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
+slot:legs
+class:cloth
+armour-value:4
+
+name:magister's boots
+desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
+slot:feet
+class:cloth
+armour-value:3
+
+name:shadowcraft cap
+desc:Black leather armour designed for stealth in dark places
+slot:head
+class:leather
+armour-value:6
+
+name:shadowcraft spaulders
+desc:Black leather armour designed for stealth in dark places
+slot:shoulders
+class:leather
+armour-value:5
+
+name:shadowcraft tunic
+desc:Black leather armour designed for stealth in dark places
+slot:chest
+class:leather
+armour-value:8
+
+name:shadowcraft gloves
+desc:Black leather armour designed for stealth in dark places
+slot:hands
+class:leather
+armour-value:5
+
+name:shadowcraft pants
+desc:Black leather armour designed for stealth in dark places
+slot:legs
+class:leather
+armour-value:6
+
+name:shadowcraft boots
+desc:Black leather armour designed for stealth in dark places
+slot:feet
+class:leather
+armour-value:5
+
+name:beaststalker's cap
+desc:A golden-brown mail worn by the wandering trackers of Kalimdor. This helm is crafted in the likeness of a wolf's head
+slot:head
+class:mail
+armour-value:8
+
+name:beaststalker's spaulders
+desc:A golden-brown mail worn by the wandering trackers of Kalimdor
+slot:shoulders
+class:mail
+armour-value:7
+
+name:beaststalker's tunic
+desc:A golden-brown mail worn by the wandering trackers of Kalimdor
+slot:chest
+class:mail
+armour-value:10
+
+name:beaststalker's gloves
+desc:A golden-brown mail worn by the wandering trackers of Kalimdor
+slot:hands
+class:mail
+armour-value:7
+
+name:beaststalker's pants
+desc:A golden-brown mail worn by the wandering trackers of Kalimdor
+slot:legs
+class:mail
+armour-value:8
+
+name:beaststalker's boots
+desc:A golden-brown mail worn by the wandering trackers of Kalimdor
+slot:feet
+class:mail
+armour-value:7
+
+name:helm of valour
+desc:Forged from heavy steel plating and decorated with a trim made of gold
+slot:head
+class:plate
+armour-value:10
+
+name:spaulders of valour
+desc:Forged from heavy steel plating and decorated with a trim made of gold
+slot:shoulders
+class:plate
+armour-value:9
+
+name:breastplate of valour
+desc:Forged from heavy steel plating and decorated with a trim made of gold
+slot:chest
+class:plate
+armour-value:12
+
+name:gauntlets of valour
+desc:Forged from heavy steel plating and decorated with a trim made of gold
+slot:hands
+class:plate
+armour-value:9
+
+name:legplates of valour
+desc:Forged from heavy steel plating and decorated with a trim made of gold
+slot:legs
+class:plate
+armour-value:10
+
+name:boots of valour
+desc:Forged from heavy steel plating and decorated with a trim made of gold
+slot:feet
+class:plate
+armour-value:9

@@ -13,9 +13,14 @@
 # Leading and trailing whitespace is stripped.
 
 # KEYS
-# name   - The name of the monster type
-# desc   - Description of the monster type
-# symbol - ASCII character for in-game drawing
+# name        - The name of the monster type
+# desc        - Description of the monster type
+# symbol      - ASCII character for in-game drawing
+# colour      - RGB colour for the symbol. [0-255]
+# stats       - Strength, agility, intelligence, spirit, and stamina (in that order)
+# pathing     - Specifies what types of terrain the monster type can traverse innately
+#                   1: Ground
+# base-armour - The name of the armour the creature has by default. This cannot be dropped or unequipped.
 
 # ----- PLAYABLE -----
 
@@ -25,6 +30,7 @@ symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
 
 name:night elf
 desc:Night Elf
@@ -32,6 +38,7 @@ symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
 
 name:dwarf
 desc:Dwarf
@@ -39,6 +46,7 @@ symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
 
 name:gnome
 desc:Gnome
@@ -46,6 +54,7 @@ symbol:@
 colour:255;255;255
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
 
 name:orc
 desc:Orc
@@ -53,6 +62,7 @@ symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
 
 name:troll
 desc:Troll
@@ -60,6 +70,7 @@ symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
 
 name:forsaken
 desc:Forsaken
@@ -67,6 +78,7 @@ symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
 
 name:tauren
 desc:Tauren
@@ -74,6 +86,7 @@ symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
 
 # ----- ENEMIES -----
 
@@ -83,3 +96,4 @@ symbol:g
 colour:55;55;55
 stats:1;1;1;1;1
 pathing:1
+base-armour:unarmoured
