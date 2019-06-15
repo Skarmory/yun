@@ -79,6 +79,10 @@
 
 // Objects
 #define CLR_METAL CLR_WHITE
+#define CLR_ARMOUR_PLATE   CLR_LBLUE
+#define CLR_ARMOUR_MAIL    CLR_LGREY
+#define CLR_ARMOUR_LEATHER CLR_LBROWN
+#define CLR_ARMOUR_CLOTH   CLR_LPINK
 
 extern Colour g_colours[];
 
