@@ -134,14 +134,10 @@ void term_clear(void)
 
 void term_clear_area(int x, int y, int w, int h)
 {
-    log_msg(DEBUG, "term_invalidate_area() called");
-    log_format_msg(DEBUG, "params x%d y%d w%d h%d", x, y, w, h);
-
     VTermSymbol* symbol;
     for(int _y = y; _y < (y + h); ++_y)
     for(int _x = x; _x < (x + w); ++_x)
     {
-        log_format_msg(DEBUG, "\tinvalidate %d %d", _x, _y);
         symbol = _term_get_symbol(_x, _y);
         symbol->symbol = ' ';
         symbol->fg = c_default_colour;
