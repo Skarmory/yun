@@ -157,7 +157,7 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
 
                         case OBJ_TYPE_ARMOUR:
                         {
-                            pending_actions->to_equip_slot = obj->objtype_ptr.armour->slot;
+                            pending_actions->to_equip_slot = obj->objtype_ptr.armour->base->slot;
                             pending_actions->to_equip = obj;
                             *went = true;
                             return true;
