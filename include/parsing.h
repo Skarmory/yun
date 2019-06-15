@@ -4,5 +4,6 @@
 #include "parser.h"
 
 enum ParserCode parse_mon_types(void);
+enum ParserCode parse_armours(void);
 
 #endif
