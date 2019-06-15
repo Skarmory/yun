@@ -9,8 +9,13 @@
 #include "symbol.h"
 
 #include <stddef.h>
+#include <stdlib.h>
 #include <string.h>
 
+struct MonType* g_mon_type = NULL;
+int g_mon_type_count = 0;
+
+// TODO Replace this logic with data file read equivalent
 /**
  * Do all runtime initialisation for montypes
  */
@@ -32,7 +37,11 @@ void uninit_montypes(void)
         // Create base armour and weapons for each mon type
         free_armour(g_mon_type[idx].base_armour);
         free_weapon(g_mon_type[idx].base_weapon);
+        free(g_mon_type[idx].symbol);
     }
+
+    free(g_mon_type);
+    g_mon_type_count = 0;
 }
 
 struct MonType* mon_type_lookup_by_name(const char* name)

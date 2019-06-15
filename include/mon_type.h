@@ -12,8 +12,8 @@ struct Symbol;
  */
 struct MonType
 {
-    char*                name; // Name of this type of mon
-    char*                desc;
+    char                 name[32]; // Name of this type of mon
+    char                 desc[32];
     struct Symbol*       symbol;
     int                  base_armour_idx;
     int                  base_weapon_idx;
@@ -28,7 +28,7 @@ void uninit_montypes(void);
 
 struct MonType* mon_type_lookup_by_name(const char* name);
 
-struct MonType* g_mon_type;
-int g_mon_type_count;
+extern struct MonType* g_mon_type;
+extern int g_mon_type_count;
 
 #endif
