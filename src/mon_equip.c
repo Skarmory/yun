@@ -6,6 +6,7 @@
 #include "obj_weapon.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 struct Equipment* new_equipment(void)
 {
@@ -62,7 +63,11 @@ bool equipment_slot_free(struct Equipment* equipment, enum EquipmentSlot slot)
         case EQUIP_SLOT_FEET:      return equipment->feet == NULL;
         case EQUIP_SLOT_MAIN_HAND: return equipment->main_hand == NULL;
         case EQUIP_SLOT_OFF_HAND:  return equipment->off_hand == NULL;
-        case EQUIP_SLOT_MAX:       return false;
+        case EQUIP_SLOT_NONE:
+        {
+            log_msg(DEBUG, "equipment_slot_free(): slot is EQUIP_SLOT_NONE");
+            break;
+        }
     }
     return false;
 }
@@ -122,8 +127,11 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
                 return true;
             }
 
-            case EQUIP_SLOT_MAX:
-                return false;
+            case EQUIP_SLOT_NONE:
+            {
+                log_msg(DEBUG, "equipment_equip_obj(): slot is EQUIP_SLOT_NONE");
+                break;
+            }
         }
     }
 
@@ -258,8 +266,11 @@ struct Object* equipment_unequip_slot(struct Equipment* equipment, enum Equipmen
             }
             break;
 
-        case EQUIP_SLOT_MAX:
+        case EQUIP_SLOT_NONE:
+        {
+            log_msg(DEBUG, "equipment_unequip_obj(): slot is EQUIP_SLOT_NONE");
             break;
+        }
     }
 
     return unequipped;
@@ -297,7 +308,22 @@ enum EquipmentSlot equipment_slot_by_obj(struct Equipment* equipment, struct Obj
             return EQUIP_SLOT_FEET;
     }
 
-    return EQUIP_SLOT_MAX;
+    // This should never be reached
+    return EQUIP_SLOT_NONE;
+}
+
+enum EquipmentSlot equipment_slot_by_name(const char* slot_name)
+{
+    if(strcmp(slot_name, "head") == 0)      return EQUIP_SLOT_HEAD;
+    if(strcmp(slot_name, "shoulders") == 0) return EQUIP_SLOT_SHOULDERS;
+    if(strcmp(slot_name, "chest") == 0)     return EQUIP_SLOT_CHEST;
+    if(strcmp(slot_name, "hands") == 0)     return EQUIP_SLOT_HANDS;
+    if(strcmp(slot_name, "legs") == 0)      return EQUIP_SLOT_LEGS;
+    if(strcmp(slot_name, "feet") == 0)      return EQUIP_SLOT_FEET;
+    if(strcmp(slot_name, "main hand") == 0) return EQUIP_SLOT_MAIN_HAND;
+    if(strcmp(slot_name, "off hand") == 0)  return EQUIP_SLOT_OFF_HAND;
+
+    return EQUIP_SLOT_NONE;
 }
 
 int equipment_armour_total(struct Equipment* equipment)

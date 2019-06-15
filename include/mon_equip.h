@@ -17,7 +17,7 @@ enum EquipmentSlot
     EQUIP_SLOT_FEET,
     EQUIP_SLOT_MAIN_HAND,
     EQUIP_SLOT_OFF_HAND,
-    EQUIP_SLOT_MAX
+    EQUIP_SLOT_NONE
 };
 
 struct Equipment
@@ -41,6 +41,7 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
 struct Object* equipment_unequip_obj(struct Equipment* equipment, struct Object* obj);
 struct Object* equipment_unequip_slot(struct Equipment* equipment, enum EquipmentSlot slot);
 enum EquipmentSlot equipment_slot_by_obj(struct Equipment* equipment, struct Object* obj);
+enum EquipmentSlot equipment_slot_by_name(const char* slot_name);
 
 int equipment_armour_total(struct Equipment* equipment);
 
