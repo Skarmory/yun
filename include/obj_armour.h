@@ -31,6 +31,23 @@ struct Object;
 #define A_VALOR_GAUNTLETS 22
 #define A_VALOR_LEGPLATES 23
 #define A_VALOR_BOOTS 24
+enum ArmourClass
+{
+    ARMOUR_CLASS_CLOTH,
+    ARMOUR_CLASS_LEATHER,
+    ARMOUR_CLASS_MAIL,
+    ARMOUR_CLASS_PLATE,
+    ARMOUR_CLASS_NONE
+};
+
+struct ArmourBase
+{
+    char name[32];
+    char desc[256];
+    enum EquipmentSlot slot;
+    enum ArmourClass class;
+    int armour_value;
+};
 
 struct Armour
 {
