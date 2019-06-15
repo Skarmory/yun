@@ -25,7 +25,7 @@ struct Weapon* new_weapon(int weapon_type)
     weapon->obj = (struct Object*) malloc(sizeof(struct Object));
     weapon->obj->name = weapon_names[weapon_type];
     weapon->obj->desc = weapon_descs[weapon_type];
-    weapon->obj->symbol = &symbols[SYM_WEAPON_OFF + weapon_type];
+    weapon->obj->symbol = &g_symbol_weapon_metal;
     weapon->obj->objtype_ptr.weapon = weapon;
     weapon->obj->objtype = OBJ_TYPE_WEAPON;
 

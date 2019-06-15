@@ -4,10 +4,6 @@
 #include "defs.h"
 #include "term.h"
 
-#define SYM_MON_OFF    0
-#define SYM_WEAPON_OFF 9
-#define SYM_ARMOUR_OFF 12
-
 struct Symbol
 {
     char sym;
@@ -20,6 +16,10 @@ struct Symbol
 
 void init_symbols(void);
 
-extern struct Symbol symbols[];
+extern struct Symbol g_symbol_armour_cloth;
+extern struct Symbol g_symbol_armour_leather;
+extern struct Symbol g_symbol_armour_mail;
+extern struct Symbol g_symbol_armour_plate;
+extern struct Symbol g_symbol_weapon_metal;
 
 #endif

@@ -4,64 +4,27 @@
 
 #define SYM(s, fg, bg, attr) { s, {0}, {0}, attr, fg, bg }
 
-struct Symbol symbols[] = {
-    // Mons
-    SYM('g', CLR_DC_1,     CLR_DEFAULT, 0), // ghoul
-    SYM('@', CLR_ALLIANCE, CLR_DEFAULT, 0), // human
-    SYM('d', CLR_ALLIANCE, CLR_DEFAULT, 0), // dwarf
-    SYM('e', CLR_ALLIANCE, CLR_DEFAULT, 0), // night elf
-    SYM('g', CLR_ALLIANCE, CLR_DEFAULT, 0), // gnome
-    SYM('o', CLR_HORDE,    CLR_DEFAULT, 0), // orc
-    SYM('u', CLR_HORDE,    CLR_DEFAULT, 0), // undead
-    SYM('t', CLR_HORDE,    CLR_DEFAULT, 0), // tauren
-    SYM('t', CLR_HORDE,    CLR_DEFAULT, 0), // troll
+struct Symbol g_symbol_armour_cloth   = SYM('[', CLR_ARMOUR_CLOTH, CLR_DEFAULT, 0);
+struct Symbol g_symbol_armour_leather = SYM('[', CLR_ARMOUR_LEATHER, CLR_DEFAULT, 0);
+struct Symbol g_symbol_armour_mail    = SYM('[', CLR_ARMOUR_MAIL, CLR_DEFAULT, 0);
+struct Symbol g_symbol_armour_plate   = SYM('[', CLR_ARMOUR_PLATE, CLR_DEFAULT, 0);
 
-    // Weapons
-    SYM(')', CLR_METAL, CLR_DEFAULT, 0), // longsword
-    SYM(')', CLR_NONE,  CLR_DEFAULT, 0), // claws
-    SYM(')', CLR_NONE,  CLR_DEFAULT, 0), // fists
-
-    // Armours
-    SYM('[', CLR_NONE, CLR_DEFAULT, 0), // Unarmoured
-
-    // Cloth
-    SYM('[', CLR_LPURPLE, CLR_DEFAULT, A_BOLD), // Magister's
-    SYM('[', CLR_LPURPLE, CLR_DEFAULT, A_BOLD), // Magister's
-    SYM('[', CLR_LPURPLE, CLR_DEFAULT, A_BOLD), // Magister's
-    SYM('[', CLR_LPURPLE, CLR_DEFAULT, A_BOLD), // Magister's
-    SYM('[', CLR_LPURPLE, CLR_DEFAULT, A_BOLD), // Magister's
-    SYM('[', CLR_LPURPLE, CLR_DEFAULT, A_BOLD), // Magister's
-
-    // Leather
-    SYM('[', CLR_LGREY, CLR_DEFAULT, A_BOLD), // Shadowcraft
-    SYM('[', CLR_LGREY, CLR_DEFAULT, A_BOLD), // Shadowcraft
-    SYM('[', CLR_LGREY, CLR_DEFAULT, A_BOLD), // Shadowcraft
-    SYM('[', CLR_LGREY, CLR_DEFAULT, A_BOLD), // Shadowcraft
-    SYM('[', CLR_LGREY, CLR_DEFAULT, A_BOLD), // Shadowcraft
-    SYM('[', CLR_LGREY, CLR_DEFAULT, A_BOLD), // Shadowcraft
-
-    // Mail
-    SYM('[', CLR_BROWN, CLR_DEFAULT, A_BOLD), // Beaststalker's
-    SYM('[', CLR_BROWN, CLR_DEFAULT, A_BOLD), // Beaststalker's
-    SYM('[', CLR_BROWN, CLR_DEFAULT, A_BOLD), // Beaststalker's
-    SYM('[', CLR_BROWN, CLR_DEFAULT, A_BOLD), // Beaststalker's
-    SYM('[', CLR_BROWN, CLR_DEFAULT, A_BOLD), // Beaststalker's
-    SYM('[', CLR_BROWN, CLR_DEFAULT, A_BOLD), // Beaststalker's
-
-    // Plate
-    SYM('[', CLR_METAL, CLR_DEFAULT, A_BOLD), // Valor
-    SYM('[', CLR_METAL, CLR_DEFAULT, A_BOLD), // Valor
-    SYM('[', CLR_METAL, CLR_DEFAULT, A_BOLD), // Valor
-    SYM('[', CLR_METAL, CLR_DEFAULT, A_BOLD), // Valor
-    SYM('[', CLR_METAL, CLR_DEFAULT, A_BOLD), // Valor
-    SYM('[', CLR_METAL, CLR_DEFAULT, A_BOLD)  // Valor
-};
+struct Symbol g_symbol_weapon_metal = SYM(')', CLR_METAL, CLR_DEFAULT, 0);
 
 void init_symbols(void)
 {
-    for(int idx = 0; idx < sizeof(symbols) / sizeof(symbols[0]); ++idx)
-    {
-        symbols[idx].fg = *COL(symbols[idx].base_fg_idx);
-        symbols[idx].bg = *COL(symbols[idx].base_bg_idx);
-    }
+    g_symbol_armour_cloth.fg = *COL(g_symbol_armour_cloth.base_fg_idx);
+    g_symbol_armour_cloth.bg = *COL(g_symbol_armour_cloth.base_bg_idx);
+
+    g_symbol_armour_leather.fg = *COL(g_symbol_armour_leather.base_fg_idx);
+    g_symbol_armour_leather.bg = *COL(g_symbol_armour_leather.base_bg_idx);
+
+    g_symbol_armour_mail.fg = *COL(g_symbol_armour_mail.base_fg_idx);
+    g_symbol_armour_mail.bg = *COL(g_symbol_armour_mail.base_bg_idx);
+
+    g_symbol_armour_plate.fg = *COL(g_symbol_armour_plate.base_fg_idx);
+    g_symbol_armour_plate.bg = *COL(g_symbol_armour_plate.base_bg_idx);
+
+    g_symbol_weapon_metal.fg = *COL(g_symbol_weapon_metal.base_fg_idx);
+    g_symbol_weapon_metal.bg = *COL(g_symbol_weapon_metal.base_bg_idx);
 }
