@@ -145,14 +145,62 @@ int main(int argc, char** argv)
     }
 
     struct Armour* armour;
-    for(int armour_idx = A_MAGISTERS_CROWN; armour_idx <= A_VALOR_BOOTS; ++armour_idx)
-    {
-        startx = random_int(room->x + 1, room->x + room->w - 2);
-        starty = random_int(room->y + 1, room->y + room->h - 2);
+    int rx0 = room->x+1;
+    int rx1 = rx0 + room->w - 3;
+    int ry0 = room->y+1;
+    int ry1 = ry0 + room->h - 3;
 
-        armour = new_armour(armour_idx);
-        loc_add_obj(&cmap->locs[startx][starty], armour->obj);
-    }
+    armour = armour_new(armour_base_lookup_by_name("magister's crown"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("magister's mantle"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("magister's robe"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("magister's gloves"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("magister's leggings"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("magister's boots"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+
+    armour = armour_new(armour_base_lookup_by_name("shadowcraft cap"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("shadowcraft spaulders"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("shadowcraft tunic"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("shadowcraft gloves"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("shadowcraft pants"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("shadowcraft boots"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+
+    armour = armour_new(armour_base_lookup_by_name("beaststalker's cap"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("beaststalker's spaulders"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("beaststalker's tunic"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("beaststalker's gloves"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("beaststalker's pants"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("beaststalker's boots"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+
+    armour = armour_new(armour_base_lookup_by_name("helm of valour"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("spaulders of valour"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("breastplate of valour"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("gauntlets of valour"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("legplates of valour"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
+    armour = armour_new(armour_base_lookup_by_name("boots of valour"));
+    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
 
     struct MonType* ghoul_type = mon_type_lookup_by_name("ghoul");
     for(int i = 1; i < cmap->room_count - 1; i++)
