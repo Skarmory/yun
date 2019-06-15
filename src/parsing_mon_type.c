@@ -1,4 +1,5 @@
 #include "parsing.h"
+#include "obj_armour.h"
 #include "log.h"
 #include "mon_type.h"
 #include "symbol.h"
@@ -17,6 +18,7 @@ static void _parse_mon_type_symbol_callback(struct Parser* parser);
 static void _parse_mon_type_colour_callback(struct Parser* parser);
 static void _parse_mon_type_stats_callback(struct Parser* parser);
 static void _parse_mon_type_pathing_callback(struct Parser* parser);
+static void _parse_mon_type_base_armour_callback(struct Parser* parser);
 
 enum ParserCode parse_mon_types(void)
 {
@@ -28,6 +30,7 @@ enum ParserCode parse_mon_types(void)
     parser_register_field(parser, "colour", "red int green int blue int", &_parse_mon_type_colour_callback);
     parser_register_field(parser, "stats", "strength int agility int intelligence int spirit int stamina int", &_parse_mon_type_stats_callback);
     parser_register_field(parser, "pathing", "pathing int", &_parse_mon_type_pathing_callback);
+    parser_register_field(parser, "base-armour", "name string", &_parse_mon_type_base_armour_callback);
 
     bool result = open_file_and_parse_all(parser, c_mon_type_file_name);
     if(!result)
@@ -74,23 +77,21 @@ static void _parse_mon_type_name_callback(struct Parser* parser)
 
     parser_set_userdata(parser, type);
 
-    type->name = malloc(32);
-
-    snprintf(type->name, 32, "%s", parser_field_get_string(parser, "name", "name"));
+    snprintf(type->name, sizeof(type->name), "%s", parser_field_get_string(parser, "name", "name"));
 }
 
 static void _parse_mon_type_desc_callback(struct Parser* parser)
 {
     struct MonType* type = parser_get_userdata_active(parser);
-    type->desc = malloc(32);
 
-    snprintf(type->desc, 32, "%s", parser_field_get_string(parser, "desc", "desc"));
+    snprintf(type->desc, sizeof(type->desc), "%s", parser_field_get_string(parser, "desc", "desc"));
 }
 
 static void _parse_mon_type_symbol_callback(struct Parser* parser)
 {
     struct MonType* type = parser_get_userdata_active(parser);
     type->symbol = malloc(sizeof(struct Symbol));
+    memset(type->symbol, 0, sizeof(struct Symbol));
     
     type->symbol->sym = parser_field_get_char(parser, "symbol", "symbol");
 }
@@ -117,4 +118,10 @@ static void _parse_mon_type_pathing_callback(struct Parser* parser)
 {
     struct MonType* type = parser_get_userdata_active(parser);
     type->pathing = parser_field_get_int(parser, "pathing", "pathing");
+}
+
+static void _parse_mon_type_base_armour_callback(struct Parser* parser)
+{
+    struct MonType* type = parser_get_userdata_active(parser);
+    type->base_armour = armour_base_lookup_by_name(parser_field_get_string(parser, "base-armour", "name"));
 }
