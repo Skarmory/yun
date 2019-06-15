@@ -10,14 +10,14 @@ DEPS=$(SRCS:.c=.d)
 
 .PHONY: clean fullclean debug $(GAME)
 
-debug: CFLAGS += -DDEBUG -g
-debug: $(GAME)
-
 $(GAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(GAME) $(LDFLAGS)
 
 %.o: %.c
 	$(CC) -MMD $(CFLAGS) -c $< -o $@
+
+debug: CFLAGS += -DDEBUG -g
+debug: $(GAME)
 
 clean:
 	@rm -f $(OBJS)
