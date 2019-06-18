@@ -1,0 +1,36 @@
+# List of weapons found in naxx.
+
+# INFO
+# Weapons are items that occupy the main hand or off hand slots and have a damage value
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# name   - The name of the weapon
+# desc   - Description of the weapon
+# class  - What type of weapon this is. [axe1h, axe2h, sword1h, sword2h, mace1h, mace2h, staff, polearm, bow, gun, dagger, fist, natural]
+# damage - The type of damage dice and the number of sides. e.g. 1;6 = 1d6, 3;10 = 3d10
+
+# ----- EQUIPPABLE -----
+
+name:longsword
+desc:A one-handed sword with a long blade often used by human adventurers. Inflicts medium damage.
+class:sword1h
+damage:1;6
+
+# ----- NATURAL -----
+# These weapons take the default unequipped slot for a mon, and should not be an actual equippable drop
+
+name:fist
+desc:An unarmed strike with the fists. Inflicts low damage
+class:natural
+damage:1;2
+
+name:claws
+desc:The sharp natural weapons of most wild beasts and mindless undead.
+class:natural
+damage:1;3
