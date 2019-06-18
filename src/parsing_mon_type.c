@@ -1,4 +1,5 @@
 #include "parsing.h"
+#include "colour.h"
 #include "obj_armour.h"
 #include "obj_weapon.h"
 #include "log.h"
@@ -105,6 +106,7 @@ static void _parse_mon_type_colour_callback(struct Parser* parser)
     type->symbol->fg.r = parser_field_get_int(parser, "colour", "red");
     type->symbol->fg.g = parser_field_get_int(parser, "colour", "green");
     type->symbol->fg.b = parser_field_get_int(parser, "colour", "blue");
+    type->symbol->bg = *COL(CLR_DEFAULT);
 }
 
 static void _parse_mon_type_stats_callback(struct Parser* parser)

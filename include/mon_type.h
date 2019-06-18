@@ -21,9 +21,6 @@ struct MonType
     int                  pathing;
 };
 
-void init_montypes(void);
-void uninit_montypes(void);
-
 struct MonType* mon_type_lookup_by_name(const char* name);
 
 extern struct MonType* g_mon_type;

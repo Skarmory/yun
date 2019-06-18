@@ -14,8 +14,6 @@ struct Symbol
     unsigned int base_bg_idx;
 };
 
-void init_symbols(void);
-
 extern struct Symbol g_symbol_armour_cloth;
 extern struct Symbol g_symbol_armour_leather;
 extern struct Symbol g_symbol_armour_mail;

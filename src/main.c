@@ -110,7 +110,11 @@ void main_loop(void)
 
 int main(int argc, char** argv)
 {
-    init_naxx();
+    if(!init_naxx())
+    {
+        printf("Initialisation failed. Check debug log.");
+        return -1;
+    }
 
     // some intro text
     term_draw_text((screen_cols/2) - 7, screen_rows/2, NULL, NULL, 0, "Welcome to Naxx");
