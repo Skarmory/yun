@@ -13,7 +13,7 @@ int g_armour_base_count = 0;
 struct Armour* armour_new(struct ArmourBase* base)
 {
     struct Armour* armour = malloc(sizeof(struct Armour));
-
+    armour->base = base;
     armour->armour_value = base->armour_value;
 
     armour->obj = malloc(sizeof(struct Object));
