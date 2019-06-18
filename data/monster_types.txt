@@ -31,6 +31,7 @@ colour:0;0;255
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:fist
 
 name:night elf
 desc:Night Elf
@@ -39,6 +40,7 @@ colour:0;0;255
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:fist
 
 name:dwarf
 desc:Dwarf
@@ -47,6 +49,7 @@ colour:0;0;255
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:fist
 
 name:gnome
 desc:Gnome
@@ -55,6 +58,7 @@ colour:255;255;255
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:fist
 
 name:orc
 desc:Orc
@@ -63,6 +67,7 @@ colour:255;0;0
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:fist
 
 name:troll
 desc:Troll
@@ -71,6 +76,7 @@ colour:255;0;0
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:fist
 
 name:forsaken
 desc:Forsaken
@@ -79,6 +85,7 @@ colour:255;0;0
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:fist
 
 name:tauren
 desc:Tauren
@@ -87,6 +94,7 @@ colour:255;0;0
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:fist
 
 # ----- ENEMIES -----
 
@@ -97,3 +105,4 @@ colour:55;55;55
 stats:1;1;1;1;1
 pathing:1
 base-armour:unarmoured
+base-weapon:claws

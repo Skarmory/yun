@@ -10,6 +10,7 @@
 
 // TEMP REMOVE THESE
 #include "obj_armour.h"
+#include "obj_weapon.h"
 #include "mon_type.h"
 #include "symbol.h"
 
@@ -24,6 +25,14 @@ bool init_naxx(void)
 
     log_msg(DEBUG, "parsing armours");
     if(parse_armours() != PARSER_OK)
+    {
+        log_msg(DEBUG, "parsing failed");
+        return false;
+    }
+    log_msg(DEBUG, "parsing complete");
+
+    log_msg(DEBUG, "parsing weapons");
+    if(parse_weapons() != PARSER_OK)
     {
         log_msg(DEBUG, "parsing failed");
         return false;
@@ -48,6 +57,9 @@ void uninit_naxx(void)
 {
     uninit_logs();
     uninit_montypes();
+
+    free(g_weapon_base);
+    g_weapon_base_count = 0;
 
     free(g_armour_base);
     g_armour_base_count = 0;

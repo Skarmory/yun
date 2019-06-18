@@ -15,9 +15,8 @@ struct MonType
     char                 name[32]; // Name of this type of mon
     char                 desc[32];
     struct Symbol*       symbol;
-    int                  base_weapon_idx;
     struct ArmourBase*   base_armour; // All creatures have a base armour for if they don't have equipment
-    struct Weapon*       base_weapon;
+    struct WeaponBase*   base_weapon;
     int                  strength, agility, intelligence, spirit, stamina;
     int                  pathing;
 };

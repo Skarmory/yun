@@ -95,11 +95,21 @@ static int _attack_power_damage(struct Mon* attacker)
 static int _attack_damage(struct Mon* attacker, struct Mon* defender)
 {
     int dmg = 0;
-    const struct Weapon* weapon = mon_get_weapon(you->mon);
+    struct Attack* attks = NULL;
 
-    for(int dice = 0; dice < weapon->attk->num_dice; dice++)
+    const struct Weapon* weapon = mon_get_weapon(attacker);
+    if(weapon)
     {
-        dmg += random_int(1, weapon->attk->sides_per_die);
+        attks = weapon->base->attk;
+    }
+    else
+    {
+        attks = defender->type->base_weapon->attk;
+    }
+
+    for(int dice = 0; dice < attks->num_dice; dice++)
+    {
+        dmg += random_int(1, attks->sides_per_die);
     }
 
     dmg += _attack_power_damage(attacker);
@@ -115,18 +125,31 @@ static inline float _calc_armour_reduction(struct Mon* attacker, struct Mon* def
 static inline void _display_hit_text(struct Mon* attacker, struct Mon* defender, int damage)
 {
     const struct Weapon* attacker_weapon = mon_get_weapon(attacker);
+    const struct Attack* attacks = NULL;
+    const char* weapon_name = NULL;
 
-    if(mon_is_player(attacker))
+    if(attacker_weapon)
     {
-        display_fmsg_log("You hit the %s for %d (%dd%d + %d) with your %s.", defender->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, _attack_power_damage(attacker), attacker_weapon->obj->name);
-    }
-    else if(mon_is_player(defender))
-    {
-        display_fmsg_log("The %s hit you for %d (%dd%d + %d) with its %s.", attacker->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, _attack_power_damage(attacker), attacker_weapon->obj->name);
+        attacks = attacker_weapon->base->attk;
+        weapon_name = attacker_weapon->base->name;
     }
     else
     {
-        display_fmsg_log("The %s hit the %s for %d (%dd%d + %d) with its %s.", attacker->type->name, defender->type->name, damage, attacker_weapon->attk->num_dice, attacker_weapon->attk->sides_per_die, _attack_power_damage(attacker), attacker_weapon->obj->name);
+        attacks = attacker->type->base_weapon->attk;
+        weapon_name = attacker->type->base_weapon->name;
+    }
+
+    if(mon_is_player(attacker))
+    {
+        display_fmsg_log("You hit the %s for %d (%dd%d + %d) with your %s.", defender->type->name, damage, attacks->num_dice, attacks->sides_per_die, _attack_power_damage(attacker), weapon_name);
+    }
+    else if(mon_is_player(defender))
+    {
+        display_fmsg_log("The %s hit you for %d (%dd%d + %d) with its %s.", attacker->type->name, damage, attacks->num_dice, attacks->sides_per_die, _attack_power_damage(attacker), weapon_name);
+    }
+    else
+    {
+        display_fmsg_log("The %s hit the %s for %d (%dd%d + %d) with its %s.", attacker->type->name, defender->type->name, damage, attacks->num_dice, attacks->sides_per_die, _attack_power_damage(attacker), weapon_name);
         mon_chk_dead(defender);
     }
 }

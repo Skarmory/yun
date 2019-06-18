@@ -122,5 +122,5 @@ const struct Weapon* mon_get_weapon(struct Mon* mon)
 {
     if(mon->equipment->main_hand)
         return mon->equipment->main_hand;
-    return mon->type->base_weapon;
+    return NULL;
 }
