@@ -21,5 +21,6 @@ extern struct Symbol g_symbol_armour_leather;
 extern struct Symbol g_symbol_armour_mail;
 extern struct Symbol g_symbol_armour_plate;
 extern struct Symbol g_symbol_weapon_metal;
+extern struct Symbol g_symbol_weapon_wood;
 
 #endif

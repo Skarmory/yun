@@ -10,6 +10,7 @@ struct Symbol g_symbol_armour_mail    = SYM('[', CLR_ARMOUR_MAIL, CLR_DEFAULT, 0
 struct Symbol g_symbol_armour_plate   = SYM('[', CLR_ARMOUR_PLATE, CLR_DEFAULT, 0);
 
 struct Symbol g_symbol_weapon_metal = SYM(')', CLR_METAL, CLR_DEFAULT, 0);
+struct Symbol g_symbol_weapon_wood = SYM(')', CLR_WOOD, CLR_DEFAULT, 0);
 
 void init_symbols(void)
 {
@@ -27,4 +28,7 @@ void init_symbols(void)
 
     g_symbol_weapon_metal.fg = *COL(g_symbol_weapon_metal.base_fg_idx);
     g_symbol_weapon_metal.bg = *COL(g_symbol_weapon_metal.base_bg_idx);
+
+    g_symbol_weapon_wood.fg = *COL(g_symbol_weapon_wood.base_fg_idx);
+    g_symbol_weapon_wood.bg = *COL(g_symbol_weapon_wood.base_bg_idx);
 }
