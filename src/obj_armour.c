@@ -34,6 +34,8 @@ struct Armour* armour_new(struct ArmourBase* base)
         case ARMOUR_CLASS_PLATE:
             armour->obj->symbol = &g_symbol_armour_plate;
             break;
+        case ARMOUR_CLASS_NATURAL:
+            break;
         case ARMOUR_CLASS_NONE:
             log_msg(DEBUG, "Armour created with ARMOUR_CLASS_NONE");
             break;
@@ -68,6 +70,7 @@ enum ArmourClass armour_class_from_string(const char* name)
     if(strcmp(name, "leather") == 0) return ARMOUR_CLASS_LEATHER;
     if(strcmp(name, "mail") == 0)    return ARMOUR_CLASS_MAIL;
     if(strcmp(name, "plate") == 0)   return ARMOUR_CLASS_PLATE;
+    if(strcmp(name, "natural") == 0) return ARMOUR_CLASS_NATURAL;
 
     return ARMOUR_CLASS_NONE;
 }

@@ -14,12 +14,13 @@
 # name         - The name of the armour
 # desc         - Description of the armour
 # slot         - Which slot the armour goes in
+# class        - Whether the armour is cloth, leather, mail, plate, or natural
 # armour-value - The amount of armour points provided by the armour
 
 name:unarmoured
 desc:There is no armour protecting here!
 slot:head
-class:cloth
+class:natural
 armour-value:0
 
 name:magister's crown
