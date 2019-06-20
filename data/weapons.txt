@@ -10,10 +10,11 @@
 # Leading and trailing whitespace is stripped.
 
 # KEYS
-# name   - The name of the weapon
-# desc   - Description of the weapon
-# class  - What type of weapon this is. [axe1h, axe2h, sword1h, sword2h, mace1h, mace2h, staff, polearm, bow, gun, dagger, fist, natural]
-# damage - The type of damage dice and the number of sides. e.g. 1;6 = 1d6, 3;10 = 3d10
+# name          - The name of the weapon
+# desc          - Description of the weapon
+# class         - What type of weapon this is. [axe1h, axe2h, sword1h, sword2h, mace1h, mace2h, staff, polearm, bow, gun, dagger, fist, natural]
+# damage        - The type of damage dice and the number of sides. e.g. 1;6 = 1d6, 3;10 = 3d10
+# attack-method - The attack method this weapon uses. See: attack_methods.txt.
 
 # ----- EQUIPPABLE -----
 
@@ -21,6 +22,7 @@ name:longsword
 desc:A one-handed sword with a long blade often used by human adventurers. Inflicts medium damage.
 class:sword1h
 damage:1;6
+attack-method:slash
 
 # ----- NATURAL -----
 # These weapons take the default unequipped slot for a mon, and should not be an actual equippable drop
@@ -29,8 +31,10 @@ name:fist
 desc:An unarmed strike with the fists. Inflicts low damage
 class:natural
 damage:1;2
+attack-method:punch
 
 name:claws
 desc:The sharp natural weapons of most wild beasts and mindless undead.
 class:natural
 damage:1;3
+attack-method:claw

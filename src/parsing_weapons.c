@@ -15,6 +15,7 @@ static void _parse_weapon_name_callback(struct Parser* parser);
 static void _parse_weapon_desc_callback(struct Parser* parser);
 static void _parse_weapon_class_callback(struct Parser* parser);
 static void _parse_weapon_damage_callback(struct Parser* parser);
+static void _parse_weapon_attack_method_callback(struct Parser* parser);
 
 enum ParserCode parse_weapons(void)
 {
@@ -24,6 +25,7 @@ enum ParserCode parse_weapons(void)
     parser_register_field(parser, "desc", "desc string", &_parse_weapon_desc_callback);
     parser_register_field(parser, "class", "class string", &_parse_weapon_class_callback);
     parser_register_field(parser, "damage", "dice int sides int", &_parse_weapon_damage_callback);
+    parser_register_field(parser, "attack-method", "name string", &_parse_weapon_attack_method_callback);
 
     bool result = open_file_and_parse_all(parser, c_weapons_file_name);
     if(!result)
@@ -93,4 +95,11 @@ static void _parse_weapon_damage_callback(struct Parser* parser)
 
     base->attk[0].num_dice = parser_field_get_int(parser, "damage", "dice");
     base->attk[0].sides_per_die = parser_field_get_int(parser, "damage", "sides");
+}
+
+static void _parse_weapon_attack_method_callback(struct Parser* parser)
+{
+    struct WeaponBase* base = parser_get_userdata_active(parser);
+
+    base->attk[0].type = attack_method_lookup_by_name(parser_field_get_string(parser, "attack-method", "name"));
 }

@@ -1,0 +1,30 @@
+# List of attack methods in naxx.
+
+# INFO
+# This is a list of ways that an attack can be inflicted.
+# These are generic actions made when an attack occurs like "slash", "bite", or "stab"
+# that can be applied to a variety of individual attacking abilities or spells.
+# i.e. these are NOT specific attacks, but the way a creature actually delivers the attack
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# name   - The name of the attack method. Must be unique.
+# msg-1  - The message format to display in non-3rd person.
+# msg-2  - The message format to display in 3rd person.
+
+name:slash
+msg-1:slash %s
+msg-2:slashes %s
+
+name:punch
+msg-1:punch %s
+msg-2:punches %s
+
+name:claw
+msg-1:claw %s
+msg-2:claws %s

@@ -38,6 +38,14 @@ static inline bool _init_symbols(void)
 
 static inline bool _init_gamedata(void)
 {
+    log_msg(DEBUG, "parsing attack types");
+    if(parse_attack_methods() != PARSER_OK)
+    {
+        log_msg(DEBUG, "parsing failed");
+        return false;
+    }
+    log_msg(DEBUG, "parsing complete");
+
     log_msg(DEBUG, "parsing armours");
     if(parse_armours() != PARSER_OK)
     {

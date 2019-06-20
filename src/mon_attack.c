@@ -13,6 +13,10 @@
 #include "util.h"
 
 #include <stdio.h>
+#include <string.h>
+
+struct AttackMethod* g_attack_methods = NULL;
+int g_attack_methods_count = 0;
 
 const int c_certain_miss_threshold = 5;
 const int c_certain_hit_threshold = 95;
@@ -294,4 +298,15 @@ bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
         mon_chk_dead(defender);
 
     return true;
+}
+
+struct AttackMethod* attack_method_lookup_by_name(const char* name)
+{
+    for(int idx = 0; idx < g_attack_methods_count; ++idx)
+    {
+        if(strcmp(name, g_attack_methods[idx].name) == 0)
+            return &g_attack_methods[idx];
+    }
+
+    return NULL;
 }
