@@ -2,6 +2,7 @@
 #include "colour.h"
 #include "globals.h"
 #include "log.h"
+#include "mon_attack.h"
 #include "mon_type.h"
 #include "obj_armour.h"
 #include "obj_weapon.h"
@@ -75,6 +76,9 @@ static inline bool _init_gamedata(void)
 
 void _uninit_gamedata(void)
 {
+    for(int idx = 0; idx < g_mon_type_count; ++idx)
+        free(g_mon_type[idx].symbol);
+
     free(g_mon_type);
     g_mon_type_count = 0;
 
@@ -83,6 +87,9 @@ void _uninit_gamedata(void)
 
     free(g_armour_base);
     g_armour_base_count = 0;
+
+    free(g_attack_methods);
+    g_attack_methods_count = 0;
 }
 
 bool init_naxx(void)
@@ -104,7 +111,7 @@ bool init_naxx(void)
 
 void uninit_naxx(void)
 {
-
+    _uninit_gamedata();
     term_uninit();
     uninit_logs();
 }
