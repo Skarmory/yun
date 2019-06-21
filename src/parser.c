@@ -1,4 +1,5 @@
 #include "parser.h"
+#include "log.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -99,6 +100,8 @@ void _print_parse_data(struct Parser* parser);
 
 bool open_file_and_parse_all(struct Parser* parser, const char* filename)
 {
+    parser->parse_state.filename = filename;
+
     FILE* file = fopen(filename, "r");
 
     if(!file)
@@ -114,11 +117,43 @@ bool open_file_and_parse_all(struct Parser* parser, const char* filename)
     {
         parser->last_code = parser_parse(parser, line);
         if(parser->last_code != PARSER_OK && parser->last_code != PARSER_NO_OP)
-            break;
+        {
+            if(parser->last_code == PARSER_NO_FORMAT_FOUND)
+            {
+                log_msg(DEBUG, "Parser error: no format found");
+            }
+            else if(parser->last_code == PARSER_MALFORMED_DATA)
+            {
+                log_msg(DEBUG, "Parser error: malformed data");
+                break;
+            }
+            else if(parser->last_code == PARSER_MALFORMED_KEY_VALUE_PAIR)
+            {
+                log_msg(DEBUG, "Parser error: malformed key pair value");
+                break;
+            }
+            else if(parser->last_code == PARSER_UNKNOWN_DATA_TYPE)
+            {
+                log_msg(DEBUG, "Parser error: unknown data type");
+                break;
+            }
+            else if(parser->last_code == PARSER_PARSE_CALLBACK_ERROR)
+            {
+                log_msg(DEBUG, "Parser error: parse callback error");
+                break;
+            }
+        }
     }
 
     free(line);
     fclose(file);
+
+    bool success = (parser->last_code == PARSER_OK || parser->last_code == PARSER_NO_OP);
+    if(!success)
+    {
+        log_format_msg(DEBUG, "PARSE ERROR: %d", parser_get_last_code(parser));
+        log_format_msg(DEBUG, "Parser state -- %s | Active: %s | %d: %s", parser->parse_state.filename, parser->parse_state.active ? "true" : "false", parser->parse_state.line_no, parser->parse_state.line);
+    }
 
     return (parser->last_code == PARSER_OK || parser->last_code == PARSER_NO_OP);
 }
@@ -331,7 +366,7 @@ struct Parser* parser_new(void)
 {
     struct Parser* parser = malloc(sizeof(struct Parser)); 
     parser->parse_state.line_no = -1;
-    parser->parse_state.line = NULL;
+    memset(parser->parse_state.line, '\0', sizeof(parser->parse_state.line));
     parser->parse_state.active = false;
     list_init(&parser->userdata);
     list_init(&parser->parse_formats);
@@ -351,8 +386,9 @@ void parser_free(struct Parser* parser)
 
 void parser_get_state(struct Parser* parser, struct ParseState* state)
 {
+    state->filename = parser->parse_state.filename;
     state->line_no = parser->parse_state.line_no;
-    state->line = parser->parse_state.line;
+    snprintf(state->line, sizeof(state->line), "%s", parser->parse_state.line);
     state->active = parser->parse_state.active;
 }
 
@@ -418,7 +454,7 @@ enum ParserCode parser_parse(struct Parser* parser, char* line)
     enum ParserCode code = PARSER_OK;
 
     parser->parse_state.line_no++;
-    parser->parse_state.line = line;
+    snprintf(parser->parse_state.line, sizeof(parser->parse_state.line), "%s", line);
 
     // Disregard comments
     if(line[0] == c_comment)
@@ -455,7 +491,9 @@ enum ParserCode parser_parse(struct Parser* parser, char* line)
     if((code = _parse_field_data(&parser->parse_data, format, field_data)) != PARSER_OK)
         return code;
 
-    format->method(parser);
+    enum ParseCallbackCode method_code = format->method(parser);
+    if(method_code == PARSE_CALLBACK_ERROR)
+        code = PARSER_PARSE_CALLBACK_ERROR;
 
     return code;
 }

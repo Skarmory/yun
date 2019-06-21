@@ -8,11 +8,10 @@
 
 const char* c_attack_methods_file_name = "data/attack_methods.txt";
 
-static void _parse_attack_methods_finalise(struct Parser* parser);
-
-static void _parse_attack_method_name_callback(struct Parser* parser);
-static void _parse_attack_method_msg1_callback(struct Parser* parser);
-static void _parse_attack_method_msg2_callback(struct Parser* parser);
+parsing_callback(_parse_attack_methods_finalise);
+parsing_callback(_parse_attack_method_name_callback);
+parsing_callback(_parse_attack_method_msg1_callback);
+parsing_callback(_parse_attack_method_msg2_callback);
 
 enum ParserCode parse_attack_methods(void)
 {
@@ -22,27 +21,17 @@ enum ParserCode parse_attack_methods(void)
     parser_register_field(parser, "msg-1", "msg string", &_parse_attack_method_msg1_callback);
     parser_register_field(parser, "msg-2", "msg string", &_parse_attack_method_msg2_callback);
 
-    bool result = open_file_and_parse_all(parser, c_attack_methods_file_name);
-    if(!result)
+    if(open_file_and_parse_all(parser, c_attack_methods_file_name))
     {
-        struct ParseState state;
-        parser_get_state(parser, &state);
-
-        log_format_msg(DEBUG, "PARSE ERROR: %d", parser_get_last_code(parser));
-        log_format_msg(DEBUG, "Parser state -- Active: %s | %d: %s", state.active ? "true" : "false", state.line_no, state.line);
-
-        goto parse_end;
+        _parse_attack_methods_finalise(parser);
     }
 
-    _parse_attack_methods_finalise(parser);
-
-parse_end:;
     enum ParserCode retval = parser_get_last_code(parser);
     parser_free(parser);
     return retval;
 }
 
-static void _parse_attack_methods_finalise(struct Parser* parser)
+parsing_callback(_parse_attack_methods_finalise)
 {
     List* attack_methods_data = parser_get_userdata(parser);
     ListNode* node;
@@ -58,28 +47,30 @@ static void _parse_attack_methods_finalise(struct Parser* parser)
         memcpy(&g_attack_methods[idx++], node->data, sizeof(struct AttackMethod));
         free(node->data);
     }
+
+    return PARSE_CALLBACK_OK;
 }
 
-static void _parse_attack_method_name_callback(struct Parser* parser)
+parsing_callback(_parse_attack_method_name_callback)
 {
     struct AttackMethod* type = malloc(sizeof(struct AttackMethod));
     memset(type, 0, sizeof(struct AttackMethod));
 
     parser_set_userdata(parser, type);
-
     snprintf(type->name, sizeof(type->name), "%s", parser_field_get_string(parser, "name", "name"));
+    return PARSE_CALLBACK_OK;
 }
 
-static void _parse_attack_method_msg1_callback(struct Parser* parser)
+parsing_callback(_parse_attack_method_msg1_callback)
 {
     struct AttackMethod* type = parser_get_userdata_active(parser);
-
     snprintf(type->msg1, sizeof(type->msg1), "%s", parser_field_get_string(parser, "msg-1", "msg"));
+    return PARSE_CALLBACK_OK;
 }
 
-static void _parse_attack_method_msg2_callback(struct Parser* parser)
+parsing_callback(_parse_attack_method_msg2_callback)
 {
     struct AttackMethod* type = parser_get_userdata_active(parser);
-
     snprintf(type->msg2, sizeof(type->msg2), "%s", parser_field_get_string(parser, "msg-2", "msg"));
+    return PARSE_CALLBACK_OK;
 }

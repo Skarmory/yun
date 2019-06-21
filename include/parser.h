@@ -14,19 +14,27 @@ enum ParserCode
     PARSER_MALFORMED_KEY_VALUE_PAIR,
     PARSER_MALFORMED_DATA,
     PARSER_UNKNOWN_DATA_TYPE,
-    PARSER_FILE_OPEN_FAIL
+    PARSER_FILE_OPEN_FAIL,
+    PARSER_PARSE_CALLBACK_ERROR
+};
+
+enum ParseCallbackCode
+{
+    PARSE_CALLBACK_OK,
+    PARSE_CALLBACK_ERROR
 };
 
 struct ParseState
 {
+    const char* filename;
     int line_no;
-    const char* line;
+    char line[256];
     bool active;
 };
 
 struct Parser;
 
-typedef void(*parse_method)(struct Parser*);
+typedef enum ParseCallbackCode(*parse_method)(struct Parser*);
 
 bool open_file_and_parse_all(struct Parser* parser, const char* filename);
 

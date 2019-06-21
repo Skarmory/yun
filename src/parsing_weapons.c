@@ -9,13 +9,13 @@
 
 const char* c_weapons_file_name = "data/weapons.txt";
 
-static void _parse_weapons_finalise(struct Parser* parser);
+parsing_callback(_parse_weapons_finalise);
 
-static void _parse_weapon_name_callback(struct Parser* parser);
-static void _parse_weapon_desc_callback(struct Parser* parser);
-static void _parse_weapon_class_callback(struct Parser* parser);
-static void _parse_weapon_damage_callback(struct Parser* parser);
-static void _parse_weapon_attack_method_callback(struct Parser* parser);
+parsing_callback(_parse_weapon_name_callback);
+parsing_callback(_parse_weapon_desc_callback);
+parsing_callback(_parse_weapon_class_callback);
+parsing_callback(_parse_weapon_damage_callback);
+parsing_callback(_parse_weapon_attack_method_callback);
 
 enum ParserCode parse_weapons(void)
 {
@@ -27,27 +27,17 @@ enum ParserCode parse_weapons(void)
     parser_register_field(parser, "damage", "dice int sides int", &_parse_weapon_damage_callback);
     parser_register_field(parser, "attack-method", "name string", &_parse_weapon_attack_method_callback);
 
-    bool result = open_file_and_parse_all(parser, c_weapons_file_name);
-    if(!result)
+    if(open_file_and_parse_all(parser, c_weapons_file_name))
     {
-        struct ParseState state;
-        parser_get_state(parser, &state);
-
-        log_format_msg(DEBUG, "PARSE ERROR: %d", parser_get_last_code(parser));
-        log_format_msg(DEBUG, "Parser state -- Active: %s | %d: %s", state.active ? "true" : "false", state.line_no, state.line);
-
-        goto parse_end;
+        _parse_weapons_finalise(parser);
     }
 
-    _parse_weapons_finalise(parser);
-
-parse_end:;
     enum ParserCode retval = parser_get_last_code(parser);
     parser_free(parser);
     return retval;
 }
 
-static void _parse_weapons_finalise(struct Parser* parser)
+parsing_callback(_parse_weapons_finalise)
 {
     List* weapon_base_data = parser_get_userdata(parser);
     ListNode* node;
@@ -63,43 +53,45 @@ static void _parse_weapons_finalise(struct Parser* parser)
         memcpy(&g_weapon_base[idx++], node->data, sizeof(struct WeaponBase));
         free(node->data);
     }
+
+    return PARSE_CALLBACK_OK;
 }
 
-static void _parse_weapon_name_callback(struct Parser* parser)
+parsing_callback(_parse_weapon_name_callback)
 {
     struct WeaponBase* base = malloc(sizeof(struct WeaponBase));
     memset(base, 0, sizeof(struct WeaponBase));
 
     parser_set_userdata(parser, base);
-
     snprintf(base->name, sizeof(base->name), "%s", parser_field_get_string(parser, "name", "name"));
+    return PARSE_CALLBACK_OK;
 }
 
-static void _parse_weapon_desc_callback(struct Parser* parser)
+parsing_callback(_parse_weapon_desc_callback)
 {
     struct WeaponBase* base = parser_get_userdata_active(parser);
-
     snprintf(base->desc, sizeof(base->desc), "%s", parser_field_get_string(parser, "desc", "desc"));
+    return PARSE_CALLBACK_OK;
 }
 
-static void _parse_weapon_class_callback(struct Parser* parser)
+parsing_callback(_parse_weapon_class_callback)
 {
     struct WeaponBase* base = parser_get_userdata_active(parser);
-
     base->class = weapon_class_from_string(parser_field_get_string(parser, "class", "class"));
+    return PARSE_CALLBACK_OK;
 }
 
-static void _parse_weapon_damage_callback(struct Parser* parser)
+parsing_callback(_parse_weapon_damage_callback)
 {
     struct WeaponBase* base = parser_get_userdata_active(parser);
-
     base->attk[0].num_dice = parser_field_get_int(parser, "damage", "dice");
     base->attk[0].sides_per_die = parser_field_get_int(parser, "damage", "sides");
+    return PARSE_CALLBACK_OK;
 }
 
-static void _parse_weapon_attack_method_callback(struct Parser* parser)
+parsing_callback(_parse_weapon_attack_method_callback)
 {
     struct WeaponBase* base = parser_get_userdata_active(parser);
-
     base->attk[0].type = attack_method_lookup_by_name(parser_field_get_string(parser, "attack-method", "name"));
+    return PARSE_CALLBACK_OK;
 }
