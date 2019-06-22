@@ -92,6 +92,6 @@ parsing_callback(_parse_weapon_damage_callback)
 parsing_callback(_parse_weapon_attack_method_callback)
 {
     struct WeaponBase* base = parser_get_userdata_active(parser);
-    base->attk[0].type = attack_method_lookup_by_name(parser_field_get_string(parser, "attack-method", "name"));
+    base->attk[0].method = attack_method_lookup_by_name(parser_field_get_string(parser, "attack-method", "name"));
     return PARSE_CALLBACK_OK;
 }

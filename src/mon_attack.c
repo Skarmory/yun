@@ -143,19 +143,30 @@ static inline void _display_hit_text(struct Mon* attacker, struct Mon* defender,
         weapon_name = attacker->type->base_weapon->name;
     }
 
+    char method_expanded[256];
+    char attacker_expanded[64];
+    char defender_expanded[64];
+
     if(mon_is_player(attacker))
     {
-        display_fmsg_log("You hit the %s for %d (%dd%d + %d) with your %s.", defender->type->name, damage, attacks->num_dice, attacks->sides_per_die, _attack_power_damage(attacker), weapon_name);
+        snprintf(method_expanded, sizeof(method_expanded), "%s.", attacks->method->msg1);
+        snprintf(attacker_expanded, sizeof(attacker_expanded), "%s", "You");
+        snprintf(defender_expanded, sizeof(defender_expanded), "the %s", defender->type->name);
     }
     else if(mon_is_player(defender))
     {
-        display_fmsg_log("The %s hit you for %d (%dd%d + %d) with its %s.", attacker->type->name, damage, attacks->num_dice, attacks->sides_per_die, _attack_power_damage(attacker), weapon_name);
+        snprintf(method_expanded, sizeof(method_expanded), "%s.", attacks->method->msg2);
+        snprintf(attacker_expanded, sizeof(attacker_expanded), "The %s", attacker->type->name);
+        snprintf(defender_expanded, sizeof(defender_expanded), "%s", "you");
     }
     else
     {
-        display_fmsg_log("The %s hit the %s for %d (%dd%d + %d) with its %s.", attacker->type->name, defender->type->name, damage, attacks->num_dice, attacks->sides_per_die, _attack_power_damage(attacker), weapon_name);
-        mon_chk_dead(defender);
+        snprintf(method_expanded, sizeof(method_expanded), "%s.", attacks->method->msg2);
+        snprintf(attacker_expanded, sizeof(attacker_expanded), "The %s", attacker->type->name);
+        snprintf(defender_expanded, sizeof(defender_expanded), "the %s", defender->type->name);
     }
+
+    display_fmsg_log(method_expanded, attacker_expanded, defender_expanded);
 }
 
 static inline void _display_miss_text(struct Mon* attacker, struct Mon* defender)

@@ -5,6 +5,8 @@
 # These are generic actions made when an attack occurs like "slash", "bite", or "stab"
 # that can be applied to a variety of individual attacking abilities or spells.
 # i.e. these are NOT specific attacks, but the way a creature actually delivers the attack
+# The msg-1 and msg-2 fields are of the format <subject> <verb> <object>
+# e.g. "You slash the ghoul", "The enemy shoots you.", "The dog bites the human."
 
 # USAGE
 # Each entry is comprised of standard key-value pair fields.
@@ -18,13 +20,13 @@
 # msg-2  - The message format to display in 3rd person.
 
 name:slash
-msg-1:slash %s
-msg-2:slashes %s
+msg-1:%s slash %s
+msg-2:%s slashes %s
 
 name:punch
-msg-1:punch %s
-msg-2:punches %s
+msg-1:%s punch %s
+msg-2:%s punches %s
 
 name:claw
-msg-1:claw %s
-msg-2:claws %s
+msg-1:%s claw %s
+msg-2:%s claws %s

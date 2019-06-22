@@ -19,7 +19,7 @@ struct Attack
 {
     int num_dice;
     int sides_per_die;
-    struct AttackMethod* type;
+    struct AttackMethod* method;
 };
 
 struct AttackMethod* attack_method_lookup_by_name(const char* name);
