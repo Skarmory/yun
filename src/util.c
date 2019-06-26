@@ -77,7 +77,7 @@ void do_quit(void)
     free_player();
 
     if(cmap)
-        free_map(cmap);
+        map_free(cmap);
 
     uninit_naxx();
     puts(exit_msg);
@@ -120,4 +120,11 @@ float roll_d100f(void)
 float log_base(int x, int base)
 {
     return log(x) / log(base);
+}
+
+int clampi(int val, int low, int high)
+{
+    if(val < low) return low;
+    if(val > high) return high;
+    return val;
 }

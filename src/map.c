@@ -28,19 +28,21 @@ void _map_free_all_mons(struct Map* map)
 /**
  * Creates the map and sets map locations to default values
  */
-struct Map* new_map(void)
+struct Map* map_new(int width, int height)
 {
     struct Map* map = (struct Map*) malloc(sizeof(struct Map));
-    map->locs = (struct Location**) malloc(sizeof(struct Location*) * MCOLS);
+    map->width = width;
+    map->height = height;
+    map->locs = (struct Location**) malloc(sizeof(struct Location*) * width);
     map->rooms = NULL;
     map->room_count = 0;
     list_init(&map->mon_list);
 
-    for(int i = 0; i < MCOLS; ++i)
+    for(int i = 0; i < width; ++i)
     {
-        map->locs[i] = (struct Location*) malloc(sizeof(struct Location) * MROWS);
+        map->locs[i] = (struct Location*) malloc(sizeof(struct Location) * height);
 
-        for(int j = 0; j < MROWS; ++j)
+        for(int j = 0; j < height; ++j)
         {
             map->locs[i][j].x = i;
             map->locs[i][j].y = j;
@@ -58,7 +60,7 @@ struct Map* new_map(void)
 /**
  * Safely deletes the map
  */
-void free_map(struct Map* map)
+void map_free(struct Map* map)
 {
     _map_free_all_mons(map);
 
@@ -67,9 +69,9 @@ void free_map(struct Map* map)
 
     free(map->rooms);
 
-    for(int x = 0; x < MCOLS; x++)
+    for(int x = 0; x < map->width; x++)
     {
-        for(int y = 0; y < MROWS; y++)
+        for(int y = 0; y < map->height; y++)
         {
             ListNode *node, *n;
             list_for_each_safe(&map->locs[x][y].obj_list, node, n)
@@ -89,31 +91,45 @@ void free_map(struct Map* map)
 }
 
 /**
- * Draw map using ncurses
+ * Draw map
  */
 void display_map(void)
 {
-    for(int i = 0; i < MCOLS; ++i)
-    for(int j = 0; j < MROWS; ++j)
-    {
-        struct Location* loc = &cmap->locs[i][j];
-        struct Object* obj = loc->obj_list.head ? loc->obj_list.head->data : NULL;
+    int xstart = clampi(you->mon->x - (MCOLS/2), 0, cmap->width - MCOLS);
+    int ystart = clampi(you->mon->y - (MROWS/2), 0, cmap->height - MROWS);
 
-        if(loc->mon)
+    log_format_msg(DEBUG, "x: %d, y: %d", you->mon->x, you->mon->y);
+    log_format_msg(DEBUG, "xs: %d, ys: %d", xstart, ystart);
+
+    int i = 0;
+    for(int x = xstart; i < MCOLS; ++x, ++i)
+    {
+        // Once x is out of range, all further x will be out of range too
+        if(!map_in_bounds(cmap, x, 0)) break;
+
+        int j = 0;
+        for(int y = ystart; j < MROWS; ++y, ++j)
         {
-            term_draw_symbol(i, j, &loc->mon->type->symbol->fg, &loc->mon->type->symbol->bg, loc->mon->type->symbol->attr, loc->mon->type->symbol->sym);
-        }
-        else if(obj)
-        {
-            term_draw_symbol(i, j, &obj->symbol->fg, &obj->symbol->bg, obj->symbol->attr, obj->symbol->sym);
-        }
-        else
-        {
-            term_draw_symbol(i, j, NULL, NULL, 0, loc->terrain);
+            // Check for y out of range
+            if(!map_in_bounds(cmap, x, y)) break;
+
+            struct Location* loc = &cmap->locs[x][y];
+            struct Object* obj = loc->obj_list.head ? loc->obj_list.head->data : NULL;
+
+            if(loc->mon)
+            {
+                term_draw_symbol(i, j, &loc->mon->type->symbol->fg, &loc->mon->type->symbol->bg, loc->mon->type->symbol->attr, loc->mon->type->symbol->sym);
+            }
+            else if(obj)
+            {
+                term_draw_symbol(i, j, &obj->symbol->fg, &obj->symbol->bg, obj->symbol->attr, obj->symbol->sym);
+            }
+            else
+            {
+                term_draw_symbol(i, j, NULL, NULL, 0, loc->terrain);
+            }
         }
     }
-
-    term_draw_symbol(you->mon->x, you->mon->y, &you->mon->type->symbol->fg, &you->mon->type->symbol->bg, you->mon->type->symbol->attr, '@');
 
     term_refresh();
 }
@@ -185,7 +201,7 @@ bool loc_rm_obj(struct Location* loc, struct Object* obj)
  */
 bool map_in_bounds(struct Map* map, int x, int y)
 {
-    if(x < 0 || x >= MCOLS || y < 0 || y >= MROWS)
+    if(x < 0 || x >= map->width || y < 0 || y >= map->height)
         return false;
     return true;
 }

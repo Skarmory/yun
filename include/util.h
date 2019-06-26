@@ -17,4 +17,6 @@ float roll_d100f(void);
 
 float log_base(int x, int base);
 
+int clampi(int val, int low, int high);
+
 #endif

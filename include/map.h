@@ -34,6 +34,8 @@ struct Location
  */
 struct Map
 {
+    int width;
+    int height;
     struct Location** locs;
     struct Room** rooms;
     int room_count;
@@ -42,8 +44,8 @@ struct Map
 
 void display_map(void);
 
-struct Map* new_map(void);
-void free_map(struct Map* map);
+struct Map* map_new(int width, int height);
+void map_free(struct Map* map);
 void map_add_mon(struct Map* map, struct Mon* mon);
 bool map_rm_mon(struct Map* map, struct Mon* mon);
 bool map_move_mon(struct Map* map, struct Mon* mon, int newx, int newy);

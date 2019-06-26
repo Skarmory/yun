@@ -121,7 +121,7 @@ int main(int argc, char** argv)
     term_refresh();
     term_getch();
 
-    cmap = new_map();
+    cmap = map_new(200, 200);
 
     new_player();
     new_game();

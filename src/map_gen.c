@@ -1,5 +1,6 @@
 #include "map_gen.h"
 
+#include "log.h"
 #include "map.h"
 #include "map_room.h"
 #include "util.h"
@@ -18,8 +19,8 @@ void gen_rooms(struct Map* map)
         int w = random_int(4, 10);
         int h = random_int(4, 8);
 
-        int x = random_int(0, (MCOLS - w - 1));
-        int y = random_int(0, (MROWS - h - 1));
+        int x = random_int(0, map->width-1-w);
+        int y = random_int(0, map->height-1-h);
 
         bool gen = true;
 
@@ -90,7 +91,7 @@ bool _is_maze_snode(struct Map* map, struct Location* loc)
     int x = loc->x;
     int y = loc->y;
 
-    if(x == 0 || x == MCOLS - 1 || y == 0 || y == MROWS - 1 || map->locs[x][y].terrain != ' ')
+    if(x == 0 || x == map->width - 1 || y == 0 || y == map->height - 1 || map->locs[x][y].terrain != ' ')
         return false;
 
     if(map->locs[x-1][y-1].terrain == ' ' && map->locs[x][y-1].terrain == ' ' && map->locs[x+1][y-1].terrain == ' ' &&
@@ -104,8 +105,8 @@ bool _is_maze_snode(struct Map* map, struct Location* loc)
 /* Finds a maze starting node */
 struct Location* _get_maze_snode(struct Map* map)
 {
-    for(int x = 0; x < MCOLS; x++)
-    for(int y = 0; y < MROWS; y++)
+    for(int x = 0; x < map->width; x++)
+    for(int y = 0; y < map->height; y++)
     {
         if(_is_maze_snode(map, &map->locs[x][y]))
         {
@@ -125,7 +126,7 @@ bool _is_valid_maze_node(struct Map* map, struct Location* loc)
     if(loc->terrain != ' ')
         return false;
 
-    if(loc->x == 0 || loc->y == 0 || loc->x == MCOLS-1 || loc->y == MROWS-1)
+    if(loc->x == 0 || loc->y == 0 || loc->x == map->width-1 || loc->y == map->height-1)
         return false;
 
     int conn_count = 0;
@@ -262,7 +263,7 @@ bool _is_maze_deadend(struct Map* map, struct Location* loc)
     if(loc->terrain != '#')
         return false;
 
-    if(x == 0 || y == 0 || x == MCOLS-1 || y == MROWS-1)
+    if(x == 0 || y == 0 || x == map->width-1 || y == map->height-1)
         return false;
 
     int conn_count = 0;
@@ -289,8 +290,8 @@ bool _is_maze_deadend(struct Map* map, struct Location* loc)
  * Returns true if it finds a deadend. */
 struct Location* _get_maze_deadend(struct Map* map)
 {
-    for(int x = 0; x < MCOLS; x++)
-    for(int y = 0; y < MROWS; y++)
+    for(int x = 0; x < map->width; x++)
+    for(int y = 0; y < map->height; y++)
     {
         if(_is_maze_deadend(map, &map->locs[x][y]))
         {
@@ -374,7 +375,7 @@ void _make_doors(struct Map* map)
         // South wall
         x = room->x+1;
         y = room->y + room->h-1;
-        if(y+1 < MROWS-1)
+        if(y+1 < map->height-1)
         {
             for(; x < (room->x + room->w - 1); x++)
             {
@@ -404,7 +405,7 @@ void _make_doors(struct Map* map)
         // East wall
         x = room->x + room->w - 1;
         y = room->y+1;
-        if(x+1 < MCOLS-1)
+        if(x+1 < map->width-1)
         {
             for(; y < (room->y + room->h - 1); y++)
             {
