@@ -20,7 +20,7 @@ void update_mon_ai(struct Mon* mon)
    struct Location* youloc = &cmap->locs[you->mon->x][you->mon->y];
 
    // Find next location closer to the player
-   struct Location* next_loc = next_path_loc(monloc, youloc, mon->pathing);
+   struct Location* next_loc = next_path_loc(monloc, youloc, mon->move_flags);
 
    if(next_loc->x == youloc->x && next_loc->y == youloc->y)
    {

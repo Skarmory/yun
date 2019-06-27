@@ -49,7 +49,7 @@ struct Map* map_new(int width, int height)
             map->locs[i][j].terrain = ' ';
             map->locs[i][j].path_node = new_path_node(&map->locs[i][j]);
             map->locs[i][j].mon = NULL;
-            map->locs[i][j].pathing = 0;
+            map->locs[i][j].pathing_flags = 0;
             list_init(&map->locs[i][j].obj_list);
         }
     }
@@ -215,19 +215,24 @@ bool map_has_mon(struct Map* map, int x, int y)
 }
 
 /**
- * Check if location is pathable given sample path bits
+ * Check if location is pathable given sample move flags
  */
-bool map_is_pathable(struct Map* map, int x, int y, int path_bits)
+bool map_is_pathable(struct Map* map, int x, int y, MonAttrMoveFlags move_flags)
 {
-    return map->locs[x][y].pathing & path_bits;
+    PathingFlags path_flags = map->locs[x][y].pathing_flags;
+    return (
+        ((path_flags & PATHING_GROUND) && (move_flags & MONATTR_WALKS)) ||
+        ((path_flags & PATHING_WATER)  && (move_flags & MONATTR_SWIMS)) ||
+        ((path_flags & PATHING_FLYING) && (move_flags & MONATTR_FLIES))
+    );
 }
 
 /**
  * Check if given x, y location is a valid move
  */
-bool map_valid_move(struct Map* map, int x, int y, int path_bits)
+bool map_valid_move(struct Map* map, int x, int y, MonAttrMoveFlags move_flags)
 {
-    return map_in_bounds(map, x, y) && map_is_pathable(map, x, y, path_bits) && !map_has_mon(map, x, y);
+    return map_in_bounds(map, x, y) && map_is_pathable(map, x, y, move_flags) && !map_has_mon(map, x, y);
 }
 
 /**
@@ -235,7 +240,7 @@ bool map_valid_move(struct Map* map, int x, int y, int path_bits)
  */
 bool map_move_mon(struct Map* map, struct Mon* mon, int newx, int newy)
 {
-    if(!map_valid_move(map, newx, newy, mon->pathing))
+    if(!map_valid_move(map, newx, newy, mon->move_flags))
         return false;
 
     map->locs[mon->x][mon->y].mon = NULL;

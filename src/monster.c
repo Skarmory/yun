@@ -31,7 +31,7 @@ struct Mon* mon_new(struct MonType* type, int x, int y)
     mon->type = type;
     mon->x = x;
     mon->y = y;
-    mon->pathing = type->pathing;
+    mon->move_flags = type->move_flags;
     mon->equipment = new_equipment();
     mon->inventory = new_inventory();
 
@@ -76,9 +76,9 @@ void update_mons(void)
 /**
  * Return true if monster has ability to use a particular pathing type
  */
-bool mon_has_pathing_attr(struct Mon* mon, int path_attr)
+bool mon_has_move_attr(struct Mon* mon, MonAttrMoveFlags move_flags)
 {
-   return mon->pathing & path_attr;
+   return mon->move_flags & move_flags;
 }
 
 /**

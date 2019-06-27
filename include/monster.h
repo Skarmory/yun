@@ -2,6 +2,7 @@
 #define NAXX_MON_H
 
 #include "defs.h"
+#include "mon_attr.h"
 #include "mon_stats.h"
 
 struct MonType;
@@ -20,7 +21,7 @@ struct Weapon;
 struct Mon
 {
     unsigned int x, y;
-    int pathing;
+    MonAttrMoveFlags move_flags;
     const struct MonType* type;
     struct Equipment* equipment;
     struct Inventory* inventory;
@@ -30,7 +31,7 @@ struct Mon
 struct Mon* mon_new(struct MonType* type, int x, int y);
 void mon_free(struct Mon*);
 void update_mons(void);
-bool mon_has_pathing_attr(struct Mon* mon, int path_attr);
+bool mon_has_move_attr(struct Mon* mon, MonAttrMoveFlags move_flags);
 bool mon_is_dead(struct Mon* mon);
 bool mon_dual_wielding(struct Mon* mon);
 bool mon_shield_wielding(struct Mon* mon);

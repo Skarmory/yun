@@ -1,10 +1,15 @@
 #ifndef NAXX_MON_ATTR_H
 #define NAXX_MON_ATTR_H
 
-// Pathing info
-#define GROUND 0x00000001
-#define WATER  0x00000002
-#define LAVA   0x00000004
-#define FLYING 0x00000008
+enum MonAttrMoveFlag
+{
+    MONATTR_WALKS = 1u,
+    MONATTR_SWIMS = (1u << 2),
+    MONATTR_FLIES = (1u << 1)
+};
+
+typedef unsigned int MonAttrMoveFlags;
+
+enum MonAttrMoveFlag mon_attr_move_flag_from_string(const char* name);
 
 #endif

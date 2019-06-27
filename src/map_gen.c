@@ -56,18 +56,18 @@ void gen_rooms(struct Map* map)
             for(int tmp = 0; tmp < h; tmp++)
             {
                 map->locs[x][y+tmp].terrain = '|';
-                map->locs[x][y+tmp].pathing = 0;
+                map->locs[x][y+tmp].pathing_flags = 0;
                 map->locs[x+w-1][y+tmp].terrain = '|';
-                map->locs[x+w-1][y+tmp].pathing = 0;
+                map->locs[x+w-1][y+tmp].pathing_flags = 0;
             }
 
             // Draw horizontal walls
             for(int tmp = 0; tmp < w; tmp++)
             {
                 map->locs[x+tmp][y].terrain = '-';
-                map->locs[x+tmp][y].pathing = 0;
+                map->locs[x+tmp][y].pathing_flags = 0;
                 map->locs[x+tmp][y+h-1].terrain = '-';
-                map->locs[x+tmp][y+h-1].pathing = 0;
+                map->locs[x+tmp][y+h-1].pathing_flags = 0;
             }
 
             // Fill in with floor
@@ -75,7 +75,7 @@ void gen_rooms(struct Map* map)
             for(int tmpy = 1; tmpy < h-1; tmpy++)
             {
                 map->locs[x + tmpx][y + tmpy].terrain = '.';
-                map->locs[x + tmpx][y + tmpy].pathing |= WALKABLE;
+                map->locs[x + tmpx][y + tmpy].pathing_flags |= PATHING_GROUND;
             }
         }
     }
@@ -248,7 +248,7 @@ void _flood_fill_maze(struct Map* map, struct Location* loc)
     while((next = _get_valid_maze_node(map, loc)))
     {
         next->terrain = '#';
-        next->pathing |= WALKABLE;
+        next->pathing_flags |= PATHING_GROUND;
         _flood_fill_maze(map, next);
     }
 }
@@ -336,7 +336,7 @@ void _back_fill_deadends(struct Map* map, struct Location* loc)
     while((next = _get_next_deadend_node(map, loc)))
     {
         next->terrain = ' ';
-        next->pathing = 0;
+        next->pathing_flags = 0;
         _back_fill_deadends(map, next);
     }
 }
@@ -420,7 +420,7 @@ void _make_doors(struct Map* map)
         int which = random_int(0, cidx-1);
 
         connectors[which]->terrain = '.';
-        connectors[which]->pathing |= WALKABLE;
+        connectors[which]->pathing_flags |= PATHING_GROUND;
     }
 
     free(connectors);
@@ -434,7 +434,7 @@ void gen_maze(struct Map* map)
     while((tmp = _get_maze_snode(map)))
     {
         tmp->terrain = '#';
-        tmp->pathing |= WALKABLE;
+        tmp->pathing_flags |= PATHING_GROUND;
         _flood_fill_maze(map, tmp);
     }
 

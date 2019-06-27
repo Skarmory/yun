@@ -31,7 +31,7 @@ enum ParserCode parse_mon_types(void)
     parser_register_field(parser, "symbol", "symbol char", &_parse_mon_type_symbol_callback);
     parser_register_field(parser, "colour", "red int green int blue int", &_parse_mon_type_colour_callback);
     parser_register_field(parser, "stats", "strength int agility int intelligence int spirit int stamina int", &_parse_mon_type_stats_callback);
-    parser_register_field(parser, "pathing", "pathing int", &_parse_mon_type_pathing_callback);
+    parser_register_field(parser, "move-flag", "flag string", &_parse_mon_type_pathing_callback);
     parser_register_field(parser, "base-armour", "name string", &_parse_mon_type_base_armour_callback);
     parser_register_field(parser, "base-weapon", "name string", &_parse_mon_type_base_weapon_callback);
 
@@ -116,7 +116,7 @@ parsing_callback(_parse_mon_type_stats_callback)
 parsing_callback(_parse_mon_type_pathing_callback)
 {
     struct MonType* type = parser_get_userdata_active(parser);
-    type->pathing = parser_field_get_int(parser, "pathing", "pathing");
+    type->move_flags |= mon_attr_move_flag_from_string(parser_field_get_string(parser, "move-flag", "flag"));
     return PARSE_CALLBACK_OK;
 }
 

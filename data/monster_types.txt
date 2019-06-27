@@ -18,9 +18,9 @@
 # symbol      - ASCII character for in-game drawing
 # colour      - RGB colour for the symbol. [0-255]
 # stats       - Strength, agility, intelligence, spirit, and stamina (in that order)
-# pathing     - Specifies what types of terrain the monster type can traverse innately
-#                   1: Ground
+# move-flag   - Specifies what types of movement the creature is capable of. This determines what terrain they can traverse. [walks, swims, flies]
 # base-armour - The name of the armour the creature has by default. This cannot be dropped or unequipped.
+# base-weapon - The name of the weapon the creature has by default. This cannot be dropped or unequipped.
 
 # ----- PLAYABLE -----
 
@@ -29,7 +29,7 @@ desc:Human
 symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:fist
 
@@ -38,7 +38,7 @@ desc:Night Elf
 symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:fist
 
@@ -47,7 +47,7 @@ desc:Dwarf
 symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:fist
 
@@ -56,7 +56,7 @@ desc:Gnome
 symbol:@
 colour:255;255;255
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:fist
 
@@ -65,7 +65,7 @@ desc:Orc
 symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:fist
 
@@ -74,7 +74,7 @@ desc:Troll
 symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:fist
 
@@ -83,7 +83,7 @@ desc:Forsaken
 symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:fist
 
@@ -92,7 +92,7 @@ desc:Tauren
 symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:fist
 
@@ -103,6 +103,6 @@ desc:Ghoul
 symbol:g
 colour:55;55;55
 stats:1;1;1;1;1
-pathing:1
+move-flag:walks
 base-armour:unarmoured
 base-weapon:claws

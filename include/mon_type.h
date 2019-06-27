@@ -1,6 +1,8 @@
 #ifndef NAXX_MONTYPE_H
 #define NAXX_MONTYPE_H
 
+#include "mon_attr.h"
+
 struct ArmourBase;
 struct Weapon;
 struct Symbol;
@@ -12,13 +14,13 @@ struct Symbol;
  */
 struct MonType
 {
-    char                 name[32]; // Name of this type of mon
-    char                 desc[32];
-    struct Symbol*       symbol;
-    struct ArmourBase*   base_armour; // All creatures have a base armour for if they don't have equipment
-    struct WeaponBase*   base_weapon;
-    int                  strength, agility, intelligence, spirit, stamina;
-    int                  pathing;
+    char               name[32]; // Name of this type of mon
+    char               desc[32];
+    struct Symbol*     symbol;
+    struct ArmourBase* base_armour; // All creatures have a base armour for if they don't have equipment
+    struct WeaponBase* base_weapon;
+    int                strength, agility, intelligence, spirit, stamina;
+    MonAttrMoveFlags   move_flags;
 };
 
 struct MonType* mon_type_lookup_by_name(const char* name);
