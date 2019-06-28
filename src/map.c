@@ -2,6 +2,7 @@
 
 #include "list.h"
 #include "log.h"
+#include "map_location.h"
 #include "monster.h"
 #include "mon_type.h"
 #include "object.h"
@@ -33,14 +34,14 @@ struct Map* map_new(int width, int height)
     struct Map* map = (struct Map*) malloc(sizeof(struct Map));
     map->width = width;
     map->height = height;
-    map->locs = (struct Location**) malloc(sizeof(struct Location*) * width);
+    map->locs = (struct MapLocation**) malloc(sizeof(struct MapLocation*) * width);
     map->rooms = NULL;
     map->room_count = 0;
     list_init(&map->mon_list);
 
     for(int i = 0; i < width; ++i)
     {
-        map->locs[i] = (struct Location*) malloc(sizeof(struct Location) * height);
+        map->locs[i] = (struct MapLocation*) malloc(sizeof(struct MapLocation) * height);
 
         for(int j = 0; j < height; ++j)
         {
@@ -110,7 +111,7 @@ void display_map(void)
             // Check for y out of range
             if(!map_in_bounds(cmap, x, y)) break;
 
-            struct Location* loc = &cmap->locs[x][y];
+            struct MapLocation* loc = &cmap->locs[x][y];
             struct Object* obj = loc->obj_list.head ? loc->obj_list.head->data : NULL;
 
             if(loc->mon)
@@ -168,31 +169,6 @@ List* map_get_objects(struct Map* map, int x, int y)
     return &map->locs[x][y].obj_list;
 }
 
-/**
- * Add object to given map location
- */
-bool loc_add_obj(struct Location* loc, struct Object* obj)
-{
-    // push object onto location object linked list
-    list_add(&loc->obj_list, obj);
-
-    return true;
-}
-
-/**
- * Remove object from given map location
- */
-bool loc_rm_obj(struct Location* loc, struct Object* obj)
-{
-    ListNode* node = list_find(&loc->obj_list, obj);
-    if(node)
-    {
-        list_rm(&loc->obj_list, node);
-        return true;
-    }
-    return false;
-}
-
 /*
  * Does map boundary check
  */
@@ -246,4 +222,9 @@ bool map_move_mon(struct Map* map, struct Mon* mon, int newx, int newy)
     mon->y = newy;
 
     return true;
+}
+
+struct MapLocation* map_get_loc(struct Map* map, int x, int y)
+{
+    return &map->locs[x][y];
 }

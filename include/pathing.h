@@ -1,7 +1,7 @@
 #ifndef NAXX_PATH_H
 #define NAXX_PATH_H
 
-struct Location;
+struct MapLocation;
 
 /**
  * Enum representing whether a pathing node has been visited
@@ -31,7 +31,7 @@ enum NodeState
  */
 struct PathNode
 {
-    struct Location* loc;
+    struct MapLocation* loc;
     struct PathNode* pathlist_next;
     struct PathNode* next;
     struct PathNode* prev;
@@ -42,7 +42,7 @@ struct PathNode
     int gen_id;
 };
 
-struct PathNode* new_path_node(struct Location* loc);
-struct Location* next_path_loc(struct Location* start, struct Location* dest, int path_bits);
+struct PathNode* new_path_node(struct MapLocation* loc);
+struct MapLocation* next_path_loc(struct MapLocation* start, struct MapLocation* dest, int path_bits);
 
 #endif

@@ -2,6 +2,7 @@
 
 #include "log.h"
 #include "map.h"
+#include "map_location.h"
 #include "monster.h"
 #include "mon_attack.h"
 #include "pathing.h"
@@ -16,11 +17,11 @@ void update_mon_ai(struct Mon* mon)
    if(mon == you->mon)
        return;
 
-   struct Location* monloc = &cmap->locs[mon->x][mon->y];
-   struct Location* youloc = &cmap->locs[you->mon->x][you->mon->y];
+   struct MapLocation* monloc = &cmap->locs[mon->x][mon->y];
+   struct MapLocation* youloc = &cmap->locs[you->mon->x][you->mon->y];
 
    // Find next location closer to the player
-   struct Location* next_loc = next_path_loc(monloc, youloc, mon->move_flags);
+   struct MapLocation* next_loc = next_path_loc(monloc, youloc, mon->move_flags);
 
    if(next_loc->x == youloc->x && next_loc->y == youloc->y)
    {

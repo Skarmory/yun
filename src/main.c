@@ -5,6 +5,7 @@
 #include "log.h"
 #include "map.h"
 #include "map_gen.h"
+#include "map_location.h"
 #include "map_room.h"
 #include "message.h"
 #include "monster.h"

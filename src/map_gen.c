@@ -2,6 +2,7 @@
 
 #include "log.h"
 #include "map.h"
+#include "map_location.h"
 #include "map_room.h"
 #include "util.h"
 
@@ -86,7 +87,7 @@ void gen_rooms(struct Map* map)
 
 /* Check if a location is a valid starting node for a maze
  * Valid maze starting nodes are solid rock surrounded by 8 other solid rock */
-bool _is_maze_snode(struct Map* map, struct Location* loc)
+bool _is_maze_snode(struct Map* map, struct MapLocation* loc)
 {
     int x = loc->x;
     int y = loc->y;
@@ -103,7 +104,7 @@ bool _is_maze_snode(struct Map* map, struct Location* loc)
 }
 
 /* Finds a maze starting node */
-struct Location* _get_maze_snode(struct Map* map)
+struct MapLocation* _get_maze_snode(struct Map* map)
 {
     for(int x = 0; x < map->width; x++)
     for(int y = 0; y < map->height; y++)
@@ -121,7 +122,7 @@ struct Location* _get_maze_snode(struct Map* map)
  * Valid maze nodes need to have only 1 connection to another corridor tile.
  * They can also only have 2 of 4 diagonal squares as corridor tiles so long as those tiles
  * are orthogonal to the single connecting corridor tile. */
-bool _is_valid_maze_node(struct Map* map, struct Location* loc)
+bool _is_valid_maze_node(struct Map* map, struct MapLocation* loc)
 {
     if(loc->terrain != ' ')
         return false;
@@ -131,7 +132,7 @@ bool _is_valid_maze_node(struct Map* map, struct Location* loc)
 
     int conn_count = 0;
 
-    struct Location* conn;
+    struct MapLocation* conn;
 
     if(map->locs[loc->x-1][loc->y].terrain == '#')
     {
@@ -194,7 +195,7 @@ bool _is_valid_maze_node(struct Map* map, struct Location* loc)
 /* Attempts to get a location at random orthogonal to a maze node to continue the maze with.
  * It will fall back to just checking every single orthogonal direction if the randomly picked
  * direction is not valid. */
-struct Location* _get_valid_maze_node(struct Map* map, struct Location* loc)
+struct MapLocation* _get_valid_maze_node(struct Map* map, struct MapLocation* loc)
 {
     int x = loc->x;
     int y = loc->y;
@@ -216,7 +217,7 @@ struct Location* _get_valid_maze_node(struct Map* map, struct Location* loc)
             yoff= 1; break;
     }
 
-    struct Location* next;
+    struct MapLocation* next;
     next = &map->locs[x + xoff][y + yoff];
     if(_is_valid_maze_node(map, next))
         return next;
@@ -241,9 +242,9 @@ struct Location* _get_valid_maze_node(struct Map* map, struct Location* loc)
 }
 
 /* Recursive algorithm to carve out a maze in the level. */
-void _flood_fill_maze(struct Map* map, struct Location* loc)
+void _flood_fill_maze(struct Map* map, struct MapLocation* loc)
 {
-    struct Location* next;
+    struct MapLocation* next;
 
     while((next = _get_valid_maze_node(map, loc)))
     {
@@ -255,7 +256,7 @@ void _flood_fill_maze(struct Map* map, struct Location* loc)
 
 /* Checks if a given location is a deadend.
  * Deadends have only one connecting corridor tile */
-bool _is_maze_deadend(struct Map* map, struct Location* loc)
+bool _is_maze_deadend(struct Map* map, struct MapLocation* loc)
 {
     int x = loc->x;
     int y = loc->y;
@@ -288,7 +289,7 @@ bool _is_maze_deadend(struct Map* map, struct Location* loc)
 
 /* Finds and sets the input arg to the first deadend it finds.
  * Returns true if it finds a deadend. */
-struct Location* _get_maze_deadend(struct Map* map)
+struct MapLocation* _get_maze_deadend(struct Map* map)
 {
     for(int x = 0; x < map->width; x++)
     for(int y = 0; y < map->height; y++)
@@ -304,9 +305,9 @@ struct Location* _get_maze_deadend(struct Map* map)
 
 /* Finds the next deadend node next to the given one, and sets the input arg to it.
  * Returns true if it finds a deadend */
-struct Location* _get_next_deadend_node(struct Map* map, struct Location* loc)
+struct MapLocation* _get_next_deadend_node(struct Map* map, struct MapLocation* loc)
 {
-    struct Location* next;
+    struct MapLocation* next;
     int x = loc->x;
     int y = loc->y;
 
@@ -330,9 +331,9 @@ struct Location* _get_next_deadend_node(struct Map* map, struct Location* loc)
 }
 
 /* Recursively fills in deadend corridors until only connected corridors remain. */
-void _back_fill_deadends(struct Map* map, struct Location* loc)
+void _back_fill_deadends(struct Map* map, struct MapLocation* loc)
 {
-    struct Location* next;
+    struct MapLocation* next;
     while((next = _get_next_deadend_node(map, loc)))
     {
         next->terrain = ' ';
@@ -348,7 +349,7 @@ void _make_doors(struct Map* map)
 {
     struct Room* room;
 
-    struct Location** connectors = (struct Location**) malloc(sizeof(struct Location*) * (10 * 2 + 8 * 2));
+    struct MapLocation** connectors = (struct MapLocation**) malloc(sizeof(struct MapLocation*) * (10 * 2 + 8 * 2));
 
     for(int i = 0; i < map->room_count; i++)
     {
@@ -429,7 +430,7 @@ void _make_doors(struct Map* map)
 /* Generate the maze of corridors, adds entryways into rooms, and fills in the deadends */
 void gen_maze(struct Map* map)
 {
-    struct Location* tmp;
+    struct MapLocation* tmp;
 
     while((tmp = _get_maze_snode(map)))
     {

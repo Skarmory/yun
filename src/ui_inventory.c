@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "log.h"
 #include "map.h"
+#include "map_location.h"
 #include "message.h"
 #include "monster.h"
 #include "mon_equip.h"

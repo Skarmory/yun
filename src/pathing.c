@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "log.h"
 #include "map.h"
+#include "map_location.h"
 #include "util.h"
 
 #include <float.h>
@@ -28,7 +29,7 @@ struct PathNode* _get_first_path_node(struct PathNode* node)
 /**
  * Evaluates a node's cost
  */
-float _evaluate(struct PathNode* path, struct Location* dest, int path_bits)
+float _evaluate(struct PathNode* path, struct MapLocation* dest, int path_bits)
 {
     float mod = 0.0f;
 
@@ -98,7 +99,7 @@ struct PathNode* _get_best_open(void)
 /**
  * A* algorithm constructing shortest path
  */
-struct PathNode* _find_path(struct Location* start, struct Location* dest, int path_bits)
+struct PathNode* _find_path(struct MapLocation* start, struct MapLocation* dest, int path_bits)
 {
     struct PathNode* global_best = NULL;
     struct PathNode* best_node = NULL;
@@ -162,7 +163,7 @@ struct PathNode* _find_path(struct Location* start, struct Location* dest, int p
     return global_best;
 }
 
-struct PathNode* new_path_node(struct Location* loc)
+struct PathNode* new_path_node(struct MapLocation* loc)
 {
     struct PathNode* node = (struct PathNode*) malloc(sizeof(struct PathNode));
     node->loc = loc;
@@ -181,7 +182,7 @@ struct PathNode* new_path_node(struct Location* loc)
 /**
  * Returns the next location in the shortest path from start to dest
  */
-struct Location* next_path_loc(struct Location* start, struct Location* dest, int path_bits)
+struct MapLocation* next_path_loc(struct MapLocation* start, struct MapLocation* dest, int path_bits)
 {
     _open_head = NULL;
 
@@ -196,7 +197,7 @@ struct Location* next_path_loc(struct Location* start, struct Location* dest, in
 
     _add_open(node);
 
-    struct Location* ret = NULL;
+    struct MapLocation* ret = NULL;
     if((node = _find_path(start, dest, path_bits)) != NULL)
     {
         ret = _get_first_path_node(node)->loc;
