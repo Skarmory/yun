@@ -126,7 +126,7 @@ int main(int argc, char** argv)
     new_player();
     new_game();
 
-    gen_map(cmap);
+    gen_map(cmap, MAPTYPE_OPEN);
 
     // --------- DEBUG CODE START ----------
     struct Room* room = cmap->rooms[0];
@@ -207,11 +207,14 @@ int main(int argc, char** argv)
     loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
 
     struct MonType* ghoul_type = mon_type_lookup_by_name("ghoul");
-    for(int i = 1; i < cmap->room_count - 1; i++)
+    for(int i = 0; i < cmap->room_count; i++)
     {
         room = cmap->rooms[i];
         startx = random_int(room->x + 1, room->x + room->w - 2);
         starty = random_int(room->y + 1, room->y + room->h - 2);
+
+        if(map_has_mon(cmap, startx, starty))
+            continue;
 
         struct Mon* ghoul = mon_new(ghoul_type, startx, starty);
         map_add_mon(cmap, ghoul);

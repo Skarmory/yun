@@ -3,6 +3,12 @@
 
 struct Map;
 
-void gen_map(struct Map* map);
+enum MapType
+{
+    MAPTYPE_DUNGEON,
+    MAPTYPE_OPEN
+};
+
+void gen_map(struct Map* map, enum MapType type);
 
 #endif

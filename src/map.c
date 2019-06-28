@@ -98,9 +98,6 @@ void display_map(void)
     int xstart = clampi(you->mon->x - (MCOLS/2), 0, cmap->width - MCOLS);
     int ystart = clampi(you->mon->y - (MROWS/2), 0, cmap->height - MROWS);
 
-    log_format_msg(DEBUG, "x: %d, y: %d", you->mon->x, you->mon->y);
-    log_format_msg(DEBUG, "xs: %d, ys: %d", xstart, ystart);
-
     int i = 0;
     for(int x = xstart; i < MCOLS; ++x, ++i)
     {

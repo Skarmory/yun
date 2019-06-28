@@ -74,6 +74,9 @@ void handle_input(void)
         char ch;
         switch(ch = term_getch()) // get movement
         {
+            case '@':
+                display_fmsg_nolog("Current position: %d, %d", you->mon->x, you->mon->y);
+                break;
             case 'h':
             case 'j':
             case 'k':

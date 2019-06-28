@@ -443,14 +443,47 @@ void gen_maze(struct Map* map)
     while((tmp = _get_maze_deadend(map)))
     {
         tmp->terrain = ' ';
-        tmp->pathing = 0;
+        tmp->pathing_flags = 0;
         _back_fill_deadends(map, tmp);
     }
 }
 
-/* Call this to generate a map that contains rooms and a load of connecting corridors */
-void gen_map(struct Map* map)
+static void _gen_open_area(struct Map* map)
 {
-    gen_rooms(map);
-    gen_maze(map);
+    map->rooms = (struct Room**)malloc(sizeof(struct Room*));
+    map->room_count = 1;
+
+    int w = random_int(map->width/4, map->width-1);
+    int h = random_int(map->width/4, map->height-1);
+    int x = random_int(0, map->width-1-w);
+    int y = random_int(0, map->height-1-h);
+
+    map->rooms[0] = (struct Room*)malloc(sizeof(struct Room));
+    struct Room* room = map->rooms[0];
+    room->x = x;
+    room->y = y;
+    room->w = w;
+    room->h = h;
+
+    // Fill in with floor
+    for(int tmpx = 1; tmpx < w-1; tmpx++)
+    for(int tmpy = 1; tmpy < h-1; tmpy++)
+    {
+        map->locs[x + tmpx][y + tmpy].terrain = '.';
+        map->locs[x + tmpx][y + tmpy].pathing_flags |= PATHING_GROUND;
+    }
+}
+
+/* Call this to generate a map that contains rooms and a load of connecting corridors */
+void gen_map(struct Map* map, enum MapType type)
+{
+    if(type == MAPTYPE_DUNGEON)
+    {
+        gen_rooms(map);
+        gen_maze(map);
+    }
+    else
+    {
+        _gen_open_area(map);
+    }
 }
