@@ -7,6 +7,7 @@
  */
 
 #include "list.h"
+#include "symbol.h"
 
 #include <stdbool.h>
 
@@ -29,13 +30,13 @@ typedef unsigned int PathingFlags;
  */
 struct MapLocation
 {
-    unsigned int x;
-    unsigned int y;
+    int x;
+    int y;
     PathingFlags pathing_flags;
     struct PathNode* path_node;
     struct Mon* mon;
     List obj_list;
-    char terrain;
+    struct Symbol symbol;
 };
 
 bool loc_add_obj(struct MapLocation* loc, struct Object* obj);

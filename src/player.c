@@ -1,6 +1,7 @@
 #include "player.h"
 
 #include "map.h"
+#include "map_cell.h"
 #include "message.h"
 #include "monster.h"
 #include "mon_type.h"
@@ -38,7 +39,8 @@ void free_player(void)
         you->faction = NULL;
         free(you->cls);
         free(you->race);
-        list_rm(&cmap->mon_list, list_find(&cmap->mon_list, you->mon));
+        struct MapCell* player_cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
+        list_rm(&player_cell->mon_list, list_find(&player_cell->mon_list, you->mon));
         mon_free(you->mon);
         free(you);
     }

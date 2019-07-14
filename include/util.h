@@ -17,6 +17,9 @@ float roll_d100f(void);
 
 float log_base(int x, int base);
 
-int clampi(int val, int low, int high);
+int clamp(int val, int low, int high);
+
+#define minu(a, b) ( (a) > (b) ? b : a )
+#define maxu(a, b) ( (a) > (b) ? a : b )
 
 #endif

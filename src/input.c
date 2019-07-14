@@ -1,6 +1,7 @@
 #include "input.h"
 
 #include "map.h"
+#include "map_cell.h"
 #include "map_location.h"
 #include "message.h"
 #include "monster.h"
@@ -24,10 +25,16 @@
  */
 static bool _do_smart_action(int x, int y)
 {
-    if(cmap->locs[x][y].mon == NULL)
-        return map_move_mon(cmap, you->mon, x, y);
+    // This could be null if it's a movement request to an out of bounds x y
+    struct MapCell* cell = map_get_cell_by_world_coord(cmap, x, y);
+    if(!cell) return false;
+
+    struct MapLocation* loc = map_cell_get_location(cell, x, y);
+
+    if(loc->mon == NULL)
+        return map_cell_move_mon(cell, you->mon, x, y);
     else
-        return do_attack_mon_mon(you->mon, cmap->locs[x][y].mon);
+        return do_attack_mon_mon(you->mon, loc->mon);
 }
 
 /**
@@ -35,7 +42,9 @@ static bool _do_smart_action(int x, int y)
  */
 static bool _pick_up_object(void)
 {
-    List* obj_list = map_get_objects(cmap, you->mon->x, you->mon->y);
+    struct MapCell* cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
+    struct MapLocation* loc = map_cell_get_location(cell, you->mon->x, you->mon->y);
+    List* obj_list = map_cell_get_objects(cell, you->mon->x, you->mon->y);
 
     if(obj_list->head == NULL)
     {
@@ -47,12 +56,12 @@ static bool _pick_up_object(void)
     struct Object* chosen = (struct Object*)obj_list->head->data;
 
     // Unlink object from Location
-    loc_rm_obj(&cmap->locs[you->mon->x][you->mon->y], chosen);
+    loc_rm_obj(loc, chosen);
 
     if(!inventory_add_obj(you->mon->inventory, chosen))
     {
         // Failed to add to inventory, relink with Location
-        loc_add_obj(&cmap->locs[you->mon->x][you->mon->y], chosen);
+        loc_add_obj(loc, chosen);
         return false;
     }
 

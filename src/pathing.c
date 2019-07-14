@@ -3,6 +3,7 @@
 #include "globals.h"
 #include "log.h"
 #include "map.h"
+#include "map_cell.h"
 #include "map_location.h"
 #include "util.h"
 
@@ -37,9 +38,10 @@ float _evaluate(struct PathNode* path, struct MapLocation* dest, int path_bits)
     if(path->loc->x == dest->x && path->loc->y == dest->y)
         return -INFINITY;
 
+    struct MapCell* cell = map_get_cell_by_world_coord(cmap, path->loc->x, path->loc->y);
     // If this is not a valid move (e.g. other mon on this loc), assign a higher value than it's distance
     // This means the algorithm will explore other paths before checking further in this direction
-    if(!map_valid_move(cmap, path->loc->x, path->loc->y, path_bits))
+    if(!map_cell_is_valid_move(cell, path->loc->x, path->loc->y, path_bits))
         mod = 100.0f;
 
     // Use distance squared to avoid sqrt
@@ -116,15 +118,16 @@ struct PathNode* _find_path(struct MapLocation* start, struct MapLocation* dest,
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
             return best_node;
 
+        struct MapCell* cell = map_get_cell_by_world_coord(cmap, best_node->loc->x, best_node->loc->y);
         for(int _x = best_node->loc->x - 1; _x < best_node->loc->x + 2; _x++)
         for(int _y = best_node->loc->y - 1; _y < best_node->loc->y + 2; _y++)
         {
             // Check for invalid location
             if((_x == best_node->loc->x && _y == best_node->loc->y) ||
-               ((!map_in_bounds(cmap, _x, _y) || !map_is_pathable(cmap, _x, _y, path_bits)) && (_x != dest->x || _y != dest->y)))
+               ((!map_cell_is_in_bounds(cell, _x, _y) || !map_cell_is_pathable(cell, _x, _y, path_bits)) && (_x != dest->x || _y != dest->y)))
                 continue;
 
-            struct PathNode* p = cmap->locs[_x][_y].path_node;
+            struct PathNode* p = map_cell_get_location(cell, _x, _y)->path_node;
 
             // Check to see if this is a stale node (if it was last visited in a previous turn or a previous pathing request this turn)
             // Set it to a fresh state

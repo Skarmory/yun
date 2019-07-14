@@ -19,7 +19,7 @@
 #include <string.h>
 
 #define STATUS_X 0
-#define STATUS_Y 45
+#define STATUS_Y 44
 #define STATUS_W 80
 
 #define YES 'y'

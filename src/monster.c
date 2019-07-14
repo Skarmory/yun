@@ -5,6 +5,7 @@
 
 #include "log.h"
 #include "map.h"
+#include "map_cell.h"
 #include "message.h"
 #include "mon_ai.h"
 #include "mon_equip.h"
@@ -12,6 +13,7 @@
 #include "mon_type.h"
 #include "object.h"
 #include "obj_weapon.h"
+#include "player.h"
 #include "util.h"
 
 #define SET_MINION_STAT_SCALES(mon) \
@@ -66,8 +68,10 @@ void mon_free(struct Mon* mon)
  */
 void update_mons(void)
 {
+    struct MapCell* cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
+
     ListNode* node;
-    list_for_each(&cmap->mon_list, node)
+    list_for_each(&cell->mon_list, node)
     {
         update_mon_ai(node->data);
     }
@@ -110,7 +114,8 @@ void mon_chk_dead(struct Mon* mon)
     if(mon_is_dead(mon))
     {
         display_fmsg_log("The %s was slain.", mon->type->name);
-        map_rm_mon(cmap, mon);
+
+        map_cell_rm_mon(map_get_cell_by_world_coord(cmap, mon->x, mon->y), mon);
         mon_free(mon);
     }
 }

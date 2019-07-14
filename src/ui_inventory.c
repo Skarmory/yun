@@ -4,6 +4,7 @@
 #include "globals.h"
 #include "log.h"
 #include "map.h"
+#include "map_cell.h"
 #include "map_location.h"
 #include "message.h"
 #include "monster.h"
@@ -188,6 +189,8 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
 {
     term_clear();
 
+    struct MapCell* cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
+
     // Drop items
     ListNode* node;
     list_for_each(&pending->to_drop, node)
@@ -195,7 +198,7 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
         struct Object* obj = (struct Object*)node->data;
 
         inventory_rm_obj(inventory, obj);
-        loc_add_obj(map_get_loc(cmap, you->mon->x, you->mon->y), obj);
+        loc_add_obj(map_cell_get_location(cell, you->mon->x, you->mon->y), obj);
 
         if(equipment_is_equipped(equipment, obj) && obj->objtype == OBJ_TYPE_WEAPON)
         {

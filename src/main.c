@@ -4,6 +4,7 @@
 #include "input.h"
 #include "log.h"
 #include "map.h"
+#include "map_cell.h"
 #include "map_gen.h"
 #include "map_location.h"
 #include "map_room.h"
@@ -117,26 +118,36 @@ int main(int argc, char** argv)
         return -1;
     }
 
+#ifdef DEBUG
+    log_msg(DEBUG, "naxx initialised with params:");
+    for(int i = 0; i < argc; ++i)
+    {
+        log_format_msg(DEBUG, "\t%s", argv[i]);
+    }
+#endif
+
     // some intro text
     term_draw_text((screen_cols/2) - 7, screen_rows/2, NULL, NULL, 0, "Welcome to Naxx");
     term_refresh();
     term_getch();
 
-    cmap = map_new(200, 200);
+    cmap = map_new(1, 1);
+    struct MapCell* test_cell = map_cell_new(0, 0);
+    list_add(&cmap->cell_list, test_cell);
 
     new_player();
     new_game();
 
-    gen_map(cmap, MAPTYPE_OPEN);
+    gen_map_cell(test_cell, MAPTYPE_DUNGEON);
 
     // --------- DEBUG CODE START ----------
-    struct Room* room = cmap->rooms[0];
+    struct Room* room = test_cell->room_list.head->data;
     int startx = random_int(room->x + 1, room->x + room->w - 2);
     int starty = random_int(room->y + 1, room->y + room->h - 2);
 
     you->mon->x = startx;
     you->mon->y = starty;
-    map_add_mon(cmap, you->mon);
+    map_cell_add_mon(test_cell, you->mon);
 
     startx = random_int(room->x + 1, room->x + room->w - 2);
     starty = random_int(room->y + 1, room->y + room->h - 2);
@@ -146,79 +157,23 @@ int main(int argc, char** argv)
     for(int i = 0; i < 5; ++i)
     {
         struct Weapon* longsword = weapon_new(longsword_base);
-        loc_add_obj(&cmap->locs[startx][starty], longsword->obj);
+        loc_add_obj(map_cell_get_location(test_cell, startx, starty), longsword->obj);
     }
 
-    struct Armour* armour;
-    int rx0 = room->x+1;
-    int rx1 = rx0 + room->w - 3;
-    int ry0 = room->y+1;
-    int ry1 = ry0 + room->h - 3;
-
-    armour = armour_new(armour_base_lookup_by_name("magister's crown"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("magister's mantle"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("magister's robe"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("magister's gloves"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("magister's leggings"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("magister's boots"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-
-    armour = armour_new(armour_base_lookup_by_name("shadowcraft cap"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("shadowcraft spaulders"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("shadowcraft tunic"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("shadowcraft gloves"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("shadowcraft pants"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("shadowcraft boots"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-
-    armour = armour_new(armour_base_lookup_by_name("beaststalker's cap"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("beaststalker's spaulders"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("beaststalker's tunic"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("beaststalker's gloves"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("beaststalker's pants"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("beaststalker's boots"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-
-    armour = armour_new(armour_base_lookup_by_name("helm of valour"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("spaulders of valour"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("breastplate of valour"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("gauntlets of valour"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("legplates of valour"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-    armour = armour_new(armour_base_lookup_by_name("boots of valour"));
-    loc_add_obj(&cmap->locs[random_int(rx0, rx1)][random_int(ry0, ry1)], armour->obj);
-
     struct MonType* ghoul_type = mon_type_lookup_by_name("ghoul");
-    for(int i = 0; i < cmap->room_count; i++)
+
+    ListNode* node;
+    list_for_each(&test_cell->room_list, node)
     {
-        room = cmap->rooms[i];
+        room = node->data;
         startx = random_int(room->x + 1, room->x + room->w - 2);
         starty = random_int(room->y + 1, room->y + room->h - 2);
 
-        if(map_has_mon(cmap, startx, starty))
+        if(map_cell_has_mon(test_cell, startx, starty))
             continue;
 
         struct Mon* ghoul = mon_new(ghoul_type, startx, starty);
-        map_add_mon(cmap, ghoul);
+        map_cell_add_mon(test_cell, ghoul);
     }
     // ---------- DEBUG CODE END ----------
 
