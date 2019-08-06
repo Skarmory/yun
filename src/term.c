@@ -9,7 +9,7 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define PRINT_BUFFER_SIZE 256
+#define PRINT_BUFFER_SIZE (1024 * 1024)
 
 #define c_escape "\033"
 #define c_escape_kind "["
@@ -42,7 +42,11 @@
 
 #define c_default c_escape c_escape_kind "0" c_graphics_mode
 
-char write_buffer[PRINT_BUFFER_SIZE];
+struct
+{
+    char buffer[PRINT_BUFFER_SIZE];
+    int buffer_len;
+} write_buffer;
 
 typedef struct VTermSymbol
 {
@@ -70,12 +74,17 @@ static void _writef(const char* format, ...)
     va_list args;
     va_start(args, format);
 
-    memset(write_buffer, '\0', PRINT_BUFFER_SIZE);
-    vsnprintf(write_buffer, PRINT_BUFFER_SIZE, format, args);
-    write(1, write_buffer, PRINT_BUFFER_SIZE);
+    vsnprintf(write_buffer.buffer + write_buffer.buffer_len, PRINT_BUFFER_SIZE, format, args);
+    write_buffer.buffer_len += strlen(write_buffer.buffer + write_buffer.buffer_len);
 
     va_end(args);
-} 
+}
+
+static void _flush(void)
+{
+    write(1, write_buffer.buffer, write_buffer.buffer_len);
+    write_buffer.buffer_len = 0;
+}
 
 static void _term_resize(void)
 {
@@ -199,13 +208,14 @@ void term_refresh(void)
             _writef(c_colour_default_bg);
 
         // Write symbol
-        write(1, &sym->symbol, 1);
+        _writef("%c", sym->symbol);
 
         sym->redraw = false;
     }
 
     // Reset term attributes
     _writef(c_default);
+    _flush();
 }
 
 char term_getch(void)
@@ -252,6 +262,7 @@ void term_init(void)
     _term_resize();
     term_clear();
     term_set_cursor(false);
+    write_buffer.buffer_len = 0;
 
     atexit(&term_uninit);
     signal(SIGWINCH, &_term_resize_signal_handler);
