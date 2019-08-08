@@ -6,6 +6,11 @@
 
 #include <stdlib.h>
 
+static inline struct MapLocation* _get_map_location_internal(struct MapCell* cell, int x, int y)
+{
+    return &cell->locs[y * g_map_cell_width + x];
+}
+
 struct MapCell* map_cell_new(int cell_x, int cell_y)
 {
     struct MapCell* cell = (struct MapCell*) malloc(sizeof(struct MapCell));
@@ -67,7 +72,7 @@ struct MapLocation* map_cell_get_location(struct MapCell* cell, int x, int y)
     {
         int _x = (x % g_map_cell_width);
         int _y = (y % g_map_cell_height);
-        return &cell->locs[_y * g_map_cell_width + _x];
+        return _get_map_location_internal(cell, _x, _y);
     }
     return NULL;
 }
@@ -76,14 +81,15 @@ struct MapLocation* map_cell_get_location_relative(struct MapCell* cell, int x, 
 {
     if(x >= 0 && x < g_map_cell_width && y >= 0 &&  y < g_map_cell_height)
     {
-        return &cell->locs[y * g_map_cell_width + x];
+        return _get_map_location_internal(cell, x, y);
     }
     return NULL;
 }
 
 List* map_cell_get_objects(struct MapCell* cell, int x, int y)
 {
-    return &map_cell_get_location(cell, x, y)->obj_list;
+    struct MapLocation* loc = map_cell_get_location(cell, x, y);
+    return loc ? &loc->obj_list : NULL;
 }
 
 void map_cell_add_mon(struct MapCell* cell, struct Mon* mon)
@@ -103,19 +109,6 @@ bool map_cell_rm_mon(struct MapCell* cell, struct Mon* mon)
     }
 
     return false;
-}
-
-bool map_cell_move_mon(struct MapCell* cell, struct Mon* mon, int newx, int newy)
-{
-    if(!map_cell_is_valid_move(cell, newx, newy, mon->move_flags))
-        return false;
-
-    map_cell_get_location(cell, mon->x, mon->y)->mon = NULL;
-    map_cell_get_location(cell, newx, newy)->mon = mon;
-    mon->x = newx;
-    mon->y = newy;
-
-    return true;
 }
 
 bool map_cell_has_mon(struct MapCell* cell, int x, int y)

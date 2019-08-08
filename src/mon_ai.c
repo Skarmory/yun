@@ -34,6 +34,6 @@ void update_mon_ai(struct Mon* mon)
    else
    {
        // Move towards the player
-       map_cell_move_mon(mon_cell, mon, next_loc->x, next_loc->y);
+       mon_move(mon, next_loc->x, next_loc->y);
    }
 }

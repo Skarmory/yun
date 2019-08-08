@@ -32,7 +32,7 @@ static bool _do_smart_action(int x, int y)
     struct MapLocation* loc = map_cell_get_location(cell, x, y);
 
     if(loc->mon == NULL)
-        return map_cell_move_mon(cell, you->mon, x, y);
+        return mon_move(you->mon, x, y);
     else
         return do_attack_mon_mon(you->mon, loc->mon);
 }
