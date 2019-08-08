@@ -152,8 +152,8 @@ bool _is_valid_maze_node(struct MapCell* cell, struct MapLocation* loc)
 
     int conn_count = 0;
 
-    struct MapLocation* tmp;
-    struct MapLocation* conn;
+    struct MapLocation* tmp = NULL;
+    struct MapLocation* conn = NULL;
 
     tmp = map_cell_get_location(cell, loc->x-1, loc->y);
     if(tmp->symbol.sym == '#')
@@ -442,10 +442,21 @@ void _make_doors(struct MapCell* cell)
             }
         }
 
-        int which = random_int(0, cidx-1);
+        int doors_to_make = random_int(1, 4);
+        for(int door_count = 0; door_count < doors_to_make; ++door_count)
+        {
+            if(cidx == 0) break;
 
-        connectors[which]->symbol.sym = '.';
-        connectors[which]->pathing_flags |= PATHING_GROUND;
+            int which = random_int(0, cidx-1);
+
+            connectors[which]->symbol.sym = '.';
+            connectors[which]->pathing_flags |= PATHING_GROUND;
+
+            // Switch in the last one in the array
+            connectors[which] = connectors[cidx-1];
+
+            --cidx;
+        }
     }
 }
 
