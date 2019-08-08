@@ -14,6 +14,11 @@
 // TODO: Check over the maze gen algorithm for performance improvements
 // TODO: Ensure that rooms are always connected
 
+static inline bool _is_border_loc(struct MapCell* cell, struct MapLocation* loc)
+{
+    return (loc->x == cell->world_x || loc->y == cell->world_y || loc->x == cell->world_x + g_map_cell_width - 1 || loc->y == cell->world_y + g_map_cell_height - 1);
+}
+
 /* Draws a map by drawing square rooms at random locations, and with random dimensions. */
 void gen_rooms(struct MapCell* cell)
 {
@@ -25,8 +30,8 @@ void gen_rooms(struct MapCell* cell)
     {
         int w = random_int(4, 10);
         int h = random_int(4, 8);
-        int x = random_int(0, g_map_cell_width-1-w);
-        int y = random_int(0, g_map_cell_height-1-h);
+        int x = random_int(cell->world_x, cell->world_x+g_map_cell_width-1-w);
+        int y = random_int(cell->world_y, cell->world_y+g_map_cell_height-1-h);
 
         bool overlaps = false;
 
@@ -105,11 +110,11 @@ void gen_rooms(struct MapCell* cell)
  * Valid maze starting nodes are solid rock surrounded by 8 other solid rock */
 bool _is_maze_snode(struct MapCell* cell, struct MapLocation* loc)
 {
+    if(loc->symbol.sym != ' ' || _is_border_loc(cell, loc))
+        return false;
+
     int x = loc->x;
     int y = loc->y;
-
-    if(x == 0 || x == g_map_cell_width - 1 || y == 0 || y == g_map_cell_height - 1 || loc->symbol.sym != ' ')
-        return false;
 
     if(map_cell_get_location(cell, x-1, y-1)->symbol.sym == ' ' && map_cell_get_location(cell, x, y-1)->symbol.sym == ' ' && map_cell_get_location(cell, x+1, y-1)->symbol.sym == ' ' &&
        map_cell_get_location(cell, x-1, y)->symbol.sym   == ' ' && map_cell_get_location(cell, x+1, y)->symbol.sym == ' ' &&
@@ -122,8 +127,8 @@ bool _is_maze_snode(struct MapCell* cell, struct MapLocation* loc)
 /* Finds a maze starting node */
 struct MapLocation* _get_maze_snode(struct MapCell* cell)
 {
-    for(int x = 0; x < g_map_cell_width; x++)
-    for(int y = 0; y < g_map_cell_height; y++)
+    for(int x = cell->world_x; x < cell->world_x + g_map_cell_width; x++)
+    for(int y = cell->world_y; y < cell->world_y + g_map_cell_height; y++)
     {
         struct MapLocation* loc = map_cell_get_location(cell, x, y);
         if(_is_maze_snode(cell, loc))
@@ -142,10 +147,7 @@ struct MapLocation* _get_maze_snode(struct MapCell* cell)
  */
 bool _is_valid_maze_node(struct MapCell* cell, struct MapLocation* loc)
 {
-    if(loc->symbol.sym != ' ')
-        return false;
-
-    if(loc->x == 0 || loc->y == 0 || loc->x == g_map_cell_width-1 || loc->y == g_map_cell_height-1)
+    if(loc->symbol.sym != ' ' || _is_border_loc(cell, loc))
         return false;
 
     int conn_count = 0;
@@ -281,15 +283,11 @@ void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
  * Deadends have only one connecting corridor tile */
 bool _is_maze_deadend(struct MapCell* cell, struct MapLocation* loc)
 {
+    if(loc->symbol.sym != '#' || _is_border_loc(cell, loc))
+        return false;
+
     int x = loc->x;
     int y = loc->y;
-
-    if(loc->symbol.sym != '#')
-        return false;
-
-    if(x == 0 || y == 0 || x == g_map_cell_width-1 || y == g_map_cell_height-1)
-        return false;
-
     int conn_count = 0;
 
     if(map_cell_get_location(cell, x-1, y)->symbol.sym == '#' || map_cell_get_location(cell, x-1, y)->symbol.sym == '.')
@@ -314,8 +312,8 @@ bool _is_maze_deadend(struct MapCell* cell, struct MapLocation* loc)
  * Returns true if it finds a deadend. */
 struct MapLocation* _get_maze_deadend(struct MapCell* cell)
 {
-    for(int x = 0; x < g_map_cell_width; x++)
-    for(int y = 0; y < g_map_cell_height; y++)
+    for(int x = cell->world_x; x < cell->world_x + g_map_cell_width; x++)
+    for(int y = cell->world_y; y < cell->world_y + g_map_cell_height; y++)
     {
         struct MapLocation* loc = map_cell_get_location(cell, x, y);
         if(_is_maze_deadend(cell, loc))
@@ -387,7 +385,7 @@ void _make_doors(struct MapCell* cell)
         // North wall
         x = room->x+1;
         y = room->y;
-        if(y-1 > 0)
+        if(y-1 > cell->world_y)
         {
             for(; x < (room->x + room->w - 1); x++)
             {
@@ -402,7 +400,7 @@ void _make_doors(struct MapCell* cell)
         // South wall
         x = room->x+1;
         y = room->y + room->h-1;
-        if(y+1 < g_map_cell_height-1)
+        if(y+1 < cell->world_y+g_map_cell_height-1)
         {
             for(; x < (room->x + room->w - 1); x++)
             {
@@ -417,7 +415,7 @@ void _make_doors(struct MapCell* cell)
         // West wall
         x = room->x;
         y = room->y+1;
-        if(x-1 > 0)
+        if(x-1 > cell->world_x)
         {
             for(; y < (room->y + room->h - 1); y++)
             {
@@ -432,7 +430,7 @@ void _make_doors(struct MapCell* cell)
         // East wall
         x = room->x + room->w - 1;
         y = room->y+1;
-        if(x+1 < g_map_cell_width-1)
+        if(x+1 < cell->world_x+g_map_cell_width-1)
         {
             for(; y < (room->y + room->h - 1); y++)
             {

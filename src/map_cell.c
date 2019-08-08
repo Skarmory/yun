@@ -19,7 +19,7 @@ struct MapCell* map_cell_new(int cell_x, int cell_y)
     for(int i = 0; i < g_map_cell_width; ++i)
     for(int j = 0; j < g_map_cell_height; ++j)
     {
-        struct MapLocation* loc = map_cell_get_location(cell, i, j);
+        struct MapLocation* loc = map_cell_get_location_relative(cell, i, j);
         loc->x = cell->world_x + i;
         loc->y = cell->world_y + j;
         loc->symbol.sym  = ' ';
@@ -72,6 +72,15 @@ struct MapLocation* map_cell_get_location(struct MapCell* cell, int x, int y)
     return NULL;
 }
 
+struct MapLocation* map_cell_get_location_relative(struct MapCell* cell, int x, int y)
+{
+    if(x >= 0 && x < g_map_cell_width && y >= 0 &&  y < g_map_cell_height)
+    {
+        return &cell->locs[y * g_map_cell_width + x];
+    }
+    return NULL;
+}
+
 List* map_cell_get_objects(struct MapCell* cell, int x, int y)
 {
     return &map_cell_get_location(cell, x, y)->obj_list;
@@ -111,7 +120,7 @@ bool map_cell_move_mon(struct MapCell* cell, struct Mon* mon, int newx, int newy
 
 bool map_cell_has_mon(struct MapCell* cell, int x, int y)
 {
-    return cell->locs[y * g_map_cell_width + x].mon != NULL;
+    return map_cell_get_location(cell, x, y)->mon != NULL;
 }
 
 bool map_cell_is_in_bounds(struct MapCell* cell, int x, int y)

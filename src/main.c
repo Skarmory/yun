@@ -131,14 +131,23 @@ int main(int argc, char** argv)
     term_refresh();
     term_getch();
 
-    cmap = map_new(1, 1);
-    struct MapCell* test_cell = map_cell_new(0, 0);
-    list_add(&cmap->cell_list, test_cell);
+    int map_width = 3;
+    int map_height = 3;
+    cmap = map_new(map_width, map_height);
+
+    struct MapCell* test_cell = NULL;
+    for(int x = 0; x < map_width; ++x)
+    for(int y = 0; y < map_height; ++y)
+    {
+        test_cell = map_cell_new(x, y);
+        list_add(&cmap->cell_list, test_cell);
+        gen_map_cell(test_cell, MAPTYPE_DUNGEON);
+    }
 
     new_player();
     new_game();
 
-    gen_map_cell(test_cell, MAPTYPE_DUNGEON);
+    test_cell = map_get_cell_by_map_coord(cmap, 1, 1);
 
     // --------- DEBUG CODE START ----------
     struct Room* room = test_cell->room_list.head->data;
