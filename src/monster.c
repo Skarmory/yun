@@ -146,5 +146,11 @@ bool mon_move(struct Mon* mon, int newx, int newy)
     mon->x = newx;
     mon->y = newy;
 
+    if(old_cell != new_cell)
+    {
+        list_rm(&old_cell->mon_list, list_find(&old_cell->mon_list, mon));
+        list_add(&new_cell->mon_list, mon);
+    }
+
     return true;
 }
