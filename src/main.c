@@ -133,21 +133,18 @@ int main(int argc, char** argv)
 
     int map_width = 3;
     int map_height = 3;
+    term_clear();
+    term_draw_text((screen_cols/2) - 9, screen_rows/2, NULL, NULL, 0, "Generating map...");
+    term_refresh();
     cmap = map_new(map_width, map_height);
-
-    struct MapCell* test_cell = NULL;
-    for(int x = 0; x < map_width; ++x)
-    for(int y = 0; y < map_height; ++y)
-    {
-        test_cell = map_cell_new(x, y);
-        list_add(&cmap->cell_list, test_cell);
-        gen_map_cell(test_cell, MAPTYPE_DUNGEON);
-    }
+    gen_map(cmap, MAPTYPE_DUNGEON);
 
     new_player();
     new_game();
 
-    test_cell = map_get_cell_by_map_coord(cmap, 1, 1);
+    MAXHP(you->mon) = 999;
+    HP(you->mon) = 999;
+    struct MapCell* test_cell = map_get_cell_by_map_coord(cmap, 1, 1);
 
     // --------- DEBUG CODE START ----------
     struct Room* room = test_cell->room_list.head->data;

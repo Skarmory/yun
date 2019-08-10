@@ -525,3 +525,160 @@ void gen_map_cell(struct MapCell* cell, enum MapType type)
         _gen_open_area(cell);
     }
 }
+
+static bool _is_potential_room_entrance(struct MapCell* cell, struct MapLocation* loc)
+{
+    if(loc->symbol.sym != '|' || loc->symbol.sym != '-')
+        return false;
+
+    if(_is_border_loc(cell, loc))
+        return false;
+
+    struct MapLocation* left  = map_cell_get_location(cell, loc->x-1, loc->y);
+    struct MapLocation* right = map_cell_get_location(cell, loc->x+1, loc->y);
+
+    if(left->symbol.sym == '-' && right->symbol.sym == '-') return true;
+
+    struct MapLocation* up   = map_cell_get_location(cell, loc->x, loc->y-1);
+    struct MapLocation* down = map_cell_get_location(cell, loc->x, loc->y+1);
+
+    if(up->symbol.sym == '|' && down->symbol.sym == '|') return true;
+
+    return false;
+}
+
+// Naively connect cells together orthogonally
+static void _connect_cells(struct Map* map)
+{
+    for(int y = 0; y < map->height; ++y)
+    for(int x = 0; x < map->width-1; ++x)
+    {
+        // Horizontal connections
+        int hconns = random_int(1, 10);
+#ifdef DEBUG
+        log_format_msg(DEBUG, "Generating %d horizontal connections from cell (%d, %d) to cell (%d, %d)", hconns, x, y, x+1, y);
+#endif
+        for(int hconn = 0; hconn < hconns; ++hconn)
+        {
+            struct MapCell* cell    = NULL;
+            struct MapLocation* loc = NULL;
+            int threshold = random_int(0, g_map_cell_height-1);
+            int offset = 0;
+
+            // If a cell is a potential room entrace, flip it and finish
+            // This has to be done in the case that we're directly in line with a room wall
+            // The algorithm would just destroy the wall and keep going
+
+            // Carve a path left
+            offset = 0;
+            cell = map_get_cell_by_map_coord(map, x, y);
+            while((loc = map_cell_get_location_relative(cell, g_map_cell_width-1-offset, threshold)) != NULL)
+            {
+                if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
+                    break;
+
+                if(_is_potential_room_entrance(cell, loc))
+                {
+                    loc->symbol.sym = '.';
+                    loc->pathing_flags |= PATHING_GROUND;
+                    break;
+                }
+
+                loc->symbol.sym = '#';
+                loc->pathing_flags |= PATHING_GROUND;
+
+                ++offset;
+            }
+
+
+            // Carve a path right
+            offset = 0;
+            cell = map_get_cell_by_map_coord(map, x+1, y);
+            while((loc = map_cell_get_location_relative(cell, offset, threshold)) != NULL)
+            {
+                if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
+                    break;
+
+                if(_is_potential_room_entrance(cell, loc))
+                {
+                    loc->symbol.sym = '.';
+                    loc->pathing_flags |= PATHING_GROUND;
+                    break;
+                }
+
+                loc->symbol.sym = '#';
+                loc->pathing_flags |= PATHING_GROUND;
+
+                ++offset;
+            }
+        }
+
+        int vconns = random_int(1, 10);
+#ifdef DEBUG
+        log_format_msg(DEBUG, "Generating %d vertical connections from cell (%d, %d) to cell (%d, %d)", vconns, y, x, y, x + 1);
+#endif
+        for(int vconn = 0; vconn < vconns; ++vconn)
+        {
+            struct MapCell* cell    = NULL;
+            struct MapLocation* loc = NULL;
+            int threshold = random_int(0, g_map_cell_width-1);
+            int offset = 0;
+
+            // Carve a path up
+            offset = 0;
+            cell = map_get_cell_by_map_coord(map, y, x);
+            while((loc = map_cell_get_location_relative(cell, threshold, g_map_cell_height-1-offset)) != NULL)
+            {
+                if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
+                    break;
+
+                if(_is_potential_room_entrance(cell, loc))
+                {
+                    loc->symbol.sym = '.';
+                    loc->pathing_flags |= PATHING_GROUND;
+                    break;
+                }
+
+                loc->symbol.sym = '#';
+                loc->pathing_flags |= PATHING_GROUND;
+
+                ++offset;
+            }
+
+
+            // Carve a path down
+            offset = 0;
+            cell = map_get_cell_by_map_coord(map, y, x+1);
+            while((loc = map_cell_get_location_relative(cell, threshold, offset)) != NULL)
+            {
+                if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
+                    break;
+
+                if(_is_potential_room_entrance(cell, loc))
+                {
+                    loc->symbol.sym = '.';
+                    loc->pathing_flags |= PATHING_GROUND;
+                    break;
+                }
+
+                loc->symbol.sym = '#';
+                loc->pathing_flags |= PATHING_GROUND;
+
+                ++offset;
+            }
+        }
+    }
+}
+
+void gen_map(struct Map* map, enum MapType type)
+{
+    for(int x = 0; x < map->width; ++x)
+    for(int y = 0; y < map->height; ++y)
+    {
+        struct MapCell* cell = map_cell_new(x, y);
+        list_add(&cmap->cell_list, cell);
+        gen_map_cell(cell, type);
+    }
+
+    _connect_cells(map);
+}
