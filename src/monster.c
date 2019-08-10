@@ -64,20 +64,6 @@ void mon_free(struct Mon* mon)
 }
 
 /**
- * Update all active mons
- */
-void update_mons(void)
-{
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
-
-    ListNode* node;
-    list_for_each(&cell->mon_list, node)
-    {
-        update_mon_ai(node->data);
-    }
-}
-
-/**
  * Return true if monster has ability to use a particular pathing type
  */
 bool mon_has_move_attr(struct Mon* mon, MonAttrMoveFlags move_flags)
@@ -153,4 +139,22 @@ bool mon_move(struct Mon* mon, int newx, int newy)
     }
 
     return true;
+}
+
+/**
+ * Update all active mons
+ */
+void update_mons(void)
+{
+    ListNode* cell_node;
+    list_for_each(&cmap->cell_list, cell_node)
+    {
+        struct MapCell* cell = cell_node->data;
+
+        ListNode* node;
+        list_for_each(&cell->mon_list, node)
+        {
+            update_mon_ai(node->data);
+        }
+    }
 }

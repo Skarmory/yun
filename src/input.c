@@ -101,6 +101,10 @@ void handle_input(void)
                     you->mon->y + (ch == 'k' || ch == 'y' || ch == 'u' ? -1 : ch == 'j' || ch == 'b' || ch == 'n' ? 1 : 0)
                 );
                 break;
+            case '.':
+                // Pass turn
+                went = true;
+                break;
             case 'q':
                 if(prompt_yn("Really quit?"))
                     do_quit();
