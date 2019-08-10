@@ -680,5 +680,6 @@ void gen_map(struct Map* map, enum MapType type)
         gen_map_cell(cell, type);
     }
 
-    _connect_cells(map);
+    if(type == MAPTYPE_DUNGEON)
+        _connect_cells(map);
 }
