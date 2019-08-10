@@ -118,13 +118,20 @@ struct PathNode* _find_path(struct MapLocation* start, struct MapLocation* dest,
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
             return best_node;
 
-        struct MapCell* cell = map_get_cell_by_world_coord(cmap, best_node->loc->x, best_node->loc->y);
         for(int _x = best_node->loc->x - 1; _x < best_node->loc->x + 2; _x++)
         for(int _y = best_node->loc->y - 1; _y < best_node->loc->y + 2; _y++)
         {
-            // Check for invalid location
-            if((_x == best_node->loc->x && _y == best_node->loc->y) ||
-               ((!map_cell_is_in_bounds(cell, _x, _y) || !map_cell_is_pathable(cell, _x, _y, path_bits)) && (_x != dest->x || _y != dest->y)))
+            // Ignore current node location
+            if(_x == best_node->loc->x && _y == best_node->loc->y)
+                continue;
+
+            // Bounds check implicit
+            struct MapCell* cell = map_get_cell_by_world_coord(cmap, _x, _y);
+            if(!cell)
+                continue;
+
+            // If not pathable then just continue
+            if(!map_cell_is_pathable(cell, _x, _y, path_bits))
                 continue;
 
             struct PathNode* p = map_cell_get_location(cell, _x, _y)->path_node;
