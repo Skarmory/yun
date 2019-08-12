@@ -20,6 +20,7 @@ struct MonType
     struct ArmourBase* base_armour; // All creatures have a base armour for if they don't have equipment
     struct WeaponBase* base_weapon;
     int                strength, agility, intelligence, spirit, stamina;
+    int                vision_radius;
     MonAttrMoveFlags   move_flags;
 };
 
