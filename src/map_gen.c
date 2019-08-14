@@ -486,8 +486,8 @@ static void _gen_open_area(struct MapCell* cell)
 {
     int w = random_int(g_map_cell_width/4, g_map_cell_width-1);
     int h = random_int(g_map_cell_height/4, g_map_cell_height-1);
-    int x = random_int(0, g_map_cell_width-1-w);
-    int y = random_int(0, g_map_cell_height-1-h);
+    int x = random_int(cell->world_x, cell->world_x + g_map_cell_width-1-w);
+    int y = random_int(cell->world_y, cell->world_y + g_map_cell_height-1-h);
 
 #ifdef DEBUG
     log_format_msg(DEBUG, "Room parameters (x, y, w, h): %d, %d, %d, %d", x, y, w, h);
@@ -506,7 +506,8 @@ static void _gen_open_area(struct MapCell* cell)
     for(int tmpy = 0; tmpy < h-1; tmpy++)
     {
         struct MapLocation* loc = map_cell_get_location(cell, x+tmpx, y+tmpy);
-        loc->symbol.sym = ' ';
+        loc->symbol.sym = '.';
+        loc->symbol.fg = (struct Colour){0,random_int(20, 180),0};
         loc->symbol.bg = ((tmpx+tmpy) % 2 == 0) ? (struct Colour){10,36,10} : (struct Colour){16, 36, 16};
         loc->pathing_flags |= PATHING_GROUND;
     }
