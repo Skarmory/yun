@@ -55,5 +55,7 @@ Colour g_colours[] =
     COLOUR(171, 212, 115), // hunter
     COLOUR(64, 199, 235), // mage
 
-    COLOUR(-1, -1, -1) // default
+    COLOUR(-1, -1, -1), // default
+
+    COLOUR(64, 64, 64) // fog of war
 };

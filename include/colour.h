@@ -62,6 +62,8 @@
 #define CLR_MAGE     38
 #define CLR_DEFAULT  39
 
+#define CLR_FOG_OF_WAR 40
+
 // mob difficulty class
 // grey - green - blue - purple - yellow - orange - red
 // This is more absolute difficulty than relative
