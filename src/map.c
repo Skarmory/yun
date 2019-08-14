@@ -1,5 +1,6 @@
 #include "map.h"
 
+#include "colour.h"
 #include "list.h"
 #include "log.h"
 #include "map_cell.h"
@@ -86,19 +87,32 @@ void display_map(void)
         {
             struct MapCell* cell = map_get_cell_by_world_coord(cmap, x, y);
             struct MapLocation* loc = map_cell_get_location(cell, x, y);
-            struct Object* obj = loc->obj_list.head ? loc->obj_list.head->data : NULL;
 
-            if(loc->mon)
+            if(!mon_can_see(you->mon, x, y))
             {
-                term_draw_symbol(i, j, &loc->mon->type->symbol->fg, &loc->mon->type->symbol->bg, loc->mon->type->symbol->attr, loc->mon->type->symbol->sym);
-            }
-            else if(obj)
-            {
-                term_draw_symbol(i, j, &obj->symbol->fg, &obj->symbol->bg, obj->symbol->attr, obj->symbol->sym);
+                if(loc->seen)
+                    term_draw_symbol(i, j, COL(CLR_LGREY), COL(CLR_DEFAULT), 0, loc->symbol.sym);
+                else
+                    term_draw_symbol(i, j, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, ' ');
             }
             else
             {
-                term_draw_symbol(i, j, &loc->symbol.fg, &loc->symbol.bg, loc->symbol.attr, loc->symbol.sym);
+                struct Object* obj = loc->obj_list.head ? loc->obj_list.head->data : NULL;
+
+                loc->seen = true;
+
+                if(loc->mon)
+                {
+                    term_draw_symbol(i, j, &loc->mon->type->symbol->fg, &loc->mon->type->symbol->bg, loc->mon->type->symbol->attr, loc->mon->type->symbol->sym);
+                }
+                else if(obj)
+                {
+                    term_draw_symbol(i, j, &obj->symbol->fg, &obj->symbol->bg, obj->symbol->attr, obj->symbol->sym);
+                }
+                else
+                {
+                    term_draw_symbol(i, j, &loc->symbol.fg, &loc->symbol.bg, loc->symbol.attr, loc->symbol.sym);
+                }
             }
         }
     }

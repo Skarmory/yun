@@ -34,6 +34,7 @@ struct MapCell* map_cell_new(int cell_x, int cell_y)
         loc->path_node = new_path_node(loc);
         loc->mon = NULL;
         loc->pathing_flags = 0;
+        loc->seen = false;
         list_init(&loc->obj_list);
     }
 

@@ -1,4 +1,5 @@
 #include "colour.h"
+#include "geom.h"
 #include "globals.h"
 #include "init.h"
 #include "input.h"

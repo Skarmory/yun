@@ -35,7 +35,7 @@ enum ParserCode parse_mon_types(void)
     parser_register_field(parser, "move-flag", "flag string", &_parse_mon_type_pathing_callback);
     parser_register_field(parser, "base-armour", "name string", &_parse_mon_type_base_armour_callback);
     parser_register_field(parser, "base-weapon", "name string", &_parse_mon_type_base_weapon_callback);
-    parser_register_field(parser, "vision-radius", "vision int", &_parse_mon_type_vision_radius_callback);
+    parser_register_field(parser, "vision-radius", "radius int", &_parse_mon_type_vision_radius_callback);
 
     if(open_file_and_parse_all(parser, c_mon_type_file_name))
     {

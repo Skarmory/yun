@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "geom.h"
 #include "log.h"
 #include "map.h"
 #include "map_cell.h"
@@ -139,6 +140,37 @@ bool mon_move(struct Mon* mon, int newx, int newy)
     }
 
     return true;
+}
+
+bool mon_can_see(struct Mon* mon, int x, int y)
+{
+    struct MapCell* cell = map_get_cell_by_world_coord(cmap, mon->x, mon->y);
+    struct MapLocation* loc = map_cell_get_location(cell, mon->x, mon->y);
+
+    if(x >= mon->x - mon->type->vision_radius && x <= mon->x + mon->type->vision_radius &&
+       y >= mon->y - mon->type->vision_radius && y <= mon->y + mon->type->vision_radius)
+    {
+        int _x = mon->x;
+        int _y = mon->y;
+        float err = 0.0f;
+
+        while(gen_line_increment(mon->x, mon->y, x, y, &_x, &_y, &err))
+        {
+            cell = map_get_cell_by_world_coord(cmap, _x, _y);
+            loc = map_cell_get_location(cell, _x, _y);
+
+            if(loc_blocks_sight(loc))
+            {
+                if(_x == x && _y == y)
+                    return true;
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 /**

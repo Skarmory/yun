@@ -37,9 +37,11 @@ struct MapLocation
     struct Mon* mon;
     List obj_list;
     struct Symbol symbol;
+    bool seen;
 };
 
 bool loc_add_obj(struct MapLocation* loc, struct Object* obj);
 bool loc_rm_obj(struct MapLocation* loc, struct Object* obj);
+bool loc_blocks_sight(struct MapLocation* loc);
 
 #endif
