@@ -43,7 +43,7 @@ static inline void _line_increment(int* x, int* y, float* err, float dx, float d
     }
 }
 
-bool gen_line_increment(int x0, int y0, int x1, int y1, int* x, int* y, float* err)
+bool geom_gen_line_increment(int x0, int y0, int x1, int y1, int* x, int* y, float* err)
 {
     if(*x == x1 && *y == y1) return false;
 
@@ -63,4 +63,12 @@ bool gen_line_increment(int x0, int y0, int x1, int y1, int* x, int* y, float* e
     }
 
     return true;
+}
+
+bool geom_point_in_circle(int px, int py, int cx, int cy, int r)
+{
+    int dx = abs(px - cx);
+    int dy = abs(py - cy);
+    int len = (dx * dx) + (dy * dy);
+    return len < (r*r);
 }

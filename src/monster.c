@@ -147,14 +147,13 @@ bool mon_can_see(struct Mon* mon, int x, int y)
     struct MapCell* cell = map_get_cell_by_world_coord(cmap, mon->x, mon->y);
     struct MapLocation* loc = map_cell_get_location(cell, mon->x, mon->y);
 
-    if(x >= mon->x - mon->type->vision_radius && x <= mon->x + mon->type->vision_radius &&
-       y >= mon->y - mon->type->vision_radius && y <= mon->y + mon->type->vision_radius)
+    if(geom_point_in_circle(x, y, mon->x, mon->y, mon->type->vision_radius))
     {
         int _x = mon->x;
         int _y = mon->y;
         float err = 0.0f;
 
-        while(gen_line_increment(mon->x, mon->y, x, y, &_x, &_y, &err))
+        while(geom_gen_line_increment(mon->x, mon->y, x, y, &_x, &_y, &err))
         {
             cell = map_get_cell_by_world_coord(cmap, _x, _y);
             loc = map_cell_get_location(cell, _x, _y);
