@@ -20,7 +20,7 @@ enum PathingFlag
     PATHING_NONE   = 0u,
     PATHING_GROUND = 1u,
     PATHING_WATER  = (1u << 1),
-    PATHING_FLYING = (1u << 3),
+    PATHING_FLYING = (1u << 2),
 };
 
 typedef unsigned int PathingFlags;

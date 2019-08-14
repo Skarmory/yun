@@ -4,8 +4,8 @@
 enum MonAttrMoveFlag
 {
     MONATTR_WALKS = 1u,
-    MONATTR_SWIMS = (1u << 2),
-    MONATTR_FLIES = (1u << 1)
+    MONATTR_FLIES = (1u << 1),
+    MONATTR_SWIMS = (1u << 2)
 };
 
 typedef unsigned int MonAttrMoveFlags;
