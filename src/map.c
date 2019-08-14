@@ -91,7 +91,7 @@ void display_map(void)
             if(!mon_can_see(you->mon, x, y))
             {
                 if(loc->seen)
-                    term_draw_symbol(i, j, COL(CLR_LGREY), COL(CLR_DEFAULT), 0, loc->symbol.sym);
+                    term_draw_symbol(i, j, COL(CLR_FOG_OF_WAR), COL(CLR_DEFAULT), 0, loc->symbol.sym);
                 else
                     term_draw_symbol(i, j, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, ' ');
             }
