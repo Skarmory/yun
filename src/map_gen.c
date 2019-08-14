@@ -71,11 +71,13 @@ void gen_rooms(struct MapCell* cell)
             loc->symbol.sym = '|';
             loc->symbol.bg = (struct Colour){20,20,20};
             loc->pathing_flags = 0;
+            loc->blocks_sight = true;
 
             loc = map_cell_get_location(cell, r->x+r->w-1, r->y+tmp);
             loc->symbol.sym = '|';
             loc->symbol.bg = (struct Colour){20,20,20};
             loc->pathing_flags = 0;
+            loc->blocks_sight = true;
         }
 
         // Draw horizontal walls
@@ -85,11 +87,13 @@ void gen_rooms(struct MapCell* cell)
             loc->symbol.sym = '-';
             loc->symbol.bg = (struct Colour){20,20,20};
             loc->pathing_flags = 0;
+            loc->blocks_sight = true;
 
             loc = map_cell_get_location(cell, r->x+tmp, r->y+r->h-1);
             loc->symbol.sym = '-';
             loc->symbol.bg = (struct Colour){20,20,20};
             loc->pathing_flags = 0;
+            loc->blocks_sight = true;
         }
 
         // Fill in with floor
@@ -102,6 +106,7 @@ void gen_rooms(struct MapCell* cell)
             loc->symbol.fg = (struct Colour){floor_col,floor_col,floor_col};
             loc->symbol.bg = ((tmpx+tmpy) % 2 == 0) ? (struct Colour){20,20,20} : (struct Colour){26,26,26};
             loc->pathing_flags |= PATHING_GROUND;
+            loc->blocks_sight = false;
         }
     }
 }
@@ -275,6 +280,7 @@ void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
     {
         next->symbol.sym = '#';
         next->pathing_flags |= PATHING_GROUND;
+        next->blocks_sight = false;
         _flood_fill_maze(cell, next);
     }
 }
@@ -360,6 +366,7 @@ void _back_fill_deadends(struct MapCell* cell, struct MapLocation* loc)
     {
         next->symbol.sym = ' ';
         next->pathing_flags = 0;
+        next->blocks_sight = true;
         _back_fill_deadends(cell, next);
     }
 }
@@ -451,6 +458,7 @@ void _make_doors(struct MapCell* cell)
 
             connectors[which]->symbol.sym = '.';
             connectors[which]->pathing_flags |= PATHING_GROUND;
+            connectors[which]->blocks_sight = false;
 
             // Switch in the last one in the array
             connectors[which] = connectors[cidx-1];
@@ -469,6 +477,7 @@ void gen_maze(struct MapCell* cell)
     {
         tmp->symbol.sym = '#';
         tmp->pathing_flags |= PATHING_GROUND;
+        tmp->blocks_sight = false;
         _flood_fill_maze(cell, tmp);
     }
 
@@ -478,6 +487,7 @@ void gen_maze(struct MapCell* cell)
     {
         tmp->symbol.sym = ' ';
         tmp->pathing_flags = 0;
+        tmp->blocks_sight = true;
         _back_fill_deadends(cell, tmp);
     }
 }
@@ -510,6 +520,7 @@ static void _gen_open_area(struct MapCell* cell)
         loc->symbol.fg = (struct Colour){0,random_int(20, 180),0};
         loc->symbol.bg = ((tmpx+tmpy) % 2 == 0) ? (struct Colour){10,36,10} : (struct Colour){16, 36, 16};
         loc->pathing_flags |= PATHING_GROUND;
+        loc->blocks_sight = false;
     }
 }
 
@@ -578,15 +589,16 @@ static void _connect_cells(struct Map* map)
                 if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
                     break;
 
+                loc->pathing_flags |= PATHING_GROUND;
+                loc->blocks_sight = false;
+
                 if(_is_potential_room_entrance(cell, loc))
                 {
                     loc->symbol.sym = '.';
-                    loc->pathing_flags |= PATHING_GROUND;
                     break;
                 }
 
                 loc->symbol.sym = '#';
-                loc->pathing_flags |= PATHING_GROUND;
 
                 ++offset;
             }
@@ -600,15 +612,16 @@ static void _connect_cells(struct Map* map)
                 if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
                     break;
 
+                loc->pathing_flags |= PATHING_GROUND;
+                loc->blocks_sight = false;
+
                 if(_is_potential_room_entrance(cell, loc))
                 {
                     loc->symbol.sym = '.';
-                    loc->pathing_flags |= PATHING_GROUND;
                     break;
                 }
 
                 loc->symbol.sym = '#';
-                loc->pathing_flags |= PATHING_GROUND;
 
                 ++offset;
             }
@@ -633,15 +646,16 @@ static void _connect_cells(struct Map* map)
                 if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
                     break;
 
+                loc->pathing_flags |= PATHING_GROUND;
+                loc->blocks_sight = false;
+
                 if(_is_potential_room_entrance(cell, loc))
                 {
                     loc->symbol.sym = '.';
-                    loc->pathing_flags |= PATHING_GROUND;
                     break;
                 }
 
                 loc->symbol.sym = '#';
-                loc->pathing_flags |= PATHING_GROUND;
 
                 ++offset;
             }
@@ -655,15 +669,16 @@ static void _connect_cells(struct Map* map)
                 if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
                     break;
 
+                loc->pathing_flags |= PATHING_GROUND;
+                loc->blocks_sight = false;
+
                 if(_is_potential_room_entrance(cell, loc))
                 {
                     loc->symbol.sym = '.';
-                    loc->pathing_flags |= PATHING_GROUND;
                     break;
                 }
 
                 loc->symbol.sym = '#';
-                loc->pathing_flags |= PATHING_GROUND;
 
                 ++offset;
             }

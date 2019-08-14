@@ -25,8 +25,8 @@ bool loc_rm_obj(struct MapLocation* loc, struct Object* obj)
     return false;
 }
 
-//TODO: This is terrible, only a quick hack for now
 bool loc_blocks_sight(struct MapLocation* loc)
 {
-    return loc->symbol.sym == ' ' || loc->symbol.sym == '|' || loc->symbol.sym == '-';
+    // TODO: Eventually mons or objects can block too
+    return loc->blocks_sight;
 }

@@ -38,6 +38,7 @@ struct MapLocation
     List obj_list;
     struct Symbol symbol;
     bool seen;
+    bool blocks_sight;
 };
 
 bool loc_add_obj(struct MapLocation* loc, struct Object* obj);
