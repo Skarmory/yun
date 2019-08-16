@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-Wall -Iinclude
-LDFLAGS=-lm
+LDFLAGS=-lm -pthread
 GAME=naxx
 
 INCL=$(wildcard include/*.h)
