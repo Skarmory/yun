@@ -19,95 +19,86 @@ static inline bool _is_border_loc(struct MapCell* cell, struct MapLocation* loc)
     return (loc->x == cell->world_x || loc->y == cell->world_y || loc->x == cell->world_x + g_map_cell_width - 1 || loc->y == cell->world_y + g_map_cell_height - 1);
 }
 
+void gen_room(struct MapCell* cell)
+{
+    int w = random_int(4, 10);
+    int h = random_int(4, 8);
+    int x = random_int(cell->world_x, cell->world_x+g_map_cell_width-1-w);
+    int y = random_int(cell->world_y, cell->world_y+g_map_cell_height-1-h);
+
+    ListNode* rnode;
+    list_for_each(&cell->room_list, rnode)
+    {
+        struct Room* r = rnode->data;
+        if((((x >= r->x) && (x <= (r->x + r->w))) || ((r->x >= x) && (r->x <= (x + w)))) &&
+           (((y >= r->y) && (y <= (r->y + r->h))) || ((r->y >= y) && (r->y <= (y + h)))))
+        {
+            return;
+        }
+    }
+
+    struct Room* room = (struct Room*) malloc(sizeof(struct Room));
+    room->x = x;
+    room->y = y;
+    room->w = w;
+    room->h = h;
+
+    list_add(&cell->room_list, room);
+
+    struct MapLocation* loc;
+    for(int tmp = 0; tmp < room->h; tmp++)
+    {
+        loc = map_cell_get_location(cell, room->x, room->y+tmp);
+        loc->symbol.sym = '|';
+        loc->symbol.bg = (struct Colour){20,20,20};
+        loc->pathing_flags = 0;
+        loc->blocks_sight = true;
+
+        loc = map_cell_get_location(cell, room->x+room->w-1, room->y+tmp);
+        loc->symbol.sym = '|';
+        loc->symbol.bg = (struct Colour){20,20,20};
+        loc->pathing_flags = 0;
+        loc->blocks_sight = true;
+    }
+
+    // Draw horizontal walls
+    for(int tmp = 0; tmp < room->w; tmp++)
+    {
+        loc = map_cell_get_location(cell, room->x+tmp, room->y);
+        loc->symbol.sym = '-';
+        loc->symbol.bg = (struct Colour){20,20,20};
+        loc->pathing_flags = 0;
+        loc->blocks_sight = true;
+
+        loc = map_cell_get_location(cell, room->x+tmp, room->y+room->h-1);
+        loc->symbol.sym = '-';
+        loc->symbol.bg = (struct Colour){20,20,20};
+        loc->pathing_flags = 0;
+        loc->blocks_sight = true;
+    }
+
+    // Fill in with floor
+    for(int tmpx = 1; tmpx < room->w-1; tmpx++)
+    for(int tmpy = 1; tmpy < room->h-1; tmpy++)
+    {
+        int floor_col = random_int(20,180);
+        loc = map_cell_get_location(cell, room->x+tmpx, room->y+tmpy);
+        loc->symbol.sym = '.';
+        loc->symbol.fg = (struct Colour){floor_col,floor_col,floor_col};
+        loc->symbol.bg = ((tmpx+tmpy) % 2 == 0) ? (struct Colour){20,20,20} : (struct Colour){26,26,26};
+        loc->pathing_flags |= PATHING_GROUND;
+        loc->blocks_sight = false;
+    }
+}
+
 /* Draws a map by drawing square rooms at random locations, and with random dimensions. */
 void gen_rooms(struct MapCell* cell)
 {
     // Place as many rooms as we can, limited to 200 attempts
     int attempts = 200;
-    ListNode* rnode = NULL;
-
     for(int i = 0; i < attempts; i++)
     {
-        int w = random_int(4, 10);
-        int h = random_int(4, 8);
-        int x = random_int(cell->world_x, cell->world_x+g_map_cell_width-1-w);
-        int y = random_int(cell->world_y, cell->world_y+g_map_cell_height-1-h);
-
-        bool overlaps = false;
-
-        list_for_each(&cell->room_list, rnode)
-        {
-            struct Room* r = rnode->data;
-            if((((x >= r->x) && (x <= (r->x + r->w))) || ((r->x >= x) && (r->x <= (x + w)))) &&
-               (((y >= r->y) && (y <= (r->y + r->h))) || ((r->y >= y) && (r->y <= (y + h)))))
-            {
-                overlaps = true;
-                break;
-            }
-        }
-
-        if(!overlaps)
-        {
-            struct Room* room = (struct Room*) malloc(sizeof(struct Room));
-            room->x = x;
-            room->y = y;
-            room->w = w;
-            room->h = h;
-
-            list_add(&cell->room_list, room);
-        }
-    }
-
-    // Draw all the rooms
-    list_for_each(&cell->room_list, rnode)
-    {
-        struct Room* r = rnode->data;
-        struct MapLocation* loc;
-
-        // Draw vertical walls
-        for(int tmp = 0; tmp < r->h; tmp++)
-        {
-            loc = map_cell_get_location(cell, r->x, r->y+tmp);
-            loc->symbol.sym = '|';
-            loc->symbol.bg = (struct Colour){20,20,20};
-            loc->pathing_flags = 0;
-            loc->blocks_sight = true;
-
-            loc = map_cell_get_location(cell, r->x+r->w-1, r->y+tmp);
-            loc->symbol.sym = '|';
-            loc->symbol.bg = (struct Colour){20,20,20};
-            loc->pathing_flags = 0;
-            loc->blocks_sight = true;
-        }
-
-        // Draw horizontal walls
-        for(int tmp = 0; tmp < r->w; tmp++)
-        {
-            loc = map_cell_get_location(cell, r->x+tmp, r->y);
-            loc->symbol.sym = '-';
-            loc->symbol.bg = (struct Colour){20,20,20};
-            loc->pathing_flags = 0;
-            loc->blocks_sight = true;
-
-            loc = map_cell_get_location(cell, r->x+tmp, r->y+r->h-1);
-            loc->symbol.sym = '-';
-            loc->symbol.bg = (struct Colour){20,20,20};
-            loc->pathing_flags = 0;
-            loc->blocks_sight = true;
-        }
-
-        // Fill in with floor
-        for(int tmpx = 1; tmpx < r->w-1; tmpx++)
-        for(int tmpy = 1; tmpy < r->h-1; tmpy++)
-        {
-            int floor_col = random_int(20,180);
-            loc = map_cell_get_location(cell, r->x+tmpx, r->y+tmpy);
-            loc->symbol.sym = '.';
-            loc->symbol.fg = (struct Colour){floor_col,floor_col,floor_col};
-            loc->symbol.bg = ((tmpx+tmpy) % 2 == 0) ? (struct Colour){20,20,20} : (struct Colour){26,26,26};
-            loc->pathing_flags |= PATHING_GROUND;
-            loc->blocks_sight = false;
-        }
+        gen_room(cell);
     }
 }
 
