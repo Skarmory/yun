@@ -132,16 +132,13 @@ int main(int argc, char** argv)
     term_refresh();
     term_getch();
 
-    int map_width = 3;
-    int map_height = 3;
-    term_clear();
-    term_draw_text((screen_cols/2) - 9, screen_rows/2, NULL, NULL, 0, "Generating map...");
-    term_refresh();
-    cmap = map_new(map_width, map_height);
-    gen_map(cmap, MAPTYPE_DUNGEON);
-
     new_player();
     new_game();
+
+    int map_width = 3;
+    int map_height = 3;
+    cmap = map_new(map_width, map_height);
+    gen_map(cmap, MAPTYPE_DUNGEON);
 
     MAXHP(you->mon) = 999;
     HP(you->mon) = 999;
