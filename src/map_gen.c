@@ -319,7 +319,7 @@ static void _enlist_orthogonals(struct MapCell* cell, struct MapLocation* loc, L
 {
     int ortho_dirs[4] = { 1, 2, 3, 4 };
     int dir_count = 3;
-    struct MapLocation* next;
+    struct MapLocation* next = NULL;
 
     while(dir_count > -1)
     {
