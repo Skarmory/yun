@@ -1,12 +1,14 @@
 #include "map_gen.h"
 
 #include "colour.h"
+#include "globals.h"
 #include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
 #include "map_room.h"
 #include "symbol.h"
+#include "tasking.h"
 #include "util.h"
 
 #include <stdlib.h>
@@ -14,9 +16,49 @@
 // TODO: Check over the maze gen algorithm for performance improvements
 // TODO: Ensure that rooms are always connected
 
+enum MapCellGenStage
+{
+    GEN_STAGE_ROOMS,
+    GEN_STAGE_FLOOD_FILL_MAZE,
+    GEN_STAGE_DOORS,
+    GEN_STAGE_BACK_FILL_MAZE,
+    GEN_STAGE_FINISHED
+};
+
+struct MapCellGenState
+{
+    struct MapCell* cell;
+    int room_attempts;
+    int room_attempts_max;
+    List tmp_list;
+    enum MapCellGenStage stage;
+};
+
 static inline bool _is_border_loc(struct MapCell* cell, struct MapLocation* loc)
 {
     return (loc->x == cell->world_x || loc->y == cell->world_y || loc->x == cell->world_x + g_map_cell_width - 1 || loc->y == cell->world_y + g_map_cell_height - 1);
+}
+
+static bool _is_potential_room_entrance(struct MapCell* cell, struct MapLocation* loc)
+{
+    if(loc->symbol.sym != '|' || loc->symbol.sym != '-')
+        return false;
+
+    if(_is_border_loc(cell, loc))
+        return false;
+
+    struct MapLocation* left  = map_cell_get_location(cell, loc->x-1, loc->y);
+    struct MapLocation* right = map_cell_get_location(cell, loc->x+1, loc->y);
+    struct MapLocation* up    = map_cell_get_location(cell, loc->x, loc->y-1);
+    struct MapLocation* down  = map_cell_get_location(cell, loc->x, loc->y+1);
+
+    if(left->symbol.sym == '-' && right->symbol.sym == '-' && (up->symbol.sym == '#' || down->symbol.sym == '#'))
+        return true;
+
+    if(up->symbol.sym == '|' && down->symbol.sym == '|' && (left->symbol.sym == '#' || right->symbol.sym == '#'))
+        return true;
+
+    return false;
 }
 
 void gen_room(struct MapCell* cell)
@@ -102,6 +144,17 @@ void gen_rooms(struct MapCell* cell)
     }
 }
 
+int gen_rooms_task_func(void* state)
+{
+    struct MapCellGenState* gen_state = state;
+
+    gen_room(gen_state->cell);
+
+    if(++gen_state->room_attempts > gen_state->room_attempts_max)
+        return TASK_STATUS_SUCCESS;
+    return TASK_STATUS_EXECUTING;
+}
+
 /* Check if a location is a valid starting node for a maze
  * Valid maze starting nodes are solid rock surrounded by 8 other solid rock */
 bool _is_maze_snode(struct MapCell* cell, struct MapLocation* loc)
@@ -152,28 +205,28 @@ bool _is_valid_maze_node(struct MapCell* cell, struct MapLocation* loc)
     struct MapLocation* conn = NULL;
 
     tmp = map_cell_get_location(cell, loc->x-1, loc->y);
-    if(tmp->symbol.sym == '#')
+    if(tmp && tmp->symbol.sym == '#')
     {
         conn_count++;
         conn = tmp;
     }
 
     tmp = map_cell_get_location(cell, loc->x+1, loc->y);
-    if(tmp->symbol.sym == '#')
+    if(tmp && tmp->symbol.sym == '#')
     {
         conn_count++;
         conn = tmp;
     }
 
     tmp = map_cell_get_location(cell, loc->x, loc->y-1);
-    if(tmp->symbol.sym == '#')
+    if(tmp && tmp->symbol.sym == '#')
     {
         conn_count++;
         conn = tmp;
     }
 
     tmp = map_cell_get_location(cell, loc->x, loc->y+1);
-    if(tmp->symbol.sym == '#')
+    if(tmp && tmp->symbol.sym == '#')
     {
         conn_count++;
         conn = tmp;
@@ -262,18 +315,66 @@ struct MapLocation* _get_valid_maze_node(struct MapCell* cell, struct MapLocatio
     return NULL;
 }
 
-/* Recursive algorithm to carve out a maze in the level. */
-void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
+static void _enlist_orthogonals(struct MapCell* cell, struct MapLocation* loc, List* list)
 {
+    int ortho_dirs[4] = { 1, 2, 3, 4 };
+    int dir_count = 3;
     struct MapLocation* next;
 
-    while((next = _get_valid_maze_node(cell, loc)))
+    while(dir_count > -1)
     {
+        int random_index = random_int(0, dir_count);
+        switch(ortho_dirs[random_index])
+        {
+            case 1: // Up
+                next = map_cell_get_location(cell, loc->x, loc->y-1);
+                break;
+            case 2: // Down
+                next = map_cell_get_location(cell, loc->x, loc->y+1);
+                break;
+            case 3: // Left
+                next = map_cell_get_location(cell, loc->x-1, loc->y);
+                break;
+            case 4: // Right
+                next = map_cell_get_location(cell, loc->x+1, loc->y);
+                break;
+        }
+
+        // Switch chosen one to the end so it won't be picked again
+        int tmp = ortho_dirs[random_index];
+        ortho_dirs[random_index] = ortho_dirs[dir_count];
+        ortho_dirs[dir_count] = tmp;
+        --dir_count;
+
+        if(next)
+            list_add(list, next);
+    }
+}
+
+void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
+{
+    List loc_list;
+    list_init(&loc_list);
+
+    _enlist_orthogonals(cell, loc, &loc_list);
+
+    do
+    {
+        // Picking from head is breadth first, and results in long straight corridors
+        // Picking from tail is depth first, and results in twisty corridors
+        struct MapLocation* next = loc_list.tail->data;
+        list_rm(&loc_list, loc_list.tail);
+
+        if(!_is_valid_maze_node(cell, next))
+            continue;
+
         next->symbol.sym = '#';
         next->pathing_flags |= PATHING_GROUND;
         next->blocks_sight = false;
-        _flood_fill_maze(cell, next);
+
+        _enlist_orthogonals(cell, next, &loc_list);
     }
+    while(loc_list.count > 0);
 }
 
 /* Checks if a given location is a deadend.
@@ -299,10 +400,7 @@ bool _is_maze_deadend(struct MapCell* cell, struct MapLocation* loc)
     if(map_cell_get_location(cell, x, y-1)->symbol.sym == '#' || map_cell_get_location(cell, x, y-1)->symbol.sym == '.')
         conn_count++;
 
-    if(conn_count > 1)
-        return false;
-
-    return true;
+    return conn_count <= 1;
 }
 
 /* Finds and sets the input arg to the first deadend it finds.
@@ -322,8 +420,9 @@ struct MapLocation* _get_maze_deadend(struct MapCell* cell)
     return NULL;
 }
 
-/* Finds the next deadend node next to the given one, and sets the input arg to it.
- * Returns true if it finds a deadend */
+/*
+ * Finds the next deadend node next to the given one.
+ */
 struct MapLocation* _get_next_deadend_node(struct MapCell* cell, struct MapLocation* loc)
 {
     struct MapLocation* next;
@@ -331,25 +430,24 @@ struct MapLocation* _get_next_deadend_node(struct MapCell* cell, struct MapLocat
     int y = loc->y;
 
     next = map_cell_get_location(cell, x-1, y);
-    if(_is_maze_deadend(cell, next))
+    if(next && _is_maze_deadend(cell, next))
         return next;
 
     next = map_cell_get_location(cell, x+1, y);
-    if(_is_maze_deadend(cell, next))
+    if(next && _is_maze_deadend(cell, next))
         return next;
 
     next = map_cell_get_location(cell, x, y-1);
-    if(_is_maze_deadend(cell, next))
+    if(next && _is_maze_deadend(cell, next))
         return next;
 
     next = map_cell_get_location(cell, x, y+1);
-    if(_is_maze_deadend(cell, next))
+    if(next && _is_maze_deadend(cell, next))
         return next;
 
     return NULL;
 }
 
-/* Recursively fills in deadend corridors until only connected corridors remain. */
 void _back_fill_deadends(struct MapCell* cell, struct MapLocation* loc)
 {
     struct MapLocation* next;
@@ -358,7 +456,7 @@ void _back_fill_deadends(struct MapCell* cell, struct MapLocation* loc)
         next->symbol.sym = ' ';
         next->pathing_flags = 0;
         next->blocks_sight = true;
-        _back_fill_deadends(cell, next);
+        loc = next;
     }
 }
 
@@ -459,6 +557,109 @@ void _make_doors(struct MapCell* cell)
     }
 }
 
+int gen_maze_flood_fill_task_func(void* state)
+{
+    struct MapCellGenState* gen_state = state;
+
+    // Check for potential maze start nodes
+    if(gen_state->tmp_list.count == 0)
+    {
+        struct MapLocation* loc = _get_maze_snode(gen_state->cell);
+        if(!loc)
+            return TASK_STATUS_SUCCESS;
+
+        loc->symbol.sym = '#';
+        loc->pathing_flags |= PATHING_GROUND;
+        loc->blocks_sight = false;
+
+        _enlist_orthogonals(gen_state->cell, loc, &gen_state->tmp_list);
+    }
+
+    // Picking from head is breadth first, and results in long straight corridors
+    // Picking from tail is depth first, and results in twisty corridors
+    struct MapLocation* next = gen_state->tmp_list.tail->data;
+    list_rm(&gen_state->tmp_list, gen_state->tmp_list.tail);
+
+    if(!_is_valid_maze_node(gen_state->cell, next))
+        return TASK_STATUS_EXECUTING;
+
+    next->symbol.sym = '#';
+    next->pathing_flags |= PATHING_GROUND;
+    next->blocks_sight = false;
+
+    _enlist_orthogonals(gen_state->cell, next, &gen_state->tmp_list);
+    return TASK_STATUS_EXECUTING;
+}
+
+int gen_maze_back_fill_deadends_task_func(void* state)
+{
+    struct MapCellGenState* gen_state = state;
+
+    struct MapLocation* loc = NULL;
+
+    // Check for potential maze deadend nodes
+    if(gen_state->tmp_list.count == 0)
+    {
+        loc = _get_maze_deadend(gen_state->cell);
+        if(!loc)
+            return TASK_STATUS_SUCCESS;
+
+        list_add(&gen_state->tmp_list, loc);
+    }
+
+    loc = gen_state->tmp_list.tail->data;
+    list_rm(&gen_state->tmp_list, gen_state->tmp_list.tail);
+
+    loc->symbol.sym = ' ';
+    loc->pathing_flags = 0;
+    loc->blocks_sight = true;
+
+    loc = _get_next_deadend_node(gen_state->cell, loc);
+    if(loc)
+        list_add(&gen_state->tmp_list, loc);
+
+    return TASK_STATUS_EXECUTING;
+}
+
+
+int gen_maze_task_func(void* state)
+{
+    struct MapCellGenState* gen_state = state;
+
+    switch(gen_state->stage)
+    {
+        case GEN_STAGE_FLOOD_FILL_MAZE:
+        {
+            if(gen_maze_flood_fill_task_func(state) == TASK_STATUS_SUCCESS)
+                gen_state->stage = GEN_STAGE_DOORS;
+            break;
+        }
+
+        case GEN_STAGE_DOORS:
+        {
+            // TODO: Taskify this?
+            _make_doors(gen_state->cell);
+            gen_state->stage = GEN_STAGE_BACK_FILL_MAZE;
+            break;
+        }
+
+        case GEN_STAGE_BACK_FILL_MAZE:
+        {
+           if(gen_maze_back_fill_deadends_task_func(state) == TASK_STATUS_SUCCESS)
+           {
+               gen_state->stage = GEN_STAGE_FINISHED;
+               return TASK_STATUS_SUCCESS;
+           }
+           break;
+        }
+
+        default:
+            return TASK_STATUS_FAILED;
+    }
+
+    return TASK_STATUS_EXECUTING;
+}
+
 /* Generate the maze of corridors, adds entryways into rooms, and fills in the deadends */
 void gen_maze(struct MapCell* cell)
 {
@@ -529,26 +730,6 @@ void gen_map_cell(struct MapCell* cell, enum MapType type)
     }
 }
 
-static bool _is_potential_room_entrance(struct MapCell* cell, struct MapLocation* loc)
-{
-    if(loc->symbol.sym != '|' || loc->symbol.sym != '-')
-        return false;
-
-    if(_is_border_loc(cell, loc))
-        return false;
-
-    struct MapLocation* left  = map_cell_get_location(cell, loc->x-1, loc->y);
-    struct MapLocation* right = map_cell_get_location(cell, loc->x+1, loc->y);
-
-    if(left->symbol.sym == '-' && right->symbol.sym == '-') return true;
-
-    struct MapLocation* up   = map_cell_get_location(cell, loc->x, loc->y-1);
-    struct MapLocation* down = map_cell_get_location(cell, loc->x, loc->y+1);
-
-    if(up->symbol.sym == '|' && down->symbol.sym == '|') return true;
-
-    return false;
-}
 
 // Naively connect cells together orthogonally
 static void _connect_cells(struct Map* map)
@@ -677,15 +858,64 @@ static void _connect_cells(struct Map* map)
     }
 }
 
+static void _gen_rooms_async(struct MapCell* cell)
+{
+    struct MapCellGenState state;
+    state.cell = cell;
+    state.room_attempts = 0;
+    state.room_attempts_max = 200;
+    state.stage = GEN_STAGE_ROOMS;
+
+    struct Task* gen_rooms_task = task_new(gen_rooms_task_func, NULL, &state, sizeof(state));
+    tasker_add_task(g_tasker, gen_rooms_task);
+}
+
+static void _gen_maze_async(struct MapCell* cell)
+{
+    struct MapCellGenState state;
+    state.cell = cell;
+    state.stage = GEN_STAGE_FLOOD_FILL_MAZE;
+    list_init(&state.tmp_list);
+
+    struct Task* task = task_new(gen_maze_task_func, NULL, &state, sizeof(state));
+    tasker_add_task(g_tasker, task);
+}
+
 void gen_map(struct Map* map, enum MapType type)
 {
+    ListNode* node = NULL;
+
     for(int x = 0; x < map->width; ++x)
     for(int y = 0; y < map->height; ++y)
     {
         struct MapCell* cell = map_cell_new(x, y);
-        list_add(&cmap->cell_list, cell);
-        gen_map_cell(cell, type);
+        list_add(&map->cell_list, cell);
     }
+
+    term_draw_text((screen_cols/2) - 9, screen_rows/2, NULL, NULL, 0, "Generating map...");
+    term_draw_text((screen_cols/2) - 9, (screen_rows/2) + 1, NULL, NULL, 0, "Creating rooms");
+    term_refresh();
+
+    list_for_each(&map->cell_list, node)
+    {
+        _gen_rooms_async(node->data);
+    }
+
+    tasker_sync(g_tasker);
+    tasker_integrate(g_tasker);
+
+    term_clear();
+    term_draw_text((screen_cols/2) - 9, screen_rows/2, NULL, NULL, 0, "Generating map...");
+    term_draw_text((screen_cols/2) - 9, (screen_rows/2) + 1, NULL, NULL, 0, "Generating maze");
+    term_refresh();
+
+    list_for_each(&map->cell_list, node)
+    {
+        _gen_maze_async(node->data);
+    }
+
+    tasker_sync(g_tasker);
+    tasker_integrate(g_tasker);
 
     if(type == MAPTYPE_DUNGEON)
         _connect_cells(map);
