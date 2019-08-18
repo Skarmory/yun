@@ -892,31 +892,40 @@ void gen_map(struct Map* map, enum MapType type)
         list_add(&map->cell_list, cell);
     }
 
-    term_draw_text((screen_cols/2) - 9, screen_rows/2, NULL, NULL, 0, "Generating map...");
-    term_draw_text((screen_cols/2) - 9, (screen_rows/2) + 1, NULL, NULL, 0, "Creating rooms");
+    int loading_progress_x = (screen_cols/2) - 9;
+    int loading_progress_y = screen_rows/8;
+
+    term_draw_text(loading_progress_x, loading_progress_y, NULL, NULL, A_BOLD, "Generating map");
+    term_draw_text(loading_progress_x, loading_progress_y + 1, NULL, NULL, 0, "Creating rooms...");
     term_refresh();
 
     list_for_each(&map->cell_list, node)
     {
         _gen_rooms_async(node->data);
     }
-
     tasker_sync(g_tasker);
     tasker_integrate(g_tasker);
 
-    term_clear();
-    term_draw_text((screen_cols/2) - 9, screen_rows/2, NULL, NULL, 0, "Generating map...");
-    term_draw_text((screen_cols/2) - 9, (screen_rows/2) + 1, NULL, NULL, 0, "Generating maze");
+    term_draw_text(loading_progress_x, loading_progress_y + 1, NULL, NULL, 0, "Creating rooms... Done!");
+    term_draw_text(loading_progress_x, loading_progress_y + 2, NULL, NULL, 0, "Generating maze...");
     term_refresh();
 
     list_for_each(&map->cell_list, node)
     {
         _gen_maze_async(node->data);
     }
-
     tasker_sync(g_tasker);
     tasker_integrate(g_tasker);
 
+    term_draw_text(loading_progress_x, loading_progress_y + 2, NULL, NULL, 0, "Generating maze... Done!");
+    term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells...");
+    term_refresh();
+
     if(type == MAPTYPE_DUNGEON)
         _connect_cells(map);
+
+    term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells... Done!");
+    term_draw_text(loading_progress_x, loading_progress_y + 5, NULL, NULL, 0, "Entering Naxxramas...");
+    term_refresh();
+    term_getch();
 }
