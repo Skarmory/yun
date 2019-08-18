@@ -21,6 +21,7 @@ struct Tasker* tasker_new(void);
 void tasker_free(struct Tasker* tasker);
 void tasker_integrate(struct Tasker* tasker);
 bool tasker_add_task(struct Tasker* tasker, struct Task* task);
+void tasker_sync(struct Tasker* tasker);
 bool tasker_has_pending_tasks(struct Tasker* tasker);
 bool tasker_has_executing_tasks(struct Tasker* tasker);
 bool tasker_has_completed_tasks(struct Tasker* tasker);
@@ -29,5 +30,7 @@ struct Task* task_new(task_func func, task_callback_func cb_func, void* args, in
 bool task_free(struct Task* task);
 task_func task_get_func(struct Task* task);
 bool task_is_finished(struct Task* task);
+
+extern struct Tasker* g_tasker;
 
 #endif

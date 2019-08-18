@@ -8,6 +8,7 @@
 #include "obj_weapon.h"
 #include "parsing.h"
 #include "symbol.h"
+#include "tasking.h"
 #include "util.h"
 
 #include <stddef.h>
@@ -101,6 +102,8 @@ bool init_naxx(void)
     term_set_sigint_callback(&sigint_handler);
     term_get_wh(&screen_cols, &screen_rows);
 
+    g_tasker = tasker_new();
+
     if(!_init_symbols())
         return false;
     if(!_init_gamedata())
@@ -112,6 +115,7 @@ bool init_naxx(void)
 void uninit_naxx(void)
 {
     _uninit_gamedata();
+    tasker_free(g_tasker);
     term_uninit();
     uninit_logs();
 }

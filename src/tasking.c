@@ -1,6 +1,7 @@
 #include "tasking.h"
 
 #include "list.h"
+#include "log.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +9,8 @@
 #include <string.h>
 #include <threads.h>
 #include <time.h>
+
+struct Tasker* g_tasker = NULL;
 
 enum TaskerState
 {
@@ -187,7 +190,8 @@ void tasker_integrate(struct Tasker* tasker)
     list_for_each_safe(&tasker->complete_list, node, next)
     {
         struct Task* task = node->data;
-        task->cb_func(task->args);
+        if(task->cb_func)
+            task->cb_func(task->args);
 
         list_rm(&tasker->complete_list, node);
         task_free(task);
@@ -212,6 +216,15 @@ bool tasker_add_task(struct Tasker* tasker, struct Task* task)
     cnd_signal(&tasker->tasks_available_signal);
 
     return true;
+}
+
+void tasker_sync(struct Tasker* tasker)
+{
+    while(tasker->has_pending_tasks || tasker->has_executing_tasks)
+    {
+        // Wait for tasker idle
+        // TODO: Wait on condition variable instead?
+    }
 }
 
 bool tasker_has_pending_tasks(struct Tasker* tasker)
