@@ -174,7 +174,7 @@ void term_set_sigint_callback(void(*handler)(int))
 
 void term_refresh(void)
 {
-    VTermSymbol* sym;
+    VTermSymbol* sym = NULL;
     for(int y = 0; y < vterm->height; ++y)
     for(int x = 0; x < vterm->width; ++x)
     {

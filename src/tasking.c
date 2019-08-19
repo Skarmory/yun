@@ -153,25 +153,19 @@ void tasker_free(struct Tasker* tasker)
     ListNode *node, *next;
     list_for_each_safe(&tasker->pending_list, node, next)
     {
-        struct Task* task = node->data;
-        task->status = TASK_STATUS_FAILED;
-        task_free(task);
+        task_free(node->data);
         free(node);
     }
 
     list_for_each_safe(&tasker->task_list, node, next)
     {
-        struct Task* task = node->data;
-        task->status = TASK_STATUS_FAILED;
-        task_free(task);
+        task_free(node->data);
         free(node);
     }
 
     list_for_each_safe(&tasker->complete_list, node, next)
     {
-        struct Task* task = node->data;
-        task->status = TASK_STATUS_FAILED;
-        task_free(task);
+        task_free(node->data);
         free(node);
     }
 

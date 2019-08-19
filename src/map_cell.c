@@ -2,6 +2,7 @@
 
 #include "colour.h"
 #include "monster.h"
+#include "object.h"
 #include "pathing.h"
 
 #include <stdlib.h>
@@ -62,6 +63,12 @@ void map_cell_free(struct MapCell* cell)
 
     for(int idx = 0; idx < (g_map_cell_width * g_map_cell_height); ++idx)
     {
+        list_for_each_safe(&cell->locs[idx].obj_list, node, n)
+        {
+            free_obj(node->data);
+            free(node);
+        }
+
         free(cell->locs[idx].path_node);
     }
 
