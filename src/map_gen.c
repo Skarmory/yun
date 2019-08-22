@@ -39,14 +39,13 @@ static inline bool _is_border_loc(struct MapCell* cell, struct MapLocation* loc)
     return (loc->x == cell->world_x || loc->y == cell->world_y || loc->x == cell->world_x + g_map_cell_width - 1 || loc->y == cell->world_y + g_map_cell_height - 1);
 }
 
+static inline bool _is_wall(struct MapLocation* loc)
+{
+    return loc->symbol.sym == '|' || loc->symbol.sym == '-';
+}
+
 static bool _is_potential_room_entrance(struct MapCell* cell, struct MapLocation* loc)
 {
-    if(loc->symbol.sym != '|' || loc->symbol.sym != '-')
-        return false;
-
-    if(_is_border_loc(cell, loc))
-        return false;
-
     struct MapLocation* left  = map_cell_get_location(cell, loc->x-1, loc->y);
     struct MapLocation* right = map_cell_get_location(cell, loc->x+1, loc->y);
     struct MapLocation* up    = map_cell_get_location(cell, loc->x, loc->y-1);
@@ -538,20 +537,23 @@ void _make_doors(struct MapCell* cell)
             }
         }
 
-        int doors_to_make = random_int(1, 4);
-        for(int door_count = 0; door_count < doors_to_make; ++door_count)
+        int doors_to_make = random_int(1, ((room->w%2) + (room->h%2) + room->w + room->h));
+        for(int door_count = 0; door_count < doors_to_make;)
         {
             if(cidx == 0) break;
 
             int which = random_int(0, cidx-1);
 
-            connectors[which]->symbol.sym = '.';
-            connectors[which]->pathing_flags |= PATHING_GROUND;
-            connectors[which]->blocks_sight = false;
+            if(_is_potential_room_entrance(cell, connectors[which]))
+            {
+                connectors[which]->symbol.sym = '.';
+                connectors[which]->pathing_flags |= PATHING_GROUND;
+                connectors[which]->blocks_sight = false;
+                ++door_count;
+            }
 
             // Switch in the last one in the array
             connectors[which] = connectors[cidx-1];
-
             --cidx;
         }
     }
@@ -758,18 +760,27 @@ static void _connect_cells(struct Map* map)
             cell = map_get_cell_by_map_coord(map, x, y);
             while((loc = map_cell_get_location_relative(cell, g_map_cell_width-1-offset, threshold)) != NULL)
             {
+                // We've hit a corridor or internal room square
                 if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
                     break;
 
-                loc->pathing_flags |= PATHING_GROUND;
-                loc->blocks_sight = false;
-
-                if(_is_potential_room_entrance(cell, loc))
+                if(_is_wall(loc))
                 {
+                    struct Room* room = map_cell_get_room(cell, loc->x, loc->y);
+                    if(room_is_corner(room, loc->x, loc->y))
+                    {
+                        // Cannot cut into a corner currently. Just try again.
+                        --hconn;
+                    }
+
+                    loc->pathing_flags |= PATHING_GROUND;
+                    loc->blocks_sight = false;
                     loc->symbol.sym = '.';
                     break;
                 }
 
+                loc->pathing_flags |= PATHING_GROUND;
+                loc->blocks_sight = false;
                 loc->symbol.sym = '#';
 
                 ++offset;
@@ -781,18 +792,27 @@ static void _connect_cells(struct Map* map)
             cell = map_get_cell_by_map_coord(map, x+1, y);
             while((loc = map_cell_get_location_relative(cell, offset, threshold)) != NULL)
             {
+                // We've hit a corridor or internal room square
                 if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
                     break;
 
-                loc->pathing_flags |= PATHING_GROUND;
-                loc->blocks_sight = false;
-
-                if(_is_potential_room_entrance(cell, loc))
+                if(_is_wall(loc))
                 {
+                    struct Room* room = map_cell_get_room(cell, loc->x, loc->y);
+                    if(room_is_corner(room, loc->x, loc->y))
+                    {
+                        // Cannot cut into a corner currently. Just try again.
+                        --hconn;
+                    }
+
+                    loc->pathing_flags |= PATHING_GROUND;
+                    loc->blocks_sight = false;
                     loc->symbol.sym = '.';
                     break;
                 }
 
+                loc->pathing_flags |= PATHING_GROUND;
+                loc->blocks_sight = false;
                 loc->symbol.sym = '#';
 
                 ++offset;
@@ -815,18 +835,27 @@ static void _connect_cells(struct Map* map)
             cell = map_get_cell_by_map_coord(map, y, x);
             while((loc = map_cell_get_location_relative(cell, threshold, g_map_cell_height-1-offset)) != NULL)
             {
+                // We've hit a corridor or internal room square
                 if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
                     break;
 
-                loc->pathing_flags |= PATHING_GROUND;
-                loc->blocks_sight = false;
-
-                if(_is_potential_room_entrance(cell, loc))
+                if(_is_wall(loc))
                 {
+                    struct Room* room = map_cell_get_room(cell, loc->x, loc->y);
+                    if(room_is_corner(room, loc->x, loc->y))
+                    {
+                        // Cannot cut into a corner currently. Just try again.
+                        --vconn;
+                    }
+
+                    loc->pathing_flags |= PATHING_GROUND;
+                    loc->blocks_sight = false;
                     loc->symbol.sym = '.';
                     break;
                 }
 
+                loc->pathing_flags |= PATHING_GROUND;
+                loc->blocks_sight = false;
                 loc->symbol.sym = '#';
 
                 ++offset;
@@ -838,18 +867,27 @@ static void _connect_cells(struct Map* map)
             cell = map_get_cell_by_map_coord(map, y, x+1);
             while((loc = map_cell_get_location_relative(cell, threshold, offset)) != NULL)
             {
+                // We've hit a corridor or internal room square
                 if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
                     break;
 
-                loc->pathing_flags |= PATHING_GROUND;
-                loc->blocks_sight = false;
-
-                if(_is_potential_room_entrance(cell, loc))
+                if(_is_wall(loc))
                 {
+                    struct Room* room = map_cell_get_room(cell, loc->x, loc->y);
+                    if(room_is_corner(room, loc->x, loc->y))
+                    {
+                        // Cannot cut into a corner currently. Just try again.
+                        --vconn;
+                    }
+
+                    loc->pathing_flags |= PATHING_GROUND;
+                    loc->blocks_sight = false;
                     loc->symbol.sym = '.';
                     break;
                 }
 
+                loc->pathing_flags |= PATHING_GROUND;
+                loc->blocks_sight = false;
                 loc->symbol.sym = '#';
 
                 ++offset;
