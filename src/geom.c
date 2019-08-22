@@ -72,3 +72,8 @@ bool geom_point_in_circle(int px, int py, int cx, int cy, int r)
     int len = (dx * dx) + (dy * dy);
     return len < (r*r);
 }
+
+bool geom_point_in_rect(int px, int py, int rx, int ry, int w, int h)
+{
+    return (px >= rx && px <= (rx + w) && py >= ry && py <= (ry + h));
+}

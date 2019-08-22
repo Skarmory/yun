@@ -14,4 +14,9 @@ bool geom_gen_line_increment(int x0, int y0, int x1, int y1, int* x, int* y, flo
  */
 bool geom_point_in_circle(int px, int py, int cx, int cy, int r);
 
+/*
+ * Check whether (px, py) is inside rectangle with top left corner at (rx, ry) with width w and height h
+ */
+bool geom_point_in_rect(int px, int py, int rx, int ry, int w, int h);
+
 #endif
