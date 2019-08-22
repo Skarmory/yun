@@ -1,6 +1,7 @@
 #include "map_cell.h"
 
 #include "colour.h"
+#include "map_room.h"
 #include "monster.h"
 #include "object.h"
 #include "pathing.h"
@@ -92,6 +93,18 @@ struct MapLocation* map_cell_get_location_relative(struct MapCell* cell, int x, 
     {
         return _get_map_location_internal(cell, x, y);
     }
+    return NULL;
+}
+
+struct Room* map_cell_get_room(struct MapCell* cell, int x, int y)
+{
+    ListNode* node = NULL;
+    list_for_each(&cell->room_list, node)
+    {
+        if(room_has_location(node->data, x, y))
+            return node->data;
+    }
+
     return NULL;
 }
 

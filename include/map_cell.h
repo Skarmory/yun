@@ -33,6 +33,9 @@ struct MapLocation* map_cell_get_location(struct MapCell* cell, int x, int y);
  * i.e. (0, 0) <= (x, y) < (g_map_cell_width, g_map_cell_height)
  */
 struct MapLocation* map_cell_get_location_relative(struct MapCell* cell, int x, int y);
+
+struct Room* map_cell_get_room(struct MapCell* cell, int x, int y);
+
 List* map_cell_get_objects(struct MapCell* cell, int x, int y);
 void map_cell_add_mon(struct MapCell* cell, struct Mon* mon);
 bool map_cell_rm_mon(struct MapCell* cell, struct Mon* mon);
