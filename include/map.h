@@ -8,10 +8,6 @@
 #include <stdbool.h>
 
 struct List;
-struct Mon;
-struct Object;
-struct PathNode;
-struct Room;
 struct MapCell;
 
 #define MROWS 40u
