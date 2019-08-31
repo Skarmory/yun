@@ -966,4 +966,5 @@ void gen_map(struct Map* map, enum MapType type)
     term_draw_text(loading_progress_x, loading_progress_y + 5, NULL, NULL, 0, "Entering Naxxramas...");
     term_refresh();
     term_getch();
+    term_clear();
 }
