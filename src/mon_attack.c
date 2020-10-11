@@ -130,17 +130,14 @@ static inline void _display_hit_text(struct Mon* attacker, struct Mon* defender,
 {
     const struct Weapon* attacker_weapon = mon_get_weapon(attacker);
     const struct Attack* attacks = NULL;
-    const char* weapon_name = NULL;
 
     if(attacker_weapon)
     {
         attacks = attacker_weapon->base->attk;
-        weapon_name = attacker_weapon->base->name;
     }
     else
     {
         attacks = attacker->type->base_weapon->attk;
-        weapon_name = attacker->type->base_weapon->name;
     }
 
     char method_expanded[256];

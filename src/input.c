@@ -7,6 +7,7 @@
 #include "monster.h"
 #include "mon_attack.h"
 #include "mon_inventory.h"
+#include "movement.h"
 #include "object.h"
 #include "player.h"
 #include "term.h"
@@ -32,7 +33,7 @@ static bool _do_smart_action(int x, int y)
     struct MapLocation* loc = map_cell_get_location(cell, x, y);
 
     if(loc->mon == NULL)
-        return mon_move(you->mon, x, y);
+        return move_mon(you->mon, x, y);
     else
         return do_attack_mon_mon(you->mon, loc->mon);
 }

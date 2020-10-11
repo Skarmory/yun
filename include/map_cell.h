@@ -42,7 +42,5 @@ bool map_cell_rm_mon(struct MapCell* cell, struct Mon* mon);
 
 bool map_cell_has_mon(struct MapCell* cell, int x, int y);
 bool map_cell_is_in_bounds(struct MapCell* cell, int x, int y);
-bool map_cell_is_pathable(struct MapCell* cell, int x, int y, MonAttrMoveFlags move_flags);
-bool map_cell_is_valid_move(struct MapCell* cell, int x, int y, MonAttrMoveFlags move_flags);
 
 #endif

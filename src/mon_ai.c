@@ -6,6 +6,7 @@
 #include "map_location.h"
 #include "monster.h"
 #include "mon_attack.h"
+#include "movement.h"
 #include "pathing.h"
 #include "player.h"
 
@@ -34,6 +35,6 @@ void update_mon_ai(struct Mon* mon)
    else
    {
        // Move towards the player
-       mon_move(mon, next_loc->x, next_loc->y);
+       move_mon(mon, next_loc->x, next_loc->y);
    }
 }

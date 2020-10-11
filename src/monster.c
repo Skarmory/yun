@@ -117,30 +117,6 @@ const struct Weapon* mon_get_weapon(struct Mon* mon)
     return NULL;
 }
 
-bool mon_move(struct Mon* mon, int newx, int newy)
-{
-    struct MapCell* old_cell = map_get_cell_by_world_coord(cmap, mon->x, mon->y);
-    struct MapCell* new_cell = map_get_cell_by_world_coord(cmap, newx, newy);
-
-    if(!map_cell_is_valid_move(new_cell, newx, newy, mon->move_flags))
-        return false;
-
-    struct MapLocation* old_loc = map_cell_get_location(old_cell, mon->x, mon->y);
-    struct MapLocation* new_loc = map_cell_get_location(new_cell, newx, newy);
-
-    old_loc->mon = NULL;
-    new_loc->mon = mon;
-    mon->x = newx;
-    mon->y = newy;
-
-    if(old_cell != new_cell)
-    {
-        list_splice_node(&old_cell->mon_list, &new_cell->mon_list, list_find(&old_cell->mon_list, mon));
-    }
-
-    return true;
-}
-
 bool mon_can_see(struct Mon* mon, int x, int y)
 {
     struct MapCell* cell = map_get_cell_by_world_coord(cmap, mon->x, mon->y);

@@ -5,6 +5,7 @@
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
+#include "movement.h"
 #include "util.h"
 
 #include <float.h>
@@ -36,13 +37,16 @@ float _evaluate(struct PathNode* path, struct MapLocation* dest, int path_bits)
 
     // Special handling for the destination
     if(path->loc->x == dest->x && path->loc->y == dest->y)
+    {
         return -INFINITY;
+    }
 
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, path->loc->x, path->loc->y);
     // If this is not a valid move (e.g. other mon on this loc), assign a higher value than it's distance
     // This means the algorithm will explore other paths before checking further in this direction
-    if(!map_cell_is_valid_move(cell, path->loc->x, path->loc->y, path_bits))
+    if(!move_is_valid(path->loc->x, path->loc->y, path_bits))
+    {
         mod = 100.0f;
+    }
 
     // Use distance squared to avoid sqrt
     float _x = dest->x - path->loc->x;
@@ -125,16 +129,11 @@ struct PathNode* _find_path(struct MapLocation* start, struct MapLocation* dest,
             if(_x == best_node->loc->x && _y == best_node->loc->y)
                 continue;
 
-            // Bounds check implicit
-            struct MapCell* cell = map_get_cell_by_world_coord(cmap, _x, _y);
-            if(!cell)
-                continue;
-
             // If not pathable then just continue
-            if(!map_cell_is_pathable(cell, _x, _y, path_bits))
+            if(!move_is_pathable(_x, _y, path_bits))
                 continue;
 
-            struct PathNode* p = map_cell_get_location(cell, _x, _y)->path_node;
+            struct PathNode* p = map_cell_get_location(map_get_cell_by_world_coord(cmap, _x, _y), _x, _y)->path_node;
 
             // Check to see if this is a stale node (if it was last visited in a previous turn or a previous pathing request this turn)
             // Set it to a fresh state

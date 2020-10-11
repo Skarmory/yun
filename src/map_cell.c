@@ -143,20 +143,3 @@ bool map_cell_is_in_bounds(struct MapCell* cell, int x, int y)
     return (x >= cell->world_x && x < cell->world_x + g_map_cell_width) &&
            (y >= cell->world_y && y < cell->world_y + g_map_cell_height);
 }
-
-bool map_cell_is_pathable(struct MapCell* cell, int x, int y, MonAttrMoveFlags move_flags)
-{
-    PathingFlags path_flags = map_cell_get_location(cell, x, y)->pathing_flags;
-    return (
-        ((path_flags & PATHING_GROUND) && (move_flags & MONATTR_WALKS)) ||
-        ((path_flags & PATHING_WATER)  && (move_flags & MONATTR_SWIMS)) ||
-        ((path_flags & PATHING_FLYING) && (move_flags & MONATTR_FLIES))
-    );
-}
-
-bool map_cell_is_valid_move(struct MapCell* cell, int x, int y, MonAttrMoveFlags move_flags)
-{
-    return map_cell_is_in_bounds(cell, x, y) &&
-           map_cell_is_pathable(cell, x, y, move_flags) &&
-           !map_cell_has_mon(cell, x, y);
-}
