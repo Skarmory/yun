@@ -102,3 +102,12 @@ void list_splice_node(List* list_from, List* list_to, ListNode* node)
 
     _add_node(list_to, node);
 }
+
+void* list_pop_head(List* list)
+{
+    void* data = list->head->data;
+
+    list_rm(list, list->head);
+
+    return data;
+}
