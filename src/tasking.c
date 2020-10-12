@@ -3,6 +3,7 @@
 #include "list.h"
 #include "log.h"
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdatomic.h>
@@ -10,15 +11,22 @@
 #include <threads.h>
 #include <time.h>
 
-#define MAX_THREADS 2
+#define MAX_THREADS 4
 
 struct Tasker* g_tasker = NULL;
 
 struct Thread;
-
 static void _thread_init(struct Thread* thread, struct Tasker* tasker);
 static void _thread_free(struct Thread* thread, struct Tasker* tasker);
+static void _thread_start_task(struct Thread* thread, struct Task* task);
+static void _thread_execute_task(struct Thread* thread);
+static void _thread_end_task(struct Thread* thread);
+static void _thread_stop(struct Thread* thread);
 static int  _thread_update(struct Thread* thread);
+
+static struct Thread* _tasker_get_idle_thread(struct Tasker* tasker);
+static void           _tasker_execute_pending_tasks(struct Tasker* tasker);
+static int            _tasker_update(struct Tasker* tasker);
 
 enum TaskerState
 {
@@ -86,11 +94,11 @@ static void _thread_init(struct Thread* thread, struct Tasker* tasker)
 
 static void _thread_free(struct Thread* thread, struct Tasker* tasker)
 {
-    thread->state = THREAD_STATE_STOPPING;
+    _thread_stop(thread);
+
     while(thread->state != THREAD_STATE_STOPPED)
     {
-        log_format_msg(DEBUG, "Trying to stop thread %d... State: %d", thread->id, thread->state);
-        cnd_signal(&thread->signal);
+        // Wait for thread to stop
     }
 
     thrd_join(thread->thread, NULL);
@@ -98,74 +106,118 @@ static void _thread_free(struct Thread* thread, struct Tasker* tasker)
     mtx_destroy(&thread->lock);
 }
 
+// Called by tasker
+static void _thread_start_task(struct Thread* thread, struct Task* task)
+{
+    assert(thread->state == THREAD_STATE_IDLE);
+
+    thread->task  = task;
+    thread->state = THREAD_STATE_EXECUTING;
+
+    cnd_signal(&thread->signal);
+}
+
+// Called by thread itself
+static void _thread_execute_task(struct Thread* thread)
+{
+    log_format_msg(DEBUG, "Worker thread %d executing task: %s", thread->id, thread->task->name);
+    thread->task->status = TASK_STATUS_EXECUTING;
+    while(thread->task->status == TASK_STATUS_EXECUTING)
+    {
+        thread->task->status = thread->task->func(thread->task->args);
+    }
+}
+
+// Called by thread itself
+static void _thread_end_task(struct Thread* thread)
+{
+    log_format_msg(DEBUG, "Worker thread %d ending task: %s", thread->id, thread->task->name);
+
+    list_add(&thread->tasker->complete_list, thread->task);
+    thread->task = NULL;
+
+    ++thread->tasker->completed_task_count;
+}
+
+// Called by tasker
+static void _thread_stop(struct Thread* thread)
+{
+    assert(thread->state != THREAD_STATE_STOPPED);
+
+    mtx_lock(&thread->lock);
+    assert(thread->state == THREAD_STATE_IDLE);
+    thread->state = THREAD_STATE_STOPPING;
+    mtx_unlock(&thread->lock);
+    cnd_signal(&thread->signal);
+}
+
 static int _thread_update(struct Thread* thread)
 {
     while(thread->state != THREAD_STATE_STOPPING)
     {
-        thread->state = THREAD_STATE_IDLE;
-        log_format_msg(DEBUG, "Set thread %d to IDLE", thread->id);
-
-        // Wait until signalled
         mtx_lock(&thread->lock);
+        thread->state = THREAD_STATE_IDLE;
         cnd_wait(&thread->signal, &thread->lock);
 
-        // Signalled to do something now, so check for what's to be done
-
-        if(thread->state == THREAD_STATE_STOPPING)
+        switch(thread->state)
         {
-            // Thread should stop, unlock and break
-            mtx_unlock(&thread->lock);
-            break;
+            case THREAD_STATE_IDLE:
+            case THREAD_STATE_STOPPING:
+                break;
+            case THREAD_STATE_EXECUTING:
+                {
+                    _thread_execute_task(thread);
+                    _thread_end_task(thread);
+                }
+                break;
+            case THREAD_STATE_STOPPED:
+                assert(true); // Shouldn't hit this ever
+                break;
         }
-
-        thread->state = THREAD_STATE_EXECUTING;
-        log_format_msg(DEBUG, "Set thread %d to EXECUTING", thread->id);
-
-        // Lock the pending task list and check for tasks
-        mtx_lock(&thread->tasker->pending_list_lock);
-        {
-            if(thread->tasker->pending_task_count == 0)
-            {
-                // No tasks, so just unlock and go back to wait state
-                log_format_msg(DEBUG, "Thread %d found no tasks.", thread->id);
-                mtx_unlock(&thread->tasker->pending_list_lock);
-                continue;
-            }
-
-            // There is a task to do, grab it
-            thread->task = list_pop_head(&thread->tasker->pending_list);
-            --thread->tasker->pending_task_count;
-            ++thread->tasker->executing_task_count;
-        }
-        mtx_unlock(&thread->tasker->pending_list_lock);
-
-        log_format_msg(DEBUG, "Thread %d begin executing task: %s.", thread->id, thread->task->name);
-
-        // Execute the task to completion
-        thread->task->status = TASK_STATUS_EXECUTING;
-        while(thread->task->status == TASK_STATUS_EXECUTING)
-        {
-            thread->task->status = thread->task->func(thread->task->args);
-            //log_format_msg(DEBUG, "Thread %d executing task: %s. Task status: %d", thread->id, thread->task->name, thread->task->status);
-        }
-
-        log_format_msg(DEBUG, "Thread %d finished executing task: %s.", thread->id, thread->task->name);
-
-        mtx_lock(&thread->tasker->complete_list_lock);
-        {
-            // Task complete, lock complete list and add
-            list_add(&thread->tasker->complete_list, thread->task);
-            thread->task = NULL;
-            --thread->tasker->executing_task_count;
-            ++thread->tasker->completed_task_count;
-        }
-        mtx_unlock(&thread->tasker->complete_list_lock);
 
         mtx_unlock(&thread->lock);
     }
 
     thread->state = THREAD_STATE_STOPPED;
     return 1;
+}
+
+static struct Thread* _tasker_get_idle_thread(struct Tasker* tasker)
+{
+    for(int tidx = 0; tidx < MAX_THREADS; ++tidx)
+    {
+        if(tasker->worker_threads[tidx].state == THREAD_STATE_IDLE)
+        {
+            return &tasker->worker_threads[tidx];
+        }
+    }
+
+    return NULL;
+}
+
+static void _tasker_execute_pending_tasks(struct Tasker* tasker)
+{
+        if(tasker->pending_task_count > 0)
+        {
+            log_format_msg(DEBUG, "Tasker found pending tasks: %d", tasker->pending_task_count);
+        }
+
+        while(tasker->pending_task_count > 0)
+        {
+            struct Thread* thread = _tasker_get_idle_thread(tasker);
+            if(thread)
+            {
+                log_format_msg(DEBUG, "Tasker found idle worker thread: %d", thread->id);
+
+                mtx_lock(&tasker->pending_list_lock);
+                struct Task* task = list_pop_head(&tasker->pending_list);
+                mtx_unlock(&tasker->pending_list_lock);
+
+                _thread_start_task(thread, task);
+                tasker->state = TASKER_STATE_EXECUTING;
+                --tasker->pending_task_count;
+            }
+        }
 }
 
 /*
@@ -177,40 +229,25 @@ static int _tasker_update(struct Tasker* tasker)
 {
     while(tasker->state != TASKER_STATE_STOPPING)
     {
-        tasker->state = TASKER_STATE_IDLE;
-        log_msg(DEBUG, "Set tasker state: IDLE");
-
         mtx_lock(&tasker->lock);
+        tasker->state = TASKER_STATE_IDLE;
         cnd_wait(&tasker->signal, &tasker->lock);
+
+        log_msg(DEBUG, "Tasker received signal");
 
         if(tasker->state == TASKER_STATE_STOPPING)
         {
+            log_msg(DEBUG, "Tasker thread breaking loop");
             mtx_unlock(&tasker->lock);
             break;
         }
 
-        tasker->state = TASKER_STATE_EXECUTING;
-        log_msg(DEBUG, "Set tasker state: EXECUTING");
-
-        while(tasker->pending_task_count > 0)
-        {
-            for(int tidx = 0; tidx < MAX_THREADS; ++tidx)
-            {
-                if(tasker->worker_threads[tidx].state == THREAD_STATE_IDLE)
-                {
-                    // Found an idle thread, signal it
-
-                    cnd_signal(&tasker->worker_threads[tidx].signal);
-                    break;
-                }
-            }
-        }
+        _tasker_execute_pending_tasks(tasker);
 
         mtx_unlock(&tasker->lock);
     }
 
     tasker->state = TASKER_STATE_STOPPED;
-    log_msg(DEBUG, "Set tasker state: STOPPED");
 
     return 1;
 }
@@ -311,12 +348,14 @@ bool tasker_add_task(struct Tasker* tasker, struct Task* task)
     }
 
     // Add task to pending list
+    mtx_lock(&tasker->lock);
     mtx_lock(&tasker->pending_list_lock);
     {
         list_add(&tasker->pending_list, task);
         ++tasker->pending_task_count;
     }
     mtx_unlock(&tasker->pending_list_lock);
+    mtx_unlock(&tasker->lock);
 
     cnd_signal(&tasker->signal);
 
