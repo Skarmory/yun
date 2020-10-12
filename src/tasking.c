@@ -223,20 +223,20 @@ void tasker_sync(struct Tasker* tasker)
 
 bool tasker_has_pending_tasks(struct Tasker* tasker)
 {
-    return tasker->has_pending_tasks;
+    return tasker->pending_task_count != 0;
 }
 
 bool tasker_has_executing_tasks(struct Tasker* tasker)
 {
-    return tasker->has_executing_tasks;
+    return tasker->executing_task_count != 0;
 }
 
 bool tasker_has_completed_tasks(struct Tasker* tasker)
 {
-    return tasker->has_completed_tasks;
+    return tasker->completed_task_count != 0;
 }
 
-struct Task* task_new(task_func func, task_func cb_func, void* args, int size_bytes)
+struct Task* task_new(char* task_name, task_func func, task_func cb_func, void* args, int size_bytes)
 {
     struct Task* task = malloc(sizeof(struct Task));
     task->status = TASK_STATUS_NOT_STARTED;
@@ -244,6 +244,7 @@ struct Task* task_new(task_func func, task_func cb_func, void* args, int size_by
     task->cb_func = cb_func;
     task->args = malloc(size_bytes);
     memcpy(task->args, args, size_bytes);
+    snprintf(task->name, sizeof(task->name), "%s", task_name);
 
     return task;
 }

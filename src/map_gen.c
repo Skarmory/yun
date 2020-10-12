@@ -904,7 +904,7 @@ static void _gen_rooms_async(struct MapCell* cell)
     state.room_attempts_max = 200;
     state.stage = GEN_STAGE_ROOMS;
 
-    struct Task* gen_rooms_task = task_new(gen_rooms_task_func, NULL, &state, sizeof(state));
+    struct Task* gen_rooms_task = task_new("Gen rooms", gen_rooms_task_func, NULL, &state, sizeof(state));
     tasker_add_task(g_tasker, gen_rooms_task);
 }
 
@@ -915,7 +915,7 @@ static void _gen_maze_async(struct MapCell* cell)
     state.stage = GEN_STAGE_FLOOD_FILL_MAZE;
     list_init(&state.tmp_list);
 
-    struct Task* task = task_new(gen_maze_task_func, NULL, &state, sizeof(state));
+    struct Task* task = task_new("Gen maze", gen_maze_task_func, NULL, &state, sizeof(state));
     tasker_add_task(g_tasker, task);
 }
 

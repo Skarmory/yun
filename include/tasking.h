@@ -26,7 +26,7 @@ bool tasker_has_pending_tasks(struct Tasker* tasker);
 bool tasker_has_executing_tasks(struct Tasker* tasker);
 bool tasker_has_completed_tasks(struct Tasker* tasker);
 
-struct Task* task_new(task_func func, task_callback_func cb_func, void* args, int size_bytes);
+struct Task* task_new(char* task_name, task_func func, task_callback_func cb_func, void* args, int size_bytes);
 bool task_free(struct Task* task);
 task_func task_get_func(struct Task* task);
 bool task_is_finished(struct Task* task);
