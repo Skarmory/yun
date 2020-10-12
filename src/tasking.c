@@ -10,7 +10,7 @@
 #include <threads.h>
 #include <time.h>
 
-#define MAX_THREADS 1
+#define MAX_THREADS 2
 
 struct Tasker* g_tasker = NULL;
 
@@ -86,9 +86,10 @@ static void _thread_init(struct Thread* thread, struct Tasker* tasker)
 
 static void _thread_free(struct Thread* thread, struct Tasker* tasker)
 {
+    thread->state = THREAD_STATE_STOPPING;
     while(thread->state != THREAD_STATE_STOPPED)
     {
-        thread->state = THREAD_STATE_STOPPING;
+        log_format_msg(DEBUG, "Trying to stop thread %d... State: %d", thread->id, thread->state);
         cnd_signal(&thread->signal);
     }
 
@@ -145,7 +146,7 @@ static int _thread_update(struct Thread* thread)
         while(thread->task->status == TASK_STATUS_EXECUTING)
         {
             thread->task->status = thread->task->func(thread->task->args);
-            log_format_msg(DEBUG, "Thread %d executing task: %s. Task status: %d", thread->id, thread->task->name, thread->task->status);
+            //log_format_msg(DEBUG, "Thread %d executing task: %s. Task status: %d", thread->id, thread->task->name, thread->task->status);
         }
 
         log_format_msg(DEBUG, "Thread %d finished executing task: %s.", thread->id, thread->task->name);
@@ -177,6 +178,7 @@ static int _tasker_update(struct Tasker* tasker)
     while(tasker->state != TASKER_STATE_STOPPING)
     {
         tasker->state = TASKER_STATE_IDLE;
+        log_msg(DEBUG, "Set tasker state: IDLE");
 
         mtx_lock(&tasker->lock);
         cnd_wait(&tasker->signal, &tasker->lock);
@@ -188,6 +190,7 @@ static int _tasker_update(struct Tasker* tasker)
         }
 
         tasker->state = TASKER_STATE_EXECUTING;
+        log_msg(DEBUG, "Set tasker state: EXECUTING");
 
         while(tasker->pending_task_count > 0)
         {
@@ -207,6 +210,7 @@ static int _tasker_update(struct Tasker* tasker)
     }
 
     tasker->state = TASKER_STATE_STOPPED;
+    log_msg(DEBUG, "Set tasker state: STOPPED");
 
     return 1;
 }
@@ -241,9 +245,10 @@ struct Tasker* tasker_new(void)
 
 void tasker_free(struct Tasker* tasker)
 {
+    tasker->state = TASKER_STATE_STOPPING;
     while(tasker->state != TASKER_STATE_STOPPED)
     {
-        tasker->state = TASKER_STATE_STOPPING;
+        log_msg(DEBUG, "Trying to stop tasker");
         cnd_signal(&tasker->signal);
     }
 
@@ -377,4 +382,3 @@ bool task_is_finished(struct Task* task)
 {
     return task->status == TASK_STATUS_SUCCESS || task->status == TASK_STATUS_FAILED;
 }
-
