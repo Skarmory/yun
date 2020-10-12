@@ -112,4 +112,11 @@ void gameplay_command_handler_func(struct Command* cmd, struct CommandResult* cm
             }
             break;
     }
+
+    if(!cmd_res->end_turn)
+    {
+        clear_msgs();
+        flush_msg_buffer();
+        display_main_screen();
+    }
 }
