@@ -13,6 +13,8 @@
 #include "object.h"
 #include "player.h"
 #include "ui.h"
+#include "ui_inventory.h"
+#include "ui_stats.h"
 #include "util.h"
 
 /**
@@ -90,6 +92,12 @@ void gameplay_command_handler_func(struct Command* cmd, struct CommandResult* cm
             break;
         case COMMAND_TYPE_PICK_UP:
             cmd_res->end_turn = _pick_up_object();
+            break;
+        case COMMAND_TYPE_DISPLAY_INVENTORY:
+            cmd_res->end_turn = display_inventory_player();
+            break;
+        case COMMAND_TYPE_DISPLAY_CHARACTER_SCREEN:
+            cmd_res->end_turn = character_screen_handler();
             break;
         case COMMAND_TYPE_NO_SAVE_AND_QUIT:
             if(prompt_yn("Really quit?"))
