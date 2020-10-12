@@ -906,6 +906,8 @@ static void _gen_rooms_async(struct MapCell* cell)
 
     struct Task* gen_rooms_task = task_new("Gen rooms", gen_rooms_task_func, NULL, &state, sizeof(state));
     tasker_add_task(g_tasker, gen_rooms_task);
+
+    log_msg(DEBUG, "Added gen room task.");
 }
 
 static void _gen_maze_async(struct MapCell* cell)
@@ -917,6 +919,8 @@ static void _gen_maze_async(struct MapCell* cell)
 
     struct Task* task = task_new("Gen maze", gen_maze_task_func, NULL, &state, sizeof(state));
     tasker_add_task(g_tasker, task);
+
+    log_msg(DEBUG, "Added gen maze task.");
 }
 
 void gen_map(struct Map* map, enum MapType type)
