@@ -19,7 +19,8 @@ enum CommandType
     COMMAND_TYPE_DISPLAY_POSITION,
 
     // Game state commands
-    COMMAND_TYPE_SAVE_AND_QUIT
+    COMMAND_TYPE_SAVE_AND_QUIT,
+    COMMAND_TYPE_NO_SAVE_AND_QUIT
 
 #ifdef DEBUG
     ,

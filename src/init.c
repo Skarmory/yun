@@ -104,6 +104,8 @@ static void _init_command_handling(void)
     command_manager_register_handler(g_command_manager, COMMAND_TYPE_PASS_TURN, gameplay_command_handler_func);
     command_manager_register_handler(g_command_manager, COMMAND_TYPE_PICK_UP, gameplay_command_handler_func);
     command_manager_register_handler(g_command_manager, COMMAND_TYPE_DISPLAY_POSITION, gameplay_command_handler_func);
+    command_manager_register_handler(g_command_manager, COMMAND_TYPE_SAVE_AND_QUIT, gameplay_command_handler_func);
+    command_manager_register_handler(g_command_manager, COMMAND_TYPE_NO_SAVE_AND_QUIT, gameplay_command_handler_func);
     //command_manager_register_handler(COMMAND_TYPE_DISPLAY_CHARACTER_SCREEN,
     //command_manager_register_handler(COMMAND_TYPE_DISPLAY_INVENTORY,
 }

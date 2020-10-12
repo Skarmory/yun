@@ -12,6 +12,8 @@
 #include "mon_inventory.h"
 #include "object.h"
 #include "player.h"
+#include "ui.h"
+#include "util.h"
 
 /**
  * Automatically determine the action of a player given a movement command
@@ -83,11 +85,23 @@ void gameplay_command_handler_func(struct Command* cmd, struct CommandResult* cm
                 );
             }
             break;
+        case COMMAND_TYPE_PASS_TURN:
+            cmd_res->end_turn = true;
+            break;
         case COMMAND_TYPE_PICK_UP:
             cmd_res->end_turn = _pick_up_object();
             break;
-        case COMMAND_TYPE_PASS_TURN:
-            cmd_res->end_turn = true;
+        case COMMAND_TYPE_NO_SAVE_AND_QUIT:
+            if(prompt_yn("Really quit?"))
+            {
+                do_quit();
+            }
+            break;
+        case COMMAND_TYPE_SAVE_AND_QUIT:
+            if(prompt_yn("Save and quit? (SAVING NOT IMPLEMENTED YET!)"))
+            {
+                do_quit();
+            }
             break;
     }
 }

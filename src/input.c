@@ -33,7 +33,8 @@ static enum CommandType _convert_command(struct Command* command)
             return COMMAND_TYPE_PASS_TURN;
         case 'q':
             return COMMAND_TYPE_SAVE_AND_QUIT;
-            break;
+        case 'Q':
+            return COMMAND_TYPE_NO_SAVE_AND_QUIT;
         case 'c':
             return COMMAND_TYPE_DISPLAY_CHARACTER_SCREEN;
         case ',':
