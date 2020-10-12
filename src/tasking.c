@@ -69,7 +69,6 @@ struct Tasker
     mtx_t         pending_list_lock;
     mtx_t         complete_list_lock;
 
-    //List          task_list;
     List          pending_list;
     List          complete_list;
 };
@@ -83,6 +82,9 @@ struct Task
     char               name[256];
 };
 
+/**
+ * Set initial state for a worker thread.
+ */
 static void _thread_init(struct Thread* thread, struct Tasker* tasker)
 {
     thread->tasker = tasker;
@@ -92,6 +94,9 @@ static void _thread_init(struct Thread* thread, struct Tasker* tasker)
     thrd_create(&thread->thread, (void*)_thread_update, thread);
 }
 
+/**
+ * Stop a worker thread, join, and destroy its members.
+ */
 static void _thread_free(struct Thread* thread, struct Tasker* tasker)
 {
     _thread_stop(thread);
@@ -106,18 +111,25 @@ static void _thread_free(struct Thread* thread, struct Tasker* tasker)
     mtx_destroy(&thread->lock);
 }
 
-// Called by tasker
+/**
+ * SHOULD ONLY BE CALLED BY THE TASKER
+ * Sets a thread's task and state and signals it to awaken.
+ */
 static void _thread_start_task(struct Thread* thread, struct Task* task)
 {
     assert(thread->state == THREAD_STATE_IDLE);
 
     thread->task  = task;
     thread->state = THREAD_STATE_EXECUTING;
+    ++thread->tasker->executing_task_count;
 
     cnd_signal(&thread->signal);
 }
 
-// Called by thread itself
+/**
+ * SHOULD ONLY BE CALLED BY A WORKER THREAD
+ * Loops executing the given task until task returns a non-executing state.
+ */
 static void _thread_execute_task(struct Thread* thread)
 {
     log_format_msg(DEBUG, "Worker thread %d executing task: %s", thread->id, thread->task->name);
@@ -128,18 +140,27 @@ static void _thread_execute_task(struct Thread* thread)
     }
 }
 
-// Called by thread itself
+/**
+ * SHOULD ONLY BE CALLED BY A WORKER THREAD
+ * Add a completed task to the tasker's completed task list.
+ */
 static void _thread_end_task(struct Thread* thread)
 {
     log_format_msg(DEBUG, "Worker thread %d ending task: %s", thread->id, thread->task->name);
 
+    mtx_lock(&thread->tasker->complete_list_lock);
     list_add(&thread->tasker->complete_list, thread->task);
+    mtx_unlock(&thread->tasker->complete_list_lock);
     thread->task = NULL;
 
+    --thread->tasker->executing_task_count;
     ++thread->tasker->completed_task_count;
 }
 
-// Called by tasker
+/**
+ * SHOULD ONLY BE CALLED BY THE TASKER
+ * Acquire the thread's lock, set its state to stopping, and signal it to awaken.
+ */
 static void _thread_stop(struct Thread* thread)
 {
     assert(thread->state != THREAD_STATE_STOPPED);
@@ -151,6 +172,11 @@ static void _thread_stop(struct Thread* thread)
     cnd_signal(&thread->signal);
 }
 
+/**
+ * Main loop for a worker thread.
+ * The thread will wait on a signal from the tasker to awaken.
+ * If the thread has work it will remain locked until the work is complete and it returns to the idle state.
+ */
 static int _thread_update(struct Thread* thread)
 {
     while(thread->state != THREAD_STATE_STOPPING)
@@ -182,6 +208,9 @@ static int _thread_update(struct Thread* thread)
     return 1;
 }
 
+/**
+ * Try to find an idle worker thread, if cannot find one then return NULL.
+ */
 static struct Thread* _tasker_get_idle_thread(struct Tasker* tasker)
 {
     for(int tidx = 0; tidx < MAX_THREADS; ++tidx)
@@ -195,6 +224,10 @@ static struct Thread* _tasker_get_idle_thread(struct Tasker* tasker)
     return NULL;
 }
 
+/**
+ * Trying to assign pending tasks to idle threads.
+ * TODO: Make this more green?.. Can I be bothered to do that anyway?
+ */
 static void _tasker_execute_pending_tasks(struct Tasker* tasker)
 {
         if(tasker->pending_task_count > 0)
@@ -220,10 +253,10 @@ static void _tasker_execute_pending_tasks(struct Tasker* tasker)
         }
 }
 
-/*
- * This is the "main loop" for the tasker thread.
- * It waits on a condition variable for tasks to be available.
- * Tasks are executed in a cooperative manner, so make sure your tasks are cooperative
+/**
+ * Main loop for the Tasker thread.
+ * Wait on a signal from another thread adding a Task, or to stop.
+ * Once a signal has been received, attempt to assign tasks to idle worker threads.
  */
 static int _tasker_update(struct Tasker* tasker)
 {
@@ -252,6 +285,10 @@ static int _tasker_update(struct Tasker* tasker)
     return 1;
 }
 
+/**
+ * Create a new tasker and set the initial state.
+ * This creates the worker threads for the tasker.
+ */
 struct Tasker* tasker_new(void)
 {
     struct Tasker* tasker = malloc(sizeof(struct Tasker));
@@ -280,6 +317,10 @@ struct Tasker* tasker_new(void)
     return tasker;
 }
 
+/**
+ * Destroy the tasker and its internal state.
+ * This also stops and joins the tasker's worker threads.
+ */
 void tasker_free(struct Tasker* tasker)
 {
     tasker->state = TASKER_STATE_STOPPING;
@@ -315,6 +356,9 @@ void tasker_free(struct Tasker* tasker)
     free(tasker);
 }
 
+/**
+ * Execute the callback functions for completed tasks and clear them out.
+ */
 void tasker_integrate(struct Tasker* tasker)
 {
     if(tasker->completed_task_count == 0)
@@ -340,6 +384,9 @@ void tasker_integrate(struct Tasker* tasker)
     mtx_unlock(&tasker->complete_list_lock);
 }
 
+/**
+ * Add a task to the tasker's list, and signal it to awaken.
+ */
 bool tasker_add_task(struct Tasker* tasker, struct Task* task)
 {
     if(task->status != TASK_STATUS_NOT_STARTED)
@@ -362,6 +409,9 @@ bool tasker_add_task(struct Tasker* tasker, struct Task* task)
     return true;
 }
 
+/**
+ * Block until tasker has finished executing all its pending tasks.
+ */
 void tasker_sync(struct Tasker* tasker)
 {
     while(tasker->pending_task_count > 0 || tasker->executing_task_count > 0)
@@ -371,21 +421,33 @@ void tasker_sync(struct Tasker* tasker)
     }
 }
 
+/**
+ * Return true if tasker has any tasks that it has not started yet.
+ */
 bool tasker_has_pending_tasks(struct Tasker* tasker)
 {
     return tasker->pending_task_count != 0;
 }
 
+/**
+ * Return true if tasker has any tasks that it is currently executing.
+ */
 bool tasker_has_executing_tasks(struct Tasker* tasker)
 {
     return tasker->executing_task_count != 0;
 }
 
+/**
+ * Return true if tasker has any tasks that it has completed, awaiting integration.
+ */
 bool tasker_has_completed_tasks(struct Tasker* tasker)
 {
     return tasker->completed_task_count != 0;
 }
 
+/**
+ * Create a new task and set its initial state
+ */
 struct Task* task_new(char* task_name, task_func func, task_func cb_func, void* args, int size_bytes)
 {
     struct Task* task = malloc(sizeof(struct Task));
@@ -399,6 +461,9 @@ struct Task* task_new(char* task_name, task_func func, task_func cb_func, void* 
     return task;
 }
 
+/**
+ * Destroy a task.
+ */
 bool task_free(struct Task* task)
 {
     if(task->status == TASK_STATUS_EXECUTING)
@@ -412,11 +477,17 @@ bool task_free(struct Task* task)
     return true;
 }
 
+/**
+ * Return the task's execution function.
+ */
 task_func task_get_func(struct Task* task)
 {
     return task->func;
 }
 
+/**
+ * Return true if the task has finished.
+ */
 bool task_is_finished(struct Task* task)
 {
     return task->status == TASK_STATUS_SUCCESS || task->status == TASK_STATUS_FAILED;
