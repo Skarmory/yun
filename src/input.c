@@ -2,6 +2,7 @@
 
 #include "command.h"
 #include "command_manager.h"
+#include "input_keycodes.h"
 #include "term.h"
 
 #include <stdbool.h>
@@ -11,29 +12,29 @@ static enum CommandType _convert_command(struct Command* command)
 {
     switch(command->cmd_char)
     {
-        case '@':
+        case KEYCODE_AT:
             return COMMAND_TYPE_DISPLAY_POSITION;
-        case 'h':
-        case 'j':
-        case 'k':
-        case 'l':
-        case 'y':
-        case 'u':
-        case 'b':
-        case 'n':
+        case KEYCODE_h:
+        case KEYCODE_j:
+        case KEYCODE_k:
+        case KEYCODE_l:
+        case KEYCODE_y:
+        case KEYCODE_u:
+        case KEYCODE_b:
+        case KEYCODE_n:
             return COMMAND_TYPE_MOVE;
-        case '.':
-        case ' ':
+        case KEYCODE_DOT:
+        case KEYCODE_SPACE:
             return COMMAND_TYPE_PASS_TURN;
-        case 'q':
+        case KEYCODE_q:
             return COMMAND_TYPE_SAVE_AND_QUIT;
-        case 'Q':
+        case KEYCODE_Q:
             return COMMAND_TYPE_NO_SAVE_AND_QUIT;
-        case 'c':
+        case KEYCODE_c:
             return COMMAND_TYPE_DISPLAY_CHARACTER_SCREEN;
-        case ',':
+        case KEYCODE_COMMA:
             return COMMAND_TYPE_PICK_UP;
-        case 'i':
+        case KEYCODE_i:
             return COMMAND_TYPE_DISPLAY_INVENTORY;
         default:
             return COMMAND_TYPE_UNKNOWN;
