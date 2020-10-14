@@ -39,8 +39,11 @@ void free_player(void)
         you->faction = NULL;
         free(you->cls);
         free(you->race);
-        struct MapCell* player_cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
-        list_rm(&player_cell->mon_list, list_find(&player_cell->mon_list, you->mon));
+        if(cmap)
+        {
+            struct MapCell* player_cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
+            list_rm(&player_cell->mon_list, list_find(&player_cell->mon_list, you->mon));
+        }
         mon_free(you->mon);
         free(you);
     }
