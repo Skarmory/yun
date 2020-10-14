@@ -150,11 +150,11 @@ static void _thread_end_task(struct Thread* thread)
 
     mtx_lock(&thread->tasker->complete_list_lock);
     list_add(&thread->tasker->complete_list, thread->task);
-    mtx_unlock(&thread->tasker->complete_list_lock);
     thread->task = NULL;
-
     --thread->tasker->executing_task_count;
     ++thread->tasker->completed_task_count;
+    mtx_unlock(&thread->tasker->complete_list_lock);
+    cnd_signal(&thread->tasker->signal);
 }
 
 /**
@@ -264,6 +264,7 @@ static int _tasker_update(struct Tasker* tasker)
     {
         mtx_lock(&tasker->lock);
         tasker->state = TASKER_STATE_IDLE;
+        log_msg(DEBUG, "Tasker set idle");
         cnd_wait(&tasker->signal, &tasker->lock);
 
         log_msg(DEBUG, "Tasker received signal");
