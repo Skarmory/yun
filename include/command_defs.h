@@ -17,6 +17,7 @@ enum CommandType
 
     // Info commands -- Display in message box area
     COMMAND_TYPE_DISPLAY_POSITION,
+    COMMAND_TYPE_LOOK_AT,
 
     // Game state commands
     COMMAND_TYPE_SAVE_AND_QUIT,

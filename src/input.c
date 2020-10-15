@@ -36,6 +36,8 @@ static enum CommandType _convert_command(struct Command* command)
             return COMMAND_TYPE_PICK_UP;
         case KEYCODE_i:
             return COMMAND_TYPE_DISPLAY_INVENTORY;
+        case KEYCODE_SEMICOLON:
+            return COMMAND_TYPE_LOOK_AT;
         default:
             return COMMAND_TYPE_UNKNOWN;
     }
