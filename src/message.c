@@ -39,7 +39,7 @@ void _flush_and_prompt(void)
 /**
  * Write a message to the messages area
  */
-void display_msg(bool should_log, char* msg)
+void display_msg(bool should_log, const char* msg)
 {
     if(should_log)
         log_msg(MSGHIST, msg);
@@ -114,7 +114,7 @@ void display_msg(bool should_log, char* msg)
 /**
  * Displays a message using a standard C format string and arguments
  */
-void display_fmsg(bool should_log, char* format, ...)
+void display_fmsg(bool should_log, const char* format, ...)
 {
     va_list args;
     va_start(args, format);

@@ -9,8 +9,8 @@
 #define display_fmsg_log(format, ...)   (display_fmsg(true, (format), __VA_ARGS__))
 #define display_fmsg_nolog(format, ...) (display_fmsg(false, (format), __VA_ARGS__))
 
-void display_msg(bool should_log, char* msg);
-void display_fmsg(bool should_log, char* format, ...);
+void display_msg(bool should_log, const char* msg);
+void display_fmsg(bool should_log, const char* format, ...);
 void clear_msgs(void);
 void flush_msg_buffer(void);
 

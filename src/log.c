@@ -23,7 +23,7 @@ void init_logs(void)
 /**
  * Write a message to the given log file.
  */
-void log_msg(int logtype, char* msg)
+void log_msg(int logtype, const char* msg)
 {
     switch(logtype)
     {
@@ -41,7 +41,7 @@ void log_msg(int logtype, char* msg)
 /**
  * Write a formatted message with variable args to the given log file.
  */
-void log_format_msg(int logtype, char* format, ...)
+void log_format_msg(int logtype, const char* format, ...)
 {
     va_list args;
     va_start(args, format);
@@ -56,7 +56,7 @@ void log_format_msg(int logtype, char* format, ...)
 /**
  *
  */
-void log_scheck_fail(char* msg)
+void log_scheck_fail(const char* msg)
 {
     log_format_msg(DEBUG, "[SANITY CHECK FAILURE] %s", msg);
 }
