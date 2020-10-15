@@ -111,3 +111,13 @@ void* list_pop_head(List* list)
 
     return data;
 }
+
+void* list_peek_head(List* list)
+{
+    return list->head->data;
+}
+
+bool list_empty(List* list)
+{
+    return list->count == 0;
+}
