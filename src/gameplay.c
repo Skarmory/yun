@@ -85,6 +85,22 @@ static bool _pick_up_object(void)
     return true;
 }
 
+static void _do_look_at_get_loc_info(struct Mon* mon, struct MapLocation* loc)
+{
+    if(!mon_can_see(mon, loc->x, loc->y))
+    {
+        display_msg_nolog("You cannot see here!");
+        return;
+    }
+
+    display_msg_nolog("You see a(n)");
+
+    if(loc->mon)
+    {
+        display_msg_nolog(loc->mon->type->name);
+    }
+}
+
 static struct Symbol _do_look_at_get_symbol(struct MapLocation* loc, struct Mon* mon)
 {
     if(!mon_can_see(mon, loc->x, loc->y))
@@ -146,14 +162,16 @@ static void _do_look_at(void)
 {
     int x = you->mon->x;
     int y = you->mon->y;
-    struct MapLocation* cached_loc = NULL;
+    struct MapLocation* loc = NULL;
 
     bool looking = true;
     while(looking)
     {
-        cached_loc = map_cell_get_location(map_get_cell_by_world_coord(cmap, x, y), x, y);
-        _do_look_at_set_visuals(you->mon, cached_loc);
-        term_refresh();
+        loc = map_cell_get_location(map_get_cell_by_world_coord(cmap, x, y), x, y);
+        _do_look_at_set_visuals(you->mon, loc);
+        _do_look_at_get_loc_info(you->mon, loc);
+        clear_msgs();
+        flush_msg_buffer();
 
         enum LookAtCommand cmd = (enum LookAtCommand) term_getch();
         switch(cmd)
@@ -170,7 +188,7 @@ static void _do_look_at(void)
             case LOOK_AT_COMMAND_MOVE_RIGHT_UP:
             case LOOK_AT_COMMAND_MOVE_RIGHT_DOWN:
                 {
-                    _do_look_at_unset_visuals(you->mon, cached_loc);
+                    _do_look_at_unset_visuals(you->mon, loc);
 
                     int dx = 0;
                     int dy = 0;
@@ -208,7 +226,7 @@ static void _do_look_at(void)
         }
     }
 
-    _do_look_at_unset_visuals(you->mon, cached_loc);
+    _do_look_at_unset_visuals(you->mon, loc);
 }
 
 void gameplay_command_handler_func(struct Command* cmd, struct CommandResult* cmd_res)
