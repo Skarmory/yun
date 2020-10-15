@@ -118,13 +118,24 @@ static void _term_resize_signal_handler(int _)
 static inline bool _should_redraw(VTermSymbol* symbol, char new_symbol, Colour* new_fg, Colour* new_bg, TextAttributeFlags new_ta_flags)
 {
     if(symbol->symbol != new_symbol)
+    {
         return true;
+    }
+
     if(symbol->fg.r != new_fg->r || symbol->fg.g != new_fg->g || symbol->fg.b != new_fg->b)
+    {
         return true;
+    }
+
     if(symbol->bg.r != new_bg->r || symbol->bg.g != new_bg->g || symbol->bg.b != new_bg->b)
+    {
         return true;
-    if(symbol->ta_flags != new_ta_flags)
+    }
+
+    if((symbol->ta_flags & new_ta_flags) != symbol->ta_flags)
+    {
         return true;
+    }
 
     return false;
 }
@@ -223,6 +234,28 @@ char term_getch(void)
     char in;
     read(1, &in, 1);
     return in;
+}
+
+void term_set_attr(int x, int y, TextAttributeFlags ta_flags)
+{
+    VTermSymbol* sym = _term_get_symbol(x, y);
+
+    if((sym->ta_flags | ta_flags) != sym->ta_flags)
+    {
+        sym->ta_flags |= ta_flags;
+        sym->redraw = true;
+    }
+}
+
+void term_unset_attr(int x, int y, TextAttributeFlags ta_flags)
+{
+    VTermSymbol* sym = _term_get_symbol(x, y);
+
+    if((sym->ta_flags | ta_flags) == sym->ta_flags)
+    {
+        sym->ta_flags &= ~ta_flags;
+        sym->redraw = true;
+    }
 }
 
 void term_uninit(void)

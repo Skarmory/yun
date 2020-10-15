@@ -41,6 +41,9 @@ void term_clear_area(int x, int y, int w, int h);
 void term_refresh(void);
 char term_getch(void);
 
+void term_set_attr(int x, int y, TextAttributeFlags ta_flags);
+void term_unset_attr(int x, int y, TextAttributeFlags ta_flags);
+
 void term_draw_symbol(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, char symbol);
 void term_draw_text(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, const char* text);
 void term_draw_ftext(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, const char* format, ...);
