@@ -52,7 +52,9 @@ struct MapCell* map_get_cell_by_world_coord(struct Map* map, int x, int y)
     list_for_each(&map->cell_list, node)
     {
         if(map_cell_is_in_bounds(node->data, x, y))
+        {
             return node->data;
+        }
     }
 
     return NULL;
@@ -69,6 +71,15 @@ struct MapCell* map_get_cell_by_map_coord(struct Map* map, int x, int y)
     }
 
     return NULL;
+}
+
+void map_get_screen_coord_by_world_coord(struct Map* map, int world_x, int world_y, int* screen_x, int* screen_y)
+{
+    int xstart = clamp(you->mon->x - (MCOLS/2), 0, (map->width * g_map_cell_width) - MCOLS - 1);
+    int ystart = clamp(you->mon->y - (MROWS/2), 0, (map->height * g_map_cell_height) - MROWS - 1);
+
+    *screen_x = world_x - xstart;
+    *screen_y = world_y - ystart;
 }
 
 /**
