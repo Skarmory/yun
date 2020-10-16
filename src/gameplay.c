@@ -16,6 +16,7 @@
 #include "mon_type.h"
 #include "object.h"
 #include "player.h"
+#include "player_class.h"
 #include "ui.h"
 #include "ui_inventory.h"
 #include "ui_stats.h"
@@ -88,15 +89,28 @@ static bool _pick_up_object(void)
 
 static void _do_look_at_get_loc_info(struct Mon* mon, struct MapLocation* loc)
 {
+    if(!loc->seen)
+    {
+        display_msg_nolog("Unexplored area");
+        return;
+    }
+
     if(!mon_can_see(mon, loc->x, loc->y))
     {
-        display_msg_nolog("You cannot see here!");
+        display_msg_nolog("You cannot see here.");
         return;
     }
 
     if(loc->mon)
     {
-        display_fmsg_nolog("You see %s %s", msg_a_an(loc->mon->type->name), loc->mon->type->name);
+        if(mon_is_player(loc->mon))
+        {
+            display_fmsg_nolog("You see yourself! %s %s %s named %s", msg_a_an(you->mon->type->name), you->mon->type->name, you->cls->name, you->name);
+        }
+        else
+        {
+            display_fmsg_nolog("You see %s %s", msg_a_an(loc->mon->type->name), loc->mon->type->name);
+        }
         return;
     }
 
@@ -171,6 +185,11 @@ static void _do_look_at(void)
     int y = you->mon->y;
     struct MapLocation* loc = NULL;
 
+    display_msg_nolog("Move cursor over a location, press esc to stop looking.");
+    clear_msgs();
+    flush_msg_buffer();
+    term_getch(); // Just wait for player input so they can see the message
+
     bool looking = true;
     while(looking)
     {
@@ -234,6 +253,10 @@ static void _do_look_at(void)
     }
 
     _do_look_at_unset_visuals(you->mon, loc);
+    display_msg_nolog("Stopped looking, back to dungeoneering");
+    clear_msgs();
+    flush_msg_buffer();
+    term_getch();
 }
 
 void gameplay_command_handler_func(struct Command* cmd, struct CommandResult* cmd_res)
