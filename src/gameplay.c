@@ -93,11 +93,16 @@ static void _do_look_at_get_loc_info(struct Mon* mon, struct MapLocation* loc)
         return;
     }
 
-    display_msg_nolog("You see a(n)");
-
     if(loc->mon)
     {
-        display_msg_nolog(loc->mon->type->name);
+        display_fmsg_nolog("You see a(n) %s", loc->mon->type->name);
+        return;
+    }
+
+    if(loc_has_obj(loc))
+    {
+        display_fmsg_nolog("You see a(n) %s", loc_get_obj(loc)->name);
+        return;
     }
 }
 

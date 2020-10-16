@@ -30,3 +30,13 @@ bool loc_blocks_sight(struct MapLocation* loc)
     // TODO: Eventually mons or objects can block too
     return loc->blocks_sight;
 }
+
+bool loc_has_obj(struct MapLocation* loc)
+{
+    return !list_empty(&loc->obj_list);
+}
+
+struct Object* loc_get_obj(struct MapLocation* loc)
+{
+    return list_peek_head(&loc->obj_list);
+}
