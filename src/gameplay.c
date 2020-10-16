@@ -8,6 +8,7 @@
 #include "map_cell.h"
 #include "map_location.h"
 #include "message.h"
+#include "message_utils.h"
 #include "movement.h"
 #include "monster.h"
 #include "mon_attack.h"
@@ -95,13 +96,14 @@ static void _do_look_at_get_loc_info(struct Mon* mon, struct MapLocation* loc)
 
     if(loc->mon)
     {
-        display_fmsg_nolog("You see a(n) %s", loc->mon->type->name);
+        display_fmsg_nolog("You see %s %s", msg_a_an(loc->mon->type->name), loc->mon->type->name);
         return;
     }
 
     if(loc_has_obj(loc))
     {
-        display_fmsg_nolog("You see a(n) %s", loc_get_obj(loc)->name);
+        const char* obj_name = loc_get_obj(loc)->name;
+        display_fmsg_nolog("You see %s %s", msg_a_an(obj_name), obj_name);
         return;
     }
 }
