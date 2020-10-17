@@ -7,6 +7,7 @@
  */
 
 #include "list.h"
+#include "pathing_flags.h"
 #include "symbol.h"
 
 #include <stdbool.h>
@@ -14,16 +15,6 @@
 struct Object;
 struct PathNode;
 struct Mon;
-
-enum PathingFlag
-{
-    PATHING_NONE   = 0u,
-    PATHING_GROUND = 1u,
-    PATHING_WATER  = (1u << 1),
-    PATHING_FLYING = (1u << 2),
-};
-
-typedef unsigned int PathingFlags;
 
 /**
  * Contains information about a square on the map
