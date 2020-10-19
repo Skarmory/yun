@@ -166,6 +166,8 @@ void gen_room(struct MapCell* cell)
     }
 
     // Fill in with floor
+    for(int tmpx = 1; tmpx < room->w-1; ++tmpx)
+    for(int tmpy = 1; tmpy < room->h-1; ++tmpy)
     {
         int floor_col = random_int(20,180);
         loc = map_cell_get_location(cell, room->x+tmpx, room->y+tmpy);
