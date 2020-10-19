@@ -1,5 +1,7 @@
 #include "pathing_flags.h"
 
+#include <string.h>
+
 enum PathingFlag pathing_path_flag_from_string(const char* name)
 {
     if(strcmp(name, "none") == 0 || strcmp(name, "NONE") == 0)

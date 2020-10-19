@@ -13,4 +13,6 @@ enum PathingFlag
 
 typedef unsigned int PathingFlags;
 
+enum PathingFlag pathing_path_flag_from_string(const char* name);
+
 #endif
