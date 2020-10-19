@@ -1,6 +1,7 @@
 #include "map_gen.h"
 
 #include "colour.h"
+#include "feature.h"
 #include "globals.h"
 #include "log.h"
 #include "map.h"
@@ -12,6 +13,7 @@
 #include "util.h"
 
 #include <stdlib.h>
+#include <string.h>
 
 // TODO: Check over the maze gen algorithm for performance improvements
 // TODO: Ensure that rooms are always connected
@@ -39,9 +41,59 @@ static inline bool _is_border_loc(struct MapCell* cell, struct MapLocation* loc)
     return (loc->x == cell->world_x || loc->y == cell->world_y || loc->x == cell->world_x + g_map_cell_width - 1 || loc->y == cell->world_y + g_map_cell_height - 1);
 }
 
+static bool _is_vertical_wall(struct MapLocation* loc)
+{
+    return loc->feature && (strcmp(loc->feature->id, "walv") == 0);
+}
+
+static bool _is_horizontal_wall(struct MapLocation* loc)
+{
+    return loc->feature && (strcmp(loc->feature->id, "walh") == 0);
+}
+
+static bool _is_corner_wall(struct MapLocation* loc)
+{
+    return loc->feature && (strcmp(loc->feature->id, "walc") == 0);
+}
+
+static bool _is_solid_rock(struct MapLocation* loc)
+{
+    if(loc->feature)
+    {
+        log_format_msg(DEBUG, "Checking for solid rock at location, found %s", loc->feature->id);
+    }
+    return loc->feature && (strcmp(loc->feature->id, "sroc") == 0);
+}
+
 static inline bool _is_wall(struct MapLocation* loc)
 {
-    return loc->symbol.sym == '|' || loc->symbol.sym == '-';
+    return (_is_vertical_wall(loc)   ||
+            _is_horizontal_wall(loc) ||
+            _is_corner_wall(loc));
+}
+
+static bool _is_corridor(struct MapLocation* loc)
+{
+    return loc->symbol.sym == '#';
+}
+
+static void _make_corridor(struct MapLocation* loc)
+{
+    loc->symbol.sym = '#';
+    loc->pathing_flags = PATHING_GROUND;
+    loc->feature = NULL;
+}
+
+static bool _is_floor(struct MapLocation* loc)
+{
+    return loc->symbol.sym == '.';
+}
+
+static void _make_floor(struct MapLocation* loc)
+{
+    loc->symbol.sym = '.';
+    loc->pathing_flags = PATHING_GROUND;
+    loc->feature = NULL;
 }
 
 static bool _is_potential_room_entrance(struct MapCell* cell, struct MapLocation* loc)
@@ -51,11 +103,15 @@ static bool _is_potential_room_entrance(struct MapCell* cell, struct MapLocation
     struct MapLocation* up    = map_cell_get_location(cell, loc->x, loc->y-1);
     struct MapLocation* down  = map_cell_get_location(cell, loc->x, loc->y+1);
 
-    if(left->symbol.sym == '-' && right->symbol.sym == '-' && (up->symbol.sym == '#' || down->symbol.sym == '#'))
+    if(_is_horizontal_wall(left) && _is_horizontal_wall(right) && (_is_corridor(up) || _is_corridor(down)))
+    {
         return true;
+    }
 
-    if(up->symbol.sym == '|' && down->symbol.sym == '|' && (left->symbol.sym == '#' || right->symbol.sym == '#'))
+    if(_is_vertical_wall(up) && _is_vertical_wall(down) && (_is_corridor(left) || _is_corridor(right)))
+    {
         return true;
+    }
 
     return false;
 }
@@ -86,49 +142,36 @@ void gen_room(struct MapCell* cell)
 
     list_add(&cell->room_list, room);
 
-    struct MapLocation* loc;
+    struct MapLocation* loc = NULL;
+    struct Feature* wall = feature_look_up_by_id("walv");
+
     for(int tmp = 0; tmp < room->h; tmp++)
     {
         loc = map_cell_get_location(cell, room->x, room->y+tmp);
-        loc->symbol.sym = '|';
-        loc->symbol.bg = (struct Colour){20,20,20};
-        loc->pathing_flags = 0;
-        loc->blocks_sight = true;
+        loc->feature = wall;
 
         loc = map_cell_get_location(cell, room->x+room->w-1, room->y+tmp);
-        loc->symbol.sym = '|';
-        loc->symbol.bg = (struct Colour){20,20,20};
-        loc->pathing_flags = 0;
-        loc->blocks_sight = true;
+        loc->feature = wall;
     }
 
     // Draw horizontal walls
+    wall = feature_look_up_by_id("walh");
     for(int tmp = 0; tmp < room->w; tmp++)
     {
         loc = map_cell_get_location(cell, room->x+tmp, room->y);
-        loc->symbol.sym = '-';
-        loc->symbol.bg = (struct Colour){20,20,20};
-        loc->pathing_flags = 0;
-        loc->blocks_sight = true;
+        loc->feature = wall;
 
         loc = map_cell_get_location(cell, room->x+tmp, room->y+room->h-1);
-        loc->symbol.sym = '-';
-        loc->symbol.bg = (struct Colour){20,20,20};
-        loc->pathing_flags = 0;
-        loc->blocks_sight = true;
+        loc->feature = wall;
     }
 
     // Fill in with floor
-    for(int tmpx = 1; tmpx < room->w-1; tmpx++)
-    for(int tmpy = 1; tmpy < room->h-1; tmpy++)
     {
         int floor_col = random_int(20,180);
         loc = map_cell_get_location(cell, room->x+tmpx, room->y+tmpy);
-        loc->symbol.sym = '.';
+        _make_floor(loc);
         loc->symbol.fg = (struct Colour){floor_col,floor_col,floor_col};
         loc->symbol.bg = ((tmpx+tmpy) % 2 == 0) ? (struct Colour){20,20,20} : (struct Colour){26,26,26};
-        loc->pathing_flags |= PATHING_GROUND;
-        loc->blocks_sight = false;
     }
 }
 
@@ -158,16 +201,21 @@ int gen_rooms_task_func(void* state)
  * Valid maze starting nodes are solid rock surrounded by 8 other solid rock */
 bool _is_maze_snode(struct MapCell* cell, struct MapLocation* loc)
 {
-    if(loc->symbol.sym != ' ' || _is_border_loc(cell, loc))
+    if(!_is_solid_rock(loc) || _is_border_loc(cell, loc))
+    {
+        log_msg(DEBUG, "Not valid start node");
         return false;
+    }
 
     int x = loc->x;
     int y = loc->y;
 
-    if(map_cell_get_location(cell, x-1, y-1)->symbol.sym == ' ' && map_cell_get_location(cell, x, y-1)->symbol.sym == ' ' && map_cell_get_location(cell, x+1, y-1)->symbol.sym == ' ' &&
-       map_cell_get_location(cell, x-1, y)->symbol.sym   == ' ' && map_cell_get_location(cell, x+1, y)->symbol.sym == ' ' &&
-       map_cell_get_location(cell, x-1, y+1)->symbol.sym == ' ' && map_cell_get_location(cell, x, y+1)->symbol.sym == ' ' && map_cell_get_location(cell, x+1, y+1)->symbol.sym == ' ')
+    if(_is_solid_rock(map_cell_get_location(cell, x-1, y-1)) && _is_solid_rock(map_cell_get_location(cell, x, y-1)) && _is_solid_rock(map_cell_get_location(cell, x+1, y-1)) &&
+       _is_solid_rock(map_cell_get_location(cell, x-1, y))   && _is_solid_rock(map_cell_get_location(cell, x+1, y)) &&
+       _is_solid_rock(map_cell_get_location(cell, x-1, y+1)) && _is_solid_rock(map_cell_get_location(cell, x, y+1)) && _is_solid_rock(map_cell_get_location(cell, x+1, y+1)))
+    {
         return true;
+    }
 
     return false;
 }
@@ -195,7 +243,7 @@ struct MapLocation* _get_maze_snode(struct MapCell* cell)
  */
 bool _is_valid_maze_node(struct MapCell* cell, struct MapLocation* loc)
 {
-    if(loc->symbol.sym != ' ' || _is_border_loc(cell, loc))
+    if(!_is_solid_rock(loc) || _is_border_loc(cell, loc))
         return false;
 
     int conn_count = 0;
@@ -204,28 +252,28 @@ bool _is_valid_maze_node(struct MapCell* cell, struct MapLocation* loc)
     struct MapLocation* conn = NULL;
 
     tmp = map_cell_get_location(cell, loc->x-1, loc->y);
-    if(tmp && tmp->symbol.sym == '#')
+    if(tmp && _is_corridor(tmp))
     {
         conn_count++;
         conn = tmp;
     }
 
     tmp = map_cell_get_location(cell, loc->x+1, loc->y);
-    if(tmp && tmp->symbol.sym == '#')
+    if(tmp && _is_corridor(tmp))
     {
         conn_count++;
         conn = tmp;
     }
 
     tmp = map_cell_get_location(cell, loc->x, loc->y-1);
-    if(tmp && tmp->symbol.sym == '#')
+    if(tmp && _is_corridor(tmp))
     {
         conn_count++;
         conn = tmp;
     }
 
     tmp = map_cell_get_location(cell, loc->x, loc->y+1);
-    if(tmp && tmp->symbol.sym == '#')
+    if(tmp && _is_corridor(tmp))
     {
         conn_count++;
         conn = tmp;
@@ -239,27 +287,31 @@ bool _is_valid_maze_node(struct MapCell* cell, struct MapLocation* loc)
 
     if(xoff == -1)
     {
-        if(map_cell_get_location(cell, loc->x-1, loc->y-1)->symbol.sym == '#' ||
-           map_cell_get_location(cell, loc->x-1, loc->y+1)->symbol.sym == '#')
+        if(_is_corridor(map_cell_get_location(cell, loc->x-1, loc->y-1)) || _is_corridor(map_cell_get_location(cell, loc->x-1, loc->y+1)))
+        {
             return false;
+        }
     }
     else if(xoff == 1)
     {
-        if(map_cell_get_location(cell, loc->x+1, loc->y-1)->symbol.sym == '#' ||
-           map_cell_get_location(cell, loc->x+1, loc->y+1)->symbol.sym == '#')
+        if(_is_corridor(map_cell_get_location(cell, loc->x+1, loc->y-1)) || _is_corridor(map_cell_get_location(cell, loc->x+1, loc->y+1)))
+        {
             return false;
+        }
     }
     else if(yoff == 1)
     {
-        if(map_cell_get_location(cell, loc->x-1, loc->y+1)->symbol.sym == '#' ||
-           map_cell_get_location(cell, loc->x+1, loc->y+1)->symbol.sym == '#')
+        if(_is_corridor(map_cell_get_location(cell, loc->x-1, loc->y+1)) || _is_corridor(map_cell_get_location(cell, loc->x+1, loc->y+1)))
+        {
             return false;
+        }
     }
     else
     {
-        if(map_cell_get_location(cell, loc->x-1, loc->y-1)->symbol.sym == '#' ||
-           map_cell_get_location(cell, loc->x+1, loc->y-1)->symbol.sym == '#')
+        if(_is_corridor(map_cell_get_location(cell, loc->x-1, loc->y-1)) || _is_corridor(map_cell_get_location(cell, loc->x+1, loc->y-1)))
+        {
             return false;
+        }
     }
 
    return true;
@@ -367,10 +419,7 @@ void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
         if(!_is_valid_maze_node(cell, next))
             continue;
 
-        next->symbol.sym = '#';
-        next->pathing_flags |= PATHING_GROUND;
-        next->blocks_sight = false;
-
+        _make_corridor(next);
         _enlist_orthogonals(cell, next, &loc_list);
     }
     while(loc_list.count > 0);
@@ -380,24 +429,32 @@ void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
  * Deadends have only one connecting corridor tile */
 bool _is_maze_deadend(struct MapCell* cell, struct MapLocation* loc)
 {
-    if(loc->symbol.sym != '#' || _is_border_loc(cell, loc))
+    if(!_is_corridor(loc) || _is_border_loc(cell, loc))
         return false;
 
     int x = loc->x;
     int y = loc->y;
     int conn_count = 0;
 
-    if(map_cell_get_location(cell, x-1, y)->symbol.sym == '#' || map_cell_get_location(cell, x-1, y)->symbol.sym == '.')
+    if(_is_corridor(map_cell_get_location(cell, x-1, y)) || _is_floor(map_cell_get_location(cell, x-1, y)))
+    {
         conn_count++;
+    }
 
-    if(map_cell_get_location(cell, x+1, y)->symbol.sym == '#' || map_cell_get_location(cell, x+1, y)->symbol.sym == '.')
+    if(_is_corridor(map_cell_get_location(cell, x+1, y)) || _is_floor(map_cell_get_location(cell, x+1, y)))
+    {
         conn_count++;
+    }
 
-    if(map_cell_get_location(cell, x, y+1)->symbol.sym == '#' || map_cell_get_location(cell, x, y+1)->symbol.sym == '.')
+    if(_is_corridor(map_cell_get_location(cell, x, y+1)) || _is_floor(map_cell_get_location(cell, x, y+1)))
+    {
         conn_count++;
+    }
 
-    if(map_cell_get_location(cell, x, y-1)->symbol.sym == '#' || map_cell_get_location(cell, x, y-1)->symbol.sym == '.')
+    if(_is_corridor(map_cell_get_location(cell, x, y-1)) || _is_floor(map_cell_get_location(cell, x, y-1)))
+    {
         conn_count++;
+    }
 
     return conn_count <= 1;
 }
@@ -450,11 +507,10 @@ struct MapLocation* _get_next_deadend_node(struct MapCell* cell, struct MapLocat
 void _back_fill_deadends(struct MapCell* cell, struct MapLocation* loc)
 {
     struct MapLocation* next;
+    struct Feature* rock = feature_look_up_by_id("sroc");
     while((next = _get_next_deadend_node(cell, loc)))
     {
-        next->symbol.sym = ' ';
-        next->pathing_flags = 0;
-        next->blocks_sight = true;
+        next->feature = rock;
         loc = next;
     }
 }
@@ -484,7 +540,7 @@ void _make_doors(struct MapCell* cell)
         {
             for(; x < (room->x + room->w - 1); x++)
             {
-                if(map_cell_get_location(cell, x, y-1)->symbol.sym == '#')
+                if(_is_corridor(map_cell_get_location(cell, x, y-1)))
                 {
                     connectors[cidx] = map_cell_get_location(cell, x, y);
                     cidx++;
@@ -499,7 +555,7 @@ void _make_doors(struct MapCell* cell)
         {
             for(; x < (room->x + room->w - 1); x++)
             {
-                if(map_cell_get_location(cell, x, y+1)->symbol.sym == '#')
+                if(_is_corridor(map_cell_get_location(cell, x, y+1)))
                 {
                     connectors[cidx] = map_cell_get_location(cell, x, y);
                     cidx++;
@@ -514,7 +570,7 @@ void _make_doors(struct MapCell* cell)
         {
             for(; y < (room->y + room->h - 1); y++)
             {
-                if(map_cell_get_location(cell, x-1, y)->symbol.sym == '#')
+                if(_is_corridor(map_cell_get_location(cell, x-1, y)))
                 {
                     connectors[cidx] = map_cell_get_location(cell, x, y);
                     cidx++;
@@ -529,7 +585,7 @@ void _make_doors(struct MapCell* cell)
         {
             for(; y < (room->y + room->h - 1); y++)
             {
-                if(map_cell_get_location(cell, x+1, y)->symbol.sym == '#')
+                if(_is_corridor(map_cell_get_location(cell, x+1, y)))
                 {
                     connectors[cidx] = map_cell_get_location(cell, x, y);
                     cidx++;
@@ -546,9 +602,7 @@ void _make_doors(struct MapCell* cell)
 
             if(_is_potential_room_entrance(cell, connectors[which]))
             {
-                connectors[which]->symbol.sym = '.';
-                connectors[which]->pathing_flags |= PATHING_GROUND;
-                connectors[which]->blocks_sight = false;
+                _make_floor(connectors[which]);
                 ++door_count;
             }
 
@@ -570,10 +624,7 @@ int gen_maze_flood_fill_task_func(void* state)
         if(!loc)
             return TASK_STATUS_SUCCESS;
 
-        loc->symbol.sym = '#';
-        loc->pathing_flags |= PATHING_GROUND;
-        loc->blocks_sight = false;
-
+        _make_corridor(loc);
         _enlist_orthogonals(gen_state->cell, loc, &gen_state->tmp_list);
     }
 
@@ -585,14 +636,13 @@ int gen_maze_flood_fill_task_func(void* state)
     if(!_is_valid_maze_node(gen_state->cell, next))
         return TASK_STATUS_EXECUTING;
 
-    next->symbol.sym = '#';
-    next->pathing_flags |= PATHING_GROUND;
-    next->blocks_sight = false;
+    _make_corridor(next);
 
     _enlist_orthogonals(gen_state->cell, next, &gen_state->tmp_list);
     return TASK_STATUS_EXECUTING;
 }
 
+// TODO: MAKE THIS NON-COOPERATIVE
 int gen_maze_back_fill_deadends_task_func(void* state)
 {
     struct MapCellGenState* gen_state = state;
@@ -612,9 +662,7 @@ int gen_maze_back_fill_deadends_task_func(void* state)
     loc = gen_state->tmp_list.tail->data;
     list_rm(&gen_state->tmp_list, gen_state->tmp_list.tail);
 
-    loc->symbol.sym = ' ';
-    loc->pathing_flags = 0;
-    loc->blocks_sight = true;
+    loc->feature = feature_look_up_by_id("sroc");
 
     loc = _get_next_deadend_node(gen_state->cell, loc);
     if(loc)
@@ -669,19 +717,17 @@ void gen_maze(struct MapCell* cell)
 
     while((tmp = _get_maze_snode(cell)))
     {
-        tmp->symbol.sym = '#';
-        tmp->pathing_flags |= PATHING_GROUND;
-        tmp->blocks_sight = false;
+        log_msg(DEBUG, "Got maze start node");
+        _make_corridor(tmp);
         _flood_fill_maze(cell, tmp);
     }
 
     _make_doors(cell);
 
+    struct Feature* feature = feature_look_up_by_id("sroc");
     while((tmp = _get_maze_deadend(cell)))
     {
-        tmp->symbol.sym = ' ';
-        tmp->pathing_flags = 0;
-        tmp->blocks_sight = true;
+        tmp->feature = feature;
         _back_fill_deadends(cell, tmp);
     }
 }
@@ -710,11 +756,9 @@ static void _gen_open_area(struct MapCell* cell)
     for(int tmpy = 0; tmpy < h-1; tmpy++)
     {
         struct MapLocation* loc = map_cell_get_location(cell, x+tmpx, y+tmpy);
-        loc->symbol.sym = '.';
+        _make_floor(loc);
         loc->symbol.fg = (struct Colour){0,random_int(20, 180),0};
         loc->symbol.bg = ((tmpx+tmpy) % 2 == 0) ? (struct Colour){10,36,10} : (struct Colour){16, 36, 16};
-        loc->pathing_flags |= PATHING_GROUND;
-        loc->blocks_sight = false;
     }
 }
 
@@ -761,7 +805,7 @@ static void _connect_cells(struct Map* map)
             while((loc = map_cell_get_location_relative(cell, g_map_cell_width-1-offset, threshold)) != NULL)
             {
                 // We've hit a corridor or internal room square
-                if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
+                if(_is_corridor(loc) || _is_floor(loc))
                     break;
 
                 if(_is_wall(loc))
@@ -773,16 +817,11 @@ static void _connect_cells(struct Map* map)
                         --hconn;
                     }
 
-                    loc->pathing_flags |= PATHING_GROUND;
-                    loc->blocks_sight = false;
-                    loc->symbol.sym = '.';
+                    _make_floor(loc);
                     break;
                 }
 
-                loc->pathing_flags |= PATHING_GROUND;
-                loc->blocks_sight = false;
-                loc->symbol.sym = '#';
-
+                _make_corridor(loc);
                 ++offset;
             }
 
@@ -793,7 +832,7 @@ static void _connect_cells(struct Map* map)
             while((loc = map_cell_get_location_relative(cell, offset, threshold)) != NULL)
             {
                 // We've hit a corridor or internal room square
-                if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
+                if(_is_corridor(loc) || _is_floor(loc))
                     break;
 
                 if(_is_wall(loc))
@@ -805,16 +844,11 @@ static void _connect_cells(struct Map* map)
                         --hconn;
                     }
 
-                    loc->pathing_flags |= PATHING_GROUND;
-                    loc->blocks_sight = false;
-                    loc->symbol.sym = '.';
+                    _make_floor(loc);
                     break;
                 }
 
-                loc->pathing_flags |= PATHING_GROUND;
-                loc->blocks_sight = false;
-                loc->symbol.sym = '#';
-
+                _make_corridor(loc);
                 ++offset;
             }
         }
@@ -836,7 +870,7 @@ static void _connect_cells(struct Map* map)
             while((loc = map_cell_get_location_relative(cell, threshold, g_map_cell_height-1-offset)) != NULL)
             {
                 // We've hit a corridor or internal room square
-                if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
+                if(_is_corridor(loc) || _is_floor(loc))
                     break;
 
                 if(_is_wall(loc))
@@ -848,16 +882,11 @@ static void _connect_cells(struct Map* map)
                         --vconn;
                     }
 
-                    loc->pathing_flags |= PATHING_GROUND;
-                    loc->blocks_sight = false;
-                    loc->symbol.sym = '.';
+                    _make_floor(loc);
                     break;
                 }
 
-                loc->pathing_flags |= PATHING_GROUND;
-                loc->blocks_sight = false;
-                loc->symbol.sym = '#';
-
+                _make_corridor(loc);
                 ++offset;
             }
 
@@ -868,7 +897,7 @@ static void _connect_cells(struct Map* map)
             while((loc = map_cell_get_location_relative(cell, threshold, offset)) != NULL)
             {
                 // We've hit a corridor or internal room square
-                if(loc->symbol.sym == '#' || loc->symbol.sym == '.')
+                if(_is_corridor(loc) || _is_floor(loc))
                     break;
 
                 if(_is_wall(loc))
@@ -880,16 +909,11 @@ static void _connect_cells(struct Map* map)
                         --vconn;
                     }
 
-                    loc->pathing_flags |= PATHING_GROUND;
-                    loc->blocks_sight = false;
-                    loc->symbol.sym = '.';
+                    _make_floor(loc);
                     break;
                 }
 
-                loc->pathing_flags |= PATHING_GROUND;
-                loc->blocks_sight = false;
-                loc->symbol.sym = '#';
-
+                _make_corridor(loc);
                 ++offset;
             }
         }

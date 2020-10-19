@@ -2,6 +2,7 @@
 
 #include "map.h"
 #include "map_cell.h"
+#include "map_location.h"
 #include "monster.h"
 #include "pathing.h"
 
@@ -9,7 +10,7 @@
 
 static inline bool _move_is_pathable(struct MapCell* cell, int destx, int desty, MonAttrMoveFlags move_flags)
 {
-    PathingFlags path_flags = map_cell_get_location(cell, destx, desty)->pathing_flags;
+    PathingFlags path_flags = loc_get_pathing(map_cell_get_location(cell, destx, desty));
     return (
         ((path_flags & PATHING_GROUND) && (move_flags & MONATTR_WALKS)) ||
         ((path_flags & PATHING_WATER)  && (move_flags & MONATTR_SWIMS)) ||

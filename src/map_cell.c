@@ -1,6 +1,7 @@
 #include "map_cell.h"
 
 #include "colour.h"
+#include "feature.h"
 #include "map_room.h"
 #include "monster.h"
 #include "object.h"
@@ -23,21 +24,22 @@ struct MapCell* map_cell_new(int cell_x, int cell_y)
     list_init(&cell->room_list);
     list_init(&cell->mon_list);
 
+    struct Feature* rock = feature_look_up_by_id("sroc");
     for(int i = 0; i < g_map_cell_width; ++i)
     for(int j = 0; j < g_map_cell_height; ++j)
     {
         struct MapLocation* loc = map_cell_get_location_relative(cell, i, j);
         loc->x = cell->world_x + i;
         loc->y = cell->world_y + j;
-        loc->symbol.sym  = ' ';
+        loc->symbol.sym  = '.';
         loc->symbol.fg   = *COL(CLR_WHITE);
         loc->symbol.bg   = *COL(CLR_DEFAULT);
         loc->symbol.attr = 0;
         loc->path_node = new_path_node(loc);
         loc->mon = NULL;
-        loc->pathing_flags = 0;
+        loc->feature = rock;
+        loc->pathing_flags = PATHING_GROUND;
         loc->seen = false;
-        loc->blocks_sight = true;
         list_init(&loc->obj_list);
     }
 

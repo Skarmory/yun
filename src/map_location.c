@@ -1,5 +1,7 @@
 #include "map_location.h"
 
+#include "feature.h"
+
 /**
  * Add object to given map location
  */
@@ -28,7 +30,12 @@ bool loc_rm_obj(struct MapLocation* loc, struct Object* obj)
 bool loc_blocks_sight(struct MapLocation* loc)
 {
     // TODO: Eventually mons or objects can block too
-    return loc->blocks_sight;
+    if(loc->feature)
+    {
+        return loc->feature->block_sight;
+    }
+
+    return false;
 }
 
 bool loc_has_obj(struct MapLocation* loc)
@@ -39,4 +46,14 @@ bool loc_has_obj(struct MapLocation* loc)
 struct Object* loc_get_obj(struct MapLocation* loc)
 {
     return list_peek_head(&loc->obj_list);
+}
+
+PathingFlags loc_get_pathing(struct MapLocation* loc)
+{
+    if(loc->feature)
+    {
+        return loc->feature->pathing_flags;
+    }
+
+    return loc->pathing_flags;
 }

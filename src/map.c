@@ -1,6 +1,7 @@
 #include "map.h"
 
 #include "colour.h"
+#include "feature.h"
 #include "list.h"
 #include "log.h"
 #include "map_cell.h"
@@ -102,26 +103,44 @@ void display_map(void)
             if(!mon_can_see(you->mon, x, y))
             {
                 if(loc->seen)
-                    term_draw_symbol(i, j, COL(CLR_FOG_OF_WAR), COL(CLR_DEFAULT), 0, loc->symbol.sym);
+                {
+                    if(loc->feature)
+                    {
+                        term_draw_symbol(i, j, COL(CLR_FOG_OF_WAR), COL(CLR_DEFAULT), 0, loc->feature->symbol->sym);
+                    }
+                    else
+                    {
+                        term_draw_symbol(i, j, COL(CLR_FOG_OF_WAR), COL(CLR_DEFAULT), 0, loc->symbol.sym);
+                    }
+                }
                 else
+                {
                     term_draw_symbol(i, j, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, ' ');
+                }
             }
             else
             {
-                struct Object* obj = loc->obj_list.head ? loc->obj_list.head->data : NULL;
-
                 loc->seen = true;
 
                 if(loc->mon)
                 {
+                    // Draw mon
                     term_draw_symbol(i, j, &loc->mon->type->symbol->fg, &loc->mon->type->symbol->bg, loc->mon->type->symbol->attr, loc->mon->type->symbol->sym);
                 }
-                else if(obj)
+                else if(loc_has_obj(loc))
                 {
+                    // Draw object
+                    struct Object* obj = loc_get_obj(loc);
                     term_draw_symbol(i, j, &obj->symbol->fg, &obj->symbol->bg, obj->symbol->attr, obj->symbol->sym);
+                }
+                else if(loc->feature)
+                {
+                    // Draw feature
+                    term_draw_symbol(i, j, &loc->feature->symbol->fg, &loc->feature->symbol->bg, loc->feature->symbol->attr, loc->feature->symbol->sym);
                 }
                 else
                 {
+                    // Draw base floor
                     term_draw_symbol(i, j, &loc->symbol.fg, &loc->symbol.bg, loc->symbol.attr, loc->symbol.sym);
                 }
             }
