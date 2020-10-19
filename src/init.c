@@ -75,6 +75,14 @@ static inline bool _init_gamedata(void)
     }
     log_msg(DEBUG, "parsing complete");
 
+    log_msg(DEBUG, "parsing features");
+    if(parse_features() != PARSER_OK)
+    {
+        log_msg(DEBUG, "parsing failed");
+        return false;
+    }
+    log_msg(DEBUG, "parsing complete");
+
     return true;
 }
 
