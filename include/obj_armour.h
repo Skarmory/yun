@@ -18,6 +18,7 @@ enum ArmourClass
 
 struct ArmourBase
 {
+    char id[5];
     char name[32];
     char desc[256];
     enum EquipmentSlot slot;
@@ -36,7 +37,7 @@ struct Armour
 struct Armour* armour_new(struct ArmourBase* base);
 void armour_free(struct Armour* armour);
 
-struct ArmourBase* armour_base_lookup_by_name(const char* name);
+struct ArmourBase* armour_base_look_up_by_id(const char* id);
 enum ArmourClass armour_class_from_string(const char* name);
 
 extern struct ArmourBase* g_armour_base;

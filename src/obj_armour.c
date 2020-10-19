@@ -53,12 +53,14 @@ void armour_free(struct Armour* armour)
     free(armour);
 }
 
-struct ArmourBase* armour_base_lookup_by_name(const char* name)
+struct ArmourBase* armour_base_look_up_by_id(const char* id)
 {
     for(int idx = 0; idx < g_armour_base_count; ++idx)
     {
-        if(strcmp(name, g_armour_base[idx].name) == 0)
+        if(strcmp(id, g_armour_base[idx].id) == 0)
+        {
             return &g_armour_base[idx];
+        }
     }
 
     return NULL;

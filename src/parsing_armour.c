@@ -10,6 +10,7 @@
 const char* c_armours_file_name = "data/armours.txt";
 
 parsing_callback(_parse_armours_finalise);
+parsing_callback(_parse_armour_id_callback);
 parsing_callback(_parse_armour_name_callback);
 parsing_callback(_parse_armour_desc_callback);
 parsing_callback(_parse_armour_slot_callback);
@@ -20,6 +21,7 @@ enum ParserCode parse_armours(void)
 {
     struct Parser* parser = parser_new();
 
+    parser_register_field(parser, "id", "id string", &_parse_armour_id_callback);
     parser_register_field(parser, "name", "name string", &_parse_armour_name_callback);
     parser_register_field(parser, "desc", "desc string", &_parse_armour_desc_callback);
     parser_register_field(parser, "slot", "slot string", &_parse_armour_slot_callback);
@@ -56,12 +58,18 @@ parsing_callback(_parse_armours_finalise)
     return PARSE_CALLBACK_OK;
 }
 
-parsing_callback(_parse_armour_name_callback)
+parsing_callback(_parse_armour_id_callback)
 {
     struct ArmourBase* base = malloc(sizeof(struct ArmourBase));
     memset(base, 0, sizeof(struct ArmourBase));
-
     parser_set_userdata(parser, base);
+    snprintf(base->id, sizeof(base->id), "%s", parser_field_get_string(parser, "id", "id"));
+    return PARSE_CALLBACK_OK;
+}
+
+parsing_callback(_parse_armour_name_callback)
+{
+    struct ArmourBase* base = parser_get_userdata_active(parser);
     snprintf(base->name, sizeof(base->name), "%s", parser_field_get_string(parser, "name", "name"));
     return PARSE_CALLBACK_OK;
 }

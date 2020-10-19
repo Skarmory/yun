@@ -11,156 +11,182 @@
 # Leading and trailing whitespace is stripped.
 
 # KEYS
+# id           - Unique ID of the armour (amongst armours only, not other data)
 # name         - The name of the armour
 # desc         - Description of the armour
 # slot         - Which slot the armour goes in
 # class        - Whether the armour is cloth, leather, mail, plate, or natural
 # armour-value - The amount of armour points provided by the armour
 
+id:uarm
 name:unarmoured
 desc:There is no armour protecting here!
 slot:head
 class:natural
 armour-value:0
 
+id:mgcr
 name:magister's crown
 desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
 slot:head
 class:cloth
 armour-value:4
 
+id:mgmn
 name:magister's mantle
 desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
 slot:shoulders
 class:cloth
 armour-value:3
 
+id:mgrb
 name:magister's robe
 desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
 slot:chest
 class:cloth
 armour-value:6
 
+id:mggl
 name:magister's gloves
 desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
 slot:hands
 class:cloth
 armour-value:3
 
+id:mglg
 name:magister's leggings
 desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
 slot:legs
 class:cloth
 armour-value:4
 
+id:mgbt
 name:magister's boots
 desc:This red and purple regalia is favoured by the Mages of the Kirin Tor
 slot:feet
 class:cloth
 armour-value:3
 
+id:sccp
 name:shadowcraft cap
 desc:Black leather armour designed for stealth in dark places
 slot:head
 class:leather
 armour-value:6
 
+id:scsp
 name:shadowcraft spaulders
 desc:Black leather armour designed for stealth in dark places
 slot:shoulders
 class:leather
 armour-value:5
 
+id:sctn
 name:shadowcraft tunic
 desc:Black leather armour designed for stealth in dark places
 slot:chest
 class:leather
 armour-value:8
 
+id:scgl
 name:shadowcraft gloves
 desc:Black leather armour designed for stealth in dark places
 slot:hands
 class:leather
 armour-value:5
 
+id:scpn
 name:shadowcraft pants
 desc:Black leather armour designed for stealth in dark places
 slot:legs
 class:leather
 armour-value:6
 
+id:scbt
 name:shadowcraft boots
 desc:Black leather armour designed for stealth in dark places
 slot:feet
 class:leather
 armour-value:5
 
+id:bscp
 name:beaststalker's cap
 desc:A golden-brown mail worn by the wandering trackers of Kalimdor. This helm is crafted in the likeness of a wolf's head
 slot:head
 class:mail
 armour-value:8
 
+id:bssp
 name:beaststalker's spaulders
 desc:A golden-brown mail worn by the wandering trackers of Kalimdor
 slot:shoulders
 class:mail
 armour-value:7
 
+id:bstn
 name:beaststalker's tunic
 desc:A golden-brown mail worn by the wandering trackers of Kalimdor
 slot:chest
 class:mail
 armour-value:10
 
+id:bsgl
 name:beaststalker's gloves
 desc:A golden-brown mail worn by the wandering trackers of Kalimdor
 slot:hands
 class:mail
 armour-value:7
 
+id:bspn
 name:beaststalker's pants
 desc:A golden-brown mail worn by the wandering trackers of Kalimdor
 slot:legs
 class:mail
 armour-value:8
 
+id:bsbt
 name:beaststalker's boots
 desc:A golden-brown mail worn by the wandering trackers of Kalimdor
 slot:feet
 class:mail
 armour-value:7
 
+id:vlhl
 name:helm of valour
 desc:Forged from heavy steel plating and decorated with a trim made of gold
 slot:head
 class:plate
 armour-value:10
 
+id:vlsp
 name:spaulders of valour
 desc:Forged from heavy steel plating and decorated with a trim made of gold
 slot:shoulders
 class:plate
 armour-value:9
 
+id:vlbp
 name:breastplate of valour
 desc:Forged from heavy steel plating and decorated with a trim made of gold
 slot:chest
 class:plate
 armour-value:12
 
+id:vlgn
 name:gauntlets of valour
 desc:Forged from heavy steel plating and decorated with a trim made of gold
 slot:hands
 class:plate
 armour-value:9
 
+id:vllp
 name:legplates of valour
 desc:Forged from heavy steel plating and decorated with a trim made of gold
 slot:legs
 class:plate
 armour-value:10
 
+id:vlbt
 name:boots of valour
 desc:Forged from heavy steel plating and decorated with a trim made of gold
 slot:feet

@@ -19,7 +19,7 @@
 # colour      - RGB colour for the symbol. [0-255]
 # stats       - Strength, agility, intelligence, spirit, and stamina (in that order)
 # move-flag   - Specifies what types of movement the creature is capable of. This determines what terrain they can traverse. [walks, swims, flies]
-# base-armour - The name of the armour the creature has by default. This cannot be dropped or unequipped.
+# base-armour - The id of the armour the creature has by default. This cannot be dropped or unequipped.
 # base-weapon - The name of the weapon the creature has by default. This cannot be dropped or unequipped.
 
 # ----- PLAYABLE -----
@@ -30,7 +30,7 @@ symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
@@ -40,7 +40,7 @@ symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
@@ -50,7 +50,7 @@ symbol:@
 colour:0;0;255
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
@@ -60,7 +60,7 @@ symbol:@
 colour:255;255;255
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
@@ -70,7 +70,7 @@ symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
@@ -80,7 +80,7 @@ symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
@@ -90,7 +90,7 @@ symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
@@ -100,7 +100,7 @@ symbol:@
 colour:255;0;0
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
@@ -112,6 +112,6 @@ symbol:g
 colour:55;55;55
 stats:1;1;1;1;1
 move-flag:walks
-base-armour:unarmoured
+base-armour:uarm
 base-weapon:claws
 vision-radius:25
