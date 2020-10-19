@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define METADATA_FIELD_NAME_SIZE 8
+#define METADATA_FIELD_NAME_SIZE 32
 #define FIELD_NAME_SIZE 32
 #define FIELD_DATA_SIZE 256
 
@@ -17,6 +17,7 @@ const char c_new_line = '\n';
 const char* c_tok_int = "int";
 const char* c_tok_char = "char";
 const char* c_tok_string = "string";
+const char* c_tok_bool = "bool";
 
 typedef List ParseFormat_List;
 typedef List FieldData_List;
@@ -28,6 +29,7 @@ enum DataType
     TYPE_INT,
     TYPE_CHAR,
     TYPE_STRING,
+    TYPE_BOOL,
     TYPE_ERROR
 };
 
@@ -36,6 +38,7 @@ union DataValue
     int   as_int;
     char  as_char;
     char* as_str;
+    bool  as_bool;
 };
 
 struct Metadata
@@ -207,6 +210,11 @@ static enum DataType _to_data_type(char* str)
     if(strcmp(str, c_tok_string) == 0)
         return TYPE_STRING;
 
+    if(strcmp(str, c_tok_bool) == 0)
+    {
+        return TYPE_BOOL;
+    }
+
     return TYPE_ERROR;
 }
 
@@ -266,6 +274,11 @@ static enum ParserCode _parse_field_data(struct ParseData* parse_data, struct Pa
                 int len = strlen(tok) + 1;
                 value.as_str = malloc(len); 
                 snprintf(value.as_str, len, "%s", tok); 
+                break;
+            }
+            case TYPE_BOOL:
+            {
+                value.as_bool = (strcmp(tok, "true") == 0) ? true : false;
                 break;
             }
             case TYPE_ERROR:
@@ -419,7 +432,7 @@ enum ParserCode parser_register_field(struct Parser* parser, char* field_name, c
             struct Metadata* meta = _metadata_new();
             list_add(&format->field_meta, meta);
 
-            snprintf(meta->name, 8, "%s", tok);
+            snprintf(meta->name, METADATA_FIELD_NAME_SIZE, "%s", tok);
 
             if(!(tok = strtok(NULL, " ")))
             {
@@ -545,6 +558,17 @@ char* parser_field_get_string(struct Parser* parser, const char* field_name, con
     return fdata->value.as_str;
 }
 
+bool parser_field_get_bool(struct Parser* parser, const char* field_name, const char* field_data_name)
+{
+    struct FieldData* fdata = _field_get_value(parser, field_name, field_data_name);
+    if(!fdata)
+    {
+        return false;
+    }
+
+    return fdata->value.as_bool;
+}
+
 /* ----- DEBUG METHODS ----- */
 
 void _print_metadata(struct Metadata* meta)
@@ -601,6 +625,10 @@ void _print_parse_data(struct Parser* parser)
             case TYPE_STRING:
                 printf("type: STRING\n");
                 printf("data: %s\n", fdata->value.as_str);
+                break;
+            case TYPE_BOOL:
+                printf("type: BOOL\n");
+                printf("data: %d", fdata->value.as_bool);
                 break;
             case TYPE_ERROR:
                 printf("type: ERROR. Something went wrong here!\n");

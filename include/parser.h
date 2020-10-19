@@ -51,6 +51,7 @@ enum ParserCode parser_get_last_code(struct Parser* parser);
 int parser_field_get_int(struct Parser* parser, const char* field_name, const char* field_data_name);
 char parser_field_get_char(struct Parser* parser, const char* field_name, const char* field_data_name);
 char* parser_field_get_string(struct Parser* parser, const char* field_name, const char* field_data_name);
+bool parser_field_get_bool(struct Parser* parser, const char* field_name, const char* field_data_name);
 
 void parser_print_formats(struct Parser* parser);
 
