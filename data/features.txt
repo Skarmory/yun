@@ -1,0 +1,53 @@
+# List of features in naxx.
+
+# INFO
+# A feature is a non-directly interactable thing. That is something which exists in the game world that you can
+# indirectly interact with, but cannot pick up, use, or wield.
+# An example of a feature is a wall or a door.
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# id          - The id of the feature for the game to use to look it up
+# name        - The name of the feature
+# desc        - Description of the feature
+# symbol      - ASCII character for in-game drawing
+# colour      - RGB colour for the symbol. [0-255]
+# path-flag   - The movement requirements to move through the feature [none, ground, water, flying]
+# block-sight - Does this feature block sight sense [true, false]
+
+id:walv
+name:wall
+desc:It's a wall
+symbol:|
+colour:255;255;255
+path-flag:none
+block-sight:true
+
+id:walh
+name:wall
+desc:It's a wall
+symbol:-
+colour:255;255;255
+path-flag:none
+block-sight:true
+
+id:walc
+name:wall
+desc:It's a wall
+symbol:+
+colour:255;255;255
+path-flag:none
+block-sight:true
+
+id:sroc
+name:solid rock
+desc:Dense solid rock
+symbol:+
+colour:0;0;0
+path-flag:none
+block-sight:true
