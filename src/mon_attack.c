@@ -308,11 +308,11 @@ bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
     return true;
 }
 
-struct AttackMethod* attack_method_lookup_by_name(const char* name)
+struct AttackMethod* attack_method_look_up_by_id(const char* id)
 {
     for(int idx = 0; idx < g_attack_methods_count; ++idx)
     {
-        if(strcmp(name, g_attack_methods[idx].name) == 0)
+        if(strcmp(id, g_attack_methods[idx].id) == 0)
             return &g_attack_methods[idx];
     }
 

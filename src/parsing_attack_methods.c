@@ -9,7 +9,7 @@
 const char* c_attack_methods_file_name = "data/attack_methods.txt";
 
 parsing_callback(_parse_attack_methods_finalise);
-parsing_callback(_parse_attack_method_name_callback);
+parsing_callback(_parse_attack_method_id_callback);
 parsing_callback(_parse_attack_method_msg1_callback);
 parsing_callback(_parse_attack_method_msg2_callback);
 
@@ -17,7 +17,7 @@ enum ParserCode parse_attack_methods(void)
 {
     struct Parser* parser = parser_new();
 
-    parser_register_field(parser, "name", "name string", &_parse_attack_method_name_callback);
+    parser_register_field(parser, "id", "id string", &_parse_attack_method_id_callback);
     parser_register_field(parser, "msg-1", "msg string", &_parse_attack_method_msg1_callback);
     parser_register_field(parser, "msg-2", "msg string", &_parse_attack_method_msg2_callback);
 
@@ -51,13 +51,13 @@ parsing_callback(_parse_attack_methods_finalise)
     return PARSE_CALLBACK_OK;
 }
 
-parsing_callback(_parse_attack_method_name_callback)
+parsing_callback(_parse_attack_method_id_callback)
 {
     struct AttackMethod* type = malloc(sizeof(struct AttackMethod));
     memset(type, 0, sizeof(struct AttackMethod));
 
     parser_set_userdata(parser, type);
-    snprintf(type->name, sizeof(type->name), "%s", parser_field_get_string(parser, "name", "name"));
+    snprintf(type->id, sizeof(type->id), "%s", parser_field_get_string(parser, "id", "id"));
     return PARSE_CALLBACK_OK;
 }
 

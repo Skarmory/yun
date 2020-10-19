@@ -7,7 +7,7 @@ struct Mon;
 
 struct AttackMethod
 {
-    char name[32];
+    char id[5];
     char msg1[32];
     char msg2[32];
 };
@@ -22,7 +22,7 @@ struct Attack
     struct AttackMethod* method;
 };
 
-struct AttackMethod* attack_method_lookup_by_name(const char* name);
+struct AttackMethod* attack_method_look_up_by_id(const char* id);
 
 bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender);
 

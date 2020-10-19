@@ -15,18 +15,18 @@
 # Leading and trailing whitespace is stripped.
 
 # KEYS
-# name   - The name of the attack method. Must be unique.
-# msg-1  - The message format to display in non-3rd person.
-# msg-2  - The message format to display in 3rd person.
+# id    - The ID of the attack method. Must be unique. Must be up to 4 chars
+# msg-1 - The message format to display in non-3rd person.
+# msg-2 - The message format to display in 3rd person.
 
-name:slash
+id:slsh
 msg-1:%s slash %s
 msg-2:%s slashes %s
 
-name:punch
+id:pnch
 msg-1:%s punch %s
 msg-2:%s punches %s
 
-name:claw
+id:claw
 msg-1:%s claw %s
 msg-2:%s claws %s

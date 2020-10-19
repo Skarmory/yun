@@ -2,6 +2,7 @@
 #include "log.h"
 #include "obj_weapon.h"
 #include "mon_equip.h"
+#include "mon_attack.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +26,7 @@ enum ParserCode parse_weapons(void)
     parser_register_field(parser, "desc", "desc string", &_parse_weapon_desc_callback);
     parser_register_field(parser, "class", "class string", &_parse_weapon_class_callback);
     parser_register_field(parser, "damage", "dice int sides int", &_parse_weapon_damage_callback);
-    parser_register_field(parser, "attack-method", "name string", &_parse_weapon_attack_method_callback);
+    parser_register_field(parser, "attack-method", "id string", &_parse_weapon_attack_method_callback);
 
     if(open_file_and_parse_all(parser, c_weapons_file_name))
     {
@@ -92,6 +93,6 @@ parsing_callback(_parse_weapon_damage_callback)
 parsing_callback(_parse_weapon_attack_method_callback)
 {
     struct WeaponBase* base = parser_get_userdata_active(parser);
-    base->attk[0].method = attack_method_lookup_by_name(parser_field_get_string(parser, "attack-method", "name"));
+    base->attk[0].method = attack_method_look_up_by_id(parser_field_get_string(parser, "attack-method", "id"));
     return PARSE_CALLBACK_OK;
 }
