@@ -58,10 +58,6 @@ static bool _is_corner_wall(struct MapLocation* loc)
 
 static bool _is_solid_rock(struct MapLocation* loc)
 {
-    if(loc->feature)
-    {
-        log_format_msg(DEBUG, "Checking for solid rock at location, found %s", loc->feature->id);
-    }
     return loc->feature && (strcmp(loc->feature->id, "sroc") == 0);
 }
 
@@ -205,7 +201,6 @@ bool _is_maze_snode(struct MapCell* cell, struct MapLocation* loc)
 {
     if(!_is_solid_rock(loc) || _is_border_loc(cell, loc))
     {
-        log_msg(DEBUG, "Not valid start node");
         return false;
     }
 
