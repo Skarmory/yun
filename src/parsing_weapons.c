@@ -12,6 +12,7 @@ const char* c_weapons_file_name = "data/weapons.txt";
 
 parsing_callback(_parse_weapons_finalise);
 
+parsing_callback(_parse_weapon_id_callback);
 parsing_callback(_parse_weapon_name_callback);
 parsing_callback(_parse_weapon_desc_callback);
 parsing_callback(_parse_weapon_class_callback);
@@ -22,6 +23,7 @@ enum ParserCode parse_weapons(void)
 {
     struct Parser* parser = parser_new();
 
+    parser_register_field(parser, "id", "id string", &_parse_weapon_id_callback);
     parser_register_field(parser, "name", "name string", &_parse_weapon_name_callback);
     parser_register_field(parser, "desc", "desc string", &_parse_weapon_desc_callback);
     parser_register_field(parser, "class", "class string", &_parse_weapon_class_callback);
@@ -58,12 +60,19 @@ parsing_callback(_parse_weapons_finalise)
     return PARSE_CALLBACK_OK;
 }
 
-parsing_callback(_parse_weapon_name_callback)
+parsing_callback(_parse_weapon_id_callback)
 {
     struct WeaponBase* base = malloc(sizeof(struct WeaponBase));
     memset(base, 0, sizeof(struct WeaponBase));
 
     parser_set_userdata(parser, base);
+    snprintf(base->id, sizeof(base->id), "%s", parser_field_get_string(parser, "id", "id"));
+    return PARSE_CALLBACK_OK;
+}
+
+parsing_callback(_parse_weapon_name_callback)
+{
+    struct WeaponBase* base = parser_get_userdata_active(parser);
     snprintf(base->name, sizeof(base->name), "%s", parser_field_get_string(parser, "name", "name"));
     return PARSE_CALLBACK_OK;
 }

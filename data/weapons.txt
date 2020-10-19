@@ -10,6 +10,7 @@
 # Leading and trailing whitespace is stripped.
 
 # KEYS
+# id            - The id of the weapon. Must be up to 4 characters. Must be unique.
 # name          - The name of the weapon
 # desc          - Description of the weapon
 # class         - What type of weapon this is. [axe1h, axe2h, sword1h, sword2h, mace1h, mace2h, staff, polearm, bow, gun, dagger, fist, natural]
@@ -18,6 +19,7 @@
 
 # ----- EQUIPPABLE -----
 
+id:lswd
 name:longsword
 desc:A one-handed sword with a long blade often used by human adventurers. Inflicts medium damage.
 class:sword1h
@@ -27,12 +29,14 @@ attack-method:slsh
 # ----- NATURAL -----
 # These weapons take the default unequipped slot for a mon, and should not be an actual equippable drop
 
+id:fist
 name:fist
 desc:An unarmed strike with the fists. Inflicts low damage
 class:natural
 damage:1;2
 attack-method:pnch
 
+id:claw
 name:claws
 desc:The sharp natural weapons of most wild beasts and mindless undead.
 class:natural

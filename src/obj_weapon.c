@@ -58,12 +58,14 @@ void weapon_free(struct Weapon* weapon)
     free(weapon);
 }
 
-struct WeaponBase* weapon_base_lookup_by_name(const char* name)
+struct WeaponBase* weapon_base_look_up_by_id(const char* id)
 {
     for(int idx = 0; idx < g_weapon_base_count; ++idx)
     {
-        if(strcmp(name, g_weapon_base[idx].name) == 0)
+        if(strcmp(id, g_weapon_base[idx].id) == 0)
+        {
             return &g_weapon_base[idx];
+        }
     }
 
     return NULL;

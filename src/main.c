@@ -157,7 +157,7 @@ int main(int argc, char** argv)
     starty = random_int(room->y + 1, room->y + room->h - 2);
 
     // Add pile of testing longswords at random location in player start room
-    struct WeaponBase* longsword_base = weapon_base_lookup_by_name("longsword");
+    struct WeaponBase* longsword_base = weapon_base_look_up_by_id("lswd");
     for(int i = 0; i < 5; ++i)
     {
         struct Weapon* longsword = weapon_new(longsword_base);

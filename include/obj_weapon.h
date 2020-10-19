@@ -25,6 +25,7 @@ enum WeaponClass
 
 struct WeaponBase
 {
+    char id[5];
     char name[32];
     char desc[256];
     enum WeaponClass class;
@@ -43,7 +44,7 @@ struct Weapon
 struct Weapon* weapon_new(struct WeaponBase* base);
 void weapon_free(struct Weapon* weapon);
 
-struct WeaponBase* weapon_base_lookup_by_name(const char* name);
+struct WeaponBase* weapon_base_look_up_by_id(const char* id);
 enum WeaponClass weapon_class_from_string(const char* name);
 
 extern struct WeaponBase* g_weapon_base;

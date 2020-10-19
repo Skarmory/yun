@@ -21,7 +21,7 @@
 # stats       - Strength, agility, intelligence, spirit, and stamina (in that order)
 # move-flag   - Specifies what types of movement the creature is capable of. This determines what terrain they can traverse. [walks, swims, flies]
 # base-armour - The id of the armour the creature has by default. This cannot be dropped or unequipped.
-# base-weapon - The name of the weapon the creature has by default. This cannot be dropped or unequipped.
+# base-weapon - The id of the weapon the creature has by default. This cannot be dropped or unequipped.
 
 # ----- PLAYABLE -----
 
@@ -123,5 +123,5 @@ colour:55;55;55
 stats:1;1;1;1;1
 move-flag:walks
 base-armour:uarm
-base-weapon:claws
+base-weapon:claw
 vision-radius:25
