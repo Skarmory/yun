@@ -14,7 +14,8 @@ struct Symbol;
  */
 struct MonType
 {
-    char               name[32]; // Name of this type of mon
+    char               id[5];
+    char               name[32];
     char               desc[32];
     struct Symbol*     symbol;
     struct ArmourBase* base_armour; // All creatures have a base armour for if they don't have equipment
@@ -24,7 +25,7 @@ struct MonType
     MonAttrMoveFlags   move_flags;
 };
 
-struct MonType* mon_type_lookup_by_name(const char* name);
+struct MonType* mon_type_look_up_by_id(const char* id);
 
 extern struct MonType* g_mon_type;
 extern int g_mon_type_count;

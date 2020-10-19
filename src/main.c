@@ -164,7 +164,7 @@ int main(int argc, char** argv)
         loc_add_obj(map_cell_get_location(test_cell, startx, starty), longsword->obj);
     }
 
-    struct MonType* ghoul_type = mon_type_lookup_by_name("ghoul");
+    struct MonType* ghoul_type = mon_type_look_up_by_id("ghul");
 
     ListNode* node;
     list_for_each(&test_cell->room_list, node)

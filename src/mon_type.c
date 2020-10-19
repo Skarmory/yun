@@ -15,12 +15,14 @@
 struct MonType* g_mon_type = NULL;
 int g_mon_type_count = 0;
 
-struct MonType* mon_type_lookup_by_name(const char* name)
+struct MonType* mon_type_look_up_by_id(const char* id)
 {
     for(int idx = 0; idx < g_mon_type_count; ++idx)
     {
-        if(strcmp(g_mon_type[idx].name, name) == 0)
+        if(strcmp(g_mon_type[idx].id, id) == 0)
+        {
             return &g_mon_type[idx];
+        }
     }
 
     return NULL;

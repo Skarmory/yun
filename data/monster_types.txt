@@ -13,6 +13,7 @@
 # Leading and trailing whitespace is stripped.
 
 # KEYS
+# id          - The id of the monster type. Must be up to 4 characters. Must be unique.
 # name        - The name of the monster type
 # desc        - Description of the monster type
 # symbol      - ASCII character for in-game drawing
@@ -24,6 +25,7 @@
 
 # ----- PLAYABLE -----
 
+id:humn
 name:human
 desc:Human
 symbol:@
@@ -34,6 +36,7 @@ base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
+id:nelf
 name:night elf
 desc:Night Elf
 symbol:@
@@ -44,6 +47,7 @@ base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
+id:dwrf
 name:dwarf
 desc:Dwarf
 symbol:@
@@ -54,6 +58,7 @@ base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
+id:gnme
 name:gnome
 desc:Gnome
 symbol:@
@@ -64,6 +69,7 @@ base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
+id:orc
 name:orc
 desc:Orc
 symbol:@
@@ -74,6 +80,7 @@ base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
+id:trll
 name:troll
 desc:Troll
 symbol:@
@@ -84,6 +91,7 @@ base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
+id:fskn
 name:forsaken
 desc:Forsaken
 symbol:@
@@ -94,6 +102,7 @@ base-armour:uarm
 base-weapon:fist
 vision-radius:25
 
+id:tarn
 name:tauren
 desc:Tauren
 symbol:@
@@ -106,6 +115,7 @@ vision-radius:25
 
 # ----- ENEMIES -----
 
+id:ghul
 name:ghoul
 desc:Ghoul
 symbol:g

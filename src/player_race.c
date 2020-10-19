@@ -89,21 +89,21 @@ struct MonType* get_race_montype(char race)
     switch(race)
     {
         case 'h':
-            return mon_type_lookup_by_name("human");
+            return mon_type_look_up_by_id("humn");
         case 'd':
-            return mon_type_lookup_by_name("dwarf");
+            return mon_type_look_up_by_id("dwrf");
         case 'e':
-            return mon_type_lookup_by_name("night elf");
+            return mon_type_look_up_by_id("nelf");
         case 'g':
-            return mon_type_lookup_by_name("gnome");
+            return mon_type_look_up_by_id("gnme");
         case 'o':
-            return mon_type_lookup_by_name("orc");
+            return mon_type_look_up_by_id("orc");
         case 'f':
-            return mon_type_lookup_by_name("forsaken");
+            return mon_type_look_up_by_id("fskn");
         case 't':
-            return mon_type_lookup_by_name("tauren");
+            return mon_type_look_up_by_id("tarn");
         case 'l':
-            return mon_type_lookup_by_name("troll");
+            return mon_type_look_up_by_id("trll");
         default:
             return NULL;
     }

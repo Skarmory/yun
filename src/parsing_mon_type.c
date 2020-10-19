@@ -13,6 +13,7 @@
 const char* c_mon_type_file_name = "data/monster_types.txt";
 
 parsing_callback(_parse_mon_types_finalise);
+parsing_callback(_parse_mon_type_id_callback);
 parsing_callback(_parse_mon_type_name_callback);
 parsing_callback(_parse_mon_type_desc_callback);
 parsing_callback(_parse_mon_type_symbol_callback);
@@ -27,6 +28,7 @@ enum ParserCode parse_mon_types(void)
 {
     struct Parser* parser = parser_new();
 
+    parser_register_field(parser, "id", "id string", &_parse_mon_type_id_callback);
     parser_register_field(parser, "name", "name string", &_parse_mon_type_name_callback);
     parser_register_field(parser, "desc", "desc string", &_parse_mon_type_desc_callback);
     parser_register_field(parser, "symbol", "symbol char", &_parse_mon_type_symbol_callback);
@@ -67,12 +69,19 @@ parsing_callback(_parse_mon_types_finalise)
     return PARSE_CALLBACK_OK;
 }
 
-parsing_callback(_parse_mon_type_name_callback)
+parsing_callback(_parse_mon_type_id_callback)
 {
     struct MonType* type = malloc(sizeof(struct MonType));
     memset(type, 0, sizeof(struct MonType));
 
     parser_set_userdata(parser, type);
+    snprintf(type->id, sizeof(type->id), "%s", parser_field_get_string(parser, "id", "id"));
+    return PARSE_CALLBACK_OK;
+}
+
+parsing_callback(_parse_mon_type_name_callback)
+{
+    struct MonType* type = parser_get_userdata_active(parser);
     snprintf(type->name, sizeof(type->name), "%s", parser_field_get_string(parser, "name", "name"));
     return PARSE_CALLBACK_OK;
 }
