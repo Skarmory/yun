@@ -61,6 +61,14 @@ static bool _is_solid_rock(struct MapLocation* loc)
     return loc->feature && (strcmp(loc->feature->id, "sroc") == 0);
 }
 
+static void _make_solid_rock(struct MapLocation* loc)
+{
+    loc->feature = feature_look_up_by_id("sroc");
+    loc->symbol.sym = ' ';
+    loc->symbol.fg = g_colours[CLR_DEFAULT];
+    loc->symbol.bg = g_colours[CLR_DEFAULT];
+}
+
 static inline bool _is_wall(struct MapLocation* loc)
 {
     return (_is_vertical_wall(loc)   ||
@@ -82,7 +90,7 @@ static void _make_corridor(struct MapLocation* loc)
 
 static bool _is_floor(struct MapLocation* loc)
 {
-    return loc->symbol.sym == '.';
+    return !loc->feature && loc->symbol.sym == '.';
 }
 
 static void _make_floor(struct MapLocation* loc)
@@ -241,7 +249,9 @@ struct MapLocation* _get_maze_snode(struct MapCell* cell)
 bool _is_valid_maze_node(struct MapCell* cell, struct MapLocation* loc)
 {
     if(!_is_solid_rock(loc) || _is_border_loc(cell, loc))
+    {
         return false;
+    }
 
     int conn_count = 0;
 
@@ -427,7 +437,9 @@ void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
 bool _is_maze_deadend(struct MapCell* cell, struct MapLocation* loc)
 {
     if(!_is_corridor(loc) || _is_border_loc(cell, loc))
+    {
         return false;
+    }
 
     int x = loc->x;
     int y = loc->y;
@@ -484,19 +496,27 @@ struct MapLocation* _get_next_deadend_node(struct MapCell* cell, struct MapLocat
 
     next = map_cell_get_location(cell, x-1, y);
     if(next && _is_maze_deadend(cell, next))
+    {
         return next;
+    }
 
     next = map_cell_get_location(cell, x+1, y);
     if(next && _is_maze_deadend(cell, next))
+    {
         return next;
+    }
 
     next = map_cell_get_location(cell, x, y-1);
     if(next && _is_maze_deadend(cell, next))
+    {
         return next;
+    }
 
     next = map_cell_get_location(cell, x, y+1);
     if(next && _is_maze_deadend(cell, next))
+    {
         return next;
+    }
 
     return NULL;
 }
@@ -504,10 +524,9 @@ struct MapLocation* _get_next_deadend_node(struct MapCell* cell, struct MapLocat
 void _back_fill_deadends(struct MapCell* cell, struct MapLocation* loc)
 {
     struct MapLocation* next;
-    struct Feature* rock = feature_look_up_by_id("sroc");
     while((next = _get_next_deadend_node(cell, loc)))
     {
-        next->feature = rock;
+        _make_solid_rock(next);
         loc = next;
     }
 }
@@ -619,7 +638,9 @@ int gen_maze_flood_fill_task_func(void* state)
     {
         struct MapLocation* loc = _get_maze_snode(gen_state->cell);
         if(!loc)
+        {
             return TASK_STATUS_SUCCESS;
+        }
 
         _make_corridor(loc);
         _enlist_orthogonals(gen_state->cell, loc, &gen_state->tmp_list);
@@ -631,7 +652,9 @@ int gen_maze_flood_fill_task_func(void* state)
     list_rm(&gen_state->tmp_list, gen_state->tmp_list.tail);
 
     if(!_is_valid_maze_node(gen_state->cell, next))
+    {
         return TASK_STATUS_EXECUTING;
+    }
 
     _make_corridor(next);
 
@@ -651,7 +674,9 @@ int gen_maze_back_fill_deadends_task_func(void* state)
     {
         loc = _get_maze_deadend(gen_state->cell);
         if(!loc)
+        {
             return TASK_STATUS_SUCCESS;
+        }
 
         list_add(&gen_state->tmp_list, loc);
     }
@@ -659,11 +684,13 @@ int gen_maze_back_fill_deadends_task_func(void* state)
     loc = gen_state->tmp_list.tail->data;
     list_rm(&gen_state->tmp_list, gen_state->tmp_list.tail);
 
-    loc->feature = feature_look_up_by_id("sroc");
+    _make_solid_rock(loc);
 
     loc = _get_next_deadend_node(gen_state->cell, loc);
     if(loc)
+    {
         list_add(&gen_state->tmp_list, loc);
+    }
 
     return TASK_STATUS_EXECUTING;
 }
@@ -684,7 +711,6 @@ int gen_maze_task_func(void* state)
 
         case GEN_STAGE_DOORS:
         {
-            // TODO: Taskify this?
             _make_doors(gen_state->cell);
             gen_state->stage = GEN_STAGE_BACK_FILL_MAZE;
             break;
@@ -714,17 +740,15 @@ void gen_maze(struct MapCell* cell)
 
     while((tmp = _get_maze_snode(cell)))
     {
-        log_msg(DEBUG, "Got maze start node");
         _make_corridor(tmp);
         _flood_fill_maze(cell, tmp);
     }
 
     _make_doors(cell);
 
-    struct Feature* feature = feature_look_up_by_id("sroc");
     while((tmp = _get_maze_deadend(cell)))
     {
-        tmp->feature = feature;
+        _make_solid_rock(tmp);
         _back_fill_deadends(cell, tmp);
     }
 }
@@ -803,7 +827,9 @@ static void _connect_cells(struct Map* map)
             {
                 // We've hit a corridor or internal room square
                 if(_is_corridor(loc) || _is_floor(loc))
+                {
                     break;
+                }
 
                 if(_is_wall(loc))
                 {
