@@ -12,13 +12,13 @@
 # Leading and trailing whitespace is stripped.
 
 # KEYS
-# id          - The id of the feature for the game to use to look it up
-# name        - The name of the feature
-# desc        - Description of the feature
-# symbol      - ASCII character for in-game drawing
-# colour      - RGB colour for the symbol. [0-255]
-# path-flag   - The movement requirements to move through the feature [none, ground, water, flying]
-# block-sight - Does this feature block sight sense [true, false]
+# id             - The id of the feature for the game to use to look it up
+# name           - The name of the feature
+# desc           - Description of the feature
+# symbol         - ASCII character for in-game drawing
+# colour         - RGB colour for the symbol. [0-255]
+# path-flag      - The movement requirements to move through the feature [none, ground, water, flying]
+# block-sight    - Does this feature block sight sense [true, false]
 
 id:walv
 name:wall
@@ -47,7 +47,7 @@ block-sight:true
 id:sroc
 name:solid rock
 desc:Dense solid rock
-symbol:+
+symbol: 
 colour:0;0;0
 path-flag:none
 block-sight:true
