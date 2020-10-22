@@ -1,7 +1,5 @@
 #include "init.h"
 #include "colour.h"
-#include "command_defs.h"
-#include "command_manager.h"
 #include "gameplay.h"
 #include "globals.h"
 #include "log.h"
@@ -104,26 +102,6 @@ void _uninit_gamedata(void)
     g_attack_methods_count = 0;
 }
 
-static void _init_command_handling(void)
-{
-    g_command_manager = command_manager_new();
-
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_MOVE, gameplay_command_handler_func);
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_PASS_TURN, gameplay_command_handler_func);
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_PICK_UP, gameplay_command_handler_func);
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_DISPLAY_POSITION, gameplay_command_handler_func);
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_SAVE_AND_QUIT, gameplay_command_handler_func);
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_NO_SAVE_AND_QUIT, gameplay_command_handler_func);
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_DISPLAY_CHARACTER_SCREEN, gameplay_command_handler_func);
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_DISPLAY_INVENTORY, gameplay_command_handler_func);
-    command_manager_register_handler(g_command_manager, COMMAND_TYPE_LOOK_AT, gameplay_command_handler_func);
-}
-
-static void _uninit_command_handling(void)
-{
-    command_manager_free(g_command_manager);
-}
-
 bool init_naxx(void)
 {
     srand(time(NULL));
@@ -140,14 +118,11 @@ bool init_naxx(void)
     if(!_init_gamedata())
         return false;
 
-    _init_command_handling();
-
     return true;
 }
 
 void uninit_naxx(void)
 {
-    _uninit_command_handling();
     _uninit_gamedata();
     tasker_free(g_tasker);
     term_uninit();

@@ -1,8 +1,6 @@
 #include "gameplay.h"
 
 #include "colour.h"
-#include "command.h"
-#include "command_defs.h"
 #include "input_keycodes.h"
 #include "look.h"
 #include "map.h"
@@ -22,6 +20,8 @@
 #include "ui_inventory.h"
 #include "ui_stats.h"
 #include "util.h"
+
+#include <stddef.h>
 
 enum GameplayCommand
 {

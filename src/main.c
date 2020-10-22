@@ -1,8 +1,8 @@
 #include "colour.h"
+#include "gameplay.h"
 #include "geom.h"
 #include "globals.h"
 #include "init.h"
-#include "input.h"
 #include "log.h"
 #include "map.h"
 #include "map_cell.h"
@@ -98,7 +98,7 @@ void main_loop(void)
         // Reset path generation info
         current_path_gen_id = -1;
 
-        handle_input();
+        gameplay_turn();
         display_main_screen();
 
         update_mons();
