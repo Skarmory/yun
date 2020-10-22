@@ -4,6 +4,7 @@
 #include "command.h"
 #include "command_defs.h"
 #include "input_keycodes.h"
+#include "look.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
@@ -22,17 +23,24 @@
 #include "ui_stats.h"
 #include "util.h"
 
-enum LookAtCommand
+enum GameplayCommand
 {
-    LOOK_AT_COMMAND_STOP            = KEYCODE_ESC,
-    LOOK_AT_COMMAND_MOVE_LEFT       = KEYCODE_h,
-    LOOK_AT_COMMAND_MOVE_RIGHT      = KEYCODE_l,
-    LOOK_AT_COMMAND_MOVE_UP         = KEYCODE_k,
-    LOOK_AT_COMMAND_MOVE_DOWN       = KEYCODE_j,
-    LOOK_AT_COMMAND_MOVE_LEFT_UP    = KEYCODE_y,
-    LOOK_AT_COMMAND_MOVE_LEFT_DOWN  = KEYCODE_b,
-    LOOK_AT_COMMAND_MOVE_RIGHT_UP   = KEYCODE_u,
-    LOOK_AT_COMMAND_MOVE_RIGHT_DOWN = KEYCODE_n
+    GAMEPLAY_COMMAND_DISPLAY_CHARACTER_SCREEN = KEYCODE_c,
+    GAMEPLAY_COMMAND_DISPLAY_INVENTORY        = KEYCODE_i,
+    GAMEPLAY_COMMAND_DISPLAY_POSITION         = KEYCODE_AT,
+    GAMEPLAY_COMMAND_LOOK                     = KEYCODE_SEMICOLON,
+    GAMEPLAY_COMMAND_MOVE_LEFT                = KEYCODE_h,
+    GAMEPLAY_COMMAND_MOVE_RIGHT               = KEYCODE_l,
+    GAMEPLAY_COMMAND_MOVE_UP                  = KEYCODE_k,
+    GAMEPLAY_COMMAND_MOVE_DOWN                = KEYCODE_j,
+    GAMEPLAY_COMMAND_MOVE_LEFT_UP             = KEYCODE_y,
+    GAMEPLAY_COMMAND_MOVE_LEFT_DOWN           = KEYCODE_b,
+    GAMEPLAY_COMMAND_MOVE_RIGHT_UP            = KEYCODE_u,
+    GAMEPLAY_COMMAND_MOVE_RIGHT_DOWN          = KEYCODE_n,
+    GAMEPLAY_COMMAND_PASS_TURN                = KEYCODE_DOT,
+    GAMEPLAY_COMMAND_PICK_UP                  = KEYCODE_COMMA,
+    GAMEPLAY_COMMAND_NO_SAVE_AND_QUIT         = KEYCODE_Q,
+    GAMEPLAY_COMMAND_SAVE_AND_QUIT            = KEYCODE_q
 };
 
 /**
@@ -87,229 +95,68 @@ static bool _pick_up_object(void)
     return true;
 }
 
-static void _do_look_at_get_loc_info(struct Mon* mon, struct MapLocation* loc)
+void gameplay_turn(void)
 {
-    if(!loc->seen)
-    {
-        display_msg_nolog("Unexplored area");
-        return;
-    }
+    bool end_turn = false;
 
-    if(!mon_can_see(mon, loc->x, loc->y))
+    while(!end_turn)
     {
-        display_msg_nolog("You cannot see here.");
-        return;
-    }
-
-    if(loc->mon)
-    {
-        if(mon_is_player(loc->mon))
+        switch(term_getch())
         {
-            display_fmsg_nolog("You see yourself! %s %s %s named %s", msg_a_an(you->mon->type->name), you->mon->type->name, you->cls->name, you->name);
-        }
-        else
-        {
-            display_fmsg_nolog("You see %s %s", msg_a_an(loc->mon->type->name), loc->mon->type->name);
-        }
-        return;
-    }
-
-    if(loc_has_obj(loc))
-    {
-        const char* obj_name = loc_get_obj(loc)->name;
-        display_fmsg_nolog("You see %s %s", msg_a_an(obj_name), obj_name);
-        return;
-    }
-}
-
-static struct Symbol _do_look_at_get_symbol(struct MapLocation* loc, struct Mon* mon)
-{
-    if(!mon_can_see(mon, loc->x, loc->y))
-    {
-        struct Symbol retsym;
-
-        if(loc->seen)
-        {
-            retsym.sym = loc->symbol.sym;
-            retsym.fg  = *COL(CLR_FOG_OF_WAR);
-            retsym.bg  = *COL(CLR_DEFAULT);
-        }
-        else
-        {
-            retsym.sym = KEYCODE_SPACE;
-            retsym.fg  = *COL(CLR_DEFAULT);
-            retsym.bg  = *COL(CLR_DEFAULT);
-        }
-
-        return retsym;
-    }
-
-    if(loc->mon)
-    {
-        return *loc->mon->type->symbol;
-    }
-
-    if(!list_empty(&loc->obj_list))
-    {
-        return *((struct Object*)list_peek_head(&loc->obj_list))->symbol;
-    }
-
-    return loc->symbol;
-}
-
-static void _do_look_at_set_visuals(struct Mon* mon, struct MapLocation* loc)
-{
-    int sx = 0;
-    int sy = 0;
-    map_get_screen_coord_by_world_coord(cmap, loc->x, loc->y, &sx, &sy);
-
-    struct Symbol sym = _do_look_at_get_symbol(loc, mon);
-
-    term_draw_symbol(sx, sy, &sym.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, sym.sym);
-}
-
-static void _do_look_at_unset_visuals(struct Mon* mon, struct MapLocation* loc)
-{
-    int sx = 0;
-    int sy = 0;
-    map_get_screen_coord_by_world_coord(cmap, loc->x, loc->y, &sx, &sy);
-
-    struct Symbol sym = _do_look_at_get_symbol(loc, mon);
-
-    term_draw_symbol(sx, sy, &sym.fg, &sym.bg, A_NONE_BIT, sym.sym);
-}
-
-static void _do_look_at(void)
-{
-    int x = you->mon->x;
-    int y = you->mon->y;
-    struct MapLocation* loc = NULL;
-
-    display_msg_nolog("Move cursor over a location, press esc to stop looking.");
-    clear_msgs();
-    flush_msg_buffer();
-    term_getch(); // Just wait for player input so they can see the message
-
-    bool looking = true;
-    while(looking)
-    {
-        loc = map_cell_get_location(map_get_cell_by_world_coord(cmap, x, y), x, y);
-        _do_look_at_set_visuals(you->mon, loc);
-        _do_look_at_get_loc_info(you->mon, loc);
-        clear_msgs();
-        flush_msg_buffer();
-
-        enum LookAtCommand cmd = (enum LookAtCommand) term_getch();
-        switch(cmd)
-        {
-            case LOOK_AT_COMMAND_STOP:
-                looking = false;
+            case GAMEPLAY_COMMAND_DISPLAY_POSITION:
+                display_fmsg_nolog("Current position: %d, %d", you->mon->x, you->mon->y);
                 break;
-            case LOOK_AT_COMMAND_MOVE_UP:
-            case LOOK_AT_COMMAND_MOVE_DOWN:
-            case LOOK_AT_COMMAND_MOVE_LEFT:
-            case LOOK_AT_COMMAND_MOVE_RIGHT:
-            case LOOK_AT_COMMAND_MOVE_LEFT_UP:
-            case LOOK_AT_COMMAND_MOVE_LEFT_DOWN:
-            case LOOK_AT_COMMAND_MOVE_RIGHT_UP:
-            case LOOK_AT_COMMAND_MOVE_RIGHT_DOWN:
+            case GAMEPLAY_COMMAND_MOVE_LEFT:
+                end_turn = _do_smart_action(you->mon->x-1, you->mon->y);
+                break;
+            case GAMEPLAY_COMMAND_MOVE_RIGHT:
+                end_turn = _do_smart_action(you->mon->x+1, you->mon->y);
+                break;
+            case GAMEPLAY_COMMAND_MOVE_UP:
+                end_turn = _do_smart_action(you->mon->x, you->mon->y-1);
+                break;
+            case GAMEPLAY_COMMAND_MOVE_DOWN:
+                end_turn = _do_smart_action(you->mon->x, you->mon->y+1);
+                break;
+            case GAMEPLAY_COMMAND_MOVE_LEFT_UP:
+                end_turn = _do_smart_action(you->mon->x-1, you->mon->y-1);
+                break;
+            case GAMEPLAY_COMMAND_MOVE_LEFT_DOWN:
+                end_turn = _do_smart_action(you->mon->x-1, you->mon->y+1);
+                break;
+            case GAMEPLAY_COMMAND_MOVE_RIGHT_UP:
+                end_turn = _do_smart_action(you->mon->x+1, you->mon->y-1);
+                break;
+            case GAMEPLAY_COMMAND_MOVE_RIGHT_DOWN:
+                end_turn = _do_smart_action(you->mon->x+1, you->mon->y+1);
+                break;
+            case GAMEPLAY_COMMAND_PASS_TURN:
+                end_turn = true;
+                break;
+            case GAMEPLAY_COMMAND_PICK_UP:
+                end_turn = _pick_up_object();
+                break;
+            case GAMEPLAY_COMMAND_DISPLAY_INVENTORY:
+                end_turn = display_inventory_player();
+                break;
+            case GAMEPLAY_COMMAND_DISPLAY_CHARACTER_SCREEN:
+                end_turn = character_screen_handler();
+                break;
+            case GAMEPLAY_COMMAND_NO_SAVE_AND_QUIT:
+                if(prompt_yn("Really quit?"))
                 {
-                    _do_look_at_unset_visuals(you->mon, loc);
-
-                    int dx = 0;
-                    int dy = 0;
-                    if(cmd == LOOK_AT_COMMAND_MOVE_UP || cmd == LOOK_AT_COMMAND_MOVE_LEFT_UP || cmd == LOOK_AT_COMMAND_MOVE_RIGHT_UP)
-                    {
-                        --dy;
-                    }
-
-                    if(cmd == LOOK_AT_COMMAND_MOVE_DOWN || cmd == LOOK_AT_COMMAND_MOVE_LEFT_DOWN || cmd == LOOK_AT_COMMAND_MOVE_RIGHT_DOWN)
-                    {
-                        ++dy;
-                    }
-
-                    if(cmd == LOOK_AT_COMMAND_MOVE_LEFT || cmd == LOOK_AT_COMMAND_MOVE_LEFT_UP || cmd == LOOK_AT_COMMAND_MOVE_LEFT_DOWN)
-                    {
-                        --dx;
-                    }
-
-                    if(cmd == LOOK_AT_COMMAND_MOVE_RIGHT || cmd == LOOK_AT_COMMAND_MOVE_RIGHT_UP || cmd == LOOK_AT_COMMAND_MOVE_RIGHT_DOWN)
-                    {
-                        ++dx;
-                    }
-
-                    struct MapCell* cell = map_get_cell_by_world_coord(cmap, x + dx, y + dy);
-                    if(!cell || !map_cell_is_in_bounds(cell, x + dx, y + dy))
-                    {
-                        break;
-                    }
-
-                    x += dx;
-                    y += dy;
+                    do_quit();
                 }
-            default:
+                break;
+            case GAMEPLAY_COMMAND_SAVE_AND_QUIT:
+                if(prompt_yn("Save and quit? (SAVING NOT IMPLEMENTED YET!)"))
+                {
+                    do_quit();
+                }
+                break;
+            case GAMEPLAY_COMMAND_LOOK:
+                look();
                 break;
         }
-    }
-
-    _do_look_at_unset_visuals(you->mon, loc);
-    display_msg_nolog("Stopped looking, back to dungeoneering");
-    clear_msgs();
-    flush_msg_buffer();
-    term_getch();
-}
-
-void gameplay_command_handler_func(struct Command* cmd, struct CommandResult* cmd_res)
-{
-    cmd_res->end_turn = false;
-
-    switch(cmd->type)
-    {
-        case COMMAND_TYPE_DISPLAY_POSITION:
-            display_fmsg_nolog("Current position: %d, %d", you->mon->x, you->mon->y);
-            break;
-        case COMMAND_TYPE_MOVE:
-            {
-                char ch = cmd->cmd_char;
-                cmd_res->end_turn = _do_smart_action(
-                    you->mon->x + (ch == 'h' || ch == 'y' || ch == 'b' ? -1 : ch == 'l' || ch == 'u' || ch == 'n' ? 1 : 0),
-                    you->mon->y + (ch == 'k' || ch == 'y' || ch == 'u' ? -1 : ch == 'j' || ch == 'b' || ch == 'n' ? 1 : 0)
-                );
-            }
-            break;
-        case COMMAND_TYPE_PASS_TURN:
-            cmd_res->end_turn = true;
-            break;
-        case COMMAND_TYPE_PICK_UP:
-            cmd_res->end_turn = _pick_up_object();
-            break;
-        case COMMAND_TYPE_DISPLAY_INVENTORY:
-            cmd_res->end_turn = display_inventory_player();
-            break;
-        case COMMAND_TYPE_DISPLAY_CHARACTER_SCREEN:
-            cmd_res->end_turn = character_screen_handler();
-            break;
-        case COMMAND_TYPE_NO_SAVE_AND_QUIT:
-            if(prompt_yn("Really quit?"))
-            {
-                do_quit();
-            }
-            break;
-        case COMMAND_TYPE_SAVE_AND_QUIT:
-            if(prompt_yn("Save and quit? (SAVING NOT IMPLEMENTED YET!)"))
-            {
-                do_quit();
-            }
-            break;
-        case COMMAND_TYPE_LOOK_AT:
-            _do_look_at();
-            break;
-    }
-
-    if(!cmd_res->end_turn)
-    {
-        clear_msgs();
-        flush_msg_buffer();
-        display_main_screen();
     }
 }
