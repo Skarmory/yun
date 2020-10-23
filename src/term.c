@@ -132,7 +132,7 @@ static inline bool _should_redraw(VTermSymbol* symbol, char new_symbol, Colour* 
         return true;
     }
 
-    if((symbol->ta_flags & new_ta_flags) != symbol->ta_flags)
+    if(symbol->ta_flags != new_ta_flags)
     {
         return true;
     }
