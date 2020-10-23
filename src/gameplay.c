@@ -158,5 +158,12 @@ void gameplay_turn(void)
                 look();
                 break;
         }
+
+        if(!end_turn)
+        {
+            clear_msgs();
+            flush_msg_buffer();
+            display_main_screen();
+        }
     }
 }

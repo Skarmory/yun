@@ -99,13 +99,10 @@ void main_loop(void)
         current_path_gen_id = -1;
 
         gameplay_turn();
-        display_main_screen();
-
         update_mons();
 
         clear_msgs();
         flush_msg_buffer();
-
         display_main_screen();
     }
     while(true);
