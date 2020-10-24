@@ -101,7 +101,7 @@ void gameplay_turn(void)
 
     while(!end_turn)
     {
-        switch(term_getch())
+        switch((enum GameplayCommand)get_key())
         {
             case GAMEPLAY_COMMAND_DISPLAY_POSITION:
                 display_fmsg_nolog("Current position: %d, %d", you->mon->x, you->mon->y);

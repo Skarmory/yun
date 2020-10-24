@@ -45,13 +45,13 @@ enum Action
     ACTION_MOVE_BIT  = 1 << 3
 };
 
-enum InventoryCommands
+enum InventoryCommand
 {
-    INVENTORY_COMMAND_MOVE_UP = KEYCODE_k,
+    INVENTORY_COMMAND_MOVE_UP   = KEYCODE_k,
     INVENTORY_COMMAND_MOVE_DOWN = KEYCODE_j,
-    INVENTORY_COMMAND_EQUIP = KEYCODE_e,
-    INVENTORY_COMMAND_DROP = KEYCODE_d,
-    INVENTORY_COMMAND_QUIT = KEYCODE_q
+    INVENTORY_COMMAND_EQUIP     = KEYCODE_e,
+    INVENTORY_COMMAND_DROP      = KEYCODE_d,
+    INVENTORY_COMMAND_QUIT      = KEYCODE_q
 };
 
 const int c_allow_mask_read_only     = ACTION_QUIT_BIT | ACTION_MOVE_BIT;
@@ -110,7 +110,7 @@ static inline int _to_bits(char input)
  */
 static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending_actions, ListNode** highlighted, bool* went, int allow_mask)
 {
-    char in = term_getch();
+    enum InventoryCommand in = get_key();
 
     if((_to_bits(in) & allow_mask) == 0)
     {
@@ -137,7 +137,7 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
 
                     draw_textbox_border(x, y, len, 1, NULL, COL(CLR_DGREY), c_already_wearing_cannot_drop_text);
                     term_refresh();
-                    term_getch();
+                    term_wait_on_input();
                     term_clear_area(x, y, len + 4, 5);
                     return false;
                 }
@@ -171,7 +171,7 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
                     {
                         char* handedness[2] = { "main hand", "off hand" };
                         char choice = prompt_choice("Choose slot", handedness, 2);
-                        if(choice == g_key_escape)
+                        if(choice == KEYCODE_ESC)
                         {
                             *went = false;
                             return false;
@@ -397,5 +397,5 @@ void display_inventory_read_only(struct Mon* mon)
             break;
         }
     }
-    while(term_getch() != INVENTORY_COMMAND_QUIT);
+    while((enum InventoryCommand)get_key() != INVENTORY_COMMAND_QUIT);
 }

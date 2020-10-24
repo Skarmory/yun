@@ -1,13 +1,12 @@
 #ifndef NAXX_UI_H
 #define NAXX_UI_H
 
+#include "input_keycodes.h"
 #include "list.h"
 
 #include <stdbool.h>
 
 #define g_option_name_max_size 32
-
-#define g_key_escape 27
 
 struct Colour;
 struct Equipment;
@@ -15,6 +14,12 @@ struct Inventory;
 struct Object;
 
 typedef struct Colour Colour;
+
+enum YesNoCommand
+{
+    YES = KEYCODE_y,
+    NO  = KEYCODE_n
+};
 
 void draw_textbox(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text);
 void draw_textbox_border(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text);

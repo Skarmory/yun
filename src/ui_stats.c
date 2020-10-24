@@ -1,6 +1,7 @@
 #include "ui_stats.h"
 
 #include "globals.h"
+#include "input_keycodes.h"
 #include "monster.h"
 #include "mon_stats.h"
 #include "player.h"
@@ -9,6 +10,11 @@
 #include "term.h"
 
 #include <stddef.h>
+
+enum CharacterScreenCommand
+{
+    CHARACTER_SCREEN_COMMAND_QUIT = KEYCODE_q
+};
 
 const int x_off_strength     = 1;
 const int x_off_agility      = 17;
@@ -61,20 +67,20 @@ void _display_stats(struct Mon* mon)
     term_draw_ftext(x_off_stamina, y++, NULL, NULL, 0, "Block%:     %5.2f", PSTAT(stamina, block_chance));
     term_draw_ftext(x_off_stamina, y++, NULL, NULL, 0, "CritBlock%: %5.2f", PSTAT(stamina, crit_block_chance));
 
-    term_draw_text(1, screen_rows-1, NULL, NULL, 0, "q = close character screen");
+    term_draw_ftext(1, screen_rows-1, NULL, NULL, 0, "%c = close character screen", CHARACTER_SCREEN_COMMAND_QUIT);
 }
 
 bool character_screen_handler(void)
 {
-    char in;
+    enum CharacterScreenCommand in;
     do
     {
         term_clear();
         _display_stats(you->mon);
         term_refresh();
-        in = term_getch();
+        in = get_key();
     }
-    while(in != 'q');
+    while(in != CHARACTER_SCREEN_COMMAND_QUIT);
 
     term_clear();
 

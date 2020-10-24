@@ -22,9 +22,6 @@
 #define STATUS_Y 44
 #define STATUS_W 80
 
-#define YES 'y'
-#define NO  'n'
-
 void draw_textbox(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text)
 {
     term_draw_area(x, y, w, h, fg, bg, 0, ' ');
@@ -84,7 +81,7 @@ bool prompt_yn(const char* msg)
     display_fmsg_nolog("%s [yn] (n)", msg);
     flush_msg_buffer();
 
-    bool decision = term_getch() == YES;
+    bool decision = get_key() == YES;
 
     display_fmsg_log("%s [yn] (n) %c", msg, decision ? YES : NO);
     flush_msg_buffer();
@@ -93,7 +90,7 @@ bool prompt_yn(const char* msg)
 
 char prompt_choice(const char* title, char** choices, int length)
 {
-    char last_option_id = 'a' + length - 1;
+    char last_option_id = KEYCODE_a + length - 1;
 
     int x = (screen_cols / 2) - (g_option_name_max_size / 2);
     int y = (screen_rows / 2) - (length / 2);
@@ -102,7 +99,7 @@ char prompt_choice(const char* title, char** choices, int length)
 
     for(int option_id = 0; option_id < length; ++option_id)
     {
-        term_draw_ftext(x, y++, NULL, NULL, 0, "%c - %s", (char)('a' + option_id), choices[option_id]);
+        term_draw_ftext(x, y++, NULL, NULL, 0, "%c - %s", (KEYCODE_a + option_id), choices[option_id]);
     }
 
     term_refresh();
@@ -110,9 +107,9 @@ char prompt_choice(const char* title, char** choices, int length)
     char choice;
     do
     {
-        choice = term_getch();
+        choice = get_key();
     }
-    while(choice != g_key_escape && (choice < 'a' || choice > last_option_id));
+    while(choice != KEYCODE_ESC && (choice < KEYCODE_a || choice > last_option_id));
 
     return choice;
 }

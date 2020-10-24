@@ -63,13 +63,13 @@ void player_chk_dead(void)
         display_map();
         display_char_status();
 
-        term_getch();
+        term_wait_on_input();
         display_msg_log("You died...");
 
         clear_msgs();
         flush_msg_buffer();
 
-        term_getch();
+        term_wait_on_input();
         do_quit();
     }
 }

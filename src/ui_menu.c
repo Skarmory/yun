@@ -1,6 +1,7 @@
 #include "ui_menu.h"
 
 #include "colour.h"
+#include "input_keycodes.h"
 #include "log.h"
 #include "monster.h"
 #include "mon_stats.h"
@@ -107,8 +108,8 @@ void pick_class(void)
 
     do
     {
-        char choice = term_getch();
-        if(choice == 'q')
+        enum KeyCode choice = get_key();
+        if(choice == KEYCODE_y)
         {
             do_quit();
             return;
@@ -148,8 +149,8 @@ void pick_race(void)
 
     do
     {
-        char choice = term_getch();
-        if(choice == 'q')
+        enum KeyCode choice = get_key();
+        if(choice == KEYCODE_q)
         {
             do_quit();
             return;
@@ -208,14 +209,14 @@ void confirm_character(void)
 
    do
    {
-       switch(term_getch())
+       switch(get_key())
        {
-           case 'y':
+           case KEYCODE_y:
                _apply_stats();
                return;
-           case 'n':
+           case KEYCODE_n:
                return;
-           case 'q':
+           case KEYCODE_q:
                do_quit(); return;
        }
    }

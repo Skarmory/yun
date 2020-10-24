@@ -128,7 +128,7 @@ void look(void)
     display_msg_nolog("Move cursor over a location, press esc to stop looking.");
     clear_msgs();
     flush_msg_buffer();
-    term_getch(); // Just wait for player input so they can see the message
+    term_wait_on_input(); // Just wait for player input so they can see the message
 
     bool looking = true;
     while(looking)
@@ -139,7 +139,7 @@ void look(void)
         clear_msgs();
         flush_msg_buffer();
 
-        enum LookCommand cmd = term_getch();
+        enum LookCommand cmd = get_key();
         switch(cmd)
         {
             case LOOK_COMMAND_STOP:
@@ -194,5 +194,5 @@ void look(void)
     display_msg_nolog("Stopped looking, back to dungeoneering");
     clear_msgs();
     flush_msg_buffer();
-    term_getch();
+    term_wait_on_input();
 }

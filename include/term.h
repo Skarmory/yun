@@ -39,7 +39,9 @@ void term_set_sigint_callback(void(*sig)(int));
 void term_clear(void);
 void term_clear_area(int x, int y, int w, int h);
 void term_refresh(void);
-char term_getch(void);
+void term_getch(char* buf, int size);
+void term_wait_on_input(void);
+void term_move_cursor(int x, int y);
 
 void term_set_attr(int x, int y, TextAttributeFlags ta_flags);
 void term_unset_attr(int x, int y, TextAttributeFlags ta_flags);

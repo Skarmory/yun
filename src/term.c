@@ -182,7 +182,6 @@ void term_set_sigint_callback(void(*handler)(int))
     signal(SIGINT, handler);
 }
 
-
 void term_refresh(void)
 {
     VTermSymbol* sym = NULL;
@@ -194,7 +193,7 @@ void term_refresh(void)
         if(!sym->redraw) continue;
 
         // Move to
-        _writef(c_move_format, y+1, x+1);
+        term_move_cursor(x, y);
 
         // Set attributes
         if(sym->ta_flags != A_NONE_BIT)
@@ -229,11 +228,21 @@ void term_refresh(void)
     _flush();
 }
 
-char term_getch(void)
+void term_getch(char* buf, int size)
 {
-    char in;
-    read(1, &in, 1);
-    return in;
+    memset(buf, '\0', size);
+    read(1, buf, size);
+}
+
+void term_wait_on_input(void)
+{
+    char c;
+    read(1, &c, 1);
+}
+
+void term_move_cursor(int x, int y)
+{
+    _writef(c_move_format, y+1, x+1);
 }
 
 void term_set_attr(int x, int y, TextAttributeFlags ta_flags)

@@ -79,7 +79,7 @@ void new_game(void)
     fclose(intro);
 
     term_refresh();
-    term_getch();
+    term_wait_on_input();
     term_clear();
 
     current_turn_number = 0;
@@ -127,7 +127,7 @@ int main(int argc, char** argv)
     // some intro text
     term_draw_text((screen_cols/2) - 7, screen_rows/2, NULL, NULL, 0, "Welcome to Naxx");
     term_refresh();
-    term_getch();
+    term_wait_on_input();
 
     new_player();
     new_game();
