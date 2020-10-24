@@ -42,7 +42,7 @@ enum KeyCode get_key(void)
     if(strlen(buf) == 1)
     {
         // Simple ASCII code to handle
-        if((buf[0] >= KEYCODE_CHAR_RANGE_START && buf[0] <= KEYCODE_CHAR_RANGE_END) || buf[0] == KEYCODE_ENTER || buf[0] == KEYCODE_ESC)
+        if((buf[0] >= KEYCODE_CHAR_RANGE_START && buf[0] <= KEYCODE_CHAR_RANGE_END) || buf[0] == KEYCODE_ENTER || buf[0] == KEYCODE_ESC || buf[0] == KEYCODE_BACKSPACE)
         {
             return buf[0];
         }

@@ -4,6 +4,7 @@
 enum KeyCode
 {
     KEYCODE_UNKNOWN                 = -1,
+    KEYCODE_BACKSPACE               = 8,
     KEYCODE_ENTER                   = 13,
     KEYCODE_ESC                     = 27,
 
