@@ -12,11 +12,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MSGBOX_X 0
-#define MSGBOX_Y 40
-#define MSGBOX_W 80
-#define MSGBOX_H 3
-
 char msgbuf[MSGBOX_W];
 int msgbuf_size = 0;
 
