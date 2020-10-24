@@ -3,7 +3,11 @@
 
 enum KeyCode
 {
+    KEYCODE_UNKNOWN                 = -1,
+    KEYCODE_ENTER                   = 13,
     KEYCODE_ESC                     = 27,
+
+    KEYCODE_CHAR_RANGE_START        = 32,
     KEYCODE_SPACE                   = 32,
     KEYCODE_EXCLAMATION             = 33,
     KEYCODE_QUOTE                   = 34,
@@ -98,7 +102,15 @@ enum KeyCode
     KEYCODE_OPEN_CURLY              = 123,
     KEYCODE_CURLY_PIPE              = 124,
     KEYCODE_CLOSE_CURLY             = 125,
-    KEYCODE_TILDE                   = 126
+    KEYCODE_TILDE                   = 126,
+    KEYCODE_CHAR_RANGE_END          = 126,
+
+    KEYCODE_SPECIAL_RANGE_START     = 257,
+    KEYCODE_ARROW_UP                = 257,
+    KEYCODE_ARROW_DOWN              = 258,
+    KEYCODE_ARROW_RIGHT             = 259,
+    KEYCODE_ARROW_LEFT              = 260,
+    KEYCODE_SPECIAL_RANGE_END       = 260
 
     //TODO: Non-ascii, figure out how to handle?
     //KEYCODE_C_CEDILLA               = 128,
