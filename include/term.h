@@ -34,6 +34,8 @@ void term_uninit(void);
 
 void term_get_wh(int* w, int* h);
 void term_set_cursor(bool on);
+void term_set_echo(bool state);
+void term_set_canon(bool state);
 void term_set_sigint_callback(void(*sig)(int));
 
 void term_clear(void);

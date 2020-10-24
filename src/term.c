@@ -177,6 +177,20 @@ void term_set_cursor(bool on)
         write(1, c_cursor_off, sizeof(c_cursor_off));
 }
 
+void term_set_echo(bool state)
+{
+    struct termios t;
+    t.c_lflag = state ? ECHO : ~ECHO;
+    tcsetattr(1, TCSANOW, &t);
+}
+
+void term_set_canon(bool state)
+{
+    struct termios t;
+    t.c_lflag = state ? ICANON : ~ICANON;
+    tcsetattr(1, TCSANOW, &t);
+}
+
 void term_set_sigint_callback(void(*handler)(int))
 {
     signal(SIGINT, handler);
