@@ -1,6 +1,7 @@
 #include "gameplay.h"
 
 #include "colour.h"
+#include "console.h"
 #include "input_keycodes.h"
 #include "look.h"
 #include "map.h"
@@ -40,7 +41,8 @@ enum GameplayCommand
     GAMEPLAY_COMMAND_PASS_TURN                = KEYCODE_DOT,
     GAMEPLAY_COMMAND_PICK_UP                  = KEYCODE_COMMA,
     GAMEPLAY_COMMAND_NO_SAVE_AND_QUIT         = KEYCODE_Q,
-    GAMEPLAY_COMMAND_SAVE_AND_QUIT            = KEYCODE_q
+    GAMEPLAY_COMMAND_SAVE_AND_QUIT            = KEYCODE_q,
+    GAMEPLAY_COMMAND_SHOW_CONSOLE             = KEYCODE_BACKTICK
 };
 
 /**
@@ -156,6 +158,9 @@ void gameplay_turn(void)
                 break;
             case GAMEPLAY_COMMAND_LOOK:
                 look();
+                break;
+            case GAMEPLAY_COMMAND_SHOW_CONSOLE:
+                console();
                 break;
         }
 
