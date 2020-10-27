@@ -19,6 +19,7 @@
 #include "player_class.h"
 #include "player_faction.h"
 #include "player_race.h"
+#include "spawn.h"
 #include "symbol.h"
 #include "term.h"
 #include "ui.h"
@@ -161,20 +162,13 @@ int main(int argc, char** argv)
         loc_add_obj(map_cell_get_location(test_cell, startx, starty), longsword->obj);
     }
 
-    struct MonType* ghoul_type = mon_type_look_up_by_id("ghul");
-
     ListNode* node;
     list_for_each(&test_cell->room_list, node)
     {
         room = node->data;
         startx = random_int(room->x + 1, room->x + room->w - 2);
         starty = random_int(room->y + 1, room->y + room->h - 2);
-
-        if(map_cell_has_mon(test_cell, startx, starty))
-            continue;
-
-        struct Mon* ghoul = mon_new(ghoul_type, startx, starty);
-        map_cell_add_mon(test_cell, ghoul);
+        spawn_mon("ghul", startx, starty);
     }
     // ---------- DEBUG CODE END ----------
 
