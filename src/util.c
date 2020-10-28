@@ -42,10 +42,8 @@ void convert_arg(char c, char* buf)
     }
 }
 
-int strrfindi(const char* haystack, const char needle, int start)
+int strrfindi(const char* haystack, const char needle, size_t start)
 {
-    int ret = -1;
-
     if(strlen(haystack) >= start)
     {
         const char* curr = haystack + start;
@@ -53,14 +51,16 @@ int strrfindi(const char* haystack, const char needle, int start)
         do
         {
             if(*curr == needle)
+            {
                 return (int)(curr - haystack) + 1;
+            }
 
             --curr;
         }
         while(curr >= haystack);
     }
 
-    return ret;
+    return -1;
 }
 
 /**
@@ -86,8 +86,12 @@ void do_quit(void)
 
 void sigint_handler(int _)
 {
+    (void)_;
+
     if(prompt_yn("Really quit?"))
+    {
         do_quit();
+    }
 }
 
 /**

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -Iinclude
+CFLAGS=-Wall -Wextra -Iinclude
 LDFLAGS=-lm -pthread
 GAME=naxx
 

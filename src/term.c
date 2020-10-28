@@ -112,6 +112,7 @@ static inline VTermSymbol* _term_get_symbol(int x, int y)
 
 static void _term_resize_signal_handler(int _)
 {
+    (void)_;
     _term_resize();
 }
 

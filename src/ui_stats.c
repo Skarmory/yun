@@ -22,7 +22,7 @@ const int x_off_intelligence = 33;
 const int x_off_spirit       = 50;
 const int x_off_stamina      = 66;
 
-void _display_stats(struct Mon* mon)
+void _display_stats(void)
 {
     term_draw_ftext(2, 0, NULL, NULL, 0, "Name: %s", you->name);
     term_draw_ftext(1, 1, NULL, NULL, 0, "Class: %s", you->cls->name);
@@ -76,7 +76,7 @@ bool character_screen_handler(void)
     do
     {
         term_clear();
-        _display_stats(you->mon);
+        _display_stats();
         term_refresh();
         in = get_key();
     }

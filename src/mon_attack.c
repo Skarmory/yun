@@ -126,7 +126,7 @@ static inline float _calc_armour_reduction(struct Mon* attacker, struct Mon* def
     return log_base(((equipment_armour_total(defender->equipment) - get_armour_pen(attacker)) / c_armour_value_divisor) + 1, c_armour_value_log_base);
 }
 
-static inline void _display_hit_text(struct Mon* attacker, struct Mon* defender, int damage)
+static inline void _display_hit_text(struct Mon* attacker, struct Mon* defender)
 {
     const struct Weapon* attacker_weapon = mon_get_weapon(attacker);
     const struct Attack* attacks = NULL;
@@ -258,7 +258,7 @@ bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
             {
                 damage = _attack_damage(attacker, defender);
                 damage *= (1.0f - _calc_armour_reduction(attacker, defender));
-                _display_hit_text(attacker, defender, damage);
+                _display_hit_text(attacker, defender);
             }
             break;
 

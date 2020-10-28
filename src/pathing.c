@@ -105,7 +105,7 @@ struct PathNode* _get_best_open(void)
 /**
  * A* algorithm constructing shortest path
  */
-struct PathNode* _find_path(struct MapLocation* start, struct MapLocation* dest, int path_bits)
+static struct PathNode* _find_path(struct MapLocation* dest, int path_bits)
 {
     struct PathNode* global_best = NULL;
     struct PathNode* best_node = NULL;
@@ -207,7 +207,7 @@ struct MapLocation* next_path_loc(struct MapLocation* start, struct MapLocation*
     _add_open(node);
 
     struct MapLocation* ret = NULL;
-    if((node = _find_path(start, dest, path_bits)) != NULL)
+    if((node = _find_path(dest, path_bits)) != NULL)
     {
         ret = _get_first_path_node(node)->loc;
     }

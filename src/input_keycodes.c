@@ -4,10 +4,14 @@
 
 #include "string.h"
 
-const static char* c_arrow_up    = "\033[A";
-const static char* c_arrow_down  = "\033[B";
-const static char* c_arrow_right = "\033[C";
-const static char* c_arrow_left  = "\033[D";
+static const char* c_arrow_up            = "\033[A";
+static const char* c_arrow_down          = "\033[B";
+static const char* c_arrow_right         = "\033[C";
+static const char* c_arrow_left          = "\033[D";
+static const char* c_control_arrow_up    = "\003[1;5A";
+static const char* c_control_arrow_down  = "\003[1;5B";
+static const char* c_control_arrow_right = "\003[1;5C";
+static const char* c_control_arrow_left  = "\003[1;5D";
 
 enum KeyCode _handle_escape_sequence(char buf[8])
 {

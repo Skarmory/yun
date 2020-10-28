@@ -31,8 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SIZE(x) sizeof(x)/sizeof(x[0])
-
 void new_game(void);
 void main_loop(void);
 
@@ -52,7 +50,7 @@ void new_game(void)
     {
         int col = screen_cols/2 - 38;
 
-        for(int i = 0; i < SIZE(buf) && buf[i] != '\0'; ++i)
+        for(int i = 0; i < (int)sizeof(buf) && buf[i] != '\0'; ++i)
         {
             if(buf[i] == '%')
             {
@@ -61,7 +59,7 @@ void new_game(void)
 
                 convert_arg(buf[i], tmp);
 
-                for(int j = 0; j < SIZE(tmp) && tmp[j] != '\0'; ++j)
+                for(int j = 0; j < (int)sizeof(tmp) && tmp[j] != '\0'; ++j)
                 {
                     term_draw_symbol(col, row, NULL, NULL, 0, tmp[j]);
                     ++col;

@@ -17,7 +17,7 @@ struct Tasker* g_tasker = NULL;
 
 struct Thread;
 static void _thread_init(struct Thread* thread, struct Tasker* tasker);
-static void _thread_free(struct Thread* thread, struct Tasker* tasker);
+static void _thread_free(struct Thread* thread);
 static void _thread_start_task(struct Thread* thread, struct Task* task);
 static void _thread_execute_task(struct Thread* thread);
 static void _thread_end_task(struct Thread* thread);
@@ -97,7 +97,7 @@ static void _thread_init(struct Thread* thread, struct Tasker* tasker)
 /**
  * Stop a worker thread, join, and destroy its members.
  */
-static void _thread_free(struct Thread* thread, struct Tasker* tasker)
+static void _thread_free(struct Thread* thread)
 {
     _thread_stop(thread);
 
@@ -333,7 +333,7 @@ void tasker_free(struct Tasker* tasker)
 
     for(int tidx = 0; tidx < MAX_THREADS; ++tidx)
     {
-        _thread_free(&tasker->worker_threads[tidx], tasker);
+        _thread_free(&tasker->worker_threads[tidx]);
     }
 
     mtx_destroy(&tasker->pending_list_lock);

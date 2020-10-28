@@ -1,9 +1,11 @@
 #ifndef NAXX_UTIL_H
 #define NAXX_UTIL_H
 
+#include <stddef.h>
+
 void convert_arg(char c, char* buf);
 
-int strrfindi(const char* haystack, const char needle, int start);
+int strrfindi(const char* haystack, const char needle, size_t start);
 
 void do_quit(void);
 

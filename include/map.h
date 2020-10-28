@@ -10,8 +10,8 @@
 struct List;
 struct MapCell;
 
-#define MROWS 40u
-#define MCOLS 80u
+#define MROWS 40
+#define MCOLS 80
 
 /**
  * Contains the map data

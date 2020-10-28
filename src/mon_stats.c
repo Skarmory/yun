@@ -306,27 +306,27 @@ void add_stat(struct Mon* mon, int stat, int amount, bool base)
     }
 }
 
-bool inline strength_check(int roll, struct Mon* mon)
+inline bool strength_check(int roll, struct Mon* mon)
 {
    return roll < get_strength(mon);
 }
 
-bool inline agility_check(int roll, struct Mon* mon)
+inline bool agility_check(int roll, struct Mon* mon)
 {
     return roll < get_agility(mon);
 }
 
-bool inline intelligence_check(int roll, struct Mon* mon)
+inline bool intelligence_check(int roll, struct Mon* mon)
 {
     return roll < get_intelligence(mon);
 }
 
-bool inline spirit_check(int roll, struct Mon* mon)
+inline bool spirit_check(int roll, struct Mon* mon)
 {
     return roll < get_spirit(mon);
 }
 
-bool inline stamina_check(int roll, struct Mon* mon)
+inline bool stamina_check(int roll, struct Mon* mon)
 {
     return roll < get_stamina(mon);
 }
