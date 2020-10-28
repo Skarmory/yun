@@ -10,6 +10,7 @@
 #include "player_class.h"
 #include "player_faction.h"
 #include "player_race.h"
+#include "ui.h"
 #include "util.h"
 
 #include <pwd.h>
@@ -196,6 +197,13 @@ void _apply_stats(void)
     add_stat(you->mon, STAT_STAMINA, you->cls->stamina_up, true);
 }
 
+enum ConfirmCharacterCommand
+{
+    CONFIRM_CHARACTER_YES  = YES,
+    CONFIRM_CHARACTER_NO   = NO,
+    CONFIRM_CHARACTER_QUIT = KEYCODE_q
+};
+
 /**
  * Prompt player to confirm their character
  */
@@ -209,14 +217,14 @@ void confirm_character(void)
 
    do
    {
-       switch(get_key())
+       switch((enum ConfirmCharacterCommand)get_key())
        {
-           case KEYCODE_y:
+           case CONFIRM_CHARACTER_YES:
                _apply_stats();
                return;
-           case KEYCODE_n:
+           case CONFIRM_CHARACTER_NO:
                return;
-           case KEYCODE_q:
+           case CONFIRM_CHARACTER_QUIT:
                do_quit(); return;
        }
    }

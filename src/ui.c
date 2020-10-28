@@ -81,7 +81,7 @@ bool prompt_yn(const char* msg)
     display_fmsg_nolog("%s [yn] (n)", msg);
     flush_msg_buffer();
 
-    bool decision = get_key() == YES;
+    bool decision = (enum YesNoCommand)get_key() == YES;
 
     display_fmsg_log("%s [yn] (n) %c", msg, decision ? YES : NO);
     flush_msg_buffer();
