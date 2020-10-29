@@ -1,135 +1,107 @@
 #include "console.h"
 
-#include "colour.h"
-#include "input_keycodes.h"
+#include "console_command.h"
+#include "console_input.h"
+#include "log.h"
 #include "message.h"
-#include "term.h"
+#include "ui.h"
+#include "variant.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #define INPUT_BUFFER_LENGTH MSGBOX_W
-#define INPUT_TEXT_MAX (INPUT_BUFFER_LENGTH-1)
-#define CURSOR_POS_MAX (INPUT_TEXT_MAX-1)
 
-enum ConsoleCommand
+static void _parse_input(char* input)
 {
-    CONSOLE_COMMAND_QUIT        = KEYCODE_ESC,
-    CONSOLE_COMMAND_EXECUTE     = KEYCODE_ENTER,
-    CONSOLE_COMMAND_BACK_ONE    = KEYCODE_ARROW_LEFT,
-    CONSOLE_COMMAND_FORWARD_ONE = KEYCODE_ARROW_RIGHT,
-    CONSOLE_COMMAND_BACK_DELETE = KEYCODE_BACKSPACE
-};
-
-struct _ConsoleState
-{
-    int cursor_pos;
-    int length;
-    char input[INPUT_BUFFER_LENGTH];
-};
-
-static void _move_cursor_back_one_space(struct _ConsoleState* state)
-{
-    if(state->length == 0 || state->cursor_pos == 0)
+    // Get console command name first
+    char* tok = strtok(input, " ");
+    if(tok == NULL)
     {
         return;
     }
 
-    --state->cursor_pos;
-}
-
-static void _move_cursor_forward_one_space(struct _ConsoleState* state)
-{
-    if(state->length == 0 || state->cursor_pos == CURSOR_POS_MAX || state->cursor_pos == state->length)
+    const struct ConsoleCommand* cmd = console_command_look_up_by_name(tok);
+    if(!cmd)
     {
+        // No console command found
         return;
     }
 
-    ++state->cursor_pos;
-}
+    const int params_count = console_command_get_param_count(cmd);
+    struct CommandParams* params = command_params_new();
 
-static void _add_character_to_input(struct _ConsoleState* state, enum KeyCode key)
-{
-    if(state->cursor_pos == INPUT_TEXT_MAX || state->length == INPUT_TEXT_MAX)
+    for(int i = 0; i < params_count; ++i)
     {
-        return;
-    }
-
-    if(key >= KEYCODE_CHAR_RANGE_START && key <= KEYCODE_CHAR_RANGE_END)
-    {
-        char tmp[INPUT_BUFFER_LENGTH];
-        memset(tmp, '\0', INPUT_BUFFER_LENGTH);
-
-        snprintf(tmp, INPUT_BUFFER_LENGTH, "%s", state->input + state->cursor_pos);
-        snprintf(state->input + state->cursor_pos + 1, INPUT_BUFFER_LENGTH - state->cursor_pos, "%s", tmp);
-        state->input[state->cursor_pos] = (char)key;
-
-        ++state->length;
-
-        if(state->cursor_pos != CURSOR_POS_MAX)
+        tok = strtok(NULL, " ");
+        if(!tok)
         {
-            ++state->cursor_pos;
+            log_format_msg(DEBUG, "ConsoleCommand: Too few arguments specified. Expected %d. Found: %d.", params_count, i+1);
+            command_params_free(params);
+            return;
         }
+
+        struct Variant actual;
+        const struct Param* param = console_command_get_param(cmd, i);
+        void* cfunc = param_get_conversion_func(param);
+
+        actual.type = param_get_type(param);
+        switch(actual.type)
+        {
+            case DATA_TYPE_INT:
+                actual.data.as_int = ((ConsoleCommandParamsConversionFunc_int)cfunc)(tok);
+                break;
+            case DATA_TYPE_UINT:
+                actual.data.as_uint = ((ConsoleCommandParamsConversionFunc_uint)cfunc)(tok);
+                break;
+            case DATA_TYPE_PTR:
+                actual.data.as_ptr = ((ConsoleCommandParamsConversionFunc_vptr)cfunc)(tok);
+                break;
+            case DATA_TYPE_STRING:
+                {
+                    int alloc_len = strlen(tok) + 1; // +1 for null terminator
+                    actual.data.as_str = malloc(alloc_len);
+
+                    if(cfunc)
+                    {
+                        snprintf(actual.data.as_str, alloc_len, "%s", ((ConsoleCommandParamsConversionFunc_string)cfunc)(tok));
+                    }
+                    else
+                    {
+                        snprintf(actual.data.as_str, alloc_len, "%s", tok);
+                    }
+                }
+                break;
+            case DATA_TYPE_CHAR:
+                actual.data.as_char = ((ConsoleCommandParamsConversionFunc_char)cfunc)(tok);
+                break;
+        }
+
+        command_params_add_param(params, &actual);
     }
-}
 
-static void _back_delete_one(struct _ConsoleState* state)
-{
-    if(state->cursor_pos == 0 || state->length == 0)
-    {
-        return;
-    }
-
-    char tmp[INPUT_BUFFER_LENGTH];
-    memset(tmp, '\0', INPUT_BUFFER_LENGTH);
-
-    snprintf(tmp, INPUT_BUFFER_LENGTH, "%s", state->input + state->cursor_pos);
-    snprintf(state->input + state->cursor_pos - 1, INPUT_BUFFER_LENGTH - state->cursor_pos, "%s", tmp);
-    state->input[state->length] = '\0';
-    --state->length;
-    --state->cursor_pos;
+    console_command_execute(cmd, params);
+    command_params_free(params);
 }
 
 void console(void)
 {
-    struct _ConsoleState state;
-    state.cursor_pos = 0;
-    state.length = 0;
-    memset(&state.input, '\0', INPUT_BUFFER_LENGTH);
+    bool should_quit = false;
 
-    clear_msgs();
-
-    bool show = true;
-    while(show)
+    do
     {
-        term_clear_area(MSGBOX_X, MSGBOX_Y, MSGBOX_W, MSGBOX_H);
-        term_draw_text(MSGBOX_X, MSGBOX_Y, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "Input console command:");
-        term_draw_ftext(MSGBOX_X, MSGBOX_Y+1, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "%s ", state.input);
-        term_draw_ftext(MSGBOX_X, MSGBOX_Y+2, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "Length: %d, Cursor Pos: %d", state.length, state.cursor_pos);
-        term_draw_symbol(MSGBOX_X + state.cursor_pos, MSGBOX_Y+1, &g_colours[CLR_BLACK], &g_colours[CLR_WHITE], A_NONE_BIT, state.input[state.cursor_pos] == '\0' ? ' ' : state.input[state.cursor_pos]);
-        term_refresh();
+        char in_command[INPUT_BUFFER_LENGTH];
+        memset(in_command, '\0', INPUT_BUFFER_LENGTH);
+        should_quit = console_input(in_command);
 
-        enum KeyCode key = get_key();
-        switch(key)
+        if(should_quit)
         {
-            case CONSOLE_COMMAND_QUIT:
-                show = false;
-                break;
-            case CONSOLE_COMMAND_EXECUTE:
-                break;
-            case CONSOLE_COMMAND_BACK_ONE:
-                _move_cursor_back_one_space(&state);
-                break;
-            case CONSOLE_COMMAND_FORWARD_ONE:
-                _move_cursor_forward_one_space(&state);
-                break;
-            case CONSOLE_COMMAND_BACK_DELETE:
-                _back_delete_one(&state);
-                break;
-            default:
-                _add_character_to_input(&state, key);
-                break;
+            return;
         }
-    }
-}
 
+        _parse_input(in_command);
+        display_main_screen();
+    }
+    while(true);
+}
