@@ -2,6 +2,7 @@
 #include "colour.h"
 #include "gameplay.h"
 #include "globals.h"
+#include "console_commands_init.h"
 #include "log.h"
 #include "mon_attack.h"
 #include "mon_type.h"
@@ -118,11 +119,14 @@ bool init_naxx(void)
     if(!_init_gamedata())
         return false;
 
+    init_console_commands();
+
     return true;
 }
 
 void uninit_naxx(void)
 {
+    uninit_console_commands();
     _uninit_gamedata();
     tasker_free(g_tasker);
     term_uninit();
