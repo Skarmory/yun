@@ -1,14 +1,5 @@
-Floating above the Plaguelands, the necropolis known as Naxxramas serves
-as the seat of one of the Lich King's most powerful officers, the dreaded
-lich Kel'Thuzad. Horrors of the past and new terrors yet to be unleashed
-are gathering inside the necropolis as the Lich King's servants prepare
-their assault.
+Placeholder intro text.
 
-The Scourge marches again...
+Placeholder intro text.
 
-As an initiate in the ranks of the %C of %H you have
-pledged your life in defence of %F. You have been sent forth by
-%L as part of a group of heroes leading the assault
-on the necropolis.
-
-Find Kel'Thuzad. Steal his phylactery. Conquer Naxxramas.
+Placeholder intro text.
