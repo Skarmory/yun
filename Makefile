@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -Wextra -Iinclude
 LDFLAGS=-lm -pthread
-GAME=naxx
+GAME=yun
 
 INCL=$(wildcard include/*.h)
 SRCS=$(wildcard src/*.c)
