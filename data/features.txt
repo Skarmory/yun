@@ -1,4 +1,4 @@
-# List of features in naxx.
+# List of features in Yun.
 
 # INFO
 # A feature is a non-directly interactable thing. That is something which exists in the game world that you can

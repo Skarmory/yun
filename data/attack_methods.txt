@@ -1,4 +1,4 @@
-# List of attack methods in naxx.
+# List of attack methods in Yun.
 
 # INFO
 # This is a list of ways that an attack can be inflicted.

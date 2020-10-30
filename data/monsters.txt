@@ -1,4 +1,4 @@
-# List of monsters in naxx
+# List of monsters in Yun
 
 # INFO
 # A monster is any individual creature that can be spawned in the game.

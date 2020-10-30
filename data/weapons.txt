@@ -1,4 +1,4 @@
-# List of weapons found in naxx.
+# List of weapons found in Yun.
 
 # INFO
 # Weapons are items that occupy the main hand or off hand slots and have a damage value

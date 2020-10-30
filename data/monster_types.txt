@@ -1,4 +1,4 @@
-# List of monster types in naxx.
+# List of monster types in Yun.
 
 # INFO
 # A monster type is the general term for a set of characteristics
@@ -18,7 +18,7 @@
 # desc        - Description of the monster type
 # symbol      - ASCII character for in-game drawing
 # colour      - RGB colour for the symbol. [0-255]
-# stats       - Strength, agility, intelligence, spirit, and stamina (in that order)
+# stats       - TODO: Pending stats overhaul.
 # move-flag   - Specifies what types of movement the creature is capable of. This determines what terrain they can traverse. [walks, swims, flies]
 # base-armour - The id of the armour the creature has by default. This cannot be dropped or unequipped.
 # base-weapon - The id of the weapon the creature has by default. This cannot be dropped or unequipped.
@@ -30,84 +30,7 @@ name:human
 desc:Human
 symbol:@
 colour:0;0;255
-stats:1;1;1;1;1
-move-flag:walks
-base-armour:uarm
-base-weapon:fist
-vision-radius:25
-
-id:nelf
-name:night elf
-desc:Night Elf
-symbol:@
-colour:0;0;255
-stats:1;1;1;1;1
-move-flag:walks
-base-armour:uarm
-base-weapon:fist
-vision-radius:25
-
-id:dwrf
-name:dwarf
-desc:Dwarf
-symbol:@
-colour:0;0;255
-stats:1;1;1;1;1
-move-flag:walks
-base-armour:uarm
-base-weapon:fist
-vision-radius:25
-
-id:gnme
-name:gnome
-desc:Gnome
-symbol:@
-colour:255;255;255
-stats:1;1;1;1;1
-move-flag:walks
-base-armour:uarm
-base-weapon:fist
-vision-radius:25
-
-id:orc
-name:orc
-desc:Orc
-symbol:@
-colour:255;0;0
-stats:1;1;1;1;1
-move-flag:walks
-base-armour:uarm
-base-weapon:fist
-vision-radius:25
-
-id:trll
-name:troll
-desc:Troll
-symbol:@
-colour:255;0;0
-stats:1;1;1;1;1
-move-flag:walks
-base-armour:uarm
-base-weapon:fist
-vision-radius:25
-
-id:fskn
-name:forsaken
-desc:Forsaken
-symbol:@
-colour:255;0;0
-stats:1;1;1;1;1
-move-flag:walks
-base-armour:uarm
-base-weapon:fist
-vision-radius:25
-
-id:tarn
-name:tauren
-desc:Tauren
-symbol:@
-colour:255;0;0
-stats:1;1;1;1;1
+stats:1
 move-flag:walks
 base-armour:uarm
 base-weapon:fist
@@ -120,7 +43,7 @@ name:ghoul
 desc:Ghoul
 symbol:g
 colour:55;55;55
-stats:1;1;1;1;1
+stats:1
 move-flag:walks
 base-armour:uarm
 base-weapon:claw
