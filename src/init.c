@@ -1,5 +1,6 @@
 #include "init.h"
 #include "colour.h"
+#include "feature.h"
 #include "gameplay.h"
 #include "globals.h"
 #include "console_commands_init.h"
@@ -75,8 +76,18 @@ static inline bool _init_gamedata(void)
 
 void _uninit_gamedata(void)
 {
+    for(int idx = 0; idx < g_features_count; ++idx)
+    {
+        free(g_features[idx].symbol);
+    }
+
+    free(g_features);
+    g_features_count = 0;
+
     for(int idx = 0; idx < g_mon_type_count; ++idx)
+    {
         free(g_mon_type[idx].symbol);
+    }
 
     free(g_mon_type);
     g_mon_type_count = 0;
