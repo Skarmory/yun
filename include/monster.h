@@ -1,5 +1,5 @@
-#ifndef NAXX_MON_H
-#define NAXX_MON_H
+#ifndef YUN_MON_H
+#define YUN_MON_H
 
 #include "defs.h"
 #include "mon_attr.h"
@@ -9,11 +9,6 @@ struct MonType;
 struct Equipment;
 struct Inventory;
 struct Weapon;
-
-#define HP(mon) mon->stats.stamina.health
-#define MAXHP(mon) mon->stats.stamina.max_health
-#define MANA(mon) mon->stats.intelligence.mana
-#define MAXMANA(mon) mon->stats.intelligence.max_mana
 
 /**
  * Struct that contains individual monster data

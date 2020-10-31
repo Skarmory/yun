@@ -1014,7 +1014,7 @@ void gen_map(struct Map* map, enum MapType type)
         _connect_cells(map);
 
     term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells... Done!");
-    term_draw_text(loading_progress_x, loading_progress_y + 5, NULL, NULL, 0, "Entering Naxxramas...");
+    term_draw_text(loading_progress_x, loading_progress_y + 5, NULL, NULL, 0, "Entering Yun...");
     term_refresh();
     term_wait_on_input();
     term_clear();

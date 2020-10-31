@@ -1,5 +1,5 @@
-#ifndef NAXX_CONSOLE_INPUT_H
-#define NAXX_CONSOLE_INPUT_H
+#ifndef YUN_CONSOLE_INPUT_H
+#define YUN_CONSOLE_INPUT_H
 
 #include <stdbool.h>
 

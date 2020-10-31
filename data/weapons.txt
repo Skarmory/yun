@@ -22,7 +22,7 @@
 id:lswd
 name:longsword
 desc:A one-handed sword with a long blade often used by human adventurers. Inflicts medium damage.
-class:sword1h
+class:sword
 damage:1;6
 attack-method:slsh
 

@@ -1,5 +1,5 @@
-#ifndef NAXX_MON_AI_H
-#define NAXX_MON_AI_H
+#ifndef YUN_MON_AI_H
+#define YUN_MON_AI_H
 
 struct Mon;
 

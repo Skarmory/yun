@@ -1,5 +1,5 @@
-#ifndef NAXX_WEAPON_H
-#define NAXX_WEAPON_H
+#ifndef YUN_WEAPON_H
+#define YUN_WEAPON_H
 
 #include "mon_attack.h"
 
@@ -7,12 +7,9 @@ struct Object;
 
 enum WeaponClass
 {
-    WEAPON_CLASS_SWORD_1H,
-    WEAPON_CLASS_SWORD_2H,
-    WEAPON_CLASS_MACE_1H,
-    WEAPON_CLASS_MACE_2H,
-    WEAPON_CLASS_AXE_1H,
-    WEAPON_CLASS_AXE_2H,
+    WEAPON_CLASS_SWORD,
+    WEAPON_CLASS_MACE,
+    WEAPON_CLASS_AXE,
     WEAPON_CLASS_BOW,
     WEAPON_CLASS_GUN,
     WEAPON_CLASS_DAGGER,

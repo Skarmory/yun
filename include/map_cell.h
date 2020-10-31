@@ -1,5 +1,5 @@
-#ifndef NAXX_MAP_CELL_H
-#define NAXX_MAP_CELL_H
+#ifndef YUN_MAP_CELL_H
+#define YUN_MAP_CELL_H
 
 #include "map_location.h"
 #include "mon_attr.h"

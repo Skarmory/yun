@@ -1,5 +1,5 @@
-#ifndef NAXX_INVENTORY_UI_H
-#define NAXX_INVENTORY_UI_H
+#ifndef YUN_INVENTORY_UI_H
+#define YUN_INVENTORY_UI_H
 
 #include <stdbool.h>
 

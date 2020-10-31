@@ -33,7 +33,7 @@ enum ParserCode parse_mon_types(void)
     parser_register_field(parser, "desc", "desc string", &_parse_mon_type_desc_callback);
     parser_register_field(parser, "symbol", "symbol char", &_parse_mon_type_symbol_callback);
     parser_register_field(parser, "colour", "red int green int blue int", &_parse_mon_type_colour_callback);
-    parser_register_field(parser, "stats", "strength int agility int intelligence int spirit int stamina int", &_parse_mon_type_stats_callback);
+    parser_register_field(parser, "stats", "hp-max int", &_parse_mon_type_stats_callback);
     parser_register_field(parser, "move-flag", "flag string", &_parse_mon_type_pathing_callback);
     parser_register_field(parser, "base-armour", "id string", &_parse_mon_type_base_armour_callback);
     parser_register_field(parser, "base-weapon", "id string", &_parse_mon_type_base_weapon_callback);
@@ -116,11 +116,7 @@ parsing_callback(_parse_mon_type_colour_callback)
 parsing_callback(_parse_mon_type_stats_callback)
 {
     struct MonType* type = parser_get_userdata_active(parser);
-    type->strength     = parser_field_get_int(parser, "stats", "strength");
-    type->agility      = parser_field_get_int(parser, "stats", "agility");
-    type->intelligence = parser_field_get_int(parser, "stats", "intelligence");
-    type->spirit       = parser_field_get_int(parser, "stats", "spirit");
-    type->stamina      = parser_field_get_int(parser, "stats", "stamina");
+    type->base_hp_max = parser_field_get_int(parser, "stats", "hp-max");
     return PARSE_CALLBACK_OK;
 }
 

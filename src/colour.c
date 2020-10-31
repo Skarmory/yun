@@ -45,16 +45,6 @@ Colour g_colours[] =
     COLOUR(255, 100, 200), // pink
     COLOUR(255, 190, 200),  // light pink
 
-    COLOUR(0, 112, 222), // shaman
-    COLOUR(255, 125, 10), // druid
-    COLOUR(245, 140, 186), // paladin
-    COLOUR(199, 156, 110), // warrior
-    COLOUR(135, 135, 237), // warlock
-    // priest
-    COLOUR(255, 245, 105), // rogue
-    COLOUR(171, 212, 115), // hunter
-    COLOUR(64, 199, 235), // mage
-
     COLOUR(-1, -1, -1), // default
 
     COLOUR(64, 64, 64) // fog of war

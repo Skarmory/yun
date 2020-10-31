@@ -19,18 +19,6 @@
 
 static inline bool _init_symbols(void)
 {
-    g_symbol_armour_cloth.fg = *COL(g_symbol_armour_cloth.base_fg_idx);
-    g_symbol_armour_cloth.bg = *COL(g_symbol_armour_cloth.base_bg_idx);
-
-    g_symbol_armour_leather.fg = *COL(g_symbol_armour_leather.base_fg_idx);
-    g_symbol_armour_leather.bg = *COL(g_symbol_armour_leather.base_bg_idx);
-
-    g_symbol_armour_mail.fg = *COL(g_symbol_armour_mail.base_fg_idx);
-    g_symbol_armour_mail.bg = *COL(g_symbol_armour_mail.base_bg_idx);
-
-    g_symbol_armour_plate.fg = *COL(g_symbol_armour_plate.base_fg_idx);
-    g_symbol_armour_plate.bg = *COL(g_symbol_armour_plate.base_bg_idx);
-
     g_symbol_weapon_metal.fg = *COL(g_symbol_weapon_metal.base_fg_idx);
     g_symbol_weapon_metal.bg = *COL(g_symbol_weapon_metal.base_bg_idx);
 
@@ -103,7 +91,7 @@ void _uninit_gamedata(void)
     g_attack_methods_count = 0;
 }
 
-bool init_naxx(void)
+bool init_yun(void)
 {
     srand(time(NULL));
 
@@ -124,7 +112,7 @@ bool init_naxx(void)
     return true;
 }
 
-void uninit_naxx(void)
+void uninit_yun(void)
 {
     uninit_console_commands();
     _uninit_gamedata();

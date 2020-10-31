@@ -1,5 +1,5 @@
-#ifndef NAXX_MONTYPE_H
-#define NAXX_MONTYPE_H
+#ifndef YUN_MONTYPE_H
+#define YUN_MONTYPE_H
 
 #include "mon_attr.h"
 
@@ -20,7 +20,7 @@ struct MonType
     struct Symbol*     symbol;
     struct ArmourBase* base_armour; // All creatures have a base armour for if they don't have equipment
     struct WeaponBase* base_weapon;
-    int                strength, agility, intelligence, spirit, stamina;
+    int                base_hp_max;
     int                vision_radius;
     MonAttrMoveFlags   move_flags;
 };

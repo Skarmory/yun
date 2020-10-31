@@ -1,5 +1,5 @@
-#ifndef NAXX_UTIL_H
-#define NAXX_UTIL_H
+#ifndef YUN_UTIL_H
+#define YUN_UTIL_H
 
 #include <stddef.h>
 

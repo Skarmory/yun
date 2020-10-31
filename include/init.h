@@ -1,9 +1,9 @@
-#ifndef NAXX_INIT_H
-#define NAXX_INIT_H
+#ifndef YUN_INIT_H
+#define YUN_INIT_H
 
 #include <stdbool.h>
 
-bool init_naxx(void);
-void uninit_naxx(void);
+bool init_yun(void);
+void uninit_yun(void);
 
 #endif

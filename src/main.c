@@ -18,7 +18,6 @@
 #include "player.h"
 #include "player_class.h"
 #include "player_faction.h"
-#include "player_race.h"
 #include "spawn.h"
 #include "symbol.h"
 #include "term.h"
@@ -109,14 +108,14 @@ void main_loop(void)
 
 int main(int argc, char** argv)
 {
-    if(!init_naxx())
+    if(!init_yun())
     {
         printf("Initialisation failed. Check debug log.");
         return -1;
     }
 
 #ifdef DEBUG
-    log_msg(DEBUG, "naxx initialised with params:");
+    log_msg(DEBUG, "yun initialised with params:");
     for(int i = 0; i < argc; ++i)
     {
         log_format_msg(DEBUG, "\t%s", argv[i]);
@@ -124,7 +123,7 @@ int main(int argc, char** argv)
 #endif
 
     // some intro text
-    term_draw_text((screen_cols/2) - 7, screen_rows/2, NULL, NULL, 0, "Welcome to Naxx");
+    term_draw_text((screen_cols/2) - 7, screen_rows/2, NULL, NULL, 0, "Welcome to Yun");
     term_refresh();
     term_wait_on_input();
 
@@ -136,8 +135,9 @@ int main(int argc, char** argv)
     cmap = map_new(map_width, map_height);
     gen_map(cmap, MAPTYPE_DUNGEON);
 
-    MAXHP(you->mon) = 999;
-    HP(you->mon) = 999;
+    mon_set_stat(you->mon, STAT_TYPE_HP_MAX, 999);
+    mon_set_stat(you->mon, STAT_TYPE_HP, 999);
+
     struct MapCell* test_cell = map_get_cell_by_map_coord(cmap, 1, 1);
 
     // --------- DEBUG CODE START ----------

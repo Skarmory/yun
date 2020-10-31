@@ -1,5 +1,5 @@
-#ifndef NAXX_VARIANT_H
-#define NAXX_VARIANT_H
+#ifndef YUN_VARIANT_H
+#define YUN_VARIANT_H
 
 enum DataType
 {

@@ -1,5 +1,5 @@
-#ifndef NAXX_FEATURE_H
-#define NAXX_FEATURE_H
+#ifndef YUN_FEATURE_H
+#define YUN_FEATURE_H
 
 #include "pathing_flags.h"
 

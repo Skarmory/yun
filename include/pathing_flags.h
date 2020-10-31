@@ -1,5 +1,5 @@
-#ifndef NAXX_PATHING_FLAGS_H
-#define NAXX_PATHING_FLAGS_H
+#ifndef YUN_PATHING_FLAGS_H
+#define YUN_PATHING_FLAGS_H
 
 #include "bit_flags.h"
 

@@ -1,5 +1,5 @@
-#ifndef NAXX_COLOUR_H
-#define NAXX_COLOUR_H
+#ifndef YUN_COLOUR_H
+#define YUN_COLOUR_H
 
 #include "term.h"
 
@@ -47,19 +47,6 @@
 #define CLR_PINK    29
 #define CLR_LPINK   30
 
-// specific
-#define CLR_ALLIANCE CLR_LBLUE
-#define CLR_HORDE    CLR_LRED
-
-#define CLR_SHAMAN   31
-#define CLR_DRUID    32
-#define CLR_PALADIN  33
-#define CLR_WARRIOR  34
-#define CLR_WARLOCK  35
-#define CLR_PRIEST   CLR_WHITE
-#define CLR_ROGUE    36
-#define CLR_HUNTER   37
-#define CLR_MAGE     38
 #define CLR_DEFAULT  39
 
 #define CLR_FOG_OF_WAR 40
@@ -82,10 +69,6 @@
 // Objects
 #define CLR_METAL CLR_WHITE
 #define CLR_WOOD  CLR_BROWN
-#define CLR_ARMOUR_PLATE   CLR_LBLUE
-#define CLR_ARMOUR_MAIL    CLR_LGREY
-#define CLR_ARMOUR_LEATHER CLR_LBROWN
-#define CLR_ARMOUR_CLOTH   CLR_LPINK
 
 extern Colour g_colours[];
 

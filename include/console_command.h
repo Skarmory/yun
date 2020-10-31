@@ -1,5 +1,5 @@
-#ifndef NAXX_CONSOLE_COMMAND_H
-#define NAXX_CONSOLE_COMMAND_H
+#ifndef YUN_CONSOLE_COMMAND_H
+#define YUN_CONSOLE_COMMAND_H
 
 struct ConsoleCommand;
 struct CommandParams;

@@ -1,5 +1,5 @@
-#ifndef NAXX_STATS_UI_H
-#define NAXX_STATS_UI_H
+#ifndef YUN_STATS_UI_H
+#define YUN_STATS_UI_H
 
 #include <stdbool.h>
 

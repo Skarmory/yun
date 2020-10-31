@@ -1,5 +1,5 @@
-#ifndef NAXX_LOOK_H
-#define NAXX_LOOK_H
+#ifndef YUN_LOOK_H
+#define YUN_LOOK_H
 
 void look(void);
 

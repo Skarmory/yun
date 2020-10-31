@@ -1,5 +1,5 @@
-#ifndef NAXX_ARMOUR_H
-#define NAXX_ARMOUR_H
+#ifndef YUN_ARMOUR_H
+#define YUN_ARMOUR_H
 
 #include "defs.h"
 #include "mon_equip.h"
@@ -8,10 +8,6 @@ struct Object;
 
 enum ArmourClass
 {
-    ARMOUR_CLASS_CLOTH,
-    ARMOUR_CLASS_LEATHER,
-    ARMOUR_CLASS_MAIL,
-    ARMOUR_CLASS_PLATE,
     ARMOUR_CLASS_NATURAL,
     ARMOUR_CLASS_NONE
 };

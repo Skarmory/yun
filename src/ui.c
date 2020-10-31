@@ -12,7 +12,6 @@
 #include "object.h"
 #include "player.h"
 #include "player_class.h"
-#include "player_race.h"
 #include "util.h"
 
 #include <stdio.h>
@@ -127,11 +126,7 @@ void display_main_screen(void)
 void display_char_status(void)
 {
     char tmp[STATUS_W];
-    sprintf(
-        tmp, "%s\tHP: %d/%d  MP: %d/%d\tStr:%d Agi:%d Int:%d Spi:%d Sta:%d", you->name,
-        HP(you->mon), MAXHP(you->mon), MANA(you->mon), MAXMANA(you->mon),
-        PSTAT(strength, strength), PSTAT(agility, agility), PSTAT(intelligence, intelligence), PSTAT(spirit, spirit), PSTAT(stamina, stamina)
-    );
+    sprintf(tmp, "%s\tHP: %d/%d", you->name, you->mon->stats.hp, you->mon->stats.hp_max);
 
     term_draw_text(STATUS_X, STATUS_Y, NULL, NULL, 0, tmp);
     term_refresh();

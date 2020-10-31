@@ -1,5 +1,5 @@
-#ifndef NAXX_PATH_H
-#define NAXX_PATH_H
+#ifndef YUN_PATHING_H
+#define YUN_PATHING_H
 
 struct MapLocation;
 

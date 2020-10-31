@@ -1,15 +1,12 @@
-#ifndef NAXX_MENU_H
-#define NAXX_MENU_H
+#ifndef YUN_MENU_H
+#define YUN_MENU_H
 
 #define PICK_CLASS 0
-#define PICK_RACE  1
-#define PICK_SPEC  2
-#define CONFIRM    3
+#define CONFIRM    1
 
 void print_picked(void);
 void print_options(int what, short mask);
 
-void pick_race(void);
 void pick_class(void);
 
 void confirm_character(void);

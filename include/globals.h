@@ -1,5 +1,5 @@
-#ifndef NAXX_GLOBALS_H
-#define NAXX_GLOBALS_H
+#ifndef YUN_GLOBALS_H
+#define YUN_GLOBALS_H
 
 extern int current_turn_number;
 extern int current_path_gen_id;

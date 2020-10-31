@@ -22,15 +22,12 @@ struct Weapon* weapon_new(struct WeaponBase* base)
 
     switch(base->class)
     {
-        case WEAPON_CLASS_SWORD_1H:
-        case WEAPON_CLASS_SWORD_2H:
-        case WEAPON_CLASS_MACE_1H:
-        case WEAPON_CLASS_MACE_2H:
+        case WEAPON_CLASS_SWORD:
+        case WEAPON_CLASS_MACE:
         case WEAPON_CLASS_DAGGER:
         case WEAPON_CLASS_FIST:
         case WEAPON_CLASS_GUN:
-        case WEAPON_CLASS_AXE_1H:
-        case WEAPON_CLASS_AXE_2H:
+        case WEAPON_CLASS_AXE:
             weapon->obj->symbol = &g_symbol_weapon_metal;
             break;
         case WEAPON_CLASS_BOW:
@@ -73,12 +70,9 @@ struct WeaponBase* weapon_base_look_up_by_id(const char* id)
 
 enum WeaponClass weapon_class_from_string(const char* name)
 {
-    if(strcmp(name, "sword1h") == 0) return WEAPON_CLASS_SWORD_1H;
-    if(strcmp(name, "sword2h") == 0) return WEAPON_CLASS_SWORD_2H;
-    if(strcmp(name, "mace1h") == 0) return WEAPON_CLASS_MACE_1H;
-    if(strcmp(name, "mace2h") == 0) return WEAPON_CLASS_MACE_2H;
-    if(strcmp(name, "axe1h") == 0) return WEAPON_CLASS_AXE_1H;
-    if(strcmp(name, "axe2h") == 0) return WEAPON_CLASS_AXE_2H;
+    if(strcmp(name, "sword") == 0) return WEAPON_CLASS_SWORD;
+    if(strcmp(name, "mace") == 0) return WEAPON_CLASS_MACE;
+    if(strcmp(name, "axe") == 0) return WEAPON_CLASS_AXE;
     if(strcmp(name, "bow") == 0) return WEAPON_CLASS_BOW;
     if(strcmp(name, "gun") == 0) return WEAPON_CLASS_GUN;
     if(strcmp(name, "dagger") == 0) return WEAPON_CLASS_DAGGER;

@@ -1,5 +1,5 @@
-#ifndef NAXX_ATTACK_H
-#define NAXX_ATTACK_H
+#ifndef YUN_ATTACK_H
+#define YUN_ATTACK_H
 
 #include <stdbool.h>
 

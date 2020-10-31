@@ -1,5 +1,5 @@
-#ifndef NAXX_GAMEPLAY_H
-#define NAXX_GAMEPLAY_H
+#ifndef YUN_GAMEPLAY_H
+#define YUN_GAMEPLAY_H
 
 void gameplay_turn(void);
 

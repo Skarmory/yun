@@ -1,5 +1,5 @@
-#ifndef NAXX_INPUT_KEYCODES_H
-#define NAXX_INPUT_KEYCODES_H
+#ifndef YUN_INPUT_KEYCODES_H
+#define YUN_INPUT_KEYCODES_H
 
 enum KeyCode
 {

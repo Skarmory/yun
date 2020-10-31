@@ -1,5 +1,5 @@
-#ifndef NAXX_MOVEMENT_H
-#define NAXX_MOVEMENT_H
+#ifndef YUN_MOVEMENT_H
+#define YUN_MOVEMENT_H
 
 #include "mon_attr.h"
 

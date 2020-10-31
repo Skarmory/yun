@@ -1,5 +1,5 @@
-#ifndef NAXX_BIT_FLAGS_H
-#define NAXX_BIT_FLAGS_H
+#ifndef YUN_BIT_FLAGS_H
+#define YUN_BIT_FLAGS_H
 
 #define BIT_FLAG(x) (1u << x)
 

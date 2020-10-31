@@ -1,8 +1,7 @@
-#ifndef NAXX_PLAYER_H
-#define NAXX_PLAYER_H
+#ifndef YUN_PLAYER_H
+#define YUN_PLAYER_H
 
 struct Class;
-struct Race;
 struct Mon;
 
 #define mon_is_player(m) (m == you->mon)
@@ -12,13 +11,9 @@ struct Mon;
  */
 struct Player
 {
-    char* name;
-    char* faction;
-
+    char*         name;
     struct Class* cls;
-    struct Race* race;
-
-    struct Mon* mon;
+    struct Mon*   mon;
 };
 
 void new_player(void);

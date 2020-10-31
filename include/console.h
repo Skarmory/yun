@@ -1,5 +1,5 @@
-#ifndef NAXX_CONSOLE_H
-#define NAXX_CONSOLE_H
+#ifndef YUN_CONSOLE_H
+#define YUN_CONSOLE_H
 
 void console(void);
 

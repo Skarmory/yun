@@ -1,5 +1,5 @@
-#ifndef NAXX_TERM_H
-#define NAXX_TERM_H
+#ifndef YUN_TERM_H
+#define YUN_TERM_H
 
 #include <stdbool.h>
 

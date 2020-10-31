@@ -1,5 +1,5 @@
-#ifndef NAXX_GEOM_H
-#define NAXX_GEOM_H
+#ifndef YUN_GEOM_H
+#define YUN_GEOM_H
 
 #include <stdbool.h>
 

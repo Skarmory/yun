@@ -1,5 +1,5 @@
-#ifndef NAXX_INVENTORY_H
-#define NAXX_INVENTORY_H
+#ifndef YUN_INVENTORY_H
+#define YUN_INVENTORY_H
 
 #include "defs.h"
 

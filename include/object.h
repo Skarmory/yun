@@ -1,5 +1,5 @@
-#ifndef NAXX_OBJECT_H
-#define NAXX_OBJECT_H
+#ifndef YUN_OBJECT_H
+#define YUN_OBJECT_H
 
 #include "defs.h"
 

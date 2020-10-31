@@ -6,7 +6,6 @@
 #include "monster.h"
 #include "mon_type.h"
 #include "player_class.h"
-#include "player_race.h"
 #include "term.h"
 #include "ui.h"
 #include "util.h"
@@ -24,9 +23,6 @@ void new_player(void)
     you = (struct Player*)malloc(sizeof(struct Player));
     you->mon = mon_new(mon_type_look_up_by_id("humn"), 0, 0);
     you->name = NULL;
-    you->faction = NULL;
-    you->cls = NULL;
-    you->race = NULL;
 }
 
 /**
@@ -36,9 +32,7 @@ void free_player(void)
 {
     if(you != NULL)
     {
-        you->faction = NULL;
         free(you->cls);
-        free(you->race);
         if(cmap)
         {
             struct MapCell* player_cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);

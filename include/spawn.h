@@ -1,5 +1,5 @@
-#ifndef NAXX_SPAWN_H
-#define NAXX_SPAWN_H
+#ifndef YUN_SPAWN_H
+#define YUN_SPAWN_H
 
 #include <stdbool.h>
 

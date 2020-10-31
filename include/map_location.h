@@ -1,5 +1,5 @@
-#ifndef NAXX_MAP_LOCATION_H
-#define NAXX_MAP_LOCATION_H
+#ifndef YUN_MAP_LOCATION_H
+#define YUN_MAP_LOCATION_H
 
 /*
  * Map locations are the actual tiles/squares in the game world that creatures,

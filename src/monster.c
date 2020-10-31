@@ -17,13 +17,6 @@
 #include "player.h"
 #include "util.h"
 
-#define SET_MINION_STAT_SCALES(mon) \
-    mon->stats.strength.scale = 0.5f; \
-    mon->stats.agility.scale = 0.5f; \
-    mon->stats.intelligence.scale = 0.5f; \
-    mon->stats.spirit.scale = 0.5f; \
-    mon->stats.stamina.scale = 0.5f;
-
 /**
  * Create a monster of given type at given position and return it
  */
@@ -37,19 +30,6 @@ struct Mon* mon_new(struct MonType* type, int x, int y)
     mon->move_flags = type->move_flags;
     mon->equipment = new_equipment();
     mon->inventory = new_inventory();
-
-    SET_MINION_STAT_SCALES(mon);
-
-    MSTAT(mon, stamina, max_health) = 1;
-    MSTAT(mon, stamina, health) = 1;
-    MSTAT(mon, intelligence, max_mana) = 1;
-    MSTAT(mon, intelligence, mana) = 1;
-
-    set_stat(mon, STAT_STRENGTH, type->strength);
-    set_stat(mon, STAT_AGILITY, type->agility);
-    set_stat(mon, STAT_INTELLIGENCE, type->intelligence);
-    set_stat(mon, STAT_SPIRIT, type->spirit);
-    set_stat(mon, STAT_STAMINA, type->stamina);
 
     return mon;
 }
@@ -77,7 +57,7 @@ bool mon_has_move_attr(struct Mon* mon, MonAttrMoveFlags move_flags)
  */
 bool mon_is_dead(struct Mon* mon)
 {
-    return HP(mon) <= 0;
+    return mon->stats.hp <= 0;
 }
 
 /**

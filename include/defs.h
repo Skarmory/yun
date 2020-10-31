@@ -1,5 +1,5 @@
-#ifndef NAXX_DEFS_H
-#define NAXX_DEFS_H
+#ifndef YUN_DEFS_H
+#define YUN_DEFS_H
 
 #include "list.h"
 

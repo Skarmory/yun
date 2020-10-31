@@ -1,5 +1,5 @@
-#ifndef NAXX_LIST_H
-#define NAXX_LIST_H
+#ifndef YUN_LIST_H
+#define YUN_LIST_H
 
 #include <stdbool.h>
 

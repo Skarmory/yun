@@ -1,5 +1,5 @@
-#ifndef NAXX_ROOM_H
-#define NAXX_ROOM_H
+#ifndef YUN_ROOM_H
+#define YUN_ROOM_H
 
 #include <stdbool.h>
 

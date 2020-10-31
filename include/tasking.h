@@ -1,5 +1,5 @@
-#ifndef NAXX_TASKING_H
-#define NAXX_TASKING_H
+#ifndef YUN_TASKING_H
+#define YUN_TASKING_H
 
 #include <stdbool.h>
 

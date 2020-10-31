@@ -8,7 +8,6 @@
 #include "player.h"
 #include "player_class.h"
 #include "player_faction.h"
-#include "player_race.h"
 #include "term.h"
 #include "ui.h"
 
@@ -29,15 +28,6 @@ void convert_arg(char c, char* buf)
             return;
         case 'c':
             strcpy(buf, you->cls->name);
-            return;
-        case 'F':
-            strcpy(buf, you->race->faction == FA_ALLIANCE ? "The Alliance" : "The Horde");
-            return;
-        case 'H':
-            strcpy(buf, you->race->home);
-            return;
-        case 'L':
-            strcpy(buf, you->race->leader);
             return;
     }
 }
@@ -70,16 +60,16 @@ void do_quit(void)
 {
     char exit_msg[512];
     if(you && you->mon && mon_is_dead(you->mon))
-        sprintf(exit_msg, "The dark void awaits you!");
+        sprintf(exit_msg, "The cycle continues.");
     else
-        sprintf(exit_msg, "Your curiosity will be the death of you.");
+        sprintf(exit_msg, "The fate of Yun is in your hands.");
 
     free_player();
 
     if(cmap)
         map_free(cmap);
 
-    uninit_naxx();
+    uninit_yun();
     puts(exit_msg);
     exit(0);
 }

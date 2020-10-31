@@ -1,5 +1,5 @@
-#ifndef NAXX_MAP_H
-#define NAXX_MAP_H
+#ifndef YUN_MAP_H
+#define YUN_MAP_H
 
 #include "defs.h"
 #include "list.h"

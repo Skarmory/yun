@@ -1,5 +1,5 @@
-#ifndef NAXX_MON_ATTR_H
-#define NAXX_MON_ATTR_H
+#ifndef YUN_MON_ATTR_H
+#define YUN_MON_ATTR_H
 
 #include "bit_flags.h"
 

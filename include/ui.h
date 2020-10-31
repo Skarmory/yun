@@ -1,5 +1,5 @@
-#ifndef NAXX_UI_H
-#define NAXX_UI_H
+#ifndef YUN_UI_H
+#define YUN_UI_H
 
 #include "input_keycodes.h"
 #include "list.h"

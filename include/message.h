@@ -1,5 +1,5 @@
-#ifndef NAXX_MESSAGE_H
-#define NAXX_MESSAGE_H
+#ifndef YUN_MESSAGE_H
+#define YUN_MESSAGE_H
 
 #include <stdbool.h>
 

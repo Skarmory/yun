@@ -22,18 +22,6 @@ struct Armour* armour_new(struct ArmourBase* base)
 
     switch(base->class)
     {
-        case ARMOUR_CLASS_CLOTH:
-            armour->obj->symbol = &g_symbol_armour_cloth;
-            break;
-        case ARMOUR_CLASS_LEATHER:
-            armour->obj->symbol = &g_symbol_armour_leather;
-            break;
-        case ARMOUR_CLASS_MAIL:
-            armour->obj->symbol = &g_symbol_armour_mail;
-            break;
-        case ARMOUR_CLASS_PLATE:
-            armour->obj->symbol = &g_symbol_armour_plate;
-            break;
         case ARMOUR_CLASS_NATURAL:
             break;
         case ARMOUR_CLASS_NONE:
@@ -68,10 +56,6 @@ struct ArmourBase* armour_base_look_up_by_id(const char* id)
 
 enum ArmourClass armour_class_from_string(const char* name)
 {
-    if(strcmp(name, "cloth") == 0)   return ARMOUR_CLASS_CLOTH;
-    if(strcmp(name, "leather") == 0) return ARMOUR_CLASS_LEATHER;
-    if(strcmp(name, "mail") == 0)    return ARMOUR_CLASS_MAIL;
-    if(strcmp(name, "plate") == 0)   return ARMOUR_CLASS_PLATE;
     if(strcmp(name, "natural") == 0) return ARMOUR_CLASS_NATURAL;
 
     return ARMOUR_CLASS_NONE;
