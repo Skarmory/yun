@@ -47,7 +47,7 @@ void new_game(void)
 
     while(fgets(buf, sizeof(buf), intro) != NULL)
     {
-        int col = screen_cols/2 - 38;
+        int col = screen_cols/2 - 50;
 
         for(int i = 0; i < (int)sizeof(buf) && buf[i] != '\0'; ++i)
         {
