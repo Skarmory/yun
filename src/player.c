@@ -21,8 +21,9 @@ struct Player* you = NULL;
 void new_player(void)
 {
     you = (struct Player*)malloc(sizeof(struct Player));
-    you->mon = mon_new(mon_type_look_up_by_id("humn"), 0, 0);
     you->name = NULL;
+    you->cls  = NULL;
+    you->mon = mon_new(mon_type_look_up_by_id("humn"), 0, 0);
 }
 
 /**
