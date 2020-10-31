@@ -2,6 +2,7 @@
 #define YUN_MONTYPE_H
 
 #include "mon_attr.h"
+#include "mon_stats.h"
 
 struct ArmourBase;
 struct Weapon;
@@ -20,7 +21,7 @@ struct MonType
     struct Symbol*     symbol;
     struct ArmourBase* base_armour; // All creatures have a base armour for if they don't have equipment
     struct WeaponBase* base_weapon;
-    int                base_hp_max;
+    struct Stats       base_stats;
     int                vision_radius;
     MonAttrMoveFlags   move_flags;
 };

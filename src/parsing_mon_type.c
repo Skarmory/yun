@@ -116,7 +116,7 @@ parsing_callback(_parse_mon_type_colour_callback)
 parsing_callback(_parse_mon_type_stats_callback)
 {
     struct MonType* type = parser_get_userdata_active(parser);
-    type->base_hp_max = parser_field_get_int(parser, "stats", "hp-max");
+    type->base_stats.hp_max = parser_field_get_int(parser, "stats", "hp-max");
     return PARSE_CALLBACK_OK;
 }
 

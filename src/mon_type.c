@@ -2,8 +2,6 @@
 
 #include "colour.h"
 #include "log.h"
-#include "mon_attr.h"
-#include "mon_stats.h"
 #include "obj_armour.h"
 #include "obj_weapon.h"
 #include "symbol.h"

@@ -24,12 +24,13 @@ struct Mon* mon_new(struct MonType* type, int x, int y)
 {
     struct Mon* mon = malloc(sizeof(struct Mon));
 
-    mon->type = type;
     mon->x = x;
     mon->y = y;
     mon->move_flags = type->move_flags;
+    mon->type = type;
     mon->equipment = new_equipment();
     mon->inventory = new_inventory();
+    mon->stats = type->base_stats;
 
     return mon;
 }

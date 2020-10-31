@@ -104,8 +104,8 @@ void pick_class(void)
 
 void _apply_stats(void)
 {
-    mon_set_stat(you->mon, STAT_TYPE_HP_MAX, you->mon->type->base_hp_max);
-    mon_set_stat(you->mon, STAT_TYPE_HP, you->mon->type->base_hp_max);
+    mon_set_stat(you->mon, STAT_TYPE_HP_MAX, you->mon->type->base_stats.hp_max);
+    mon_set_stat(you->mon, STAT_TYPE_HP, you->mon->type->base_stats.hp_max);
 }
 
 enum ConfirmCharacterCommand
