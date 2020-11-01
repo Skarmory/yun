@@ -16,7 +16,7 @@ static inline struct MapLocation* _get_map_location_internal(struct MapCell* cel
 
 struct MapCell* map_cell_new(int cell_x, int cell_y)
 {
-    struct MapCell* cell = (struct MapCell*) malloc(sizeof(struct MapCell));
+    struct MapCell* cell = malloc(sizeof(struct MapCell));
     cell->cell_x = cell_x;
     cell->cell_y = cell_y;
     cell->world_x = cell_x * g_map_cell_width;
@@ -48,7 +48,7 @@ struct MapCell* map_cell_new(int cell_x, int cell_y)
 
 void map_cell_free(struct MapCell* cell)
 {
-    ListNode *node, *n;
+    ListNode *node = NULL, *n = NULL;
 
     // Free mons
     list_for_each_safe(&cell->mon_list, node, n)
@@ -104,7 +104,9 @@ struct Room* map_cell_get_room(struct MapCell* cell, int x, int y)
     list_for_each(&cell->room_list, node)
     {
         if(room_has_location(node->data, x, y))
+        {
             return node->data;
+        }
     }
 
     return NULL;

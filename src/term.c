@@ -1,5 +1,8 @@
 #include "term.h"
+
+#include "colour.h"
 #include "log.h"
+
 #include <sys/ioctl.h>
 #include <signal.h>
 #include <stdarg.h>
@@ -48,26 +51,26 @@ struct
     int buffer_len;
 } write_buffer;
 
-typedef struct VTermSymbol
+struct VTermSymbol
 {
-    Colour fg;
-    Colour bg;
+    struct Colour fg;
+    struct Colour bg;
     TextAttributeFlags ta_flags;
     char symbol;
     bool redraw;
-} VTermSymbol;
+};
 
-typedef struct VTerm
+struct VTerm
 {
     int width;
     int height;
-    VTermSymbol* symbols;
+    struct VTermSymbol* symbols;
     struct termios initial_state;
     bool cursor;
-} VTerm;
+};
 
-VTerm* vterm = NULL;
-Colour c_default_colour = { -1, -1, -1 };
+struct VTerm* vterm = NULL;
+struct Colour c_default_colour = { -1, -1, -1 };
 
 static void _writef(const char* format, ...)
 {
@@ -94,7 +97,7 @@ static void _term_resize(void)
     vterm->width  = ws.ws_col;
     vterm->height = ws.ws_row;
 
-    VTermSymbol* new_sym = (VTermSymbol*)realloc(vterm->symbols, vterm->width * vterm->height * sizeof(VTermSymbol));
+    struct VTermSymbol* new_sym = realloc(vterm->symbols, vterm->width * vterm->height * sizeof(struct VTermSymbol));
     if(!new_sym)
     {
         // Couldn't realloc the memory, which means something bad has happened.
@@ -105,7 +108,7 @@ static void _term_resize(void)
     vterm->symbols = new_sym;
 }
 
-static inline VTermSymbol* _term_get_symbol(int x, int y)
+static inline struct VTermSymbol* _term_get_symbol(int x, int y)
 {
     return &vterm->symbols[y * vterm->width + x];
 }
@@ -116,7 +119,7 @@ static void _term_resize_signal_handler(int _)
     _term_resize();
 }
 
-static inline bool _should_redraw(VTermSymbol* symbol, char new_symbol, Colour* new_fg, Colour* new_bg, TextAttributeFlags new_ta_flags)
+static inline bool _should_redraw(struct VTermSymbol* symbol, char new_symbol, struct Colour* new_fg, struct Colour* new_bg, TextAttributeFlags new_ta_flags)
 {
     if(symbol->symbol != new_symbol)
     {
@@ -149,13 +152,13 @@ void term_get_wh(int* w, int* h)
 
 void term_clear(void)
 {
-    memset(vterm->symbols, 0, vterm->width * vterm->height * sizeof(VTermSymbol));
+    memset(vterm->symbols, 0, vterm->width * vterm->height * sizeof(struct VTermSymbol));
     write(1, c_clear, sizeof(c_clear)); 
 }
 
 void term_clear_area(int x, int y, int w, int h)
 {
-    VTermSymbol* symbol;
+    struct VTermSymbol* symbol;
     for(int _y = y; _y < (y + h); ++_y)
     for(int _x = x; _x < (x + w); ++_x)
     {
@@ -173,9 +176,13 @@ void term_set_cursor(bool on)
     vterm->cursor = on;
 
     if(on)
+    {
         write(1, c_cursor_on, sizeof(c_cursor_on));
+    }
     else
+    {
         write(1, c_cursor_off, sizeof(c_cursor_off));
+    }
 }
 
 void term_set_echo(bool state)
@@ -199,13 +206,16 @@ void term_set_sigint_callback(void(*handler)(int))
 
 void term_refresh(void)
 {
-    VTermSymbol* sym = NULL;
+    struct VTermSymbol* sym = NULL;
     for(int y = 0; y < vterm->height; ++y)
     for(int x = 0; x < vterm->width; ++x)
     {
         sym = _term_get_symbol(x, y);
 
-        if(!sym->redraw) continue;
+        if(!sym->redraw)
+        {
+            continue;
+        }
 
         // Move to
         term_move_cursor(x, y);
@@ -225,12 +235,18 @@ void term_refresh(void)
 
         // Set colours
         if(sym->fg.r != -1)
+        {
             _writef(c_colour_fg_format, sym->fg.r, sym->fg.g, sym->fg.b);
+        }
 
         if(sym->bg.r != -1)
+        {
             _writef(c_colour_bg_format, sym->bg.r, sym->bg.g, sym->bg.b);
+        }
         else
+        {
             _writef(c_colour_default_bg);
+        }
 
         // Write symbol
         _writef("%c", sym->symbol);
@@ -262,7 +278,7 @@ void term_move_cursor(int x, int y)
 
 void term_set_attr(int x, int y, TextAttributeFlags ta_flags)
 {
-    VTermSymbol* sym = _term_get_symbol(x, y);
+    struct VTermSymbol* sym = _term_get_symbol(x, y);
 
     if((sym->ta_flags | ta_flags) != sym->ta_flags)
     {
@@ -273,7 +289,7 @@ void term_set_attr(int x, int y, TextAttributeFlags ta_flags)
 
 void term_unset_attr(int x, int y, TextAttributeFlags ta_flags)
 {
-    VTermSymbol* sym = _term_get_symbol(x, y);
+    struct VTermSymbol* sym = _term_get_symbol(x, y);
 
     if((sym->ta_flags | ta_flags) == sym->ta_flags)
     {
@@ -284,7 +300,10 @@ void term_unset_attr(int x, int y, TextAttributeFlags ta_flags)
 
 void term_uninit(void)
 {
-    if(!vterm) return;
+    if(!vterm)
+    {
+        return;
+    }
 
     term_clear();
     term_set_cursor(true);
@@ -300,14 +319,17 @@ void term_uninit(void)
 
 void term_init(void)
 {
-    if(vterm) return;
+    if(vterm)
+    {
+        return;
+    }
 
     // Take control of the terminal
     setvbuf(stdout, NULL, _IONBF, 0);
     write(1, c_alt_buffer_on, sizeof(c_alt_buffer_on));
 
-    vterm = (VTerm*)malloc(sizeof(VTerm));
-    memset(vterm, 0, sizeof(VTerm));
+    vterm = malloc(sizeof(struct VTerm));
+    memset(vterm, 0, sizeof(struct VTerm));
 
     struct termios t;
     tcgetattr(1, &t);
@@ -325,12 +347,12 @@ void term_init(void)
     signal(SIGWINCH, &_term_resize_signal_handler);
 }
 
-void term_draw_symbol(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, char symbol)
+void term_draw_symbol(int x, int y, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, char symbol)
 {
     if(!fg) fg = &c_default_colour;
     if(!bg) bg = &c_default_colour;
 
-    VTermSymbol* sym = _term_get_symbol(x, y); 
+    struct VTermSymbol* sym = _term_get_symbol(x, y);
     if(_should_redraw(sym, symbol, fg, bg, ta_flags))
     {
         sym->symbol = symbol;
@@ -341,7 +363,7 @@ void term_draw_symbol(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags t
     }
 }
 
-void term_draw_text(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, const char* text)
+void term_draw_text(int x, int y, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, const char* text)
 {
     int length = strlen(text);
     for(int _x = x; (_x - x) < length; ++_x)
@@ -350,7 +372,7 @@ void term_draw_text(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_
     }
 }
 
-void term_draw_ftext(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, const char* format, ...)
+void term_draw_ftext(int x, int y, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, const char* format, ...)
 {
     va_list args;
 
@@ -363,7 +385,7 @@ void term_draw_ftext(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta
     va_end(args);
 }
 
-void term_draw_fntext(int count, int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, const char* format, ...)
+void term_draw_fntext(int count, int x, int y, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, const char* format, ...)
 {
     va_list args;
 
@@ -376,7 +398,7 @@ void term_draw_fntext(int count, int x, int y, Colour* fg, Colour* bg, TextAttri
     va_end(args);
 }
 
-void term_draw_area(int x, int y, int w, int h, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, char symbol)
+void term_draw_area(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, char symbol)
 {
     for(int _y = y; _y < (y+h); ++_y)
     for(int _x = x; _x < (x+w); ++_x)

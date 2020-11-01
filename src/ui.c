@@ -12,6 +12,7 @@
 #include "object.h"
 #include "player.h"
 #include "player_class.h"
+#include "term.h"
 #include "util.h"
 
 #include <stdio.h>
@@ -21,7 +22,7 @@
 #define STATUS_Y 44
 #define STATUS_W 80
 
-void draw_textbox(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text)
+void draw_textbox(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, const char* text)
 {
     term_draw_area(x, y, w, h, fg, bg, 0, ' ');
 
@@ -37,9 +38,13 @@ void draw_textbox(int x, int y, int w, int h, Colour* fg, Colour* bg, const char
             chars = strrfindi(text, ' ', stridx + w);
 
             if(chars == -1)
+            {
                 chars = w;
+            }
             else
+            {
                 chars -= stridx;
+            }
         }
 
         term_draw_fntext(chars, x, y++, fg, bg, 0, "%s", text + stridx);
@@ -47,7 +52,7 @@ void draw_textbox(int x, int y, int w, int h, Colour* fg, Colour* bg, const char
     }
 }
 
-void draw_textbox_border(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text)
+void draw_textbox_border(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, const char* text)
 {
     int _w = w + 4;
     int _h = h + 4;
@@ -126,7 +131,7 @@ void display_main_screen(void)
 void display_char_status(void)
 {
     char tmp[STATUS_W];
-    sprintf(tmp, "%s\tHP: %d/%d", you->name, you->mon->stats.hp, you->mon->stats.hp_max);
+    sprintf(tmp, "%s\tHP: %d/%d", g_you->name, g_you->mon->stats.hp, g_you->mon->stats.hp_max);
 
     term_draw_text(STATUS_X, STATUS_Y, NULL, NULL, 0, tmp);
     term_refresh();

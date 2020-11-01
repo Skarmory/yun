@@ -199,7 +199,10 @@ int gen_rooms_task_func(void* state)
     gen_room(gen_state->cell);
 
     if(++gen_state->room_attempts > gen_state->room_attempts_max)
+    {
         return TASK_STATUS_SUCCESS;
+    }
+
     return TASK_STATUS_EXECUTING;
 }
 
@@ -287,7 +290,9 @@ bool _is_valid_maze_node(struct MapCell* cell, struct MapLocation* loc)
     }
 
     if(conn_count > 1)
+    {
         return false;
+    }
 
     int xoff = loc->x - conn->x;
     int yoff = loc->y - conn->y;
@@ -339,36 +344,42 @@ struct MapLocation* _get_valid_maze_node(struct MapCell* cell, struct MapLocatio
 
     switch(dir)
     {
-        case 0:
-            xoff = -1; break;
-        case 1:
-            xoff = 1; break;
-        case 2:
-            yoff = -1; break;
-        case 3:
-            yoff= 1; break;
+        case 0: xoff = -1; break;
+        case 1: xoff = 1; break;
+        case 2: yoff = -1; break;
+        case 3: yoff= 1; break;
     }
 
     struct MapLocation* next;
     next = map_cell_get_location(cell, x+xoff, y+yoff);
     if(_is_valid_maze_node(cell, next))
+    {
         return next;
+    }
 
     next = map_cell_get_location(cell, x+1, y);
     if(_is_valid_maze_node(cell, next))
+    {
         return next;
+    }
 
     next = map_cell_get_location(cell, x-1, y);
     if(_is_valid_maze_node(cell, next))
+    {
         return next;
+    }
 
     next = map_cell_get_location(cell, x, y+1);
     if(_is_valid_maze_node(cell, next))
+    {
         return next;
+    }
 
     next = map_cell_get_location(cell, x, y-1);
     if(_is_valid_maze_node(cell, next))
+    {
         return next;
+    }
 
     return NULL;
 }
@@ -385,17 +396,25 @@ static void _enlist_orthogonals(struct MapCell* cell, struct MapLocation* loc, L
         switch(ortho_dirs[random_index])
         {
             case 1: // Up
+            {
                 next = map_cell_get_location(cell, loc->x, loc->y-1);
                 break;
+            }
             case 2: // Down
+            {
                 next = map_cell_get_location(cell, loc->x, loc->y+1);
                 break;
+            }
             case 3: // Left
+            {
                 next = map_cell_get_location(cell, loc->x-1, loc->y);
                 break;
+            }
             case 4: // Right
+            {
                 next = map_cell_get_location(cell, loc->x+1, loc->y);
                 break;
+            }
         }
 
         // Switch chosen one to the end so it won't be picked again
@@ -405,7 +424,9 @@ static void _enlist_orthogonals(struct MapCell* cell, struct MapLocation* loc, L
         --dir_count;
 
         if(next)
+        {
             list_add(list, next);
+        }
     }
 }
 
@@ -424,7 +445,9 @@ void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
         list_rm(&loc_list, loc_list.tail);
 
         if(!_is_valid_maze_node(cell, next))
+        {
             continue;
+        }
 
         _make_corridor(next);
         _enlist_orthogonals(cell, next, &loc_list);
@@ -612,7 +635,10 @@ void _make_doors(struct MapCell* cell)
         int doors_to_make = random_int(1, ((room->w%2) + (room->h%2) + room->w + room->h));
         for(int door_count = 0; door_count < doors_to_make;)
         {
-            if(cidx == 0) break;
+            if(cidx == 0)
+            {
+                break;
+            }
 
             int which = random_int(0, cidx-1);
 
@@ -727,7 +753,9 @@ int gen_maze_task_func(void* state)
         }
 
         default:
+        {
             return TASK_STATUS_FAILED;
+        }
     }
 
     return TASK_STATUS_EXECUTING;
@@ -760,8 +788,8 @@ static void _gen_open_area(struct MapCell* cell)
     int x = random_int(cell->world_x, cell->world_x + g_map_cell_width-1-w);
     int y = random_int(cell->world_y, cell->world_y + g_map_cell_height-1-h);
 
-#ifdef DEBUG
-    log_format_msg(DEBUG, "Room parameters (x, y, w, h): %d, %d, %d, %d", x, y, w, h);
+#ifdef LOG_DEBUG
+    log_format_msg(LOG_DEBUG, "Room parameters (x, y, w, h): %d, %d, %d, %d", x, y, w, h);
 #endif
 
     struct Room* room = (struct Room*) malloc(sizeof(struct Room));
@@ -806,8 +834,8 @@ static void _connect_cells(struct Map* map)
     {
         // Horizontal connections
         int hconns = random_int(1, 10);
-#ifdef DEBUG
-        log_format_msg(DEBUG, "Generating %d horizontal connections from cell (%d, %d) to cell (%d, %d)", hconns, x, y, x+1, y);
+#ifdef LOG_DEBUG
+        log_format_msg(LOG_DEBUG, "Generating %d horizontal connections from cell (%d, %d) to cell (%d, %d)", hconns, x, y, x+1, y);
 #endif
         for(int hconn = 0; hconn < hconns; ++hconn)
         {
@@ -856,7 +884,9 @@ static void _connect_cells(struct Map* map)
             {
                 // We've hit a corridor or internal room square
                 if(_is_corridor(loc) || _is_floor(loc))
+                {
                     break;
+                }
 
                 if(_is_wall(loc))
                 {
@@ -877,8 +907,8 @@ static void _connect_cells(struct Map* map)
         }
 
         int vconns = random_int(1, 10);
-#ifdef DEBUG
-        log_format_msg(DEBUG, "Generating %d vertical connections from cell (%d, %d) to cell (%d, %d)", vconns, y, x, y, x + 1);
+#ifdef LOG_DEBUG
+        log_format_msg(LOG_DEBUG, "Generating %d vertical connections from cell (%d, %d) to cell (%d, %d)", vconns, y, x, y, x + 1);
 #endif
         for(int vconn = 0; vconn < vconns; ++vconn)
         {
@@ -894,7 +924,9 @@ static void _connect_cells(struct Map* map)
             {
                 // We've hit a corridor or internal room square
                 if(_is_corridor(loc) || _is_floor(loc))
+                {
                     break;
+                }
 
                 if(_is_wall(loc))
                 {
@@ -921,7 +953,9 @@ static void _connect_cells(struct Map* map)
             {
                 // We've hit a corridor or internal room square
                 if(_is_corridor(loc) || _is_floor(loc))
+                {
                     break;
+                }
 
                 if(_is_wall(loc))
                 {
@@ -954,7 +988,7 @@ static void _gen_rooms_async(struct MapCell* cell)
     struct Task* gen_rooms_task = task_new("Gen rooms", gen_rooms_task_func, NULL, &state, sizeof(state));
     tasker_add_task(g_tasker, gen_rooms_task);
 
-    log_msg(DEBUG, "Added gen room task.");
+    log_msg(LOG_DEBUG, "Added gen room task.");
 }
 
 static void _gen_maze_async(struct MapCell* cell)
@@ -967,7 +1001,7 @@ static void _gen_maze_async(struct MapCell* cell)
     struct Task* task = task_new("Gen maze", gen_maze_task_func, NULL, &state, sizeof(state));
     tasker_add_task(g_tasker, task);
 
-    log_msg(DEBUG, "Added gen maze task.");
+    log_msg(LOG_DEBUG, "Added gen maze task.");
 }
 
 void gen_map(struct Map* map, enum MapType type)

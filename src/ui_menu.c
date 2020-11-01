@@ -22,11 +22,11 @@
 void print_picked(void)
 {
     int col;
-    term_draw_ftext(1, 2, NULL, NULL, 0, "   name: %s", !you->name ? "unknown" : you->name);
+    term_draw_ftext(1, 2, NULL, NULL, 0, "   name: %s", !g_you->name ? "unknown" : g_you->name);
 
-    col = get_class_colour(you->cls);
+    col = get_class_colour(g_you->cls);
     term_draw_text(2, 2, NULL, NULL, 0, "  class: ");
-    term_draw_ftext(11, 2, COL(col), NULL, 0, "%s", !you->cls ? "not chosen" : you->cls->name);
+    term_draw_ftext(11, 2, COL(col), NULL, 0, "%s", !g_you->cls ? "not chosen" : g_you->cls->name);
 }
 
 /**
@@ -40,7 +40,8 @@ void print_options(int what, short mask)
     switch(what)
     {
         case PICK_CLASS:
-            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Choose your class");
+        {
+            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Choose g_your class");
             menu_row += 2;
             for(int i = 0; i < g_classes_count; i++, menu_row++)
             {
@@ -48,13 +49,16 @@ void print_options(int what, short mask)
                 term_draw_ftext(menu_col, menu_row, col != CLR_DEFAULT ? COL(col) : NULL, NULL, 0, "%c - %s", g_classes[i].hotkey, g_classes[i].name);
             }
             break;
+        }
 
         case CONFIRM:
+        {
             term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Confirm this character and start a new game?");
             menu_row += 2;
             term_draw_text(menu_col, menu_row++, NULL, NULL, 0, "y - Start game");
             term_draw_text(menu_col, menu_row++, NULL, NULL, 0, "n - Choose again");
             break;
+        }
     }
 
     menu_row++;
@@ -78,7 +82,7 @@ void pick_class(void)
 
     print_options(PICK_CLASS, 0);
 
-    you->cls = malloc(sizeof(struct Class));
+    g_you->cls = malloc(sizeof(struct Class));
 
     bool picked = false;
 
@@ -93,9 +97,11 @@ void pick_class(void)
 
         int cls_idx = get_class_idx(choice);
         if(cls_idx == -1)
+        {
             continue;
+        }
 
-        *(you->cls) = g_classes[cls_idx];
+        *(g_you->cls) = g_classes[cls_idx];
         picked = true;
     }
     while(!picked);
@@ -104,8 +110,8 @@ void pick_class(void)
 
 void _apply_stats(void)
 {
-    mon_set_stat(you->mon, STAT_TYPE_HP_MAX, you->mon->type->base_stats.hp_max);
-    mon_set_stat(you->mon, STAT_TYPE_HP, you->mon->type->base_stats.hp_max);
+    mon_set_stat(g_you->mon, STAT_TYPE_HP_MAX, g_you->mon->type->base_stats.hp_max);
+    mon_set_stat(g_you->mon, STAT_TYPE_HP, g_you->mon->type->base_stats.hp_max);
 }
 
 enum ConfirmCharacterCommand
@@ -151,9 +157,13 @@ void do_char_creation(void)
 {
     struct passwd* pd = getpwuid(getuid());
     if(pd == NULL)
-        you->name = "unknown";
+    {
+        g_you->name = "unknown";
+    }
     else
-        you->name = pd->pw_name;
+    {
+        g_you->name = pd->pw_name;
+    }
 
     pick_class();
 

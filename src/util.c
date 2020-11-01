@@ -24,11 +24,15 @@ void convert_arg(char c, char* buf)
     switch(c)
     {
         case 'C':
-            strcpy(buf, you->cls->name_plural);
+        {
+            strcpy(buf, g_you->cls->name_plural);
             return;
+        }
         case 'c':
-            strcpy(buf, you->cls->name);
+        {
+            strcpy(buf, g_you->cls->name);
             return;
+        }
     }
 }
 
@@ -59,15 +63,21 @@ int strrfindi(const char* haystack, const char needle, size_t start)
 void do_quit(void)
 {
     char exit_msg[512];
-    if(you && you->mon && mon_is_dead(you->mon))
+    if(g_you && g_you->mon && mon_is_dead(g_you->mon))
+    {
         sprintf(exit_msg, "The cycle continues.");
+    }
     else
+    {
         sprintf(exit_msg, "The fate of Yun is in your hands.");
+    }
 
     free_player();
 
-    if(cmap)
-        map_free(cmap);
+    if(g_cmap)
+    {
+        map_free(g_cmap);
+    }
 
     uninit_yun();
     puts(exit_msg);

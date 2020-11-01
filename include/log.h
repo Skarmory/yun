@@ -1,8 +1,8 @@
 #ifndef YUN_LOG_H
 #define YUN_LOG_H
 
-#define MSGHIST 0
-#define DEBUG   1
+#define LOG_MSGHIST 0
+#define LOG_DEBUG   1
 
 void init_logs(void);
 void uninit_logs(void);

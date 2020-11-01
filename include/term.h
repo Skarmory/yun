@@ -3,31 +3,26 @@
 
 #include <stdbool.h>
 
-typedef unsigned int TextAttributeFlags;
-typedef enum TextAttributeFlag
+struct Colour;
+
+enum TextAttributeFlag
 {
     A_NONE_BIT       = 0,
     A_BOLD_BIT       = 1 << 0,
     A_UNDERSCORE_BIT = 1 << 1,
     A_BLINK_BIT      = 1 << 2,
     A_REVERSE_BIT    = 1 << 3
-} TextAttributeFlag;
+};
+typedef unsigned int TextAttributeFlags;
 
-typedef enum TextAttribute
+enum TextAttribute
 {
     A_NONE       = 0,
     A_BOLD       = 1,
     A_UNDERSCORE = 4,
     A_BLINK      = 5,
     A_REVERSE    = 7
-} TextAttribute;
-
-typedef struct Colour
-{
-    int r;
-    int g;
-    int b;
-} Colour;
+};
 
 void term_init(void);
 void term_uninit(void);
@@ -48,10 +43,10 @@ void term_move_cursor(int x, int y);
 void term_set_attr(int x, int y, TextAttributeFlags ta_flags);
 void term_unset_attr(int x, int y, TextAttributeFlags ta_flags);
 
-void term_draw_symbol(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, char symbol);
-void term_draw_text(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, const char* text);
-void term_draw_ftext(int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, const char* format, ...);
-void term_draw_fntext(int count, int x, int y, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, const char* format, ...);
-void term_draw_area(int x, int y, int w, int h, Colour* fg, Colour* bg, TextAttributeFlags ta_flags, char symbol);
+void term_draw_symbol(int x, int y, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, char symbol);
+void term_draw_text(int x, int y, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, const char* text);
+void term_draw_ftext(int x, int y, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, const char* format, ...);
+void term_draw_fntext(int count, int x, int y, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, const char* format, ...);
+void term_draw_area(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, TextAttributeFlags ta_flags, char symbol);
 
 #endif

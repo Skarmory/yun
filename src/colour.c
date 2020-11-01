@@ -2,7 +2,7 @@
 
 #define COLOUR(r, g, b) { r, g, b }
 
-Colour g_colours[] =
+struct Colour g_colours[] =
 {
     COLOUR(  0,   0,   0), // black
     COLOUR( 32,  32,  32), // dark grey

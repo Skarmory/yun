@@ -4,7 +4,7 @@
 struct Class;
 struct Mon;
 
-#define mon_is_player(m) (m == you->mon)
+#define mon_is_player(m) (m == g_you->mon)
 
 /**
  * Struct containing information about the player
@@ -20,6 +20,6 @@ void new_player(void);
 void free_player(void);
 void player_chk_dead(void);
 
-extern struct Player* you;
+extern struct Player* g_you;
 
 #endif

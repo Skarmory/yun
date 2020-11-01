@@ -20,10 +20,14 @@ struct PathNode* _open_head;
 struct PathNode* _get_first_path_node(struct PathNode* node)
 {
     if(!node->prev)
+    {
         return node;
+    }
 
     while(node->prev->prev)
+    {
         node = node->prev;
+    }
 
     return node;
 }
@@ -116,24 +120,32 @@ static struct PathNode* _find_path(struct MapLocation* dest, int path_bits)
 
         // Set global best node seen so far
         if(!global_best || best_node->cost_to_end < global_best->cost_to_end)
+        {
             global_best = best_node;
+        }
 
         // Reached destination, return
         if(best_node->loc->x == dest->x && best_node->loc->y == dest->y)
+        {
             return best_node;
+        }
 
         for(int _x = best_node->loc->x - 1; _x < best_node->loc->x + 2; _x++)
         for(int _y = best_node->loc->y - 1; _y < best_node->loc->y + 2; _y++)
         {
             // Ignore current node location
             if(_x == best_node->loc->x && _y == best_node->loc->y)
+            {
                 continue;
+            }
 
             // If not pathable then just continue
             if(!move_is_pathable(_x, _y, path_bits))
+            {
                 continue;
+            }
 
-            struct PathNode* p = map_cell_get_location(map_get_cell_by_world_coord(cmap, _x, _y), _x, _y)->path_node;
+            struct PathNode* p = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, _x, _y), _x, _y)->path_node;
 
             // Check to see if this is a stale node (if it was last visited in a previous turn or a previous pathing request this turn)
             // Set it to a fresh state

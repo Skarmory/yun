@@ -22,14 +22,22 @@ static inline void _add_node(List* list, ListNode* node)
 static inline void _remove_node(List* list, ListNode* node)
 {
     if(node->prev)
+    {
         node->prev->next = node->next;
+    }
     else
+    {
         list->head = node->next;
+    }
 
     if(node->next)
+    {
         node->next->prev = node->prev;
+    }
     else
+    {
         list->tail = node->prev;
+    }
 
     node->prev = NULL;
     node->next = NULL;
@@ -79,7 +87,11 @@ void list_add(List* list, void* data)
 
 void list_rm(List* list, ListNode* node)
 {
-    if(!node) return;
+    if(!node)
+    {
+        return;
+    }
+
     _remove_node(list, node);
 
     free(node);
@@ -92,12 +104,17 @@ ListNode* list_find(List* list, void* data)
     {
         if(node->data == data) return node;
     }
+
     return NULL;
 }
 
 void list_splice_node(List* list_from, List* list_to, ListNode* node)
 {
-    if(!node) return;
+    if(!node)
+    {
+        return;
+    }
+
     _remove_node(list_from, node);
 
     _add_node(list_to, node);

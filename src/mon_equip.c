@@ -65,7 +65,7 @@ bool equipment_slot_free(struct Equipment* equipment, enum EquipmentSlot slot)
         case EQUIP_SLOT_OFF_HAND:  return equipment->off_hand == NULL;
         case EQUIP_SLOT_NONE:
         {
-            log_msg(DEBUG, "equipment_slot_free(): slot is EQUIP_SLOT_NONE");
+            log_msg(LOG_DEBUG, "equipment_slot_free(): slot is EQUIP_SLOT_NONE");
             break;
         }
     }
@@ -76,7 +76,7 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
 {
     if(obj_is_equipment(obj))
     {
-        log_format_msg(DEBUG, "slot: %d", slot);
+        log_format_msg(LOG_DEBUG, "slot: %d", slot);
         switch(slot)
         {
             case EQUIP_SLOT_MAIN_HAND:
@@ -129,7 +129,7 @@ bool equipment_equip_obj(struct Equipment* equipment, struct Object* obj, enum E
 
             case EQUIP_SLOT_NONE:
             {
-                log_msg(DEBUG, "equipment_equip_obj(): slot is EQUIP_SLOT_NONE");
+                log_msg(LOG_DEBUG, "equipment_equip_obj(): slot is EQUIP_SLOT_NONE");
                 break;
             }
         }
@@ -203,72 +203,88 @@ struct Object* equipment_unequip_slot(struct Equipment* equipment, enum Equipmen
     switch(slot)
     {
         case EQUIP_SLOT_MAIN_HAND:
+        {
             if(equipment->main_hand)
             {
                 unequipped = equipment->main_hand->obj;
                 equipment->main_hand = NULL;
             }
             break;
+        }
 
         case EQUIP_SLOT_OFF_HAND:
+        {
             if(equipment->off_hand)
             {
                 unequipped = equipment->off_hand;
                 equipment->off_hand = NULL;
             }
             break;
+        }
 
         case EQUIP_SLOT_HEAD:
+        {
             if(equipment->head)
             {
                 unequipped = equipment->head->obj;
                 equipment->head = NULL;
             }
             break;
+        }
 
         case EQUIP_SLOT_SHOULDERS:
+        {
             if(equipment->shoulders)
             {
                 unequipped = equipment->shoulders->obj;
                 equipment->shoulders = NULL;
             }
             break;
+        }
 
         case EQUIP_SLOT_CHEST:
+        {
             if(equipment->chest)
             {
                 unequipped = equipment->chest->obj;
                 equipment->chest = NULL;
             }
             break;
+        }
 
         case EQUIP_SLOT_HANDS:
+        {
             if(equipment->hands)
             {
                 unequipped = equipment->hands->obj;
                 equipment->hands = NULL;
             }
             break;
+        }
 
         case EQUIP_SLOT_LEGS:
+        {
             if(equipment->legs)
             {
                 unequipped = equipment->legs->obj;
                 equipment->legs = NULL;
             }
             break;
+        }
 
         case EQUIP_SLOT_FEET:
+        {
             if(equipment->feet)
             {
                 unequipped = equipment->feet->obj;
                 equipment->feet = NULL;
             }
             break;
+        }
 
         case EQUIP_SLOT_NONE:
         {
-            log_msg(DEBUG, "equipment_unequip_obj(): slot is EQUIP_SLOT_NONE");
+            log_msg(LOG_DEBUG, "equipment_unequip_obj(): slot is EQUIP_SLOT_NONE");
             break;
         }
     }
@@ -280,32 +296,18 @@ enum EquipmentSlot equipment_slot_by_obj(struct Equipment* equipment, struct Obj
 {
     if(obj->objtype == OBJ_TYPE_WEAPON)
     {
-        if(obj->objtype_ptr.weapon == equipment->main_hand)
-            return EQUIP_SLOT_MAIN_HAND;
-
-        if(obj == equipment->off_hand)
-            return EQUIP_SLOT_OFF_HAND;
+        if(obj->objtype_ptr.weapon == equipment->main_hand) return EQUIP_SLOT_MAIN_HAND;
+        if(obj == equipment->off_hand)                      return EQUIP_SLOT_OFF_HAND;
     }
 
     if(obj->objtype == OBJ_TYPE_ARMOUR)
     {
-        if(obj->objtype_ptr.armour == equipment->head)
-            return EQUIP_SLOT_HEAD;
-
-        if(obj->objtype_ptr.armour == equipment->shoulders)
-            return EQUIP_SLOT_SHOULDERS;
-
-        if(obj->objtype_ptr.armour == equipment->chest)
-            return EQUIP_SLOT_CHEST;
-
-        if(obj->objtype_ptr.armour == equipment->hands)
-            return EQUIP_SLOT_HANDS;
-
-        if(obj->objtype_ptr.armour == equipment->legs)
-            return EQUIP_SLOT_LEGS;
-
-        if(obj->objtype_ptr.armour == equipment->feet)
-            return EQUIP_SLOT_FEET;
+        if(obj->objtype_ptr.armour == equipment->head)      return EQUIP_SLOT_HEAD;
+        if(obj->objtype_ptr.armour == equipment->shoulders) return EQUIP_SLOT_SHOULDERS;
+        if(obj->objtype_ptr.armour == equipment->chest)     return EQUIP_SLOT_CHEST;
+        if(obj->objtype_ptr.armour == equipment->hands)     return EQUIP_SLOT_HANDS;
+        if(obj->objtype_ptr.armour == equipment->legs)      return EQUIP_SLOT_LEGS;
+        if(obj->objtype_ptr.armour == equipment->feet)      return EQUIP_SLOT_FEET;
     }
 
     // This should never be reached

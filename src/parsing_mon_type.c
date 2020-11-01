@@ -54,7 +54,7 @@ parsing_callback(_parse_mon_types_finalise)
     List* mon_type_data = parser_get_userdata(parser);
     ListNode* node;
 
-    log_format_msg(DEBUG, "Parsed mon type count: %d", mon_type_data->count);
+    log_format_msg(LOG_DEBUG, "Parsed mon type count: %d", mon_type_data->count);
 
     g_mon_type = malloc(sizeof(struct MonType) * mon_type_data->count);
     g_mon_type_count = mon_type_data->count;

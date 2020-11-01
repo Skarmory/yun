@@ -17,8 +17,8 @@ enum CharacterScreenCommand
 
 void _display_stats(void)
 {
-    term_draw_ftext(2, 0, NULL, NULL, 0, "Name: %s", you->name);
-    term_draw_ftext(1, 1, NULL, NULL, 0, "Class: %s", you->cls->name);
+    term_draw_ftext(2, 0, NULL, NULL, 0, "Name: %s", g_you->name);
+    term_draw_ftext(1, 1, NULL, NULL, 0, "Class: %s", g_you->cls->name);
 
     term_draw_ftext(1, screen_rows-1, NULL, NULL, 0, "%c = close character screen", CHARACTER_SCREEN_COMMAND_QUIT);
 }

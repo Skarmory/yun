@@ -2,7 +2,7 @@
 
 #include "term.h"
 
-#include "string.h"
+#include <string.h>
 
 static const char* c_arrow_up            = "\033[A";
 static const char* c_arrow_down          = "\033[B";

@@ -5,6 +5,7 @@
 
 #define CLS_FIGHTER 0x000000001
 
+#define CLS_INVALID_IDX (-1)
 #define CLS_FIGHTER_IDX 0
 
 /**

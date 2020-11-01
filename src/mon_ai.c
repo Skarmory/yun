@@ -16,13 +16,15 @@
 void update_mon_ai(struct Mon* mon)
 {
    // Player character is not an ai
-   if(mon == you->mon)
+   if(mon == g_you->mon)
+   {
        return;
+   }
 
-   struct MapCell* mon_cell = map_get_cell_by_world_coord(cmap, mon->x, mon->y);
-   struct MapCell* you_cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
+   struct MapCell* mon_cell = map_get_cell_by_world_coord(g_cmap, mon->x, mon->y);
+   struct MapCell* you_cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
    struct MapLocation* monloc = map_cell_get_location(mon_cell, mon->x, mon->y);
-   struct MapLocation* youloc = map_cell_get_location(you_cell, you->mon->x, you->mon->y);
+   struct MapLocation* youloc = map_cell_get_location(you_cell, g_you->mon->x, g_you->mon->y);
 
    // Find next location closer to the player
    struct MapLocation* next_loc = next_path_loc(monloc, youloc, mon->move_flags);
@@ -30,7 +32,7 @@ void update_mon_ai(struct Mon* mon)
    if(next_loc->x == youloc->x && next_loc->y == youloc->y)
    {
        // Attack the player
-       do_attack_mon_mon(mon, you->mon);
+       do_attack_mon_mon(mon, g_you->mon);
    }
    else
    {

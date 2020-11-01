@@ -6,8 +6,7 @@ struct CommandParams;
 struct Param;
 struct Variant;
 
-typedef void (*ConsoleCommandExecutionFunc)(const struct CommandParams* params);
-
+typedef void         (*ConsoleCommandExecutionFunc)(const struct CommandParams* params);
 typedef void*        (*ConsoleCommandParamsConversionFunc_vptr)(const char* param);
 typedef int          (*ConsoleCommandParamsConversionFunc_int) (const char* param);
 typedef unsigned int (*ConsoleCommandParamsConversionFunc_uint)(const char* param);

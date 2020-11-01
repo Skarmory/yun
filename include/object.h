@@ -5,12 +5,12 @@
 
 #include <stdbool.h>
 
+#define OBJECT_WEAPON_OFF 0
+#define OBJECT_ARMOUR_OFF 3
+
 struct Weapon;
 struct Armour;
 struct Symbol;
-
-#define OBJECT_WEAPON_OFF 0
-#define OBJECT_ARMOUR_OFF 3
 
 enum ObjectType
 {

@@ -123,26 +123,27 @@ bool open_file_and_parse_all(struct Parser* parser, const char* filename)
         {
             if(parser->last_code == PARSER_NO_FORMAT_FOUND)
             {
-                log_msg(DEBUG, "Parser error: no format found");
+                log_msg(LOG_DEBUG, "Parser error: no format found");
+                break;
             }
             else if(parser->last_code == PARSER_MALFORMED_DATA)
             {
-                log_msg(DEBUG, "Parser error: malformed data");
+                log_msg(LOG_DEBUG, "Parser error: malformed data");
                 break;
             }
             else if(parser->last_code == PARSER_MALFORMED_KEY_VALUE_PAIR)
             {
-                log_msg(DEBUG, "Parser error: malformed key pair value");
+                log_msg(LOG_DEBUG, "Parser error: malformed key pair value");
                 break;
             }
             else if(parser->last_code == PARSER_UNKNOWN_DATA_TYPE)
             {
-                log_msg(DEBUG, "Parser error: unknown data type");
+                log_msg(LOG_DEBUG, "Parser error: unknown data type");
                 break;
             }
             else if(parser->last_code == PARSER_PARSE_CALLBACK_ERROR)
             {
-                log_msg(DEBUG, "Parser error: parse callback error");
+                log_msg(LOG_DEBUG, "Parser error: parse callback error");
                 break;
             }
         }
@@ -154,8 +155,8 @@ bool open_file_and_parse_all(struct Parser* parser, const char* filename)
     bool success = (parser->last_code == PARSER_OK || parser->last_code == PARSER_NO_OP);
     if(!success)
     {
-        log_format_msg(DEBUG, "PARSE ERROR: %d", parser_get_last_code(parser));
-        log_format_msg(DEBUG, "Parser state -- %s | Active: %s | %d: %s", parser->parse_state.filename, parser->parse_state.active ? "true" : "false", parser->parse_state.line_no, parser->parse_state.line);
+        log_format_msg(LOG_DEBUG, "PARSE ERROR: %d", parser_get_last_code(parser));
+        log_format_msg(LOG_DEBUG, "Parser state -- %s | Active: %s | %d: %s", parser->parse_state.filename, parser->parse_state.active ? "true" : "false", parser->parse_state.line_no, parser->parse_state.line);
     }
 
     return (parser->last_code == PARSER_OK || parser->last_code == PARSER_NO_OP);
@@ -171,7 +172,9 @@ static inline struct FieldData* _field_data_new(struct Metadata* meta)
 static inline void _field_data_free(struct FieldData* field)
 {
     if(field->meta->type == TYPE_STRING)
+    {
         free(field->value.as_str);
+    }
 
     free(field);
 }
@@ -189,7 +192,7 @@ static inline void _metadata_free(struct Metadata* meta)
 
 static void _parse_format_free(struct ParseFormat* format)
 {
-    ListNode *metadata_node, *metadata_node_next;
+    ListNode *metadata_node = NULL, *metadata_node_next = NULL;
     list_for_each_safe(&format->field_meta, metadata_node, metadata_node_next)
     {
         _metadata_free(metadata_node->data);
@@ -202,13 +205,19 @@ static void _parse_format_free(struct ParseFormat* format)
 static enum DataType _to_data_type(char* str)
 {
     if(strcmp(str, c_tok_int) == 0)
+    {
         return TYPE_INT;
+    }
 
     if(strcmp(str, c_tok_char) == 0)
+    {
         return TYPE_CHAR;
+    }
 
     if(strcmp(str, c_tok_string) == 0)
+    {
         return TYPE_STRING;
+    }
 
     if(strcmp(str, c_tok_bool) == 0)
     {
@@ -236,7 +245,10 @@ static enum ParserCode _split_key_value(char* field_name, char* field_data, char
 
     int len = strlen(tok);
     if(tok[len-1] == '\n')
+    {
         tok[len-1] = '\0';
+    }
+
     snprintf(field_data, 256, "%s", tok);
 
     return PARSER_OK;
@@ -246,7 +258,7 @@ static enum ParserCode _parse_field_data(struct ParseData* parse_data, struct Pa
 {
     char* tok = strtok(field_data, ";");
 
-    ListNode* node;
+    ListNode* node = NULL;
     list_for_each(&parse_format->field_meta, node)
     {
         if(!tok)
@@ -287,9 +299,9 @@ static enum ParserCode _parse_field_data(struct ParseData* parse_data, struct Pa
             }
         }
 
-        struct FieldData* field_data = _field_data_new(node->data);
-        field_data->value = value;
-        list_add(&parse_data->data, field_data);
+        struct FieldData* fdata = _field_data_new(node->data);
+        fdata->value = value;
+        list_add(&parse_data->data, fdata);
 
         tok = strtok(NULL, ";");
     }
@@ -305,7 +317,7 @@ static inline void _parser_reset(struct Parser* parser)
 {
     if(parser->parse_data.data.count > 0)
     {
-        ListNode *field_node, *field_node_next;
+        ListNode *field_node = NULL, *field_node_next = NULL;
         list_for_each_safe(&parser->parse_data.data, field_node, field_node_next)
         {
             _field_data_free(field_node->data);
@@ -316,7 +328,7 @@ static inline void _parser_reset(struct Parser* parser)
 
 static void _parser_free_parse_formats(struct Parser* parser)
 {
-    ListNode* node, *next;
+    ListNode* node = NULL, *next = NULL;
     list_for_each_safe(&parser->parse_formats, node, next)
     {
         _parse_format_free(node->data);
@@ -326,7 +338,7 @@ static void _parser_free_parse_formats(struct Parser* parser)
 
 static void _parser_free_userdata(struct Parser* parser)
 {
-    ListNode* node, *next;
+    ListNode* node = NULL, *next = NULL;
     list_for_each_safe(&parser->userdata, node, next)
     {
         free(node);
@@ -337,10 +349,10 @@ static void _parser_free_userdata(struct Parser* parser)
 static enum ParserCode _parser_find_format(struct Parser* parser, const char* field_name, struct ParseFormat** format)
 {
     enum ParserCode code = PARSER_NO_FORMAT_FOUND;
-    ListNode* n;
+    ListNode* n = NULL;
     list_for_each(&parser->parse_formats, n)
     {
-        *format = (struct ParseFormat*)n->data;
+        *format = n->data;
         if(strcmp(field_name, (*format)->field_name) == 0)
         {
             code = PARSER_OK;
@@ -361,7 +373,7 @@ struct FieldData* _field_get_value(struct Parser* parser, const char* field_name
     struct ParseData* pdata = &parser->parse_data;
     if(strcmp(pdata->name, field_name) == 0)
     {
-        ListNode* n;
+        ListNode* n = NULL;
         list_for_each(&pdata->data, n)
         {
             struct FieldData* fdata = n->data;
@@ -409,10 +421,10 @@ enum ParserCode parser_register_field(struct Parser* parser, char* field_name, c
 {
     enum ParserCode code = PARSER_OK;
 
-    struct ParseFormat* format;
+    struct ParseFormat* format = NULL;
     if((code = _parser_find_format(parser, field_name, &format)) != PARSER_OK)
     {
-        format = (struct ParseFormat*)malloc(sizeof(struct ParseFormat));
+        format = malloc(sizeof(struct ParseFormat));
         list_add(&parser->parse_formats, format);
     }
 
@@ -421,7 +433,7 @@ enum ParserCode parser_register_field(struct Parser* parser, char* field_name, c
     format->method = method;
 
     int fmt_len = strlen(field_data_format) + 1;
-    char* fmt = (char*)malloc(fmt_len);
+    char* fmt = malloc(fmt_len);
     snprintf(fmt, fmt_len, "%s", field_data_format);
 
     char* tok = strtok(fmt, " ");
@@ -471,7 +483,9 @@ enum ParserCode parser_parse(struct Parser* parser, char* line)
 
     // Disregard comments
     if(line[0] == c_comment)
+    {
         return PARSER_NO_OP;
+    }
 
     // If the line is just a new line character
     // a) if it immediately procedes an entry, set parse state to inactive
@@ -479,34 +493,53 @@ enum ParserCode parser_parse(struct Parser* parser, char* line)
     if(line[0] == c_new_line)
     {
         if(parser->parse_state.active)
+        {
             parser->parse_state.active = false;
+        }
+
         return PARSER_NO_OP;
     }
 
     // This should be a proper line of data now
     // If the parsing state is not active, this is a new entry
     if(!parser->parse_state.active)
+    {
         parser->parse_state.active = true;
+    }
 
     _parser_reset(parser);
 
     // Split the field into field name and field data
     char field_name[FIELD_NAME_SIZE];
     char field_data[FIELD_DATA_SIZE];
-    struct ParseFormat* format;
+    struct ParseFormat* format = NULL;
 
     if((code = _split_key_value(field_name, field_data, line)) != PARSER_OK)
+    {
         return code;
+    }
 
     if((code = _parser_find_format(parser, field_name, &format)) == PARSER_NO_FORMAT_FOUND)
+    {
         return code;
+    }
 
     if((code = _parse_field_data(&parser->parse_data, format, field_data)) != PARSER_OK)
+    {
+        ListNode* n = NULL, *nn = NULL;
+        list_for_each_safe(&parser->parse_data.data, n, nn)
+        {
+            _field_data_free(n->data);
+        }
+
         return code;
+    }
 
     enum ParseCallbackCode method_code = format->method(parser);
     if(method_code == PARSE_CALLBACK_ERROR)
+    {
         code = PARSER_PARSE_CALLBACK_ERROR;
+    }
 
     return code;
 }
@@ -535,7 +568,9 @@ int parser_field_get_int(struct Parser* parser, const char* field_name, const ch
 {
     struct FieldData* fdata = _field_get_value(parser, field_name, field_data_name);
     if(!fdata)
+    {
         return -1;
+    }
 
     return fdata->value.as_int;
 }
@@ -544,7 +579,9 @@ char parser_field_get_char(struct Parser* parser, const char* field_name, const 
 {
     struct FieldData* fdata = _field_get_value(parser, field_name, field_data_name);
     if(!fdata)
+    {
         return '\0';
+    }
 
     return fdata->value.as_char;
 }
@@ -553,7 +590,9 @@ char* parser_field_get_string(struct Parser* parser, const char* field_name, con
 {
     struct FieldData* fdata = _field_get_value(parser, field_name, field_data_name);
     if(!fdata)
+    {
         return NULL;
+    }
 
     return fdata->value.as_str;
 }
@@ -607,7 +646,7 @@ void parser_print_formats(struct Parser* p)
 void _print_parse_data(struct Parser* parser)
 {
     printf("Parse data\n");
-    ListNode* n;
+    ListNode* n = NULL;
     list_for_each(&parser->parse_data.data, n)
     {
         struct FieldData* fdata = n->data;
@@ -615,24 +654,38 @@ void _print_parse_data(struct Parser* parser)
         switch(fdata->meta->type)
         {
             case TYPE_INT:
+            {
                 printf("type: INT\n");
                 printf("data: %d\n", fdata->value.as_int);
                 break;
+            }
+
             case TYPE_CHAR:
+            {
                 printf("type: CHAR\n");
                 printf("data: %c\n", fdata->value.as_char);
                 break;
+            }
+
             case TYPE_STRING:
+            {
                 printf("type: STRING\n");
                 printf("data: %s\n", fdata->value.as_str);
                 break;
+            }
+
             case TYPE_BOOL:
+            {
                 printf("type: BOOL\n");
                 printf("data: %d", fdata->value.as_bool);
                 break;
+            }
+
             case TYPE_ERROR:
+            {
                 printf("type: ERROR. Something went wrong here!\n");
                 break;
+            }
         }
     }
 }

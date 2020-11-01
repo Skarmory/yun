@@ -45,7 +45,7 @@ parsing_callback(_parse_weapons_finalise)
     List* weapon_base_data = parser_get_userdata(parser);
     ListNode* node;
 
-    log_format_msg(DEBUG, "Parsed weapon count: %d", weapon_base_data->count);
+    log_format_msg(LOG_DEBUG, "Parsed weapon count: %d", weapon_base_data->count);
 
     g_weapon_base = malloc(sizeof(struct WeaponBase) * weapon_base_data->count);
     g_weapon_base_count = weapon_base_data->count;

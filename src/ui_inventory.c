@@ -26,7 +26,7 @@ const char* c_equipped_text  = "equipped";
 const char* c_main_hand_text = "main hand";
 const char* c_off_hand_text  = "off hand";
 const char* c_already_wearing_cannot_equip_text = "You are already wearing something in that slot.";
-const char* c_already_wearing_cannot_drop_text = "You cannot drop something you are wearing.";
+const char* c_already_wearing_cannot_drop_text = "You cannot drop something g_you are wearing.";
 
 const int c_list_x = 1;
 const int c_list_y = 2;
@@ -57,12 +57,12 @@ enum InventoryCommand
 const int c_allow_mask_read_only     = ACTION_QUIT_BIT | ACTION_MOVE_BIT;
 const int c_allow_mask_own_inventory = ACTION_QUIT_BIT | ACTION_DROP_BIT | ACTION_EQUIP_BIT | ACTION_MOVE_BIT;
 
-typedef struct _PendingActions
+struct PendingActions
 {
     List               to_drop;
     struct Object*     to_equip;
     enum EquipmentSlot to_equip_slot;
-} PendingActions;
+};
 
 static void _create_extra_text(char* extra_text_string, struct Object* obj, struct Equipment* equipment)
 {
@@ -108,7 +108,7 @@ static inline int _to_bits(char input)
  * Grab player input here and do something with it.
  * Return true if action should close inventory and end the turn
  */
-static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending_actions, ListNode** highlighted, bool* went, int allow_mask)
+static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, struct PendingActions* pending_actions, ListNode** highlighted, bool* went, int allow_mask)
 {
     enum InventoryCommand in = get_key();
 
@@ -121,9 +121,12 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
     switch(in)
     {
         case INVENTORY_COMMAND_QUIT:
+        {
             return true;
+        }
 
         case INVENTORY_COMMAND_DROP:
+        {
             if(highlighted && *highlighted)
             {
                 struct Object* drop = (*highlighted)->data;
@@ -160,8 +163,10 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
                 list_add(&pending_actions->to_drop, drop);
             }
             break;
+        }
 
         case INVENTORY_COMMAND_EQUIP:
+        {
             if(highlighted && *highlighted)
             {
                 struct Object* obj = (struct Object*)(*highlighted)->data;
@@ -193,20 +198,25 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
                 }
             }
             break;
+        }
 
         case INVENTORY_COMMAND_MOVE_DOWN:
+        {
             if(highlighted && *highlighted && (*highlighted)->next)
             {
                 *highlighted = (*highlighted)->next;
             }
             break;
+        }
 
         case INVENTORY_COMMAND_MOVE_UP:
+        {
             if(highlighted && *highlighted && (*highlighted)->prev)
             {
                 *highlighted = (*highlighted)->prev;
             }
             break;
+        }
     }
 
     return false;
@@ -215,25 +225,25 @@ static bool _input_handled(struct Inventory* inventory, struct Equipment* equipm
 /**
  * If there's an action being performed by the player from the inventory, handle it here.
  */
-static void _resolve_actions(struct Inventory* inventory, struct Equipment* equipment, PendingActions* pending)
+static void _resolve_actions(struct Inventory* inventory, struct Equipment* equipment, struct PendingActions* pending)
 {
     term_clear();
 
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
+    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
 
     // Drop items
-    ListNode* node;
+    ListNode* node = NULL;
     list_for_each(&pending->to_drop, node)
     {
         struct Object* obj = node->data;
 
         inventory_rm_obj(inventory, obj);
-        loc_add_obj(map_cell_get_location(cell, you->mon->x, you->mon->y), obj);
+        loc_add_obj(map_cell_get_location(cell, g_you->mon->x, g_you->mon->y), obj);
 
         if(equipment_is_equipped(equipment, obj) && obj->objtype == OBJ_TYPE_WEAPON)
         {
             equipment_unequip_obj(equipment, obj);
-            display_fmsg_log("You thrown down your %s.", obj->name);
+            display_fmsg_log("You thrown down g_your %s.", obj->name);
         }
         else
         {
@@ -256,13 +266,13 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
                 {
                     if(unequipped)
                     {
-                        display_fmsg_log("You unequipped your %s.", unequipped->name);
+                        display_fmsg_log("You unequipped g_your %s.", unequipped->name);
                     }
-                    display_fmsg_log("You equipped your %s.", pending->to_equip->name);
+                    display_fmsg_log("You equipped g_your %s.", pending->to_equip->name);
                 }
                 else
                 {
-                    display_fmsg_log("You equipped your %s.",   pending->to_equip->name);
+                    display_fmsg_log("You equipped g_your %s.",   pending->to_equip->name);
 
                     // Failed to equip the item, roll back to previous state
                     if(unequipped)
@@ -283,7 +293,7 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
                 }
                 else
                 {
-                    log_format_msg(DEBUG, "Slot: %d", pending->to_equip_slot);
+                    log_format_msg(LOG_DEBUG, "Slot: %d", pending->to_equip_slot);
                     display_msg_log("You are already wearing something there!");
                 }
 
@@ -348,29 +358,29 @@ bool display_inventory_player(void)
 {
     term_clear();
 
-    PendingActions pending;
+    struct PendingActions pending;
     list_init(&pending.to_drop);
     pending.to_equip = NULL;
 
     bool went = false;
-    ListNode* highlighted = you->mon->inventory->obj_list.head;
+    ListNode* highlighted = g_you->mon->inventory->obj_list.head;
 
     do
     {
-        _display_inventory(you->mon->inventory, you->mon->equipment, &highlighted);
+        _display_inventory(g_you->mon->inventory, g_you->mon->equipment, &highlighted);
 
         term_draw_ftext(1, screen_rows-1, NULL, NULL, 0, "%c: close inventory / %c: drop object / %c: equip object", INVENTORY_COMMAND_QUIT, INVENTORY_COMMAND_DROP, INVENTORY_COMMAND_EQUIP);
 
         term_refresh();
 
-        if(_input_handled(you->mon->inventory, you->mon->equipment, &pending, &highlighted, &went, c_allow_mask_own_inventory))
+        if(_input_handled(g_you->mon->inventory, g_you->mon->equipment, &pending, &highlighted, &went, c_allow_mask_own_inventory))
         {
             break;
         }
     }
     while(true);
 
-    _resolve_actions(you->mon->inventory, you->mon->equipment, &pending);
+    _resolve_actions(g_you->mon->inventory, g_you->mon->equipment, &pending);
 
     return went;
 }

@@ -112,22 +112,34 @@ bool console_input(char* out_command)
         switch(key)
         {
             case CONSOLE_TEXT_EDITOR_COMMAND_QUIT:
+            {
                 return true;
+            }
             case CONSOLE_TEXT_EDITOR_COMMAND_EXECUTE:
+            {
                 snprintf(out_command, INPUT_BUFFER_LENGTH, "%s", state.input);
                 return false;
+            }
             case CONSOLE_TEXT_EDITOR_COMMAND_BACK_ONE:
+            {
                 _move_cursor_back_one_space(&state);
                 break;
+            }
             case CONSOLE_TEXT_EDITOR_COMMAND_FORWARD_ONE:
+            {
                 _move_cursor_forward_one_space(&state);
                 break;
+            }
             case CONSOLE_TEXT_EDITOR_COMMAND_BACK_DELETE:
+            {
                 _back_delete_one(&state);
                 break;
+            }
             default:
+            {
                 _add_character_to_input(&state, key);
                 break;
+            }
         }
     }
 }

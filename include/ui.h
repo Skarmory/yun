@@ -13,16 +13,14 @@ struct Equipment;
 struct Inventory;
 struct Object;
 
-typedef struct Colour Colour;
-
 enum YesNoCommand
 {
     YES = KEYCODE_y,
     NO  = KEYCODE_n
 };
 
-void draw_textbox(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text);
-void draw_textbox_border(int x, int y, int w, int h, Colour* fg, Colour* bg, const char* text);
+void draw_textbox(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, const char* text);
+void draw_textbox_border(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, const char* text);
 
 bool prompt_yn(const char* msg);
 char prompt_choice(const char* title, char** choices, int length);

@@ -70,6 +70,13 @@
 #define CLR_METAL CLR_WHITE
 #define CLR_WOOD  CLR_BROWN
 
-extern Colour g_colours[];
+struct Colour
+{
+    int r;
+    int g;
+    int b;
+};
+
+extern struct Colour g_colours[];
 
 #endif

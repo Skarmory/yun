@@ -110,10 +110,10 @@ int main(int argc, char** argv)
     }
 
 #ifdef DEBUG
-    log_msg(DEBUG, "yun initialised with params:");
+    log_msg(LOG_DEBUG, "yun initialised with params:");
     for(int i = 0; i < argc; ++i)
     {
-        log_format_msg(DEBUG, "\t%s", argv[i]);
+        log_format_msg(LOG_DEBUG, "\t%s", argv[i]);
     }
 #endif
 
@@ -127,22 +127,22 @@ int main(int argc, char** argv)
 
     int map_width = 3;
     int map_height = 3;
-    cmap = map_new(map_width, map_height);
-    gen_map(cmap, MAPTYPE_DUNGEON);
+    g_cmap = map_new(map_width, map_height);
+    gen_map(g_cmap, MAPTYPE_DUNGEON);
 
-    mon_set_stat(you->mon, STAT_TYPE_HP_MAX, 999);
-    mon_set_stat(you->mon, STAT_TYPE_HP, 999);
+    mon_set_stat(g_you->mon, STAT_TYPE_HP_MAX, 999);
+    mon_set_stat(g_you->mon, STAT_TYPE_HP, 999);
 
-    struct MapCell* test_cell = map_get_cell_by_map_coord(cmap, 1, 1);
+    struct MapCell* test_cell = map_get_cell_by_map_coord(g_cmap, 1, 1);
 
     // --------- DEBUG CODE START ----------
     struct Room* room = test_cell->room_list.head->data;
     int startx = random_int(room->x + 1, room->x + room->w - 2);
     int starty = random_int(room->y + 1, room->y + room->h - 2);
 
-    you->mon->x = startx;
-    you->mon->y = starty;
-    map_cell_add_mon(test_cell, you->mon);
+    g_you->mon->x = startx;
+    g_you->mon->y = starty;
+    map_cell_add_mon(test_cell, g_you->mon);
 
     startx = random_int(room->x + 1, room->x + room->w - 2);
     starty = random_int(room->y + 1, room->y + room->h - 2);

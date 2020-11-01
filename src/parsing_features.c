@@ -48,7 +48,7 @@ parsing_callback(_parse_features_finalise)
     List* features_data = parser_get_userdata(parser);
     ListNode* node = NULL;
 
-    log_format_msg(DEBUG, "Parsed features count: %d", features_data->count);
+    log_format_msg(LOG_DEBUG, "Parsed features count: %d", features_data->count);
 
     g_features = malloc(sizeof(struct Feature) * features_data->count);
     g_features_count = features_data->count;

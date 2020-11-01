@@ -43,7 +43,7 @@ parsing_callback(_parse_armours_finalise)
     List* armour_base_data = parser_get_userdata(parser);
     ListNode* node;
 
-    log_format_msg(DEBUG, "Parsed armour count: %d", armour_base_data->count);
+    log_format_msg(LOG_DEBUG, "Parsed armour count: %d", armour_base_data->count);
 
     g_armour_base = malloc(sizeof(struct ArmourBase) * armour_base_data->count);
     g_armour_base_count = armour_base_data->count;

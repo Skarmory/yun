@@ -17,14 +17,14 @@
 
 #include <stdlib.h>
 
-struct Map* cmap = NULL;
+struct Map* g_cmap = NULL;
 
 /**
  * Creates the map and sets map locations to default values
  */
 struct Map* map_new(int width, int height)
 {
-    struct Map* map = (struct Map*) malloc(sizeof(struct Map));
+    struct Map* map = malloc(sizeof(struct Map));
     map->width = width;
     map->height = height;
     list_init(&map->cell_list);
@@ -37,7 +37,7 @@ struct Map* map_new(int width, int height)
  */
 void map_free(struct Map* map)
 {
-    ListNode *node, *next;
+    ListNode *node = NULL, *next = NULL;
     list_for_each_safe(&map->cell_list, node, next)
     {
         map_cell_free(node->data);
@@ -49,7 +49,7 @@ void map_free(struct Map* map)
 
 struct MapCell* map_get_cell_by_world_coord(struct Map* map, int x, int y)
 {
-    ListNode* node;
+    ListNode* node = NULL;
     list_for_each(&map->cell_list, node)
     {
         if(map_cell_is_in_bounds(node->data, x, y))
@@ -63,12 +63,14 @@ struct MapCell* map_get_cell_by_world_coord(struct Map* map, int x, int y)
 
 struct MapCell* map_get_cell_by_map_coord(struct Map* map, int x, int y)
 {
-    ListNode* node;
+    ListNode* node = NULL;
     list_for_each(&map->cell_list, node)
     {
         struct MapCell* cell = node->data;
         if(cell->cell_x == x && cell->cell_y == y)
+        {
             return cell;
+        }
     }
 
     return NULL;
@@ -76,8 +78,8 @@ struct MapCell* map_get_cell_by_map_coord(struct Map* map, int x, int y)
 
 void map_get_screen_coord_by_world_coord(struct Map* map, int world_x, int world_y, int* screen_x, int* screen_y)
 {
-    int xstart = clamp(you->mon->x - (MCOLS/2), 0, (map->width * g_map_cell_width) - MCOLS - 1);
-    int ystart = clamp(you->mon->y - (MROWS/2), 0, (map->height * g_map_cell_height) - MROWS - 1);
+    int xstart = clamp(g_you->mon->x - (MCOLS/2), 0, (map->width * g_map_cell_width) - MCOLS - 1);
+    int ystart = clamp(g_you->mon->y - (MROWS/2), 0, (map->height * g_map_cell_height) - MROWS - 1);
 
     *screen_x = world_x - xstart;
     *screen_y = world_y - ystart;
@@ -88,8 +90,8 @@ void map_get_screen_coord_by_world_coord(struct Map* map, int world_x, int world
  */
 void display_map(void)
 {
-    int xstart = clamp(you->mon->x - (MCOLS/2), 0, (cmap->width * g_map_cell_width) - MCOLS - 1);
-    int ystart = clamp(you->mon->y - (MROWS/2), 0, (cmap->height * g_map_cell_height) - MROWS - 1);
+    int xstart = clamp(g_you->mon->x - (MCOLS/2), 0, (g_cmap->width * g_map_cell_width) - MCOLS - 1);
+    int ystart = clamp(g_you->mon->y - (MROWS/2), 0, (g_cmap->height * g_map_cell_height) - MROWS - 1);
 
     int i = 0;
     for(int x = xstart; i < MCOLS; ++x, ++i)
@@ -97,10 +99,10 @@ void display_map(void)
         int j = 0;
         for(int y = ystart; j < MROWS; ++y, ++j)
         {
-            struct MapCell* cell = map_get_cell_by_world_coord(cmap, x, y);
+            struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x, y);
             struct MapLocation* loc = map_cell_get_location(cell, x, y);
 
-            if(!mon_can_see(you->mon, x, y))
+            if(!mon_can_see(g_you->mon, x, y))
             {
                 if(loc->seen)
                 {

@@ -53,15 +53,22 @@ enum GameplayCommand
 static bool _do_smart_action(int x, int y)
 {
     // This could be null if it's a movement request to an out of bounds x y
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, x, y);
-    if(!cell) return false;
+    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x, y);
+    if(!cell)
+    {
+        return false;
+    }
 
     struct MapLocation* loc = map_cell_get_location(cell, x, y);
 
     if(loc->mon == NULL)
-        return move_mon(you->mon, x, y);
+    {
+        return move_mon(g_you->mon, x, y);
+    }
     else
-        return do_attack_mon_mon(you->mon, loc->mon);
+    {
+        return do_attack_mon_mon(g_you->mon, loc->mon);
+    }
 }
 
 /**
@@ -69,9 +76,9 @@ static bool _do_smart_action(int x, int y)
  */
 static bool _pick_up_object(void)
 {
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, you->mon->x, you->mon->y);
-    struct MapLocation* loc = map_cell_get_location(cell, you->mon->x, you->mon->y);
-    List* obj_list = map_cell_get_objects(cell, you->mon->x, you->mon->y);
+    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
+    struct MapLocation* loc = map_cell_get_location(cell, g_you->mon->x, g_you->mon->y);
+    List* obj_list = map_cell_get_objects(cell, g_you->mon->x, g_you->mon->y);
 
     if(obj_list->head == NULL)
     {
@@ -85,7 +92,7 @@ static bool _pick_up_object(void)
     // Unlink object from Location
     loc_rm_obj(loc, chosen);
 
-    if(!inventory_add_obj(you->mon->inventory, chosen))
+    if(!inventory_add_obj(g_you->mon->inventory, chosen))
     {
         // Failed to add to inventory, relink with Location
         loc_add_obj(loc, chosen);
@@ -106,62 +113,96 @@ void gameplay_turn(void)
         switch((enum GameplayCommand)get_key())
         {
             case GAMEPLAY_COMMAND_DISPLAY_POSITION:
-                display_fmsg_nolog("Current position: %d, %d", you->mon->x, you->mon->y);
+            {
+                display_fmsg_nolog("Current position: %d, %d", g_you->mon->x, g_you->mon->y);
                 break;
+            }
             case GAMEPLAY_COMMAND_MOVE_LEFT:
-                end_turn = _do_smart_action(you->mon->x-1, you->mon->y);
+            {
+                end_turn = _do_smart_action(g_you->mon->x-1, g_you->mon->y);
                 break;
+            }
             case GAMEPLAY_COMMAND_MOVE_RIGHT:
-                end_turn = _do_smart_action(you->mon->x+1, you->mon->y);
+            {
+                end_turn = _do_smart_action(g_you->mon->x+1, g_you->mon->y);
                 break;
+            }
             case GAMEPLAY_COMMAND_MOVE_UP:
-                end_turn = _do_smart_action(you->mon->x, you->mon->y-1);
+            {
+                end_turn = _do_smart_action(g_you->mon->x, g_you->mon->y-1);
                 break;
+            }
             case GAMEPLAY_COMMAND_MOVE_DOWN:
-                end_turn = _do_smart_action(you->mon->x, you->mon->y+1);
+            {
+                end_turn = _do_smart_action(g_you->mon->x, g_you->mon->y+1);
                 break;
+            }
             case GAMEPLAY_COMMAND_MOVE_LEFT_UP:
-                end_turn = _do_smart_action(you->mon->x-1, you->mon->y-1);
+            {
+                end_turn = _do_smart_action(g_you->mon->x-1, g_you->mon->y-1);
                 break;
+            }
             case GAMEPLAY_COMMAND_MOVE_LEFT_DOWN:
-                end_turn = _do_smart_action(you->mon->x-1, you->mon->y+1);
+            {
+                end_turn = _do_smart_action(g_you->mon->x-1, g_you->mon->y+1);
                 break;
+            }
             case GAMEPLAY_COMMAND_MOVE_RIGHT_UP:
-                end_turn = _do_smart_action(you->mon->x+1, you->mon->y-1);
+            {
+                end_turn = _do_smart_action(g_you->mon->x+1, g_you->mon->y-1);
                 break;
+            }
             case GAMEPLAY_COMMAND_MOVE_RIGHT_DOWN:
-                end_turn = _do_smart_action(you->mon->x+1, you->mon->y+1);
+            {
+                end_turn = _do_smart_action(g_you->mon->x+1, g_you->mon->y+1);
                 break;
+            }
             case GAMEPLAY_COMMAND_PASS_TURN:
+            {
                 end_turn = true;
                 break;
+            }
             case GAMEPLAY_COMMAND_PICK_UP:
+            {
                 end_turn = _pick_up_object();
                 break;
+            }
             case GAMEPLAY_COMMAND_DISPLAY_INVENTORY:
+            {
                 end_turn = display_inventory_player();
                 break;
+            }
             case GAMEPLAY_COMMAND_DISPLAY_CHARACTER_SCREEN:
+            {
                 end_turn = character_screen_handler();
                 break;
+            }
             case GAMEPLAY_COMMAND_NO_SAVE_AND_QUIT:
+            {
                 if(prompt_yn("Really quit?"))
                 {
                     do_quit();
                 }
                 break;
+            }
             case GAMEPLAY_COMMAND_SAVE_AND_QUIT:
+            {
                 if(prompt_yn("Save and quit? (SAVING NOT IMPLEMENTED YET!)"))
                 {
                     do_quit();
                 }
                 break;
+            }
             case GAMEPLAY_COMMAND_LOOK:
+            {
                 look();
                 break;
+            }
             case GAMEPLAY_COMMAND_SHOW_CONSOLE:
+            {
                 console();
                 break;
+            }
         }
 
         if(!end_turn)

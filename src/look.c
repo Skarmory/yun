@@ -45,7 +45,7 @@ void _look_get_loc_info(struct Mon* mon, struct MapLocation* loc)
     {
         if(mon_is_player(loc->mon))
         {
-            display_fmsg_nolog("You see yourself! %s %s %s named %s", msg_a_an(you->mon->type->name), you->mon->type->name, you->cls->name, you->name);
+            display_fmsg_nolog("You see yourself! %s %s %s named %s", msg_a_an(g_you->mon->type->name), g_you->mon->type->name, g_you->cls->name, g_you->name);
         }
         else
         {
@@ -101,7 +101,7 @@ void _look_set_visuals(struct Mon* mon, struct MapLocation* loc)
 {
     int sx = 0;
     int sy = 0;
-    map_get_screen_coord_by_world_coord(cmap, loc->x, loc->y, &sx, &sy);
+    map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
 
     struct Symbol sym = _look_get_symbol(loc, mon);
 
@@ -112,7 +112,7 @@ void _look_unset_visuals(struct Mon* mon, struct MapLocation* loc)
 {
     int sx = 0;
     int sy = 0;
-    map_get_screen_coord_by_world_coord(cmap, loc->x, loc->y, &sx, &sy);
+    map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
 
     struct Symbol sym = _look_get_symbol(loc, mon);
 
@@ -121,8 +121,8 @@ void _look_unset_visuals(struct Mon* mon, struct MapLocation* loc)
 
 void look(void)
 {
-    int x = you->mon->x;
-    int y = you->mon->y;
+    int x = g_you->mon->x;
+    int y = g_you->mon->y;
     struct MapLocation* loc = NULL;
 
     display_msg_nolog("Move cursor over a location, press esc to stop looking.");
@@ -133,9 +133,9 @@ void look(void)
     bool looking = true;
     while(looking)
     {
-        loc = map_cell_get_location(map_get_cell_by_world_coord(cmap, x, y), x, y);
-        _look_set_visuals(you->mon, loc);
-        _look_get_loc_info(you->mon, loc);
+        loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, x, y), x, y);
+        _look_set_visuals(g_you->mon, loc);
+        _look_get_loc_info(g_you->mon, loc);
         clear_msgs();
         flush_msg_buffer();
 
@@ -143,8 +143,10 @@ void look(void)
         switch(cmd)
         {
             case LOOK_COMMAND_STOP:
+            {
                 looking = false;
                 break;
+            }
             case LOOK_COMMAND_MOVE_UP:
             case LOOK_COMMAND_MOVE_DOWN:
             case LOOK_COMMAND_MOVE_LEFT:
@@ -153,8 +155,8 @@ void look(void)
             case LOOK_COMMAND_MOVE_LEFT_DOWN:
             case LOOK_COMMAND_MOVE_RIGHT_UP:
             case LOOK_COMMAND_MOVE_RIGHT_DOWN:
-                {
-                    _look_unset_visuals(you->mon, loc);
+            {
+                    _look_unset_visuals(g_you->mon, loc);
 
                     int dx = 0;
                     int dy = 0;
@@ -176,7 +178,7 @@ void look(void)
                         ++dx;
                     }
 
-                    struct MapCell* cell = map_get_cell_by_world_coord(cmap, x + dx, y + dy);
+                    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x + dx, y + dy);
                     if(!cell || !map_cell_is_in_bounds(cell, x + dx, y + dy))
                     {
                         break;
@@ -184,13 +186,15 @@ void look(void)
 
                     x += dx;
                     y += dy;
-                }
+            }
             default:
+            {
                 break;
+            }
         }
     }
 
-    _look_unset_visuals(you->mon, loc);
+    _look_unset_visuals(g_you->mon, loc);
     display_msg_nolog("Stopped looking, back to dungeoneering");
     clear_msgs();
     flush_msg_buffer();

@@ -23,8 +23,7 @@ int g_classes_count = 1;
  */
 int get_class_colour(const struct Class* cls)
 {
-    if(!cls)
-        return CLR_DEFAULT;
+    if(!cls) return CLR_DEFAULT;
 
     return CLR_WHITE;
 } 
@@ -36,9 +35,7 @@ int get_class_idx(char cls)
 {
     switch(cls)
     {
-        case 'f':
-            return CLS_FIGHTER_IDX;
-        default:
-            return -1;
+        case 'f': return CLS_FIGHTER_IDX;
+        default:  return CLS_INVALID_IDX;
     }
 }

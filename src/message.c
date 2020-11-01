@@ -37,7 +37,9 @@ void _flush_and_prompt(void)
 void display_msg(bool should_log, const char* msg)
 {
     if(should_log)
-        log_msg(MSGHIST, msg);
+    {
+        log_msg(LOG_MSGHIST, msg);
+    }
 
     int msgsize = strlen(msg);
     bool handled = false;
@@ -65,7 +67,9 @@ void display_msg(bool should_log, const char* msg)
             // by splitting it up and prompting user to input to show
             int idx = (MSGBOX_W - 1) - msgbuf_size - 1;
             while(!isspace(msg[idx]) && idx >= 0)
+            {
                 idx--;
+            }
 
             if(idx == -1) // This string is somehow larger than the display area
             {
@@ -91,7 +95,10 @@ void display_msg(bool should_log, const char* msg)
 
             // Don't add a leading space to the message
             if(msgbuf_size > 0)
+            {
                 strcat(msgbuf, " ");
+            }
+
             strcat(msgbuf, substr);
             msgbuf_size = idx;
             msgsize -= idx;

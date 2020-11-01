@@ -1,14 +1,14 @@
 #ifndef YUN_SYMBOL_H
 #define YUN_SYMBOL_H
 
-#include "defs.h"
+#include "colour.h"
 #include "term.h"
 
 struct Symbol
 {
     char sym;
-    Colour fg;
-    Colour bg;
+    struct Colour fg;
+    struct Colour bg;
     unsigned int attr;
     unsigned int base_fg_idx;
     unsigned int base_bg_idx;

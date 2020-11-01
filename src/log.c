@@ -27,14 +27,18 @@ void log_msg(int logtype, const char* msg)
 {
     switch(logtype)
     {
-        case MSGHIST:
+        case LOG_MSGHIST:
+        {
             fprintf(msghist_file, "%s\n", msg);
             fflush(msghist_file);
             break;
-        case DEBUG:
+        }
+        case LOG_DEBUG:
+        {
             fprintf(debug_file, "%s\n", msg);
             fflush(debug_file);
             break;
+        }
     }
 }
 
@@ -58,7 +62,7 @@ void log_format_msg(int logtype, const char* format, ...)
  */
 void log_scheck_fail(const char* msg)
 {
-    log_format_msg(DEBUG, "[SANITY CHECK FAILURE] %s", msg);
+    log_format_msg(LOG_DEBUG, "[SANITY CHECK FAILURE] %s", msg);
 }
 
 /**

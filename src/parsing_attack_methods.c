@@ -36,7 +36,7 @@ parsing_callback(_parse_attack_methods_finalise)
     List* attack_methods_data = parser_get_userdata(parser);
     ListNode* node;
 
-    log_format_msg(DEBUG, "Parsed attack types count: %d", attack_methods_data->count);
+    log_format_msg(LOG_DEBUG, "Parsed attack types count: %d", attack_methods_data->count);
 
     g_attack_methods = malloc(sizeof(struct AttackMethod) * attack_methods_data->count);
     g_attack_methods_count = attack_methods_data->count;

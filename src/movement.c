@@ -20,7 +20,7 @@ static inline bool _move_is_pathable(struct MapCell* cell, int destx, int desty,
 
 bool move_is_pathable(int destx, int desty, MonAttrMoveFlags move_flags)
 {
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, destx, desty); 
+    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, destx, desty);
     if(!cell)
     {
         return false;
@@ -36,7 +36,7 @@ static inline bool _move_is_valid(struct MapCell* cell, int destx, int desty, Mo
 
 bool move_is_valid(int destx, int desty, MonAttrMoveFlags move_flags)
 {
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, destx, desty);
+    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, destx, desty);
     if(!cell)
     {
         return false;
@@ -47,8 +47,8 @@ bool move_is_valid(int destx, int desty, MonAttrMoveFlags move_flags)
 
 bool move_mon(struct Mon* mon, int newx, int newy)
 {
-    struct MapCell* old_cell = map_get_cell_by_world_coord(cmap, mon->x, mon->y);
-    struct MapCell* new_cell = map_get_cell_by_world_coord(cmap, newx, newy);
+    struct MapCell* old_cell = map_get_cell_by_world_coord(g_cmap, mon->x, mon->y);
+    struct MapCell* new_cell = map_get_cell_by_world_coord(g_cmap, newx, newy);
 
     if(!_move_is_valid(new_cell, newx, newy, mon->move_flags))
     {

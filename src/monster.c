@@ -83,7 +83,7 @@ void mon_chk_dead(struct Mon* mon)
     {
         display_fmsg_log("The %s was slain.", mon->type->name);
 
-        map_cell_rm_mon(map_get_cell_by_world_coord(cmap, mon->x, mon->y), mon);
+        map_cell_rm_mon(map_get_cell_by_world_coord(g_cmap, mon->x, mon->y), mon);
         mon_free(mon);
     }
 }
@@ -94,14 +94,16 @@ void mon_chk_dead(struct Mon* mon)
 const struct Weapon* mon_get_weapon(struct Mon* mon)
 {
     if(mon->equipment->main_hand)
+    {
         return mon->equipment->main_hand;
+    }
+
     return NULL;
 }
 
 bool mon_can_see(struct Mon* mon, int x, int y)
 {
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, mon->x, mon->y);
-    struct MapLocation* loc = map_cell_get_location(cell, mon->x, mon->y);
+    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, mon->x, mon->y);
 
     if(geom_point_in_circle(x, y, mon->x, mon->y, mon->type->vision_radius))
     {
@@ -111,14 +113,12 @@ bool mon_can_see(struct Mon* mon, int x, int y)
 
         while(geom_gen_line_increment(mon->x, mon->y, x, y, &_x, &_y, &err))
         {
-            cell = map_get_cell_by_world_coord(cmap, _x, _y);
-            loc = map_cell_get_location(cell, _x, _y);
+            cell = map_get_cell_by_world_coord(g_cmap, _x, _y);
+            struct MapLocation* loc = map_cell_get_location(cell, _x, _y);
 
             if(loc_blocks_sight(loc))
             {
-                if(_x == x && _y == y)
-                    return true;
-                return false;
+                return (_x == x) && (_y == y);
             }
         }
 
@@ -133,12 +133,12 @@ bool mon_can_see(struct Mon* mon, int x, int y)
  */
 void update_mons(void)
 {
-    ListNode* cell_node;
-    list_for_each(&cmap->cell_list, cell_node)
+    ListNode* cell_node = NULL;
+    list_for_each(&g_cmap->cell_list, cell_node)
     {
         struct MapCell* cell = cell_node->data;
 
-        ListNode* node;
+        ListNode* node = NULL;
         list_for_each(&cell->mon_list, node)
         {
             update_mon_ai(node->data);

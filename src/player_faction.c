@@ -13,7 +13,7 @@ char* factions[] =
  */
 const char* faction_get_name_by_idx(int idx)
 {
-    if(idx >= 0 && idx < 4)
-        return factions[idx];
+    if(idx == 0) return factions[idx];
+
     return "unknown";
 }

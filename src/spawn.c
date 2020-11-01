@@ -24,7 +24,7 @@ enum SpawnType spawn_type_from_string(const char* str)
 bool spawn_mon(const char* id, int wx, int wy)
 {
     // Check for valid position
-    struct MapCell* cell = map_get_cell_by_world_coord(cmap, wx, wy);
+    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, wx, wy);
     if(map_cell_has_mon(cell, wx, wy))
     {
         return false;
@@ -47,10 +47,14 @@ void _spawn_console_command_execute(const struct CommandParams* params)
     switch(type)
     {
         case SPAWN_TYPE_MON:
+        {
             spawn_mon(id, x, y);
             break;
+        }
         case SPAWN_TYPE_UNKNOWN:
+        {
             break;
+        }
     }
 }
 

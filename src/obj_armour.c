@@ -23,10 +23,14 @@ struct Armour* armour_new(struct ArmourBase* base)
     switch(base->class)
     {
         case ARMOUR_CLASS_NATURAL:
+        {
             break;
+        }
         case ARMOUR_CLASS_NONE:
-            log_msg(DEBUG, "Armour created with ARMOUR_CLASS_NONE");
+        {
+            log_msg(LOG_DEBUG, "Armour created with ARMOUR_CLASS_NONE");
             break;
+        }
     }
 
     armour->obj->objtype_ptr.armour = armour;

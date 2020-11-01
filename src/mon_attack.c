@@ -24,36 +24,36 @@ const int c_attack_power_divisor  = 12;
 const int c_armour_value_divisor  = 50;
 const int c_armour_value_log_base = 5;
 
-typedef enum _AttackResult
+enum AttackResult
 {
     AR_HIT,
     AR_MISS
-} AttackResult;
+};
 
 /**
  * Check to see if attack hits
  *
  * Takes into account mon dodge/block etc not just hit
  */
-static AttackResult _get_attack_result(struct Mon* attacker, struct Mon* defender)
+static enum AttackResult _get_attack_result(struct Mon* attacker, struct Mon* defender)
 {
-    log_format_msg(DEBUG, ">>> %s(%d) -> %s(%d)", attacker->type->name, attacker->stats.hp, defender->type->name, defender->stats.hp);
+    log_format_msg(LOG_DEBUG, ">>> %s(%d) -> %s(%d)", attacker->type->name, attacker->stats.hp, defender->type->name, defender->stats.hp);
 
     int roll = roll_d100();
 
-    log_format_msg(DEBUG, "roll to hit: %d", roll);
+    log_format_msg(LOG_DEBUG, "roll to hit: %d", roll);
 
     // Check for certain hit or miss
     if(roll < c_certain_miss_threshold)
     {
-        log_msg(DEBUG, "miss");
-        log_msg(DEBUG, "<<<");
+        log_msg(LOG_DEBUG, "miss");
+        log_msg(LOG_DEBUG, "<<<");
         return AR_MISS;
     }
     else
     {
-        log_msg(DEBUG, "hit");
-        log_msg(DEBUG, "<<<");
+        log_msg(LOG_DEBUG, "hit");
+        log_msg(LOG_DEBUG, "<<<");
         return AR_HIT;
     }
 }
@@ -144,32 +144,36 @@ static inline void _display_miss_text(struct Mon* attacker, struct Mon* defender
 
 bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
 {
-    AttackResult result = _get_attack_result(attacker, defender);
+    enum AttackResult result = _get_attack_result(attacker, defender);
 
     int damage = 0;
 
     switch(result)
     {
         case AR_HIT:
-            {
-                damage = _attack_damage(attacker, defender);
-                _display_hit_text(attacker, defender);
-            }
+        {
+            damage = _attack_damage(attacker, defender);
+            _display_hit_text(attacker, defender);
             break;
+        }
 
         case AR_MISS:
-            {
-                _display_miss_text(attacker, defender);
-            }
+        {
+            _display_miss_text(attacker, defender);
             break;
+        }
     }
 
     defender->stats.hp -= damage;
 
     if(mon_is_player(defender))
+    {
         player_chk_dead();
+    }
     else
+    {
         mon_chk_dead(defender);
+    }
 
     return true;
 }
@@ -179,7 +183,9 @@ struct AttackMethod* attack_method_look_up_by_id(const char* id)
     for(int idx = 0; idx < g_attack_methods_count; ++idx)
     {
         if(strcmp(id, g_attack_methods[idx].id) == 0)
+        {
             return &g_attack_methods[idx];
+        }
     }
 
     return NULL;

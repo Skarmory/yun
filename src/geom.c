@@ -45,7 +45,10 @@ static inline void _line_increment(int* x, int* y, float* err, float dx, float d
 
 bool geom_gen_line_increment(int x0, int y0, int x1, int y1, int* x, int* y, float* err)
 {
-    if(*x == x1 && *y == y1) return false;
+    if(*x == x1 && *y == y1)
+    {
+        return false;
+    }
 
     float dx   = (float)x1 - (float)x0;
     float dy   = (float)y1 - (float)y0;

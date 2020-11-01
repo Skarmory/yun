@@ -31,45 +31,45 @@ static inline bool _init_symbols(void)
 
 static inline bool _init_gamedata(void)
 {
-    log_msg(DEBUG, "parsing attack types");
+    log_msg(LOG_DEBUG, "parsing attack types");
     if(parse_attack_methods() != PARSER_OK)
     {
-        log_msg(DEBUG, "parsing failed");
+        log_msg(LOG_DEBUG, "parsing failed");
         return false;
     }
-    log_msg(DEBUG, "parsing complete");
+    log_msg(LOG_DEBUG, "parsing complete");
 
-    log_msg(DEBUG, "parsing armours");
+    log_msg(LOG_DEBUG, "parsing armours");
     if(parse_armours() != PARSER_OK)
     {
-        log_msg(DEBUG, "parsing failed");
+        log_msg(LOG_DEBUG, "parsing failed");
         return false;
     }
-    log_msg(DEBUG, "parsing complete");
+    log_msg(LOG_DEBUG, "parsing complete");
 
-    log_msg(DEBUG, "parsing weapons");
+    log_msg(LOG_DEBUG, "parsing weapons");
     if(parse_weapons() != PARSER_OK)
     {
-        log_msg(DEBUG, "parsing failed");
+        log_msg(LOG_DEBUG, "parsing failed");
         return false;
     }
-    log_msg(DEBUG, "parsing complete");
+    log_msg(LOG_DEBUG, "parsing complete");
 
-    log_msg(DEBUG, "parsing mon types");
+    log_msg(LOG_DEBUG, "parsing mon types");
     if(parse_mon_types() != PARSER_OK)
     {
-        log_msg(DEBUG, "parsing failed");
+        log_msg(LOG_DEBUG, "parsing failed");
         return false;
     }
-    log_msg(DEBUG, "parsing complete");
+    log_msg(LOG_DEBUG, "parsing complete");
 
-    log_msg(DEBUG, "parsing features");
+    log_msg(LOG_DEBUG, "parsing features");
     if(parse_features() != PARSER_OK)
     {
-        log_msg(DEBUG, "parsing failed");
+        log_msg(LOG_DEBUG, "parsing failed");
         return false;
     }
-    log_msg(DEBUG, "parsing complete");
+    log_msg(LOG_DEBUG, "parsing complete");
 
     return true;
 }
@@ -114,9 +114,14 @@ bool init_yun(void)
     g_tasker = tasker_new();
 
     if(!_init_symbols())
+    {
         return false;
+    }
+
     if(!_init_gamedata())
+    {
         return false;
+    }
 
     init_console_commands();
 

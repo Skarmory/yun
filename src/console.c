@@ -13,7 +13,7 @@
 
 #define INPUT_BUFFER_LENGTH MSGBOX_W
 
-static void _parse_input(char* input)
+static void _parse_and_execute(char* input)
 {
     // Get console command name first
     char* tok = strtok(input, " ");
@@ -37,7 +37,8 @@ static void _parse_input(char* input)
         tok = strtok(NULL, " ");
         if(!tok)
         {
-            log_format_msg(DEBUG, "ConsoleCommand: Too few arguments specified. Expected %d. Found: %d.", params_count, i+1);
+            // Too few args
+            log_format_msg(LOG_DEBUG, "ConsoleCommand: Too few arguments specified. Expected %d. Found: %d.", params_count, i+1);
             command_params_free(params);
             return;
         }
@@ -81,26 +82,41 @@ static void _parse_input(char* input)
         command_params_add_param(params, &actual);
     }
 
+    tok = strtok(NULL, " "); // Should make tok null if the correct number of args
+
+    if(tok != NULL)
+    {
+        // Too many args
+        int count = params_count + 1;
+        while(tok != NULL)
+        {
+            tok = strtok(NULL, " ");
+            ++count;
+        }
+
+        log_format_msg(LOG_DEBUG, "ConsoleCommand: Too many arguments specified. Expected %d. Found: %d.", params_count, count);
+        command_params_free(params);
+        return;
+    }
+
     console_command_execute(cmd, params);
     command_params_free(params);
 }
 
 void console(void)
 {
-    bool should_quit = false;
+    char in_command[INPUT_BUFFER_LENGTH];
 
     do
     {
-        char in_command[INPUT_BUFFER_LENGTH];
         memset(in_command, '\0', INPUT_BUFFER_LENGTH);
-        should_quit = console_input(in_command);
 
-        if(should_quit)
+        if(console_input(in_command))
         {
             return;
         }
 
-        _parse_input(in_command);
+        _parse_and_execute(in_command);
         display_main_screen();
     }
     while(true);
