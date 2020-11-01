@@ -101,11 +101,6 @@ static void _thread_free(struct Thread* thread)
 {
     _thread_stop(thread);
 
-    while(thread->state != THREAD_STATE_STOPPED)
-    {
-        // Wait for thread to stop
-    }
-
     thrd_join(thread->thread, NULL);
     cnd_destroy(&thread->signal);
     mtx_destroy(&thread->lock);
@@ -204,8 +199,10 @@ static int _thread_update(struct Thread* thread)
         mtx_unlock(&thread->lock);
     }
 
+    log_format_msg(DEBUG, "Thread %d exited", thread->id);
+    thrd_exit(0);
     thread->state = THREAD_STATE_STOPPED;
-    return 1;
+    return 0;
 }
 
 /**
@@ -271,7 +268,6 @@ static int _tasker_update(struct Tasker* tasker)
 
         if(tasker->state == TASKER_STATE_STOPPING)
         {
-            log_msg(DEBUG, "Tasker thread breaking loop");
             mtx_unlock(&tasker->lock);
             break;
         }
@@ -327,7 +323,6 @@ void tasker_free(struct Tasker* tasker)
     tasker->state = TASKER_STATE_STOPPING;
     while(tasker->state != TASKER_STATE_STOPPED)
     {
-        log_msg(DEBUG, "Trying to stop tasker");
         cnd_signal(&tasker->signal);
     }
 
