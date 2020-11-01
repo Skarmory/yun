@@ -1,25 +1,17 @@
-#include "colour.h"
 #include "gameplay.h"
-#include "geom.h"
 #include "globals.h"
 #include "init.h"
+#include "list.h"
 #include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_gen.h"
-#include "map_location.h"
 #include "map_room.h"
 #include "message.h"
 #include "monster.h"
-#include "mon_ai.h"
-#include "mon_type.h"
-#include "obj_armour.h"
 #include "obj_weapon.h"
 #include "player.h"
-#include "player_class.h"
-#include "player_faction.h"
 #include "spawn.h"
-#include "symbol.h"
 #include "term.h"
 #include "ui.h"
 #include "ui_menu.h"
@@ -108,6 +100,9 @@ void main_loop(void)
 
 int main(int argc, char** argv)
 {
+    (void)argc;
+    (void)argv;
+
     if(!init_yun())
     {
         printf("Initialisation failed. Check debug log.");
