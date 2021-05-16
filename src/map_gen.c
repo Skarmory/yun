@@ -110,9 +110,7 @@ void gen_rooms(struct MapCell* cell)
 int gen_rooms_task_func(void* state)
 {
     struct MapCellGenState* gen_state = state;
-
     gen_rooms(gen_state->cell);
-
     return TASK_STATUS_SUCCESS;
 }
 
@@ -354,7 +352,7 @@ void gen_map(struct Map* map, enum MapType type)
 
     list_for_each(&map->cell_list, node)
     {
-        map_gen_maze(node->data);
+        map_gen_maze_async(node->data);
     }
     tasker_sync(g_tasker);
     tasker_integrate(g_tasker);

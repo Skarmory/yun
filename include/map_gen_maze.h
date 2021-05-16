@@ -5,5 +5,6 @@ struct MapCell;
 
 /* Generate the maze of corridors, adds entryways into rooms, and fills in the deadends */
 void map_gen_maze(struct MapCell* cell);
+void map_gen_maze_async(struct MapCell* cell);
 
 #endif

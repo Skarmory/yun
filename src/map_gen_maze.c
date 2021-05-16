@@ -452,7 +452,7 @@ void _back_fill_deadends(struct MapCell* cell, struct MapLocation* loc)
 }
 
 
-static void _gen_maze_async(struct MapCell* cell)
+void map_gen_maze(struct MapCell* cell)
 {
     struct MapLocation* tmp;
 
@@ -474,12 +474,11 @@ static void _gen_maze_async(struct MapCell* cell)
 int gen_maze_task_func(void* state)
 {
     struct MapCellGenState* gen_state = state;
-    _gen_maze_async(gen_state->cell);
-
+    map_gen_maze(gen_state->cell);
     return TASK_STATUS_SUCCESS;
 }
 
-void map_gen_maze(struct MapCell* cell)
+void map_gen_maze_async(struct MapCell* cell)
 {
     struct MapCellGenState state;
     state.cell = cell;
