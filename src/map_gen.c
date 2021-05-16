@@ -21,21 +21,14 @@
 // TODO: Check over the maze gen algorithm for performance improvements
 // TODO: Ensure that rooms are always connected
 
-struct MapCellGenState
-{
-    struct MapCell* cell;
-    List tmp_list;
-};
-
 // FDECL
-void                gen_room(struct MapCell* cell);
-void                gen_rooms(struct MapCell* cell);
-int                 gen_rooms_task_func(void* state);
-static void         _gen_open_area(struct MapCell* cell);
-static void         _gen_rooms_async(struct MapCell* cell);
-void                gen_map(struct Map*, enum MapType type);
+static void _gen_room(struct MapCell* cell);
+static void _gen_rooms(struct MapCell* cell);
+static int  _gen_rooms_task_func(void* state);
+static void _gen_open_area(struct MapCell* cell);
+static void _gen_rooms_async(struct MapCell* cell);
 
-void gen_room(struct MapCell* cell)
+static void _gen_room(struct MapCell* cell)
 {
     int w = random_int(4, 10);
     int h = random_int(4, 8);
@@ -97,20 +90,20 @@ void gen_room(struct MapCell* cell)
 }
 
 /* Draws a map by drawing square rooms at random locations, and with random dimensions. */
-void gen_rooms(struct MapCell* cell)
+static void _gen_rooms(struct MapCell* cell)
 {
     // Place as many rooms as we can, limited to 200 attempts
     int attempts = 200;
     for(int i = 0; i < attempts; i++)
     {
-        gen_room(cell);
+        _gen_room(cell);
     }
 }
 
-int gen_rooms_task_func(void* state)
+static int _gen_rooms_task_func(void* state)
 {
-    struct MapCellGenState* gen_state = state;
-    gen_rooms(gen_state->cell);
+    struct MapCell* cell = *(struct MapCell**)state;
+    _gen_rooms(cell);
     return TASK_STATUS_SUCCESS;
 }
 
@@ -131,7 +124,7 @@ static void _gen_open_area(struct MapCell* cell)
     room->w = w;
     room->h = h;
 
-    list_add(&cell->room_list, room); 
+    list_add(&cell->room_list, room);
 
     // Fill in with floor
     for(int tmpx = 0; tmpx < w-1; tmpx++)
@@ -144,26 +137,9 @@ static void _gen_open_area(struct MapCell* cell)
     }
 }
 
-/* Call this to generate a map that contains rooms and a load of connecting corridors */
-void gen_map_cell(struct MapCell* cell, enum MapType type)
-{
-    if(type == MAPTYPE_DUNGEON)
-    {
-        gen_rooms(cell);
-        //gen_maze(cell);
-    }
-    else
-    {
-        _gen_open_area(cell);
-    }
-}
-
 static void _gen_rooms_async(struct MapCell* cell)
 {
-    struct MapCellGenState state;
-    state.cell = cell;
-
-    struct Task* gen_rooms_task = task_new("Gen rooms", gen_rooms_task_func, NULL, &state, sizeof(struct MapCellGenState));
+    struct Task* gen_rooms_task = task_new("Gen rooms", _gen_rooms_task_func, NULL, &cell, sizeof(cell));
     tasker_add_task(g_tasker, gen_rooms_task);
 
     log_msg(LOG_DEBUG, "Added gen rooms task.");
@@ -320,18 +296,8 @@ static void _connect_cells(struct Map* map)
     }
 }
 
-
-void gen_map(struct Map* map, enum MapType type)
+static void _gen_map_dungeon(struct Map* map)
 {
-    ListNode* node = NULL;
-
-    for(int x = 0; x < map->width; ++x)
-    for(int y = 0; y < map->height; ++y)
-    {
-        struct MapCell* cell = map_cell_new(x, y);
-        list_add(&map->cell_list, cell);
-    }
-
     int loading_progress_x = (screen_cols/2) - 9;
     int loading_progress_y = screen_rows/8;
 
@@ -339,6 +305,7 @@ void gen_map(struct Map* map, enum MapType type)
     term_draw_text(loading_progress_x, loading_progress_y + 1, NULL, NULL, 0, "Creating rooms...");
     term_refresh();
 
+    ListNode* node = NULL;
     list_for_each(&map->cell_list, node)
     {
         _gen_rooms_async(node->data);
@@ -361,12 +328,44 @@ void gen_map(struct Map* map, enum MapType type)
     term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells...");
     term_refresh();
 
-    if(type == MAPTYPE_DUNGEON)
-        _connect_cells(map);
+    _connect_cells(map);
 
     term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells... Done!");
     term_draw_text(loading_progress_x, loading_progress_y + 5, NULL, NULL, 0, "Entering Yun...");
     term_refresh();
     term_wait_on_input();
     term_clear();
+}
+
+static void _gen_map_open(struct Map* map)
+{
+    ListNode* node = NULL;
+    list_for_each(&map->cell_list, node)
+    {
+        _gen_open_area(node->data);
+    }
+}
+
+void gen_map(struct Map* map, enum MapType type)
+{
+    for(int x = 0; x < map->width; ++x)
+    for(int y = 0; y < map->height; ++y)
+    {
+        struct MapCell* cell = map_cell_new(x, y);
+        list_add(&map->cell_list, cell);
+    }
+
+    switch(type)
+    {
+        case MAPTYPE_DUNGEON:
+        {
+            _gen_map_dungeon(map);
+            break;
+        }
+        case MAPTYPE_OPEN:
+        {
+            _gen_map_open(map);
+            break;
+        }
+    }
 }

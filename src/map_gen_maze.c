@@ -14,12 +14,6 @@
 #include <stddef.h>
 #include <string.h>
 
-struct MapCellGenState
-{
-    struct MapCell* cell;
-    List tmp_list;
-};
-
 static void _make_solid_rock(struct MapLocation* loc)
 {
     loc->feature = feature_look_up_by_id("sroc");
@@ -473,18 +467,14 @@ void map_gen_maze(struct MapCell* cell)
 
 int gen_maze_task_func(void* state)
 {
-    struct MapCellGenState* gen_state = state;
-    map_gen_maze(gen_state->cell);
+    struct MapCell* cell = *(struct MapCell**)state;
+    map_gen_maze(cell);
     return TASK_STATUS_SUCCESS;
 }
 
 void map_gen_maze_async(struct MapCell* cell)
 {
-    struct MapCellGenState state;
-    state.cell = cell;
-    list_init(&state.tmp_list);
-
-    struct Task* task = task_new("Gen maze", gen_maze_task_func, NULL, &state, sizeof(state));
+    struct Task* task = task_new("Gen maze", gen_maze_task_func, NULL, &cell, sizeof(cell));
     tasker_add_task(g_tasker, task);
 
     log_msg(LOG_DEBUG, "Added gen maze task.");
