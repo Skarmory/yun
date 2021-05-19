@@ -2,7 +2,6 @@
 
 #include "colour.h"
 #include "feature.h"
-#include "input_keycodes.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
@@ -20,6 +19,7 @@
 enum LookCommand
 {
     LOOK_COMMAND_STOP            = KEYCODE_ESC,
+    LOOK_COMMAND_CONFIRM         = KEYCODE_ENTER,
     LOOK_COMMAND_MOVE_LEFT       = KEYCODE_h,
     LOOK_COMMAND_MOVE_RIGHT      = KEYCODE_l,
     LOOK_COMMAND_MOVE_UP         = KEYCODE_k,
@@ -127,16 +127,17 @@ void _look_unset_visuals(struct Mon* mon, struct MapLocation* loc)
     term_draw_symbol(sx, sy, &sym.fg, &sym.bg, A_NONE_BIT, sym.sym);
 }
 
-struct MapLocation* cursor_free_move(struct MapLocation* loc)
+enum KeyCode cursor_free_move(struct MapLocation* in_loc, struct MapLocation** out_loc)
 {
     while(true)
     {
         enum LookCommand cmd = get_key();
         switch(cmd)
         {
+            case LOOK_COMMAND_CONFIRM:
             case LOOK_COMMAND_STOP:
             {
-                return NULL;
+                return cmd;
             }
             case LOOK_COMMAND_MOVE_UP:
             case LOOK_COMMAND_MOVE_DOWN:
@@ -167,8 +168,8 @@ struct MapLocation* cursor_free_move(struct MapLocation* loc)
                     ++dx;
                 }
 
-                const int x = loc->x + dx;
-                const int y = loc->y + dy;
+                const int x = in_loc->x + dx;
+                const int y = in_loc->y + dy;
 
                 struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x, y);
                 if(!cell || !map_cell_is_in_bounds(cell, x, y))
@@ -176,7 +177,8 @@ struct MapLocation* cursor_free_move(struct MapLocation* loc)
                     break;
                 }
 
-                return map_cell_get_location(map_get_cell_by_world_coord(g_cmap, x, y), x, y);
+                *out_loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, x, y), x, y);
+                return cmd;
             }
             default:
             {
@@ -185,7 +187,7 @@ struct MapLocation* cursor_free_move(struct MapLocation* loc)
         }
     }
 
-    return NULL;
+    return LOOK_COMMAND_STOP;
 }
 
 void look(void)
@@ -195,9 +197,7 @@ void look(void)
     flush_msg_buffer();
     term_wait_on_input(); // Just wait for player input so they can see the message
 
-    int x = g_you->mon->x;
-    int y = g_you->mon->y;
-    struct MapLocation* loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, x, y), x, y);
+    struct MapLocation* loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y), g_you->mon->x, g_you->mon->y);
     struct Mon* mon = g_you->mon;
 
     bool looking = true;
@@ -210,10 +210,11 @@ void look(void)
         clear_msgs();
         flush_msg_buffer();
 
-        struct MapLocation* next = cursor_free_move(loc);
+        struct MapLocation* next = NULL;
+        enum LookCommand cmd = cursor_free_move(loc, &next);
         _look_unset_visuals(mon, loc);
 
-        if(!next)
+        if(cmd == LOOK_COMMAND_STOP || cmd == LOOK_COMMAND_CONFIRM)
         {
             looking = false;
         }
