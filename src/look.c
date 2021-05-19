@@ -1,4 +1,7 @@
+#include "look.h"
+
 #include "colour.h"
+#include "feature.h"
 #include "input_keycodes.h"
 #include "map.h"
 #include "map_cell.h"
@@ -94,6 +97,11 @@ struct Symbol _look_get_symbol(struct MapLocation* loc, struct Mon* mon)
         return *((struct Object*)list_peek_head(&loc->obj_list))->symbol;
     }
 
+    if(loc->feature)
+    {
+        return *loc->feature->symbol;
+    }
+
     return loc->symbol;
 }
 
@@ -119,33 +127,16 @@ void _look_unset_visuals(struct Mon* mon, struct MapLocation* loc)
     term_draw_symbol(sx, sy, &sym.fg, &sym.bg, A_NONE_BIT, sym.sym);
 }
 
-void look(void)
+struct MapLocation* cursor_free_move(struct MapLocation* loc)
 {
-    int x = g_you->mon->x;
-    int y = g_you->mon->y;
-    struct MapLocation* loc = NULL;
-
-    display_msg_nolog("Move cursor over a location, press esc to stop looking.");
-    clear_msgs();
-    flush_msg_buffer();
-    term_wait_on_input(); // Just wait for player input so they can see the message
-
-    bool looking = true;
-    while(looking)
+    while(true)
     {
-        loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, x, y), x, y);
-        _look_set_visuals(g_you->mon, loc);
-        _look_get_loc_info(g_you->mon, loc);
-        clear_msgs();
-        flush_msg_buffer();
-
         enum LookCommand cmd = get_key();
         switch(cmd)
         {
             case LOOK_COMMAND_STOP:
             {
-                looking = false;
-                break;
+                return NULL;
             }
             case LOOK_COMMAND_MOVE_UP:
             case LOOK_COMMAND_MOVE_DOWN:
@@ -156,36 +147,36 @@ void look(void)
             case LOOK_COMMAND_MOVE_RIGHT_UP:
             case LOOK_COMMAND_MOVE_RIGHT_DOWN:
             {
-                    _look_unset_visuals(g_you->mon, loc);
+                int dx = 0;
+                int dy = 0;
+                if(cmd == LOOK_COMMAND_MOVE_UP || cmd == LOOK_COMMAND_MOVE_LEFT_UP || cmd == LOOK_COMMAND_MOVE_RIGHT_UP)
+                {
+                    --dy;
+                }
+                else if(cmd == LOOK_COMMAND_MOVE_DOWN || cmd == LOOK_COMMAND_MOVE_LEFT_DOWN || cmd == LOOK_COMMAND_MOVE_RIGHT_DOWN)
+                {
+                    ++dy;
+                }
 
-                    int dx = 0;
-                    int dy = 0;
-                    if(cmd == LOOK_COMMAND_MOVE_UP || cmd == LOOK_COMMAND_MOVE_LEFT_UP || cmd == LOOK_COMMAND_MOVE_RIGHT_UP)
-                    {
-                        --dy;
-                    }
-                    else if(cmd == LOOK_COMMAND_MOVE_DOWN || cmd == LOOK_COMMAND_MOVE_LEFT_DOWN || cmd == LOOK_COMMAND_MOVE_RIGHT_DOWN)
-                    {
-                        ++dy;
-                    }
+                if(cmd == LOOK_COMMAND_MOVE_LEFT || cmd == LOOK_COMMAND_MOVE_LEFT_UP || cmd == LOOK_COMMAND_MOVE_LEFT_DOWN)
+                {
+                    --dx;
+                }
+                else if(cmd == LOOK_COMMAND_MOVE_RIGHT || cmd == LOOK_COMMAND_MOVE_RIGHT_UP || cmd == LOOK_COMMAND_MOVE_RIGHT_DOWN)
+                {
+                    ++dx;
+                }
 
-                    if(cmd == LOOK_COMMAND_MOVE_LEFT || cmd == LOOK_COMMAND_MOVE_LEFT_UP || cmd == LOOK_COMMAND_MOVE_LEFT_DOWN)
-                    {
-                        --dx;
-                    }
-                    else if(cmd == LOOK_COMMAND_MOVE_RIGHT || cmd == LOOK_COMMAND_MOVE_RIGHT_UP || cmd == LOOK_COMMAND_MOVE_RIGHT_DOWN)
-                    {
-                        ++dx;
-                    }
+                const int x = loc->x + dx;
+                const int y = loc->y + dy;
 
-                    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x + dx, y + dy);
-                    if(!cell || !map_cell_is_in_bounds(cell, x + dx, y + dy))
-                    {
-                        break;
-                    }
+                struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x, y);
+                if(!cell || !map_cell_is_in_bounds(cell, x, y))
+                {
+                    break;
+                }
 
-                    x += dx;
-                    y += dy;
+                return map_cell_get_location(map_get_cell_by_world_coord(g_cmap, x, y), x, y);
             }
             default:
             {
@@ -194,7 +185,42 @@ void look(void)
         }
     }
 
-    _look_unset_visuals(g_you->mon, loc);
+    return NULL;
+}
+
+void look(void)
+{
+    display_msg_nolog("Move cursor over a location, press esc to stop looking.");
+    clear_msgs();
+    flush_msg_buffer();
+    term_wait_on_input(); // Just wait for player input so they can see the message
+
+    int x = g_you->mon->x;
+    int y = g_you->mon->y;
+    struct MapLocation* loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, x, y), x, y);
+    struct Mon* mon = g_you->mon;
+
+    bool looking = true;
+    while(looking)
+    {
+        _look_set_visuals(mon, loc);
+        _look_get_loc_info(mon, loc);
+
+        term_refresh();
+        clear_msgs();
+        flush_msg_buffer();
+
+        struct MapLocation* next = cursor_free_move(loc);
+        _look_unset_visuals(mon, loc);
+
+        if(!next)
+        {
+            looking = false;
+        }
+
+        loc = next;
+    }
+
     display_msg_nolog("Stopped looking, back to dungeoneering");
     clear_msgs();
     flush_msg_buffer();
