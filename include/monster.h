@@ -31,7 +31,7 @@ bool mon_dual_wielding(struct Mon* mon);
 bool mon_shield_wielding(struct Mon* mon);
 void mon_chk_dead(struct Mon* mon);
 const struct Weapon* mon_get_weapon(struct Mon* mon);
-bool mon_can_see(struct Mon* mon, int x, int y);
+bool mon_can_see(const struct Mon* mon, int x, int y);
 
 void update_mons(void);
 

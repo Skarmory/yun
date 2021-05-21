@@ -101,7 +101,7 @@ const struct Weapon* mon_get_weapon(struct Mon* mon)
     return NULL;
 }
 
-bool mon_can_see(struct Mon* mon, int x, int y)
+bool mon_can_see(const struct Mon* mon, int x, int y)
 {
     struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, mon->x, mon->y);
 
