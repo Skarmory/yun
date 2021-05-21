@@ -49,3 +49,10 @@ struct Colour g_colours[] =
 
     COLOUR(64, 64, 64) // fog of war
 };
+
+bool colour_equal(struct Colour* c1, struct Colour* c2)
+{
+    return c1->r == c2->r &&
+           c1->g == c2->g &&
+           c1->b == c2->b;
+}
