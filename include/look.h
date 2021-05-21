@@ -2,6 +2,7 @@
 #define YUN_LOOK_H
 
 #include "input_keycodes.h"
+#include "symbol.h"
 
 struct MapLocation;
 struct Mon;
@@ -19,6 +20,7 @@ struct Mon;
  */
 enum KeyCode cursor_free_move(struct MapLocation* restrict in_loc, struct MapLocation** restrict out_loc);
 
+struct Symbol look_get_symbol(const struct MapLocation* loc, const struct Mon* looker);
 void look(void);
 
 #endif

@@ -2,6 +2,7 @@
 
 #include "colour.h"
 #include "feature.h"
+#include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
@@ -65,9 +66,9 @@ void _look_get_loc_info(struct Mon* mon, struct MapLocation* loc)
     }
 }
 
-struct Symbol _look_get_symbol(struct MapLocation* loc, struct Mon* mon)
+struct Symbol look_get_symbol(const struct MapLocation* loc, const struct Mon* looker)
 {
-    if(!mon_can_see(mon, loc->x, loc->y))
+    if(!mon_can_see(looker, loc->x, loc->y))
     {
         struct Symbol retsym;
 
@@ -111,9 +112,16 @@ void _look_set_visuals(struct Mon* mon, struct MapLocation* loc)
     int sy = 0;
     map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
 
-    struct Symbol sym = _look_get_symbol(loc, mon);
+    struct Symbol sym = look_get_symbol(loc, mon);
 
-    term_draw_symbol(sx, sy, &sym.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, sym.sym);
+    if(colour_equal(&sym.fg, &g_colours[CLR_WHITE]))
+    {
+        term_draw_symbol(sx, sy, &g_colours[CLR_BLACK], &g_colours[CLR_WHITE], A_BLINK_BIT, sym.sym);
+    }
+    else
+    {
+        term_draw_symbol(sx, sy, &sym.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, sym.sym);
+    }
 }
 
 void _look_unset_visuals(struct Mon* mon, struct MapLocation* loc)
@@ -122,7 +130,7 @@ void _look_unset_visuals(struct Mon* mon, struct MapLocation* loc)
     int sy = 0;
     map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
 
-    struct Symbol sym = _look_get_symbol(loc, mon);
+    struct Symbol sym = look_get_symbol(loc, mon);
 
     term_draw_symbol(sx, sy, &sym.fg, &sym.bg, A_NONE_BIT, sym.sym);
 }
