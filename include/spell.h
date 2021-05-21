@@ -23,6 +23,8 @@ struct Spell
     enum SpellEffectType effect_type;
 };
 
+void spell_cast(const struct Spell* spell);
+
 struct Spell* spell_look_up_by_id(const char* id);
 
 extern struct Spell* g_spell;
