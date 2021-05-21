@@ -17,6 +17,7 @@
 #include "object.h"
 #include "player.h"
 #include "player_class.h"
+#include "spell.h"
 #include "ui.h"
 #include "ui_inventory.h"
 #include "ui_stats.h"
@@ -26,6 +27,7 @@
 
 enum GameplayCommand
 {
+    GAMEPLAY_COMMAND_CAST_SPELL               = KEYCODE_C,
     GAMEPLAY_COMMAND_DISPLAY_CHARACTER_SCREEN = KEYCODE_c,
     GAMEPLAY_COMMAND_DISPLAY_INVENTORY        = KEYCODE_i,
     GAMEPLAY_COMMAND_DISPLAY_POSITION         = KEYCODE_AT,
@@ -112,6 +114,11 @@ void gameplay_turn(void)
     {
         switch((enum GameplayCommand)get_key())
         {
+            case GAMEPLAY_COMMAND_CAST_SPELL:
+            {
+                spell_cast(g_spell);
+                break;
+            }
             case GAMEPLAY_COMMAND_DISPLAY_POSITION:
             {
                 display_fmsg_nolog("Current position: %d, %d", g_you->mon->x, g_you->mon->y);

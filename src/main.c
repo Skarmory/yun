@@ -12,6 +12,7 @@
 #include "obj_weapon.h"
 #include "player.h"
 #include "spawn.h"
+#include "spell.h"
 #include "term.h"
 #include "ui.h"
 #include "ui_menu.h"
@@ -163,6 +164,11 @@ int main(int argc, char** argv)
         starty = random_int(room->y + 1, room->y + room->h - 2);
         spawn_mon("ghul", startx, starty);
     }
+
+    // Make a debug spell
+    g_spell = malloc(sizeof(struct Spell));
+    g_spell->spatial_type = SPELL_SPATIAL_SKEWER;
+
     // ---------- DEBUG CODE END ----------
 
     main_loop();
