@@ -26,8 +26,8 @@ void list_rm(List* list, ListNode* node);
 ListNode* list_find(List* list, void* data);
 void list_splice_node(List* list_from, List* list_to, ListNode* node);
 void* list_pop_head(List* list);
-void* list_peek_head(List* list);
-bool list_empty(List* list);
+void* list_peek_head(const List* list);
+bool list_empty(const List* list);
 
 #define list_for_each(list, it)\
     for(it = (list)->head; it != NULL; it = it->next)

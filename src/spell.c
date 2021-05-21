@@ -58,7 +58,7 @@ static void _spell_cast_skewer_visuals(const struct Mon* caster, const struct Ma
     // Set the target segment
 }
 
-static void _spell_cast_set_visuals(struct Mon* caster, struct Spell* spell, struct MapLocation* location, List* loc_cache)
+static void _spell_cast_set_visuals(const struct Mon* caster, const struct Spell* spell, const struct MapLocation* location, List* loc_cache)
 {
     switch(spell->spatial_type)
     {
@@ -77,7 +77,7 @@ static void _spell_cast_set_visuals(struct Mon* caster, struct Spell* spell, str
     }
 }
 
-static void _spell_cast_unset_visuals(struct Mon* caster, List* loc_cache)
+static void _spell_cast_unset_visuals(const struct Mon* caster, List* loc_cache)
 {
     int sx = 0;
     int sy = 0;
