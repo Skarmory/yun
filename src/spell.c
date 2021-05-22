@@ -151,7 +151,7 @@ static bool _spell_cast_is_valid_loc(const struct Spell* spell, const struct Mon
         return false;
     }
 
-    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, loc->x, loc->y); 
+    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, loc->x, loc->y);
     if(!cell)
     {
         // Out of bounds location
