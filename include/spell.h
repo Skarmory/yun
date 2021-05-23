@@ -1,6 +1,8 @@
 #ifndef YUN_SPELL_H
 #define YUN_SPELL_H
 
+struct SpellEffect;
+
 enum SpellSpatialType
 {
     SPELL_SPATIAL_INSTANTANEOUS,
@@ -9,18 +11,12 @@ enum SpellSpatialType
     SPELL_SPATIAL_AREA_SQUARE
 };
 
-enum SpellEffectType
-{
-    SPELL_EFFECT_DAMAGE_HEALTH,
-    SPELL_EFFECT_HEAL_HEALTH
-};
-
 struct Spell
 {
     char id[5];
     int cost;
     enum SpellSpatialType spatial_type;
-    enum SpellEffectType effect_type;
+    struct SpellEffect* effect;
 };
 
 void spell_cast(const struct Spell* spell);
