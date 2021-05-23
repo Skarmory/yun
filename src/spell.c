@@ -10,7 +10,9 @@
 #include "map_cell.h"
 #include "message.h"
 #include "monster.h"
+#include "mon_type.h"
 #include "player.h"
+#include "spell_effect.h"
 #include "term.h"
 
 #include <string.h>
@@ -26,7 +28,7 @@ enum SpellCastCommand
 
 /* ---------- SECTION TARGETTING ---------- */
 
-static void _spell_cast_skewer_get_targetted_locs(const struct MapLocation* origin, const struct MapLocation* target, List* loc_cache)
+static void _spell_cast_skewer_get_targets(const struct MapLocation* origin, const struct MapLocation* target, List* loc_cache, List* mon_cache)
 {
 
     int ox = origin->x; // Line origin (start) coords
@@ -39,25 +41,26 @@ static void _spell_cast_skewer_get_targetted_locs(const struct MapLocation* orig
 
     struct MapLocation* loc = NULL;
 
-    //// Set the origin segment
-    //struct MapLocation* loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, ox, oy), ox, oy);
-    //list_add(loc_cache, loc);
-
     // Set the in-between line segments
     while(geom_gen_line_increment(ox, oy, tx, ty, &nx, &ny, &err))
     {
         loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, nx, ny), nx, ny);
         list_add(loc_cache, loc);
+
+        if(loc->mon)
+        {
+            list_add(mon_cache, loc->mon);
+        }
     }
 }
 
-static void _spell_cast_get_targetted_locs(const struct Spell* spell, const struct MapLocation* origin, const struct MapLocation* target, List* loc_cache)
+static void _spell_cast_get_targets(const struct Spell* spell, const struct MapLocation* origin, const struct MapLocation* target, List* loc_cache, List* mon_cache)
 {
     switch(spell->spatial_type)
     {
         case SPELL_SPATIAL_SKEWER:
         {
-            _spell_cast_skewer_get_targetted_locs(origin, target, loc_cache);
+            _spell_cast_skewer_get_targets(origin, target, loc_cache, mon_cache);
             break;
         }
         default:
@@ -186,14 +189,19 @@ void spell_cast(const struct Spell* spell)
     struct MapLocation* target = origin;
 
     List loc_cache;
+    List mon_cache;
     list_init(&loc_cache);
+    list_init(&mon_cache);
 
-    bool targetting = true;
-    while(targetting)
+    bool found_target = false;
+    while(!found_target)
     {
+        list_uninit(&loc_cache);
+        list_uninit(&mon_cache);
+
         display_msg_nolog("Move cursor to select a target [hjklyubn]. Confirm [ENTER]. Cancel [ESC].");
 
-        _spell_cast_get_targetted_locs(spell, origin, target, &loc_cache);
+        _spell_cast_get_targets(spell, origin, target, &loc_cache, &mon_cache);
         _spell_cast_set_visuals(spell, caster, &loc_cache);
         _spell_cast_target_info(caster, target);
 
@@ -206,9 +214,16 @@ void spell_cast(const struct Spell* spell)
         struct MapLocation* next_target = NULL;
         enum SpellCastCommand cmd = cursor_free_move(target, &next_target);
         log_format_msg(LOG_DEBUG, "Spell cast command: %d", cmd);
-        if(cmd == SPELL_CAST_COMMAND_CONFIRM || cmd == SPELL_CAST_COMMAND_CANCEL)
+
+        if(cmd == SPELL_CAST_COMMAND_CONFIRM)
         {
-            targetting = false;
+            found_target = true;
+            break;
+        }
+
+        if(cmd == SPELL_CAST_COMMAND_CANCEL)
+        {
+            break;
         }
 
         if(!_spell_cast_is_valid_loc(spell, caster, next_target))
@@ -216,11 +231,26 @@ void spell_cast(const struct Spell* spell)
             continue;
         }
 
-
         target = next_target;
     }
 
+    log_msg(LOG_DEBUG, "Spell got targets:");
+    ListNode* n = NULL;
+    list_for_each(&mon_cache, n)
+    {
+        log_format_msg(LOG_DEBUG, "\t%s - %p", ((struct Mon*)n->data)->type->name, n->data);
+    }
+
+    if(found_target)
+    {
+        struct SpellEffectArgs args;
+        args.affected_locations = &loc_cache;
+        args.affected_mons = &mon_cache;
+        spell_effect_execute(spell->effect, &args);
+    }
+
     list_uninit(&loc_cache);
+    list_uninit(&mon_cache);
 }
 
 struct Spell* spell_look_up_by_id(const char* id)
