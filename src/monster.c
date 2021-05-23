@@ -41,7 +41,9 @@ struct Mon* mon_new(struct MonType* type, int x, int y)
 void mon_free(struct Mon* mon)
 {
     free_equipment(mon->equipment);
+    mon->equipment = NULL;
     free_inventory(mon->inventory);
+    mon->inventory = NULL;
     free(mon);
 }
 
