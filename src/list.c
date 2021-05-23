@@ -73,6 +73,10 @@ void list_uninit(List* list)
     {
         free(node);
     }
+
+    list->count = 0;
+    list->head = NULL;
+    list->tail = NULL;
 }
 
 void list_add(List* list, void* data)
