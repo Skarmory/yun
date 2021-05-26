@@ -12,7 +12,7 @@ typedef struct _ListNode
 
 typedef struct _List
 {
-    int count;
+    int       count;
     ListNode* head;
     ListNode* tail;
 } List;
