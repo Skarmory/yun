@@ -2,6 +2,7 @@
 #include "spell_effect_action.h"
 
 #include "monster.h"
+#include "util.h"
 
 #include <stddef.h>
 #include <string.h>
