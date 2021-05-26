@@ -102,6 +102,18 @@ int random_int(int lo, int hi)
     return lo + (rand() % (hi - lo + 1));
 }
 
+int roll_dice(int dice_count, int dice_sides)
+{
+    int total = 0;
+
+    for(int i = 0; i < dice_count; ++i)
+    {
+        total += random_int(1, dice_sides);
+    }
+
+    return total;
+}
+
 /**
  * Get a number between 1 and 100
  */
