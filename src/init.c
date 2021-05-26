@@ -10,6 +10,8 @@
 #include "obj_armour.h"
 #include "obj_weapon.h"
 #include "parsing.h"
+#include "spell.h"
+#include "spell_effect.h"
 #include "symbol.h"
 #include "tasking.h"
 #include "util.h"
@@ -71,11 +73,33 @@ static inline bool _init_gamedata(void)
     }
     log_msg(LOG_DEBUG, "parsing complete");
 
+    log_msg(LOG_DEBUG, "parsing spell effects");
+    if(parse_spell_effects() != PARSER_OK)
+    {
+        log_msg(LOG_DEBUG, "parsing failed");
+        return false;
+    }
+    log_msg(LOG_DEBUG, "parsing complete");
+
+    log_msg(LOG_DEBUG, "parsing spells");
+    if(parse_spells() != PARSER_OK)
+    {
+        log_msg(LOG_DEBUG, "parsing failed");
+        return false;
+    }
+    log_msg(LOG_DEBUG, "parsing complete");
+
     return true;
 }
 
 void _uninit_gamedata(void)
 {
+    free(g_spells);
+    g_spells_count = 0;
+
+    free(g_spell_effects);
+    g_spell_effects_count = 0;
+
     for(int idx = 0; idx < g_features_count; ++idx)
     {
         free(g_features[idx].symbol);
