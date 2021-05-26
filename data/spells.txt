@@ -1,0 +1,29 @@
+# List of spells in Yun.
+
+# INFO
+# This is a list of all the spells.
+# Spells are made up of a variety of spell effects, which are defined in spell_effects.txt
+# This contains a reference to the spell effects, and the data of the spell effects (such as damage)
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# id                - The ID of the spell. Must be unique. Must be up to 4 chars
+# spatial-type      - The spatial targetting of the spell (i.e. missile, skewer, area)
+# spell-effect      - The spell effect that occurs during this spell cast
+# spell-effect-args - Data that needs to be passed to a spell effect
+
+# SPATIAL TYPES
+# SPELL_SPATIAL_INSTANTANEOUS   0
+# SPELL_SPATIAL_SKEWER          1
+# SPELL_SPATIAL_MISSILE         2
+# SPELL_SPATIAL_AREA_SQUARE     3
+
+# Testing spell, skewer damage
+id:dbg0
+spatial-type:1
+spell-effect:dmoh

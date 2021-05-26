@@ -1,6 +1,8 @@
 #ifndef YUN_SPELL_H
 #define YUN_SPELL_H
 
+#include "list.h"
+
 struct SpellEffect;
 
 enum SpellSpatialType
@@ -14,16 +16,15 @@ enum SpellSpatialType
 struct Spell
 {
     char id[5];
-    int cost;
     enum SpellSpatialType spatial_type;
-    struct SpellEffect* effect;
+    List spell_effects;
 };
 
 void spell_cast(const struct Spell* spell);
 
 struct Spell* spell_look_up_by_id(const char* id);
 
-extern struct Spell* g_spell;
-extern int g_spell_count;
+extern struct Spell* g_spells;
+extern int g_spells_count;
 
 #endif

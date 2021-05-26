@@ -17,8 +17,8 @@
 
 #include <string.h>
 
-struct Spell* g_spell = NULL;
-int g_spell_count = 0;
+struct Spell* g_spells = NULL;
+int g_spells_count = 0;
 
 enum SpellCastCommand
 {
@@ -246,7 +246,10 @@ void spell_cast(const struct Spell* spell)
         struct SpellEffectArgs args;
         args.affected_locations = &loc_cache;
         args.affected_mons = &mon_cache;
-        spell_effect_execute(spell->effect, &args);
+        list_for_each(&spell->spell_effects, n)
+        {
+            spell_effect_execute((struct SpellEffect*)n->data, &args);
+        }
     }
 
     list_uninit(&loc_cache);
@@ -255,11 +258,11 @@ void spell_cast(const struct Spell* spell)
 
 struct Spell* spell_look_up_by_id(const char* id)
 {
-    for(int idx = 0; idx < g_spell_count; ++idx)
+    for(int idx = 0; idx < g_spells_count; ++idx)
     {
-        if(strcmp(g_spell[idx].id, id) == 0)
+        if(strcmp(g_spells[idx].id, id) == 0)
         {
-            return &g_spell[idx];
+            return &g_spells[idx];
         }
     }
 
