@@ -2,24 +2,27 @@
 #define YUN_SPELL_EFFECT_H
 
 #include "list.h"
+#include "spell_effect_action.h"
 
-enum SpellEvent
+enum SpellEffectEvent
 {
-    SPELL_EVENT_HIT_MON
-};
-
-enum SpellEffectType
-{
-    SPELL_EFFECT_TYPE_DAMAGE_HEALTH
+    SPELL_EFFECT_EVENT_HIT_MON
 };
 
 struct SpellEffect
 {
-    enum SpellEvent event;
-    enum SpellEffectType effect_type;
-    int amount;
+    char                   id[5];
+    enum SpellEffectEvent  event;
+    enum SpellEffectAction action;
+    void*                  action_data;
 };
 
+/*
+ * Contains the things affected by a Spell.
+ * A spell effect can grab what it's interested in from these and apply its effects.
+ * affected_locations: List of MapLocation
+ * affected_mons: List of Mon
+ */
 struct SpellEffectArgs
 {
     List* affected_locations;
@@ -27,6 +30,8 @@ struct SpellEffectArgs
 };
 
 void spell_effect_execute(const struct SpellEffect* effect, const struct SpellEffectArgs* args);
+
+const struct SpellEffect* spell_effect_look_up_by_id(const char* id);
 
 extern struct SpellEffect* g_spell_effects;
 extern int g_spell_effects_count;

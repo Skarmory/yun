@@ -1,0 +1,29 @@
+# List of spell effects in Yun.
+
+# INFO
+# This is a list of all the spell effects that can be part of a spell cast.
+# This defines the events, conditions, and actions that a spell effect will cause.
+# as that will vary based on the spell.
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# id            - The ID of the spell effect. Must be unique. Must be up to 4 chars
+# event-type    - The event that triggers the spell effect action to occur
+# action-type   - The action that the spell effect will execute
+
+# EVENTS
+# SPELL_EVENT_HIT_MON  0
+
+# ACTIONS
+# SPELL_ACTION_DAMAGE_HEALTH    0
+
+# Damage monster on hit
+id:dmoh
+event-type:0
+action-type:0
+damage:1;8
