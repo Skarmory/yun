@@ -95,7 +95,10 @@ void gameplay_turn(void)
         {
             case GAMEPLAY_COMMAND_CAST_SPELL:
             {
-                spell_cast(g_spell);
+                // DEBUG CODE
+                const struct Spell* spell = &g_spells[0];
+                // DEBUG CODE
+                spell_cast(spell);
                 break;
             }
             case GAMEPLAY_COMMAND_DISPLAY_POSITION:
