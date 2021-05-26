@@ -166,17 +166,6 @@ int main(int argc, char** argv)
         spawn_mon("ghul", startx, starty);
     }
 
-    // Make a debug spell
-
-    g_spell_effects = malloc(sizeof(struct SpellEffect));
-    g_spell_effects->event = SPELL_EVENT_HIT_MON;
-    g_spell_effects->effect_type = SPELL_EFFECT_TYPE_DAMAGE_HEALTH;
-    g_spell_effects->amount = 1;
-
-    g_spell = malloc(sizeof(struct Spell));
-    g_spell->spatial_type = SPELL_SPATIAL_SKEWER;
-    g_spell->effect = g_spell_effects;
-
     // ---------- DEBUG CODE END ----------
 
     main_loop();
