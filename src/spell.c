@@ -171,6 +171,12 @@ static bool _spell_cast_is_valid_loc(const struct Spell* spell, const struct Mon
                 return false;
             }
 
+            if(loc_get_pathing(loc) == PATHING_NONE)
+            {
+                // TODO: Maybe this is a bit naive? Better solution needed?
+                return false;
+            }
+
             break;
         }
         default:
