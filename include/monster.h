@@ -15,7 +15,8 @@ struct Weapon;
  */
 struct Mon
 {
-    unsigned int x, y;
+    int x;
+    int y;
     MonAttrMoveFlags move_flags;
     const struct MonType* type;
     struct Equipment* equipment;
