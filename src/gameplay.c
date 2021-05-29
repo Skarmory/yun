@@ -96,7 +96,7 @@ void gameplay_turn(void)
             case GAMEPLAY_COMMAND_CAST_SPELL:
             {
                 // DEBUG CODE
-                const struct Spell* spell = &g_spells[0];
+                struct Spell* spell = &g_spells[0];
                 // DEBUG CODE
                 spell_cast(spell);
                 break;

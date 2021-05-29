@@ -10,7 +10,7 @@
 struct SpellEffect* g_spell_effects = NULL;
 int g_spell_effects_count = 0;
 
-static void _spell_effect_affect_mon(const struct SpellEffect* effect, const struct SpellEffectArgs* args)
+static void _spell_effect_affect_mon(struct SpellEffect* effect, struct SpellEffectArgs* args)
 {
     switch(effect->action)
     {
@@ -32,7 +32,7 @@ static void _spell_effect_affect_mon(const struct SpellEffect* effect, const str
 
 /* ---------- SECTION EXTERNALLY VISIBLE ---------- */
 
-void spell_effect_execute(const struct SpellEffect* effect, const struct SpellEffectArgs* args)
+void spell_effect_execute(struct SpellEffect* effect, struct SpellEffectArgs* args)
 {
     switch(effect->event)
     {
@@ -44,7 +44,7 @@ void spell_effect_execute(const struct SpellEffect* effect, const struct SpellEf
     }
 }
 
-const struct SpellEffect* spell_effect_look_up_by_id(const char* id)
+struct SpellEffect* spell_effect_look_up_by_id(const char* id)
 {
     for(int idx = 0; idx < g_spell_effects_count; ++idx)
     {

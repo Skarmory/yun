@@ -23,7 +23,7 @@ enum SpellCastCommand
     SPELL_CAST_COMMAND_CANCEL  = KEYCODE_ESC
 };
 
-static bool _spell_cast_skewer_is_valid_loc(const struct Mon* caster, const struct MapLocation* loc)
+static bool _spell_cast_skewer_is_valid_loc(struct Mon* caster, struct MapLocation* loc)
 {
     if(caster->x == loc->x && caster->y == loc->y)
     {
@@ -42,7 +42,7 @@ static bool _spell_cast_skewer_is_valid_loc(const struct Mon* caster, const stru
 }
 
 // Create a line, checking for validity, and get the targets that this spell will hit
-static void _spell_cast_skewer_get_targets(const struct Mon* caster, const struct MapLocation* origin, struct MapLocation** target, List* loc_cache, List* mon_cache)
+static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocation* origin, struct MapLocation** target, List* loc_cache, List* mon_cache)
 {
     struct Line line;
     geom_gen_line(&line, origin->x, origin->y, (*target)->x, (*target)->y);
@@ -80,7 +80,7 @@ static void _spell_cast_skewer_target_info(struct Mon* caster, struct MapLocatio
 }
 
 // Set the symbols for the casting targetting indicator
-static void _spell_cast_skewer_set_visuals(const struct Mon* caster, List* loc_cache)
+static void _spell_cast_skewer_set_visuals(struct Mon* caster, List* loc_cache)
 {
     int count = 0;
     ListNode* n = NULL;
@@ -109,7 +109,7 @@ static void _spell_cast_skewer_set_visuals(const struct Mon* caster, List* loc_c
 }
 
 // Take the cached locations and unset the term visuals, then clean the cache out
-static void _spell_cast_skewer_unset_visuals(const struct Mon* caster, List* loc_cache)
+static void _spell_cast_skewer_unset_visuals(struct Mon* caster, List* loc_cache)
 {
     int sx = 0;
     int sy = 0;

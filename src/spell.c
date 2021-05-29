@@ -21,15 +21,23 @@
 struct Spell* g_spells = NULL;
 int g_spells_count = 0;
 
-void spell_cast(const struct Spell* spell)
+void spell_cast(struct Spell* spell)
 {
     struct Mon* caster = g_you->mon; // TODO: Update for monster spellcasting
 
     switch(spell->spatial_type)
     {
         case SPELL_SPATIAL_SKEWER:
+        {
             spell_cast_skewer(spell, caster);
             break;
+        }
+
+        default:
+        {
+            log_msg(LOG_DEBUG, "Unknown spell spatial type");
+            break;
+        }
     }
 }
 

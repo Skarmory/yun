@@ -20,7 +20,7 @@ struct Spell
     List spell_effects;
 };
 
-void spell_cast(const struct Spell* spell);
+void spell_cast(struct Spell* spell);
 
 struct Spell* spell_look_up_by_id(const char* id);
 

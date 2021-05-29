@@ -29,9 +29,9 @@ struct SpellEffectArgs
     List* affected_mons;
 };
 
-void spell_effect_execute(const struct SpellEffect* effect, const struct SpellEffectArgs* args);
+void spell_effect_execute(struct SpellEffect* effect, struct SpellEffectArgs* args);
 
-const struct SpellEffect* spell_effect_look_up_by_id(const char* id);
+struct SpellEffect* spell_effect_look_up_by_id(const char* id);
 
 extern struct SpellEffect* g_spell_effects;
 extern int g_spell_effects_count;
