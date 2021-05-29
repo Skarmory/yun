@@ -1,5 +1,7 @@
 #include "geom.h"
 
+#include "log.h"
+
 #include <math.h>
 #include <stdlib.h>
 
@@ -68,6 +70,30 @@ bool geom_gen_line_increment(int x0, int y0, int x1, int y1, int* x, int* y, flo
     return true;
 }
 
+void geom_gen_line(struct Line* out_line, int x0, int y0, int x1, int y1)
+{
+    int nx = x0; // Line segment next coords
+    int ny = y0;
+    float err = 0.0f;
+
+    list_init(&out_line->coordinate_list);
+
+    struct Coordinate* coord = malloc(sizeof(struct Coordinate));
+    coord->x = x0;
+    coord->y = x1;
+
+    list_add(&out_line->coordinate_list, coord);
+
+    // Set the in-between line segments
+    while(geom_gen_line_increment(x0, y0, x1, y1, &nx, &ny, &err))
+    {
+        coord = malloc(sizeof(struct Coordinate));
+        coord->x = nx;
+        coord->y = ny;
+        list_add(&out_line->coordinate_list, coord);
+    }
+}
+
 bool geom_point_in_circle(int px, int py, int cx, int cy, int r)
 {
     int dx = abs(px - cx);
@@ -79,4 +105,17 @@ bool geom_point_in_circle(int px, int py, int cx, int cy, int r)
 bool geom_point_in_rect(int px, int py, int rx, int ry, int w, int h)
 {
     return (px >= rx && px <= (rx + w) && py >= ry && py <= (ry + h));
+}
+
+void geom_dbg_log_line(struct Line* line, const char* line_name)
+{
+    log_format_msg(LOG_DEBUG, "Debugging line: %s", line_name);
+    int seg = 0;
+    ListNode* n = NULL;
+    list_for_each(&line->coordinate_list, n)
+    {
+        struct Coordinate* cptr = n->data;
+        log_format_msg(LOG_DEBUG, "\tsegment %d: (%d, %d)", seg, cptr->x, cptr->y);
+        ++seg;
+    }
 }
