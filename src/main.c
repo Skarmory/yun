@@ -96,6 +96,7 @@ void main_loop(void)
         clear_msgs();
         flush_msg_buffer();
         display_main_screen();
+        term_refresh();
     }
     while(true);
 }

@@ -110,7 +110,7 @@ static inline int _to_bits(char input)
  */
 static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, struct PendingActions* pending_actions, ListNode** highlighted, bool* went, int allow_mask)
 {
-    enum InventoryCommand in = get_key();
+    enum InventoryCommand in = (enum InventoryCommand)get_key();
 
     if((_to_bits(in) & allow_mask) == 0)
     {

@@ -1,6 +1,7 @@
 #include "look.h"
 
 #include "colour.h"
+#include "cursor_utils.h"
 #include "feature.h"
 #include "log.h"
 #include "map.h"
@@ -64,6 +65,12 @@ void _look_get_loc_info(struct Mon* mon, struct MapLocation* loc)
         display_fmsg_nolog("You see %s %s", msg_a_an(obj_name), obj_name);
         return;
     }
+
+    if(loc->feature)
+    {
+        display_fmsg_nolog("You see %s %s", msg_a_an(loc->feature->name), loc->feature->name);
+        return;
+    }
 }
 
 struct Symbol look_get_symbol(const struct MapLocation* loc, const struct Mon* looker)
@@ -74,7 +81,14 @@ struct Symbol look_get_symbol(const struct MapLocation* loc, const struct Mon* l
 
         if(loc->seen)
         {
-            retsym.sym = loc->symbol.sym;
+            if(loc->feature)
+            {
+                retsym.sym = loc->feature->symbol->sym;
+            }
+            else
+            {
+                retsym.sym = loc->symbol.sym;
+            }
             retsym.fg  = *COL(CLR_FOG_OF_WAR);
             retsym.bg  = *COL(CLR_DEFAULT);
         }
@@ -135,69 +149,6 @@ void _look_unset_visuals(struct Mon* mon, struct MapLocation* loc)
     term_draw_symbol(sx, sy, &sym.fg, &sym.bg, A_NONE_BIT, sym.sym);
 }
 
-enum KeyCode cursor_free_move(struct MapLocation* in_loc, struct MapLocation** out_loc)
-{
-    while(true)
-    {
-        enum LookCommand cmd = get_key();
-        switch(cmd)
-        {
-            case LOOK_COMMAND_CONFIRM:
-            case LOOK_COMMAND_STOP:
-            {
-                return cmd;
-            }
-            case LOOK_COMMAND_MOVE_UP:
-            case LOOK_COMMAND_MOVE_DOWN:
-            case LOOK_COMMAND_MOVE_LEFT:
-            case LOOK_COMMAND_MOVE_RIGHT:
-            case LOOK_COMMAND_MOVE_LEFT_UP:
-            case LOOK_COMMAND_MOVE_LEFT_DOWN:
-            case LOOK_COMMAND_MOVE_RIGHT_UP:
-            case LOOK_COMMAND_MOVE_RIGHT_DOWN:
-            {
-                int dx = 0;
-                int dy = 0;
-                if(cmd == LOOK_COMMAND_MOVE_UP || cmd == LOOK_COMMAND_MOVE_LEFT_UP || cmd == LOOK_COMMAND_MOVE_RIGHT_UP)
-                {
-                    --dy;
-                }
-                else if(cmd == LOOK_COMMAND_MOVE_DOWN || cmd == LOOK_COMMAND_MOVE_LEFT_DOWN || cmd == LOOK_COMMAND_MOVE_RIGHT_DOWN)
-                {
-                    ++dy;
-                }
-
-                if(cmd == LOOK_COMMAND_MOVE_LEFT || cmd == LOOK_COMMAND_MOVE_LEFT_UP || cmd == LOOK_COMMAND_MOVE_LEFT_DOWN)
-                {
-                    --dx;
-                }
-                else if(cmd == LOOK_COMMAND_MOVE_RIGHT || cmd == LOOK_COMMAND_MOVE_RIGHT_UP || cmd == LOOK_COMMAND_MOVE_RIGHT_DOWN)
-                {
-                    ++dx;
-                }
-
-                const int x = in_loc->x + dx;
-                const int y = in_loc->y + dy;
-
-                struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x, y);
-                if(!cell || !map_cell_is_in_bounds(cell, x, y))
-                {
-                    break;
-                }
-
-                *out_loc = map_cell_get_location(cell, x, y);
-                return cmd;
-            }
-            default:
-            {
-                break;
-            }
-        }
-    }
-
-    return LOOK_COMMAND_STOP;
-}
-
 void look(void)
 {
     display_msg_nolog("Move cursor over a location, press esc to stop looking.");
@@ -218,8 +169,10 @@ void look(void)
         clear_msgs();
         flush_msg_buffer();
 
-        struct MapLocation* next = NULL;
-        enum LookCommand cmd = cursor_free_move(loc, &next);
+        int nx = -1;
+        int ny = -1;
+        enum LookCommand cmd = (enum LookCommand)cursor_move(loc->x, loc->y, &nx, &ny);
+        struct MapLocation* next = map_get_location(g_cmap, nx, ny);
         _look_unset_visuals(mon, loc);
 
         if(cmd == LOOK_COMMAND_STOP || cmd == LOOK_COMMAND_CONFIRM)

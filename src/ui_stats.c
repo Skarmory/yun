@@ -31,7 +31,7 @@ bool character_screen_handler(void)
         term_clear();
         _display_stats();
         term_refresh();
-        in = get_key();
+        in = (enum CharacterScreenCommand)get_key();
     }
     while(in != CHARACTER_SCREEN_COMMAND_QUIT);
 

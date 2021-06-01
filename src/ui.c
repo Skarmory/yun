@@ -122,7 +122,6 @@ void display_main_screen(void)
 {
     display_map();
     display_char_status();
-    term_refresh();
 }
 
 /*
@@ -133,6 +132,6 @@ void display_char_status(void)
     char tmp[STATUS_W];
     sprintf(tmp, "%s\tHP: %d/%d", g_you->name, g_you->mon->stats.hp, g_you->mon->stats.hp_max);
 
+    term_clear_area(STATUS_X, STATUS_Y, MCOLS, 1);
     term_draw_text(STATUS_X, STATUS_Y, NULL, NULL, 0, tmp);
-    term_refresh();
 }

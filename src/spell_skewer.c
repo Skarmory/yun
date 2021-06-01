@@ -1,5 +1,6 @@
 #include "spell_skewer.h"
 
+#include "cursor_utils.h"
 #include "geom.h"
 #include "look.h"
 #include "log.h"
@@ -157,9 +158,10 @@ void spell_cast_skewer(struct Spell* spell, struct Mon* caster)
 
         _spell_cast_skewer_unset_visuals(caster, &loc_cache);
 
-        struct MapLocation* next_target = NULL;
-        enum SpellCastCommand cmd = cursor_free_move(target, &next_target);
-        log_format_msg(LOG_DEBUG, "Spell cast command: %d", cmd);
+        int nx = -1;
+        int ny = -1;
+        enum SpellCastCommand cmd = (enum SpellCastCommand)cursor_move(target->x, target->y, &nx, &ny);
+        struct MapLocation* next_target = map_get_location(g_cmap, nx, ny);
 
         if(cmd == SPELL_CAST_COMMAND_CONFIRM)
         {

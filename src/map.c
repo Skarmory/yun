@@ -250,6 +250,4 @@ void display_map(void)
             }
         }
     }
-
-    term_refresh();
 }

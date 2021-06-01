@@ -81,7 +81,7 @@ void gameplay_turn(void)
 
     while(!end_turn)
     {
-        enum GameplayCommand cmd = get_key();
+        enum GameplayCommand cmd = (enum GameplayCommand)get_key();
         switch(cmd)
         {
             case GAMEPLAY_COMMAND_CAST_SPELL:
@@ -174,6 +174,7 @@ void gameplay_turn(void)
             clear_msgs();
             flush_msg_buffer();
             display_main_screen();
+            term_refresh();
         }
     }
 }

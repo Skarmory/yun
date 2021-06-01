@@ -7,13 +7,13 @@
 
 #include <stdbool.h>
 
+#define MROWS 40
+#define MCOLS 80
+
 struct List;
 struct MapCell;
 struct MapLocation;
 struct Mon;
-
-#define MROWS 40
-#define MCOLS 80
 
 /**
  * Contains the map data
