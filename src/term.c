@@ -77,7 +77,7 @@ static void _writef(const char* format, ...)
     va_list args;
     va_start(args, format);
 
-    vsnprintf(write_buffer.buffer + write_buffer.buffer_len, PRINT_BUFFER_SIZE, format, args);
+    vsnprintf(write_buffer.buffer + write_buffer.buffer_len, PRINT_BUFFER_SIZE - write_buffer.buffer_len, format, args);
     write_buffer.buffer_len += strlen(write_buffer.buffer + write_buffer.buffer_len);
 
     va_end(args);
@@ -153,7 +153,7 @@ void term_get_wh(int* w, int* h)
 void term_clear(void)
 {
     memset(vterm->symbols, 0, vterm->width * vterm->height * sizeof(struct VTermSymbol));
-    write(1, c_clear, sizeof(c_clear)); 
+    _writef("%s", c_clear);
 }
 
 void term_clear_area(int x, int y, int w, int h)
@@ -207,6 +207,8 @@ void term_set_sigint_callback(void(*handler)(int))
 void term_refresh(void)
 {
     struct VTermSymbol* sym = NULL;
+    int lx = -1, ly = -1;
+    int nomove=0;
     for(int y = 0; y < vterm->height; ++y)
     for(int x = 0; x < vterm->width; ++x)
     {
@@ -218,7 +220,15 @@ void term_refresh(void)
         }
 
         // Move to
-        term_move_cursor(x, y);
+        if (x != lx + 1 || y != ly)
+        {
+            term_move_cursor(x, y);
+        }
+        else
+        {
+            nomove++;
+        }
+        lx = x; ly = y;
 
         // Set attributes
         if(sym->ta_flags != A_NONE_BIT)
@@ -253,6 +263,8 @@ void term_refresh(void)
 
         sym->redraw = false;
     }
+
+    log_format_msg(LOG_DEBUG, "did not move term cursor: %d", nomove);
 
     // Reset term attributes
     _writef(c_default);
