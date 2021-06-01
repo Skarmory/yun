@@ -31,24 +31,15 @@
  *
  * Will attempt to attack a monster if possible, otherwise will attempt to move
  */
-static bool _do_smart_action(int x, int y)
+static bool _do_smart_action(struct MapLocation* target)
 {
-    // This could be null if it's a movement request to an out of bounds x y
-    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x, y);
-    if(!cell)
+    if(target->mon == NULL)
     {
-        return false;
-    }
-
-    struct MapLocation* loc = map_cell_get_location(cell, x, y);
-
-    if(loc->mon == NULL)
-    {
-        return move_mon(g_you->mon, x, y);
+        return move_mon(g_you->mon, target->x, target->y);
     }
     else
     {
-        return do_attack_mon_mon(g_you->mon, loc->mon);
+        return do_attack_mon_mon(g_you->mon, target->mon);
     }
 }
 
@@ -91,7 +82,8 @@ void gameplay_turn(void)
 
     while(!end_turn)
     {
-        switch((enum GameplayCommand)get_key())
+        enum GameplayCommand cmd = get_key();
+        switch(cmd)
         {
             case GAMEPLAY_COMMAND_CAST_SPELL:
             {
@@ -107,43 +99,21 @@ void gameplay_turn(void)
                 break;
             }
             case GAMEPLAY_COMMAND_MOVE_LEFT:
-            {
-                end_turn = _do_smart_action(g_you->mon->x-1, g_you->mon->y);
-                break;
-            }
             case GAMEPLAY_COMMAND_MOVE_RIGHT:
-            {
-                end_turn = _do_smart_action(g_you->mon->x+1, g_you->mon->y);
-                break;
-            }
             case GAMEPLAY_COMMAND_MOVE_UP:
-            {
-                end_turn = _do_smart_action(g_you->mon->x, g_you->mon->y-1);
-                break;
-            }
             case GAMEPLAY_COMMAND_MOVE_DOWN:
-            {
-                end_turn = _do_smart_action(g_you->mon->x, g_you->mon->y+1);
-                break;
-            }
             case GAMEPLAY_COMMAND_MOVE_LEFT_UP:
-            {
-                end_turn = _do_smart_action(g_you->mon->x-1, g_you->mon->y-1);
-                break;
-            }
             case GAMEPLAY_COMMAND_MOVE_LEFT_DOWN:
-            {
-                end_turn = _do_smart_action(g_you->mon->x-1, g_you->mon->y+1);
-                break;
-            }
             case GAMEPLAY_COMMAND_MOVE_RIGHT_UP:
-            {
-                end_turn = _do_smart_action(g_you->mon->x+1, g_you->mon->y-1);
-                break;
-            }
             case GAMEPLAY_COMMAND_MOVE_RIGHT_DOWN:
             {
-                end_turn = _do_smart_action(g_you->mon->x+1, g_you->mon->y+1);
+                struct MapCell* you_cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
+                if(!you_cell) break;
+                struct MapLocation* you_loc = map_cell_get_location(you_cell, g_you->mon->x, g_you->mon->y);
+                if(!you_loc) break;
+                struct MapLocation* target = map_get_location_offset_by_direction(g_cmap, you_loc, cmd);
+                if(!target) break;
+                end_turn = _do_smart_action(target);
                 break;
             }
             case GAMEPLAY_COMMAND_PASS_TURN:

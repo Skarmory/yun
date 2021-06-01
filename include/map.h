@@ -9,6 +9,7 @@
 
 struct List;
 struct MapCell;
+struct MapLocation;
 
 #define MROWS 40
 #define MCOLS 80
@@ -31,6 +32,8 @@ void map_free(struct Map* map);
 struct MapCell* map_get_cell_by_world_coord(struct Map* map, int x, int y);
 struct MapCell* map_get_cell_by_map_coord(struct Map* map, int x, int y);
 void map_get_screen_coord_by_world_coord(struct Map* map, int world_x, int world_y, int* screen_x, int* screen_y);
+
+struct MapLocation* map_get_location_offset_by_direction(struct Map* map, struct MapLocation* loc, int input_keycode);
 
 extern struct Map* g_cmap;
 

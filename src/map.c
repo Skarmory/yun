@@ -2,6 +2,8 @@
 
 #include "colour.h"
 #include "feature.h"
+#include "gameplay_commands.h"
+#include "input_keycodes.h"
 #include "list.h"
 #include "log.h"
 #include "map_cell.h"
@@ -83,6 +85,75 @@ void map_get_screen_coord_by_world_coord(struct Map* map, int world_x, int world
 
     *screen_x = world_x - xstart;
     *screen_y = world_y - ystart;
+}
+
+struct MapLocation* map_get_location_offset_by_direction(struct Map* map, struct MapLocation* loc, int input_keycode)
+{
+    int x_off = 0;
+    int y_off = 0;
+
+    switch((enum KeyCode)input_keycode)
+    {
+        case GAMEPLAY_COMMAND_MOVE_LEFT:
+        {
+            x_off = -1;
+            break;
+        }
+        case GAMEPLAY_COMMAND_MOVE_RIGHT:
+        {
+            x_off = 1;
+            break;
+        }
+        case GAMEPLAY_COMMAND_MOVE_UP:
+        {
+            y_off = -1;
+            break;
+        }
+        case GAMEPLAY_COMMAND_MOVE_DOWN:
+        {
+            y_off = 1;
+            break;
+        }
+        case GAMEPLAY_COMMAND_MOVE_LEFT_UP:
+        {
+            x_off = -1;
+            y_off = -1;
+            break;
+        }
+        case GAMEPLAY_COMMAND_MOVE_LEFT_DOWN:
+        {
+            x_off = -1;
+            y_off = 1;
+            break;
+        }
+        case GAMEPLAY_COMMAND_MOVE_RIGHT_UP:
+        {
+            x_off = 1;
+            y_off = -1;
+            break;
+        }
+        case GAMEPLAY_COMMAND_MOVE_RIGHT_DOWN:
+        {
+            x_off = 1;
+            y_off = 1;
+            break;
+        }
+        default:
+        {
+            break;
+        }
+    }
+
+    const int newx = loc->x + x_off;
+    const int newy = loc->y + y_off;
+
+    struct MapCell* cell = map_get_cell_by_world_coord(map, newx, newy);
+    if(!cell)
+    {
+        return NULL;
+    }
+
+    return map_cell_get_location(cell, newx, newy);
 }
 
 /**
