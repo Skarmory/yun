@@ -25,7 +25,7 @@ type:player
 name:wretched ghoul
 type:ghoul
 desc:This was a human at one point, but its skin is flayed beyond recognition. Necromantic magics have twisted its nails into long claws.
-colour:50;50;50
+colour:255;255;255
 health:1
 attack:CLAW;1d4
 armour:0

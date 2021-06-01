@@ -42,7 +42,7 @@ id:ghul
 name:ghoul
 desc:Ghoul
 symbol:g
-colour:55;55;55
+colour:255;255;255
 stats:1
 move-flag:walks
 base-armour:uarm
