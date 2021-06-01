@@ -145,7 +145,8 @@ static struct PathNode* _find_path(struct MapLocation* dest, int path_bits)
                 continue;
             }
 
-            struct PathNode* p = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, _x, _y), _x, _y)->path_node;
+            //struct PathNode* p = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, _x, _y), _x, _y)->path_node;
+            struct PathNode* p = map_get_location(g_cmap, _x, _y)->path_node;
 
             // Check to see if this is a stale node (if it was last visited in a previous turn or a previous pathing request this turn)
             // Set it to a fresh state

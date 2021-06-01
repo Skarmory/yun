@@ -105,7 +105,7 @@ const struct Weapon* mon_get_weapon(struct Mon* mon)
 
 bool mon_can_see(const struct Mon* mon, int x, int y)
 {
-    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, mon->x, mon->y);
+    //struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, mon->x, mon->y);
 
     if(geom_point_in_circle(x, y, mon->x, mon->y, mon->type->vision_radius))
     {
@@ -115,8 +115,9 @@ bool mon_can_see(const struct Mon* mon, int x, int y)
 
         while(geom_gen_line_increment(mon->x, mon->y, x, y, &_x, &_y, &err))
         {
-            cell = map_get_cell_by_world_coord(g_cmap, _x, _y);
-            struct MapLocation* loc = map_cell_get_location(cell, _x, _y);
+            //cell = map_get_cell_by_world_coord(g_cmap, _x, _y);
+            //struct MapLocation* loc = map_cell_get_location(cell, _x, _y);
+            struct MapLocation* loc = map_get_location(g_cmap, _x, _y);
 
             if(loc_blocks_sight(loc))
             {

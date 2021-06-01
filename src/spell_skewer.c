@@ -56,7 +56,7 @@ static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocatio
     list_for_each(&line.coordinate_list, n)
     {
         struct Coordinate* xy = n->data;
-        struct MapLocation* loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, xy->x, xy->y), xy->x, xy->y);
+        struct MapLocation* loc = map_get_location(g_cmap, xy->x, xy->y);
 
         if(!_spell_cast_skewer_is_valid_loc(caster, loc))
         {
@@ -131,7 +131,7 @@ static void _spell_cast_skewer_unset_visuals(struct Mon* caster, List* loc_cache
 
 void spell_cast_skewer(struct Spell* spell, struct Mon* caster)
 {
-    struct MapLocation* origin = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y), g_you->mon->x, g_you->mon->y);;
+    struct MapLocation* origin = map_get_location(g_cmap, g_you->mon->x, g_you->mon->y);
     struct MapLocation* target = origin;
 
     List loc_cache;

@@ -24,15 +24,17 @@ enum SpawnType spawn_type_from_string(const char* str)
 bool spawn_mon(const char* id, int wx, int wy)
 {
     // Check for valid position
-    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, wx, wy);
-    if(map_cell_has_mon(cell, wx, wy))
+    //struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, wx, wy);
+    //if(map_cell_has_mon(cell, wx, wy))
+    if(map_has_mon(g_cmap, wx, wy))
     {
         return false;
     }
 
     struct MonType* type = mon_type_look_up_by_id(id);
     struct Mon* mon = mon_new(type, wx, wy);
-    map_cell_add_mon(cell, mon);
+    //map_cell_add_mon(cell, mon);
+    map_add_mon(g_cmap, mon, wx, wy);
 
     return true;
 }

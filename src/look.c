@@ -185,7 +185,7 @@ enum KeyCode cursor_free_move(struct MapLocation* in_loc, struct MapLocation** o
                     break;
                 }
 
-                *out_loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, x, y), x, y);
+                *out_loc = map_cell_get_location(cell, x, y);
                 return cmd;
             }
             default:
@@ -205,7 +205,7 @@ void look(void)
     flush_msg_buffer();
     term_wait_on_input(); // Just wait for player input so they can see the message
 
-    struct MapLocation* loc = map_cell_get_location(map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y), g_you->mon->x, g_you->mon->y);
+    struct MapLocation* loc = map_get_location(g_cmap, g_you->mon->x, g_you->mon->y);
     struct Mon* mon = g_you->mon;
 
     bool looking = true;

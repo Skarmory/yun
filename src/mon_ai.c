@@ -21,10 +21,8 @@ void update_mon_ai(struct Mon* mon)
        return;
    }
 
-   struct MapCell* mon_cell = map_get_cell_by_world_coord(g_cmap, mon->x, mon->y);
-   struct MapCell* you_cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
-   struct MapLocation* monloc = map_cell_get_location(mon_cell, mon->x, mon->y);
-   struct MapLocation* youloc = map_cell_get_location(you_cell, g_you->mon->x, g_you->mon->y);
+   struct MapLocation* monloc = map_get_location(g_cmap, mon->x, mon->y);
+   struct MapLocation* youloc = map_get_location(g_cmap, g_you->mon->x, g_you->mon->y);
 
    // Find next location closer to the player
    struct MapLocation* next_loc = next_path_loc(monloc, youloc, mon->move_flags);

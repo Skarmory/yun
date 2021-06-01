@@ -229,7 +229,7 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
 {
     term_clear();
 
-    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
+    //struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
 
     // Drop items
     ListNode* node = NULL;
@@ -238,7 +238,8 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
         struct Object* obj = node->data;
 
         inventory_rm_obj(inventory, obj);
-        loc_add_obj(map_cell_get_location(cell, g_you->mon->x, g_you->mon->y), obj);
+        //loc_add_obj(map_cell_get_location(cell, g_you->mon->x, g_you->mon->y), obj);
+        loc_add_obj(map_get_location(g_cmap, g_you->mon->x, g_you->mon->y), obj);
 
         if(equipment_is_equipped(equipment, obj) && obj->objtype == OBJ_TYPE_WEAPON)
         {

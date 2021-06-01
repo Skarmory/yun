@@ -48,9 +48,8 @@ static bool _do_smart_action(struct MapLocation* target)
  */
 static bool _pick_up_object(void)
 {
-    struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
-    struct MapLocation* loc = map_cell_get_location(cell, g_you->mon->x, g_you->mon->y);
-    List* obj_list = map_cell_get_objects(cell, g_you->mon->x, g_you->mon->y);
+    struct MapLocation* loc = map_get_location(g_cmap, g_you->mon->x, g_you->mon->y);
+    List* obj_list = loc_get_objs(loc);
 
     if(obj_list->head == NULL)
     {
@@ -107,12 +106,18 @@ void gameplay_turn(void)
             case GAMEPLAY_COMMAND_MOVE_RIGHT_UP:
             case GAMEPLAY_COMMAND_MOVE_RIGHT_DOWN:
             {
-                struct MapCell* you_cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
-                if(!you_cell) break;
-                struct MapLocation* you_loc = map_cell_get_location(you_cell, g_you->mon->x, g_you->mon->y);
-                if(!you_loc) break;
+                struct MapLocation* you_loc = map_get_location(g_cmap, g_you->mon->x, g_you->mon->y);
+                if(!you_loc)
+                {
+                    break;
+                }
+
                 struct MapLocation* target = map_get_location_offset_by_direction(g_cmap, you_loc, cmd);
-                if(!target) break;
+                if(!target)
+                {
+                    break;
+                }
+
                 end_turn = _do_smart_action(target);
                 break;
             }

@@ -201,8 +201,8 @@ void display_map(void)
         int j = 0;
         for(int y = ystart; j < MROWS; ++y, ++j)
         {
-            struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x, y);
-            struct MapLocation* loc = map_cell_get_location(cell, x, y);
+            //struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, x, y);
+            struct MapLocation* loc = map_get_location(g_cmap, x, y);
 
             if(!mon_can_see(g_you->mon, x, y))
             {
