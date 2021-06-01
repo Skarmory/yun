@@ -37,7 +37,9 @@ bool loc_add_obj(struct MapLocation* loc, struct Object* obj);
 bool loc_rm_obj(struct MapLocation* loc, struct Object* obj);
 bool loc_blocks_sight(struct MapLocation* loc);
 bool loc_has_obj(struct MapLocation* loc);
+bool loc_has_mon(struct MapLocation* loc);
 struct Object* loc_get_obj(struct MapLocation* loc);
+List* loc_get_objs(struct MapLocation* loc);
 PathingFlags loc_get_pathing(struct MapLocation* loc);
 
 #endif

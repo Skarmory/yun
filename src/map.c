@@ -87,6 +87,17 @@ void map_get_screen_coord_by_world_coord(struct Map* map, int world_x, int world
     *screen_y = world_y - ystart;
 }
 
+struct MapLocation* map_get_location(struct Map* map, int x, int y)
+{
+    struct MapCell* cell = map_get_cell_by_world_coord(map, x, y);
+    if(!cell)
+    {
+        return NULL;
+    }
+
+    return map_cell_get_location(cell, x, y);
+}
+
 struct MapLocation* map_get_location_offset_by_direction(struct Map* map, struct MapLocation* loc, int input_keycode)
 {
     int x_off = 0;
@@ -147,13 +158,33 @@ struct MapLocation* map_get_location_offset_by_direction(struct Map* map, struct
     const int newx = loc->x + x_off;
     const int newy = loc->y + y_off;
 
-    struct MapCell* cell = map_get_cell_by_world_coord(map, newx, newy);
+    //struct MapCell* cell = map_get_cell_by_world_coord(map, newx, newy);
+    //if(!cell)
+    //{
+    //    return NULL;
+    //}
+
+    return map_get_location(map, newx, newy);
+}
+
+bool map_add_mon(struct Map* map, struct Mon* mon, int x, int y)
+{
+    struct MapCell* cell = map_get_cell_by_world_coord(map, x, y);
     if(!cell)
     {
-        return NULL;
+        return false;
     }
 
-    return map_cell_get_location(cell, newx, newy);
+    map_cell_add_mon(cell, mon);
+
+    return true;
+}
+
+bool map_has_mon(struct Map* map, int x, int y)
+{
+    struct MapLocation* loc = map_get_location(map, x, y);
+
+    return loc->mon != NULL;
 }
 
 /**

@@ -2,6 +2,8 @@
 
 #include "feature.h"
 
+#include <stddef.h>
+
 /**
  * Add object to given map location
  */
@@ -43,9 +45,19 @@ bool loc_has_obj(struct MapLocation* loc)
     return !list_empty(&loc->obj_list);
 }
 
+bool loc_has_mon(struct MapLocation* loc)
+{
+    return loc->mon != NULL;
+}
+
 struct Object* loc_get_obj(struct MapLocation* loc)
 {
     return list_peek_head(&loc->obj_list);
+}
+
+List* loc_get_objs(struct MapLocation* loc)
+{
+    return &loc->obj_list;
 }
 
 PathingFlags loc_get_pathing(struct MapLocation* loc)

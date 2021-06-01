@@ -9,6 +9,8 @@
 #define g_map_cell_width  100
 #define g_map_cell_height 100
 
+struct Mon;
+
 struct MapCell
 {
     int cell_x;
