@@ -244,7 +244,7 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
         if(equipment_is_equipped(equipment, obj) && obj->objtype == OBJ_TYPE_WEAPON)
         {
             equipment_unequip_obj(equipment, obj);
-            display_fmsg_log("You thrown down g_your %s.", obj->name);
+            display_fmsg_log("You thrown down your %s.", obj->name);
         }
         else
         {
@@ -267,13 +267,13 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
                 {
                     if(unequipped)
                     {
-                        display_fmsg_log("You unequipped g_your %s.", unequipped->name);
+                        display_fmsg_log("You unequipped your %s.", unequipped->name);
                     }
-                    display_fmsg_log("You equipped g_your %s.", pending->to_equip->name);
+                    display_fmsg_log("You equipped your %s.", pending->to_equip->name);
                 }
                 else
                 {
-                    display_fmsg_log("You equipped g_your %s.",   pending->to_equip->name);
+                    display_fmsg_log("You equipped your %s.",   pending->to_equip->name);
 
                     // Failed to equip the item, roll back to previous state
                     if(unequipped)

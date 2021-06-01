@@ -41,7 +41,7 @@ void print_options(int what, short mask)
     {
         case PICK_CLASS:
         {
-            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Choose g_your class");
+            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Choose your class");
             menu_row += 2;
             for(int i = 0; i < g_classes_count; i++, menu_row++)
             {
