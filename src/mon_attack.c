@@ -160,7 +160,7 @@ bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender)
         case AR_MISS:
         {
             _display_miss_text(attacker, defender);
-            break;
+            return true;
         }
     }
 
