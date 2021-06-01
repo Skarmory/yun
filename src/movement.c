@@ -49,7 +49,6 @@ bool move_is_valid(int destx, int desty, MonAttrMoveFlags move_flags)
 
 bool move_mon(struct Mon* mon, int newx, int newy)
 {
-
     struct MapLocation* old_loc = map_get_location(g_cmap, mon->x, mon->y);
     struct MapLocation* new_loc = map_get_location(g_cmap, newx, newy);
 
@@ -58,11 +57,6 @@ bool move_mon(struct Mon* mon, int newx, int newy)
         return false;
     }
 
-    old_loc->mon = NULL;
-    new_loc->mon = mon;
-    mon->x = newx;
-    mon->y = newy;
-
     struct MapCell* old_cell = map_get_cell_by_world_coord(g_cmap, mon->x, mon->y);
     struct MapCell* new_cell = map_get_cell_by_world_coord(g_cmap, newx, newy);
 
@@ -70,6 +64,11 @@ bool move_mon(struct Mon* mon, int newx, int newy)
     {
         list_splice_node(&old_cell->mon_list, &new_cell->mon_list, list_find(&old_cell->mon_list, mon));
     }
+
+    old_loc->mon = NULL;
+    new_loc->mon = mon;
+    mon->x = newx;
+    mon->y = newy;
 
     return true;
 }
