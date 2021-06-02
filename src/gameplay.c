@@ -4,6 +4,7 @@
 #include "console.h"
 #include "gameplay_commands.h"
 #include "input_keycodes.h"
+#include "log.h"
 #include "look.h"
 #include "map.h"
 #include "map_cell.h"

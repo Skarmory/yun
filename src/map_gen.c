@@ -303,6 +303,7 @@ static void _gen_map_dungeon(struct Map* map)
 
     term_draw_text(loading_progress_x, loading_progress_y, NULL, NULL, A_BOLD, "Generating map");
     term_draw_text(loading_progress_x, loading_progress_y + 1, NULL, NULL, 0, "Creating rooms...");
+
     term_refresh();
 
     ListNode* node = NULL;
@@ -315,6 +316,7 @@ static void _gen_map_dungeon(struct Map* map)
 
     term_draw_text(loading_progress_x, loading_progress_y + 1, NULL, NULL, 0, "Creating rooms... Done!");
     term_draw_text(loading_progress_x, loading_progress_y + 2, NULL, NULL, 0, "Generating maze...");
+
     term_refresh();
 
     list_for_each(&map->cell_list, node)
@@ -326,12 +328,14 @@ static void _gen_map_dungeon(struct Map* map)
 
     term_draw_text(loading_progress_x, loading_progress_y + 2, NULL, NULL, 0, "Generating maze... Done!");
     term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells...");
+
     term_refresh();
 
     _connect_cells(map);
 
     term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells... Done!");
     term_draw_text(loading_progress_x, loading_progress_y + 5, NULL, NULL, 0, "Entering Yun...");
+
     term_refresh();
     term_wait_on_input();
     term_clear();

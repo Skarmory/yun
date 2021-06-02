@@ -20,12 +20,13 @@ int msgbuf_size = 0;
  */
 void _flush_and_prompt(void)
 {
-    flush_msg_buffer();
     term_draw_text(MSGBOX_X, MSGBOX_Y+1, NULL, NULL, 0, "-- more--");
+    flush_msg_buffer();
 
     // Redraw visual info
     // This will show the partial updates for the turn up to this prompt
     display_main_screen();
+    term_refresh();
 
     term_wait_on_input();
     clear_msgs();
@@ -134,7 +135,6 @@ void display_fmsg(bool should_log, const char* format, ...)
 void clear_msgs(void)
 {
     term_clear_area(MSGBOX_X, MSGBOX_Y, MSGBOX_W, MSGBOX_H);
-    term_refresh();
 }
 
 /**
@@ -143,7 +143,6 @@ void clear_msgs(void)
 void flush_msg_buffer(void)
 {
     term_draw_text(MSGBOX_X, MSGBOX_Y, NULL, NULL, 0, msgbuf);
-    term_refresh();
     msgbuf_size = 0;
     memset(msgbuf, '\0', MSGBOX_W-1);
 }

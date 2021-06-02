@@ -84,11 +84,13 @@ bool prompt_yn(const char* msg)
     clear_msgs();
     display_fmsg_nolog("%s [yn] (n)", msg);
     flush_msg_buffer();
+    term_refresh();
 
     bool decision = (enum YesNoCommand)get_key() == YES;
 
     display_fmsg_log("%s [yn] (n) %c", msg, decision ? YES : NO);
     flush_msg_buffer();
+    term_refresh();
     return decision;
 }
 
