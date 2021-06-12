@@ -33,8 +33,8 @@ enum ParserCode parse_attack_methods(void)
 
 parsing_callback(_parse_attack_methods_finalise)
 {
-    List* attack_methods_data = parser_get_userdata(parser);
-    ListNode* node;
+    struct List* attack_methods_data = parser_get_userdata(parser);
+    struct ListNode* node;
 
     log_format_msg(LOG_DEBUG, "Parsed attack types count: %d", attack_methods_data->count);
 

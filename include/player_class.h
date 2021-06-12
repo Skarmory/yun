@@ -1,8 +1,6 @@
 #ifndef YUN_CLASS_H
 #define YUN_CLASS_H
 
-#include "defs.h"
-
 #define CLS_FIGHTER 0x000000001
 
 #define CLS_INVALID_IDX (-1)

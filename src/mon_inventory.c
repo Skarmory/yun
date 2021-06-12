@@ -27,7 +27,7 @@ struct Inventory* new_inventory(void)
 
 void free_inventory(struct Inventory* inventory)
 {
-    ListNode *node, *n;
+    struct ListNode *node, *n;
     list_for_each_safe(&inventory->obj_list, node, n)
     {
         free_obj(node->data);
@@ -58,7 +58,7 @@ bool inventory_add_obj(struct Inventory* inventory, struct Object* obj)
 
 bool inventory_rm_obj(struct Inventory* inventory, struct Object* obj)
 {
-    ListNode* node = list_find(&inventory->obj_list, obj);
+    struct ListNode* node = list_find(&inventory->obj_list, obj);
     if(!node) return false;
 
     list_rm(&inventory->obj_list, node);
@@ -69,7 +69,7 @@ bool inventory_rm_obj(struct Inventory* inventory, struct Object* obj)
 
 bool inventory_has_obj(struct Inventory* inventory, struct Object* obj)
 {
-    ListNode* node;
+    struct ListNode* node;
     list_for_each(&inventory->obj_list, node)
     {
         if(node->data == obj) return true;
@@ -96,7 +96,7 @@ bool inventory_sanity_check(struct Inventory* inventory)
     }
 
     int counter = 0;
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&inventory->obj_list, node)
     {
         ++counter;

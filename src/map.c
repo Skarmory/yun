@@ -4,7 +4,6 @@
 #include "feature.h"
 #include "gameplay_commands.h"
 #include "input_keycodes.h"
-#include "list.h"
 #include "log.h"
 #include "map_cell.h"
 #include "map_location.h"
@@ -39,7 +38,7 @@ struct Map* map_new(int width, int height)
  */
 void map_free(struct Map* map)
 {
-    ListNode *node = NULL, *next = NULL;
+    struct ListNode *node = NULL, *next = NULL;
     list_for_each_safe(&map->cell_list, node, next)
     {
         map_cell_free(node->data);
@@ -51,7 +50,7 @@ void map_free(struct Map* map)
 
 struct MapCell* map_get_cell_by_world_coord(struct Map* map, int x, int y)
 {
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&map->cell_list, node)
     {
         if(map_cell_is_in_bounds(node->data, x, y))
@@ -65,7 +64,7 @@ struct MapCell* map_get_cell_by_world_coord(struct Map* map, int x, int y)
 
 struct MapCell* map_get_cell_by_map_coord(struct Map* map, int x, int y)
 {
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&map->cell_list, node)
     {
         struct MapCell* cell = node->data;

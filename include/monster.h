@@ -1,7 +1,6 @@
 #ifndef YUN_MON_H
 #define YUN_MON_H
 
-#include "defs.h"
 #include "mon_attr.h"
 #include "mon_stats.h"
 

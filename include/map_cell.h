@@ -1,6 +1,7 @@
 #ifndef YUN_MAP_CELL_H
 #define YUN_MAP_CELL_H
 
+#include "list.h"
 #include "map_location.h"
 #include "mon_attr.h"
 
@@ -18,8 +19,8 @@ struct MapCell
     int world_x;
     int world_y;
     struct MapLocation locs[g_map_cell_width * g_map_cell_height];
-    List room_list;
-    List mon_list;
+    struct List room_list;
+    struct List mon_list;
 };
 
 struct MapCell* map_cell_new(int cell_x, int cell_y);
@@ -38,7 +39,7 @@ struct MapLocation* map_cell_get_location_relative(struct MapCell* cell, int x, 
 
 struct Room* map_cell_get_room(struct MapCell* cell, int x, int y);
 
-List* map_cell_get_objects(struct MapCell* cell, int x, int y);
+struct List* map_cell_get_objects(struct MapCell* cell, int x, int y);
 void map_cell_add_mon(struct MapCell* cell, struct Mon* mon);
 bool map_cell_rm_mon(struct MapCell* cell, struct Mon* mon);
 

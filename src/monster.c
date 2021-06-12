@@ -136,12 +136,12 @@ bool mon_can_see(const struct Mon* mon, int x, int y)
  */
 void update_mons(void)
 {
-    ListNode* cell_node = NULL;
+    struct ListNode* cell_node = NULL;
     list_for_each(&g_cmap->cell_list, cell_node)
     {
         struct MapCell* cell = cell_node->data;
 
-        ListNode* node = NULL;
+        struct ListNode* node = NULL;
         list_for_each(&cell->mon_list, node)
         {
             update_mon_ai(node->data);

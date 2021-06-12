@@ -69,8 +69,8 @@ struct Tasker
     mtx_t         pending_list_lock;
     mtx_t         complete_list_lock;
 
-    List          pending_list;
-    List          complete_list;
+    struct List          pending_list;
+    struct List          complete_list;
 };
 
 struct Task
@@ -339,7 +339,7 @@ void tasker_free(struct Tasker* tasker)
     mtx_destroy(&tasker->lock);
     cnd_destroy(&tasker->signal);
 
-    ListNode *node, *next;
+    struct ListNode *node, *next;
     list_for_each_safe(&tasker->pending_list, node, next)
     {
         task_free(node->data);
@@ -367,7 +367,7 @@ void tasker_integrate(struct Tasker* tasker)
 
     mtx_lock(&tasker->complete_list_lock);
     {
-        ListNode *node, *next;
+        struct ListNode *node, *next;
         list_for_each_safe(&tasker->complete_list, node, next)
         {
             struct Task* task = node->data;

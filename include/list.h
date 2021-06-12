@@ -3,31 +3,31 @@
 
 #include <stdbool.h>
 
-typedef struct _ListNode
+struct ListNode
 {
     void* data;
-    struct _ListNode* next;
-    struct _ListNode* prev;
-} ListNode;
+    struct ListNode* next;
+    struct ListNode* prev;
+};
 
-typedef struct _List
+struct List
 {
-    int       count;
-    ListNode* head;
-    ListNode* tail;
-} List;
+    int              count;
+    struct ListNode* head;
+    struct ListNode* tail;
+};
 
-List* list_new(void);
-void list_free(List* list);
-void list_init(List* list);
-void list_uninit(List* list);
-void list_add(List* list, void* data);
-void list_rm(List* list, ListNode* node);
-ListNode* list_find(List* list, void* data);
-void list_splice_node(List* list_from, List* list_to, ListNode* node);
-void* list_pop_head(List* list);
-void* list_peek_head(const List* list);
-bool list_empty(const List* list);
+struct List* list_new(void);
+void list_free(struct List* list);
+void list_init(struct List* list);
+void list_uninit(struct List* list);
+void list_add(struct List* list, void* data);
+void list_rm(struct List* list, struct ListNode* node);
+struct ListNode* list_find(struct List* list, void* data);
+void list_splice_node(struct List* list_from, struct List* list_to, struct ListNode* node);
+void* list_pop_head(struct List* list);
+void* list_peek_head(const struct List* list);
+bool list_empty(const struct List* list);
 
 #define list_for_each(list, it)\
     for(it = (list)->head; it != NULL; it = it->next)

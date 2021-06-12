@@ -1,7 +1,6 @@
 #ifndef YUN_ARMOUR_H
 #define YUN_ARMOUR_H
 
-#include "defs.h"
 #include "mon_equip.h"
 
 struct Object;

@@ -202,7 +202,7 @@ struct MapLocation* _get_valid_maze_node(struct MapCell* cell, struct MapLocatio
 
 void _flood_fill_maze(struct MapCell* cell, struct MapLocation* loc)
 {
-    List loc_list;
+    struct List loc_list;
     list_init(&loc_list);
 
     map_util_enlist_orthogonals_random_order(cell, loc, &loc_list);
@@ -255,7 +255,7 @@ void _make_doors(struct MapCell* cell)
     // TODO: This should equal the size of the perimeter of the maximum sized room, make a constant
     struct MapLocation* connectors[36];
 
-    ListNode* rnode;
+    struct ListNode* rnode;
     list_for_each(&cell->room_list, rnode)
     {
         room = rnode->data;

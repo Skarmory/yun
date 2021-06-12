@@ -1,11 +1,10 @@
 #ifndef YUN_INVENTORY_H
 #define YUN_INVENTORY_H
 
-#include "defs.h"
+#include "list.h"
 
 #include <stdbool.h>
 
-struct List;
 struct Object;
 
 struct Inventory
@@ -13,7 +12,7 @@ struct Inventory
     int capacity;
     int size;
 
-    List obj_list;
+    struct List obj_list;
 };
 
 struct Inventory* new_inventory(void);

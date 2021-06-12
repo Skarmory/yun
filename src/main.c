@@ -158,7 +158,7 @@ int main(int argc, char** argv)
         loc_add_obj(map_cell_get_location(test_cell, startx, starty), longsword->obj);
     }
 
-    ListNode* node;
+    struct ListNode* node;
     list_for_each(&test_cell->room_list, node)
     {
         room = node->data;

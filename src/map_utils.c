@@ -1,14 +1,14 @@
 #include "map_utils.h"
 
+#include "feature.h"
+#include "list.h"
 #include "map_cell.h"
 #include "map_location.h"
-
-#include "feature.h"
 #include "util.h"
 
 #include <string.h>
 
-void map_util_enlist_orthogonals_random_order(struct MapCell* cell, struct MapLocation* loc, List* list)
+void map_util_enlist_orthogonals_random_order(struct MapCell* cell, struct MapLocation* loc, struct List* list)
 {
     int ortho_dirs[4] = { 1, 2, 3, 4 };
     int dir_count = 3;

@@ -35,8 +35,8 @@ enum ParserCode parse_spells(void)
 
 parsing_callback(_parse_spells_finalise)
 {
-    List* spells_data = parser_get_userdata(parser);
-    ListNode* node = NULL;
+    struct List* spells_data = parser_get_userdata(parser);
+    struct ListNode* node = NULL;
 
     log_format_msg(LOG_DEBUG, "Parsed spells count: %d", spells_data->count);
 

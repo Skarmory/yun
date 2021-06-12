@@ -42,8 +42,8 @@ enum ParserCode parse_weapons(void)
 
 parsing_callback(_parse_weapons_finalise)
 {
-    List* weapon_base_data = parser_get_userdata(parser);
-    ListNode* node;
+    struct List* weapon_base_data = parser_get_userdata(parser);
+    struct ListNode* node;
 
     log_format_msg(LOG_DEBUG, "Parsed weapon count: %d", weapon_base_data->count);
 

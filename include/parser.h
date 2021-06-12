@@ -44,7 +44,7 @@ void parser_get_state(struct Parser* parser, struct ParseState* state);
 enum ParserCode parser_register_field(struct Parser* parser, char* field_name, char* field_data_format, parse_method pmeth);
 enum ParserCode parser_parse(struct Parser* parser, char* line);
 void parser_set_userdata(struct Parser* parser, void* userdata);
-List* parser_get_userdata(struct Parser* parser);
+struct List* parser_get_userdata(struct Parser* parser);
 void* parser_get_userdata_active(struct Parser* parser);
 enum ParserCode parser_get_last_code(struct Parser* parser);
 

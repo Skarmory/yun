@@ -1,6 +1,7 @@
 #include "spell_effect.h"
 #include "spell_effect_action.h"
 
+#include "list.h"
 #include "monster.h"
 #include "util.h"
 
@@ -18,7 +19,7 @@ static void _spell_effect_affect_mon(struct SpellEffect* effect, struct SpellEff
         {
             struct SpellEffectAction_CauseDamage* data = effect->action_data;
 
-            ListNode* n = NULL;
+            struct ListNode* n = NULL;
             list_for_each(args->affected_mons, n)
             {
                 struct Mon* mon = n->data;

@@ -111,7 +111,7 @@ void geom_dbg_log_line(struct Line* line, const char* line_name)
 {
     log_format_msg(LOG_DEBUG, "Debugging line: %s", line_name);
     int seg = 0;
-    ListNode* n = NULL;
+    struct ListNode* n = NULL;
     list_for_each(&line->coordinate_list, n)
     {
         struct Coordinate* cptr = n->data;

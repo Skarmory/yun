@@ -20,7 +20,7 @@ bool loc_add_obj(struct MapLocation* loc, struct Object* obj)
  */
 bool loc_rm_obj(struct MapLocation* loc, struct Object* obj)
 {
-    ListNode* node = list_find(&loc->obj_list, obj);
+    struct ListNode* node = list_find(&loc->obj_list, obj);
     if(node)
     {
         list_rm(&loc->obj_list, node);
@@ -55,7 +55,7 @@ struct Object* loc_get_obj(struct MapLocation* loc)
     return list_peek_head(&loc->obj_list);
 }
 
-List* loc_get_objs(struct MapLocation* loc)
+struct List* loc_get_objs(struct MapLocation* loc)
 {
     return &loc->obj_list;
 }

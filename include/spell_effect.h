@@ -1,8 +1,9 @@
 #ifndef YUN_SPELL_EFFECT_H
 #define YUN_SPELL_EFFECT_H
 
-#include "list.h"
 #include "spell_effect_action.h"
+
+struct List;
 
 enum SpellEffectEvent
 {
@@ -20,13 +21,13 @@ struct SpellEffect
 /*
  * Contains the things affected by a Spell.
  * A spell effect can grab what it's interested in from these and apply its effects.
- * affected_locations: List of MapLocation
- * affected_mons: List of Mon
+ * affected_locations: struct List of MapLocation
+ * affected_mons: struct List of Mon
  */
 struct SpellEffectArgs
 {
-    List* affected_locations;
-    List* affected_mons;
+    struct List* affected_locations;
+    struct List* affected_mons;
 };
 
 void spell_effect_execute(struct SpellEffect* effect, struct SpellEffectArgs* args);

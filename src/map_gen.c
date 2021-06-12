@@ -35,7 +35,7 @@ static void _gen_room(struct MapCell* cell)
     int x = random_int(cell->world_x, cell->world_x+g_map_cell_width-1-w);
     int y = random_int(cell->world_y, cell->world_y+g_map_cell_height-1-h);
 
-    ListNode* rnode;
+    struct ListNode* rnode;
     list_for_each(&cell->room_list, rnode)
     {
         struct Room* r = rnode->data;
@@ -306,7 +306,7 @@ static void _gen_map_dungeon(struct Map* map)
 
     term_refresh();
 
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&map->cell_list, node)
     {
         _gen_rooms_async(node->data);
@@ -343,7 +343,7 @@ static void _gen_map_dungeon(struct Map* map)
 
 static void _gen_map_open(struct Map* map)
 {
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&map->cell_list, node)
     {
         _gen_open_area(node->data);

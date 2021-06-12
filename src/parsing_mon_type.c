@@ -51,8 +51,8 @@ enum ParserCode parse_mon_types(void)
 
 parsing_callback(_parse_mon_types_finalise)
 {
-    List* mon_type_data = parser_get_userdata(parser);
-    ListNode* node;
+    struct List* mon_type_data = parser_get_userdata(parser);
+    struct ListNode* node;
 
     log_format_msg(LOG_DEBUG, "Parsed mon type count: %d", mon_type_data->count);
 
