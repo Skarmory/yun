@@ -27,9 +27,19 @@ enum SpellCastCommand
 
 static bool _spell_cast_skewer_is_valid_loc(struct Mon* caster, struct MapLocation* loc)
 {
+    if(!map_is_in_view_bounds(g_cmap, loc->x, loc->y))
+    {
+        return false;
+    }
+
     if(caster->x == loc->x && caster->y == loc->y)
     {
         // Cannot skewer yourself!
+        return false;
+    }
+
+    if(!loc->seen)
+    {
         return false;
     }
 
@@ -49,7 +59,9 @@ static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocatio
     struct Line line;
     geom_gen_line(&line, origin->x, origin->y, (*target)->x, (*target)->y);
 
-    list_pop_head(&line.coordinate_list); // Discard the origin of the line (the caster's location)
+    struct Coordinate* xy = list_pop_head(&line.coordinate_list); // Discard the origin of the line (the caster's location)
+    struct MapLocation* loc = map_get_location(g_cmap, xy->x, xy->y);
+    *target = loc;
 
     geom_dbg_log_line(&line, "spell_cast_skewer_get_targets line");
 
@@ -57,8 +69,8 @@ static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocatio
     struct ListNode* n = NULL;
     list_for_each(&line.coordinate_list, n)
     {
-        struct Coordinate* xy = n->data;
-        struct MapLocation* loc = map_get_location(g_cmap, xy->x, xy->y);
+        xy = n->data;
+        loc = map_get_location(g_cmap, xy->x, xy->y);
 
         if(!_spell_cast_skewer_is_valid_loc(caster, loc))
         {
@@ -84,45 +96,57 @@ static void _spell_cast_skewer_target_info(struct Mon* caster, struct MapLocatio
 // Set the symbols for the casting targetting indicator
 static void _spell_cast_skewer_set_visuals(struct Mon* caster, struct List* loc_cache)
 {
-    int count = 0;
-    struct ListNode* n = NULL;
-    list_for_each(loc_cache, n)
-    {
-        int sx = -1;
-        int sy = -1;
-        struct MapLocation* loc = n->data;
-        struct Symbol what_is_seen = look_get_symbol(loc, caster);
+    int sx = -1;
+    int sy = -1;
 
+    if(loc_cache->count != 0)
+    {
+        int count = 0;
+        struct ListNode* n = NULL;
+        list_for_each(loc_cache, n)
+        {
+            struct MapLocation* loc = n->data;
+            struct Symbol what_is_seen = look_get_symbol(loc, caster);
+
+            map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
+
+            if(count == loc_cache->count - 1)
+            {
+                // Set the "head"/target segment
+                term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
+
+                if(colour_similar(&what_is_seen.fg, &g_colours[CLR_WHITE]))
+                {
+                    term_draw_symbol(sx, sy, &g_colours[CLR_BLACK], &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
+                }
+                else
+                {
+                    term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
+                }
+            }
+            else
+            {
+                // Set the "tail" segments
+                if(colour_similar(&what_is_seen.fg, &g_colours[CLR_LGREY]))
+                {
+                    term_draw_symbol(sx, sy, &g_colours[CLR_BLACK], &g_colours[CLR_LGREY], A_BLINK_BIT, what_is_seen.sym);
+                }
+                else
+                {
+                    term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_LGREY], A_BLINK_BIT, what_is_seen.sym);
+                }
+            }
+
+            ++count;
+        }
+    }
+    else
+    {
+        // Must be targetting the player, or something really bizarre is going on
+        struct MapLocation* loc = map_get_location(g_cmap, caster->x, caster->y);
         map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
 
-        if(count == loc_cache->count - 1)
-        {
-            // Set the "head"/target segment
-            term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
-
-            if(colour_similar(&what_is_seen.fg, &g_colours[CLR_WHITE]))
-            {
-                term_draw_symbol(sx, sy, &g_colours[CLR_BLACK], &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
-            }
-            else
-            {
-                term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
-            }
-        }
-        else
-        {
-            // Set the "tail" segments
-            if(colour_similar(&what_is_seen.fg, &g_colours[CLR_LGREY]))
-            {
-                term_draw_symbol(sx, sy, &g_colours[CLR_BLACK], &g_colours[CLR_LGREY], A_BLINK_BIT, what_is_seen.sym);
-            }
-            else
-            {
-                term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_LGREY], A_BLINK_BIT, what_is_seen.sym);
-            }
-        }
-
-        ++count;
+        term_draw_symbol(sx, sy, &caster->type->symbol->fg, &g_colours[CLR_LRED], A_NONE, caster->type->symbol->sym);
     }
 }
 
@@ -133,9 +157,13 @@ static void _spell_cast_skewer_unset_visuals(struct Mon* caster, struct List* lo
     int sy = 0;
     struct ListNode* n = NULL, *nn = NULL;
 
+    struct MapLocation* loc = map_get_location(g_cmap, caster->x, caster->y);
+    map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
+    term_draw_symbol(sx, sy, &caster->type->symbol->fg, &caster->type->symbol->bg, A_NONE_BIT, caster->type->symbol->sym);
+
     list_for_each_safe(loc_cache, n, nn)
     {
-        struct MapLocation* loc = n->data;
+        loc = n->data;
 
         map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
 
@@ -197,11 +225,6 @@ void spell_cast_skewer(struct Spell* spell, struct Mon* caster)
         if(cmd == SPELL_CAST_COMMAND_CANCEL)
         {
             break;
-        }
-
-        if(!_spell_cast_skewer_is_valid_loc(caster, next_target))
-        {
-            continue;
         }
 
         target = next_target;
