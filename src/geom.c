@@ -80,7 +80,7 @@ void geom_gen_line(struct Line* out_line, int x0, int y0, int x1, int y1)
 
     struct Coordinate* coord = malloc(sizeof(struct Coordinate));
     coord->x = x0;
-    coord->y = x1;
+    coord->y = y0;
 
     list_add(&out_line->coordinate_list, coord);
 
