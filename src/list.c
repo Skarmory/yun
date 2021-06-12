@@ -138,6 +138,11 @@ void* list_peek_head(const struct List* list)
     return list->head->data;
 }
 
+void* list_peek_tail(const struct List* list)
+{
+    return list->tail->data;
+}
+
 bool list_empty(const struct List* list)
 {
     return list->count == 0;

@@ -27,6 +27,7 @@ struct ListNode* list_find(struct List* list, void* data);
 void list_splice_node(struct List* list_from, struct List* list_to, struct ListNode* node);
 void* list_pop_head(struct List* list);
 void* list_peek_head(const struct List* list);
+void* list_peek_tail(const struct List* list);
 bool list_empty(const struct List* list);
 
 #define list_for_each(list, it)\
