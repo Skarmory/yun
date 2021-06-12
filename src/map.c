@@ -186,6 +186,25 @@ bool map_has_mon(struct Map* map, int x, int y)
     return loc->mon != NULL;
 }
 
+bool map_is_in_bounds(struct Map* map, int x, int y)
+{
+    struct MapCell* cell = map_get_cell_by_world_coord(map, x, y);
+
+    return cell != NULL;
+}
+
+// TODO: Replace with proper map view functionality
+bool map_is_in_view_bounds(struct Map* map, int x, int y)
+{
+    int xmin = clamp(g_you->mon->x - (MCOLS/2), 0, (map->width * g_map_cell_width) - MCOLS - 1);
+    int ymin = clamp(g_you->mon->y - (MROWS/2), 0, (map->height * g_map_cell_height) - MROWS - 1);
+
+    int xmax = clamp(g_you->mon->x + (MCOLS/2), 0, (map->width * g_map_cell_width) + MCOLS - 1);
+    int ymax = clamp(g_you->mon->y + (MROWS/2), 0, (map->height * g_map_cell_height) + MROWS - 1);
+
+    return (x >= xmin && x < xmax) && (y >= ymin && y < ymax);
+}
+
 /**
  * Draw map
  */
