@@ -99,11 +99,27 @@ static void _spell_cast_skewer_set_visuals(struct Mon* caster, struct List* loc_
         {
             // Set the "head"/target segment
             term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
+
+            if(colour_similar(&what_is_seen.fg, &g_colours[CLR_WHITE]))
+            {
+                term_draw_symbol(sx, sy, &g_colours[CLR_BLACK], &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
+            }
+            else
+            {
+                term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_WHITE], A_BLINK_BIT, what_is_seen.sym);
+            }
         }
         else
         {
             // Set the "tail" segments
-            term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_LGREY], A_BLINK_BIT, what_is_seen.sym);
+            if(colour_similar(&what_is_seen.fg, &g_colours[CLR_LGREY]))
+            {
+                term_draw_symbol(sx, sy, &g_colours[CLR_BLACK], &g_colours[CLR_LGREY], A_BLINK_BIT, what_is_seen.sym);
+            }
+            else
+            {
+                term_draw_symbol(sx, sy, &what_is_seen.fg, &g_colours[CLR_LGREY], A_BLINK_BIT, what_is_seen.sym);
+            }
         }
 
         ++count;
@@ -165,7 +181,12 @@ void spell_cast_skewer(struct Spell* spell, struct Mon* caster)
         int nx = -1;
         int ny = -1;
         enum SpellCastCommand cmd = (enum SpellCastCommand)cursor_move(target->x, target->y, &nx, &ny);
+
         struct MapLocation* next_target = map_get_location(g_cmap, nx, ny);
+        if(nx == -1 || ny == -1)
+        {
+            next_target = target;
+        }
 
         if(cmd == SPELL_CAST_COMMAND_CONFIRM)
         {
