@@ -56,3 +56,14 @@ bool colour_equal(struct Colour* c1, struct Colour* c2)
            c1->g == c2->g &&
            c1->b == c2->b;
 }
+
+bool colour_similar(struct Colour* c1, struct Colour* c2)
+{
+    int rmean = (c1->r + c2->r) / 2;
+    int r     = c1->r - c2->r;
+    int g     = c1->g - c2->g;
+    int b     = c1->b - c2->b;
+    int dist2 = (((512 + rmean) * r * r) >> 8) + (4 * g * g) + (((767 - rmean) * b * b) >> 8);
+
+    return dist2 < 150000;
+}

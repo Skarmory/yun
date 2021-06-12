@@ -78,6 +78,7 @@ struct Colour
 };
 
 bool colour_equal(struct Colour* c1, struct Colour* c2);
+bool colour_similar(struct Colour* c1, struct Colour* c2);
 
 extern struct Colour g_colours[];
 
