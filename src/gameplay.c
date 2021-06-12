@@ -4,6 +4,7 @@
 #include "console.h"
 #include "gameplay_commands.h"
 #include "input_keycodes.h"
+#include "log.h"
 #include "look.h"
 #include "map.h"
 #include "map_cell.h"
@@ -49,7 +50,7 @@ static bool _do_smart_action(struct MapLocation* target)
 static bool _pick_up_object(void)
 {
     struct MapLocation* loc = map_get_location(g_cmap, g_you->mon->x, g_you->mon->y);
-    List* obj_list = loc_get_objs(loc);
+    struct List* obj_list = loc_get_objs(loc);
 
     if(obj_list->head == NULL)
     {

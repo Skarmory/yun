@@ -15,9 +15,9 @@ enum SpellSpatialType
 
 struct Spell
 {
-    char id[5];
+    char                  id[5];
     enum SpellSpatialType spatial_type;
-    List spell_effects;
+    struct List           spell_effects;
 };
 
 void spell_cast(struct Spell* spell);

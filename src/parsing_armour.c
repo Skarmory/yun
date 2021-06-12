@@ -40,8 +40,8 @@ enum ParserCode parse_armours(void)
 
 parsing_callback(_parse_armours_finalise)
 {
-    List* armour_base_data = parser_get_userdata(parser);
-    ListNode* node;
+    struct List* armour_base_data = parser_get_userdata(parser);
+    struct ListNode* node;
 
     log_format_msg(LOG_DEBUG, "Parsed armour count: %d", armour_base_data->count);
 

@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static inline void _add_node(List* list, ListNode* node)
+static inline void _add_node(struct List* list, struct ListNode* node)
 {
     if(list->tail)
     {
@@ -19,7 +19,7 @@ static inline void _add_node(List* list, ListNode* node)
     list->tail = node;
 }
 
-static inline void _remove_node(List* list, ListNode* node)
+static inline void _remove_node(struct List* list, struct ListNode* node)
 {
     if(node->prev)
     {
@@ -44,31 +44,31 @@ static inline void _remove_node(List* list, ListNode* node)
     --list->count;
 }
 
-List* list_new(void)
+struct List* list_new(void)
 {
-    List* list = (List*)malloc(sizeof(List));
+    struct List* list = (struct List*)malloc(sizeof(struct List));
 
     list_init(list);
 
     return list;
 }
 
-void list_free(List* list)
+void list_free(struct List* list)
 {
     list_uninit(list);
     free(list);
 }
 
-void list_init(List* list)
+void list_init(struct List* list)
 {
     list->count = 0;
     list->head = NULL;
     list->tail = NULL;
 }
 
-void list_uninit(List* list)
+void list_uninit(struct List* list)
 {
-    ListNode *node, *n;
+    struct ListNode *node, *n;
     list_for_each_safe(list, node, n)
     {
         free(node);
@@ -79,9 +79,9 @@ void list_uninit(List* list)
     list->tail = NULL;
 }
 
-void list_add(List* list, void* data)
+void list_add(struct List* list, void* data)
 {
-    ListNode* node = malloc(sizeof(ListNode));
+    struct ListNode* node = malloc(sizeof(struct ListNode));
     node->data = data;
     node->next = NULL;
     node->prev = NULL;
@@ -89,7 +89,7 @@ void list_add(List* list, void* data)
     _add_node(list, node);
 }
 
-void list_rm(List* list, ListNode* node)
+void list_rm(struct List* list, struct ListNode* node)
 {
     if(!node)
     {
@@ -101,9 +101,9 @@ void list_rm(List* list, ListNode* node)
     free(node);
 }
 
-ListNode* list_find(List* list, void* data)
+struct ListNode* list_find(struct List* list, void* data)
 {
-    ListNode* node;
+    struct ListNode* node;
     list_for_each(list, node)
     {
         if(node->data == data) return node;
@@ -112,7 +112,7 @@ ListNode* list_find(List* list, void* data)
     return NULL;
 }
 
-void list_splice_node(List* list_from, List* list_to, ListNode* node)
+void list_splice_node(struct List* list_from, struct List* list_to, struct ListNode* node)
 {
     if(!node)
     {
@@ -124,7 +124,7 @@ void list_splice_node(List* list_from, List* list_to, ListNode* node)
     _add_node(list_to, node);
 }
 
-void* list_pop_head(List* list)
+void* list_pop_head(struct List* list)
 {
     void* data = list->head->data;
 
@@ -133,12 +133,12 @@ void* list_pop_head(List* list)
     return data;
 }
 
-void* list_peek_head(const List* list)
+void* list_peek_head(const struct List* list)
 {
     return list->head->data;
 }
 
-bool list_empty(const List* list)
+bool list_empty(const struct List* list)
 {
     return list->count == 0;
 }

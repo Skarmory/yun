@@ -48,7 +48,7 @@ struct MapCell* map_cell_new(int cell_x, int cell_y)
 
 void map_cell_free(struct MapCell* cell)
 {
-    ListNode *node = NULL, *n = NULL;
+    struct ListNode *node = NULL, *n = NULL;
 
     // Free mons
     list_for_each_safe(&cell->mon_list, node, n)
@@ -100,7 +100,7 @@ struct MapLocation* map_cell_get_location_relative(struct MapCell* cell, int x, 
 
 struct Room* map_cell_get_room(struct MapCell* cell, int x, int y)
 {
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&cell->room_list, node)
     {
         if(room_has_location(node->data, x, y))
@@ -112,7 +112,7 @@ struct Room* map_cell_get_room(struct MapCell* cell, int x, int y)
     return NULL;
 }
 
-List* map_cell_get_objects(struct MapCell* cell, int x, int y)
+struct List* map_cell_get_objects(struct MapCell* cell, int x, int y)
 {
     struct MapLocation* loc = map_cell_get_location(cell, x, y);
     return loc ? &loc->obj_list : NULL;
@@ -126,7 +126,7 @@ void map_cell_add_mon(struct MapCell* cell, struct Mon* mon)
 
 bool map_cell_rm_mon(struct MapCell* cell, struct Mon* mon)
 {
-    ListNode* node = list_find(&cell->mon_list, mon);
+    struct ListNode* node = list_find(&cell->mon_list, mon);
     if(node)
     {
         map_cell_get_location(cell, mon->x, mon->y)->mon = NULL;

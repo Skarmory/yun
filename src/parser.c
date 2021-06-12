@@ -19,11 +19,6 @@ const char* c_tok_char = "char";
 const char* c_tok_string = "string";
 const char* c_tok_bool = "bool";
 
-typedef List ParseFormat_List;
-typedef List FieldData_List;
-typedef List Metadata_List;
-typedef List Userdata_List;
-
 enum DataType
 {
     TYPE_INT,
@@ -51,29 +46,29 @@ struct Metadata
 struct FieldData
 {
     struct Metadata* meta;
-    union DataValue value;
+    union DataValue  value;
 };
 
 // Collection of field data for a single entry
 struct ParseData
 {
-    char name[FIELD_NAME_SIZE];
-    FieldData_List data;
+    char        name[FIELD_NAME_SIZE];
+    struct List data;
 };
 
 // Collection of metadata for each field data in an entry and a parse function callback
 struct ParseFormat
 {
-    char field_name[FIELD_NAME_SIZE];
-    Metadata_List field_meta;
+    char         field_name[FIELD_NAME_SIZE];
+    struct List  field_meta;
     parse_method method;
 };
 
 struct Parser
 {
     enum ParserCode   last_code;
-    Userdata_List     userdata;
-    ParseFormat_List  parse_formats;
+    struct List       userdata;
+    struct List       parse_formats;
     struct ParseData  parse_data;
     struct ParseState parse_state;
 };
@@ -192,7 +187,7 @@ static inline void _metadata_free(struct Metadata* meta)
 
 static void _parse_format_free(struct ParseFormat* format)
 {
-    ListNode *metadata_node = NULL, *metadata_node_next = NULL;
+    struct ListNode *metadata_node = NULL, *metadata_node_next = NULL;
     list_for_each_safe(&format->field_meta, metadata_node, metadata_node_next)
     {
         _metadata_free(metadata_node->data);
@@ -258,7 +253,7 @@ static enum ParserCode _parse_field_data(struct ParseData* parse_data, struct Pa
 {
     char* tok = strtok(field_data, ";");
 
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&parse_format->field_meta, node)
     {
         if(!tok)
@@ -317,7 +312,7 @@ static inline void _parser_reset(struct Parser* parser)
 {
     if(parser->parse_data.data.count > 0)
     {
-        ListNode *field_node = NULL, *field_node_next = NULL;
+        struct ListNode *field_node = NULL, *field_node_next = NULL;
         list_for_each_safe(&parser->parse_data.data, field_node, field_node_next)
         {
             _field_data_free(field_node->data);
@@ -328,7 +323,7 @@ static inline void _parser_reset(struct Parser* parser)
 
 static void _parser_free_parse_formats(struct Parser* parser)
 {
-    ListNode* node = NULL, *next = NULL;
+    struct ListNode* node = NULL, *next = NULL;
     list_for_each_safe(&parser->parse_formats, node, next)
     {
         _parse_format_free(node->data);
@@ -338,7 +333,7 @@ static void _parser_free_parse_formats(struct Parser* parser)
 
 static void _parser_free_userdata(struct Parser* parser)
 {
-    ListNode* node = NULL, *next = NULL;
+    struct ListNode* node = NULL, *next = NULL;
     list_for_each_safe(&parser->userdata, node, next)
     {
         free(node);
@@ -349,7 +344,7 @@ static void _parser_free_userdata(struct Parser* parser)
 static enum ParserCode _parser_find_format(struct Parser* parser, const char* field_name, struct ParseFormat** format)
 {
     enum ParserCode code = PARSER_NO_FORMAT_FOUND;
-    ListNode* n = NULL;
+    struct ListNode* n = NULL;
     list_for_each(&parser->parse_formats, n)
     {
         *format = n->data;
@@ -373,7 +368,7 @@ struct FieldData* _field_get_value(struct Parser* parser, const char* field_name
     struct ParseData* pdata = &parser->parse_data;
     if(strcmp(pdata->name, field_name) == 0)
     {
-        ListNode* n = NULL;
+        struct ListNode* n = NULL;
         list_for_each(&pdata->data, n)
         {
             struct FieldData* fdata = n->data;
@@ -526,7 +521,7 @@ enum ParserCode parser_parse(struct Parser* parser, char* line)
 
     if((code = _parse_field_data(&parser->parse_data, format, field_data)) != PARSER_OK)
     {
-        ListNode* n = NULL, *nn = NULL;
+        struct ListNode* n = NULL, *nn = NULL;
         list_for_each_safe(&parser->parse_data.data, n, nn)
         {
             _field_data_free(n->data);
@@ -554,7 +549,7 @@ void* parser_get_userdata_active(struct Parser* parser)
     return parser->userdata.tail->data;
 }
 
-List* parser_get_userdata(struct Parser* parser)
+struct List* parser_get_userdata(struct Parser* parser)
 {
     return &parser->userdata;
 }
@@ -620,7 +615,7 @@ void _print_format(struct ParseFormat* f)
     printf("\tfield_name: %s\n", f->field_name);
     printf("\tfield_data:\n");
 
-    ListNode* n2;
+    struct ListNode* n2;
     list_for_each(&f->field_meta, n2)
     {
         printf("\t\t");
@@ -632,7 +627,7 @@ void parser_print_formats(struct Parser* p)
 {
     printf("FORMATS\n");
     int format_count = 1;
-    ListNode* n = NULL;
+    struct ListNode* n = NULL;
     list_for_each(&p->parse_formats, n)
     {
         printf("format %d\n", format_count);
@@ -646,7 +641,7 @@ void parser_print_formats(struct Parser* p)
 void _print_parse_data(struct Parser* parser)
 {
     printf("Parse data\n");
-    ListNode* n = NULL;
+    struct ListNode* n = NULL;
     list_for_each(&parser->parse_data.data, n)
     {
         struct FieldData* fdata = n->data;

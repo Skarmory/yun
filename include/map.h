@@ -1,7 +1,6 @@
 #ifndef YUN_MAP_H
 #define YUN_MAP_H
 
-#include "defs.h"
 #include "list.h"
 #include "mon_attr.h"
 
@@ -10,7 +9,6 @@
 #define MROWS 40
 #define MCOLS 80
 
-struct List;
 struct MapCell;
 struct MapLocation;
 struct Mon;
@@ -22,7 +20,7 @@ struct Map
 {
     int width;
     int height;
-    List cell_list;
+    struct List cell_list;
 };
 
 void display_map(void);

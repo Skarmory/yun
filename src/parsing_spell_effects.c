@@ -37,8 +37,8 @@ enum ParserCode parse_spell_effects(void)
 
 parsing_callback(_parse_spell_effects_finalise)
 {
-    List* spell_effects_data = parser_get_userdata(parser);
-    ListNode* node = NULL;
+    struct List* spell_effects_data = parser_get_userdata(parser);
+    struct ListNode* node = NULL;
 
     log_format_msg(LOG_DEBUG, "Parsed spell effects count: %d", spell_effects_data->count);
 

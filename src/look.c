@@ -154,6 +154,7 @@ void look(void)
     display_msg_nolog("Move cursor over a location, press esc to stop looking.");
     clear_msgs();
     flush_msg_buffer();
+    term_refresh();
     term_wait_on_input(); // Just wait for player input so they can see the message
 
     struct MapLocation* loc = map_get_location(g_cmap, g_you->mon->x, g_you->mon->y);
@@ -165,9 +166,9 @@ void look(void)
         _look_set_visuals(mon, loc);
         _look_get_loc_info(mon, loc);
 
-        term_refresh();
         clear_msgs();
         flush_msg_buffer();
+        term_refresh();
 
         int nx = -1;
         int ny = -1;
@@ -186,5 +187,6 @@ void look(void)
     display_msg_nolog("Stopped looking, back to dungeoneering");
     clear_msgs();
     flush_msg_buffer();
+    term_refresh();
     term_wait_on_input();
 }

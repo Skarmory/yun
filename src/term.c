@@ -207,8 +207,10 @@ void term_set_sigint_callback(void(*handler)(int))
 void term_refresh(void)
 {
     struct VTermSymbol* sym = NULL;
-    int lx = -1, ly = -1;
+    int lx = -1;
+    int ly = -1;
     int nomove=0;
+
     for(int y = 0; y < vterm->height; ++y)
     for(int x = 0; x < vterm->width; ++x)
     {
@@ -228,6 +230,7 @@ void term_refresh(void)
         {
             nomove++;
         }
+
         lx = x; ly = y;
 
         // Set attributes

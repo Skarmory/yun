@@ -1,8 +1,6 @@
 #ifndef YUN_SPELL_SKEWER_H
 #define YUN_SPELL_SKEWER_H
 
-#include "list.h"
-
 #include <stdbool.h>
 
 struct MapLocation;

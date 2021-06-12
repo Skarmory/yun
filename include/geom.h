@@ -13,7 +13,7 @@ struct Coordinate
 
 struct Line
 {
-    List coordinate_list;
+    struct List coordinate_list;
 };
 
 /* 

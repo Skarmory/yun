@@ -52,17 +52,18 @@ void player_chk_dead(void)
 {
     if(mon_is_dead(g_you->mon))
     {
+        display_main_screen();
+
         clear_msgs();
         flush_msg_buffer();
-
-        display_map();
-        display_char_status();
+        term_refresh();
 
         term_wait_on_input();
         display_msg_log("You died...");
 
         clear_msgs();
         flush_msg_buffer();
+        term_refresh();
 
         term_wait_on_input();
         do_quit();

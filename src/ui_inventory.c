@@ -59,7 +59,7 @@ const int c_allow_mask_own_inventory = ACTION_QUIT_BIT | ACTION_DROP_BIT | ACTIO
 
 struct PendingActions
 {
-    List               to_drop;
+    struct List               to_drop;
     struct Object*     to_equip;
     enum EquipmentSlot to_equip_slot;
 };
@@ -108,7 +108,7 @@ static inline int _to_bits(char input)
  * Grab player input here and do something with it.
  * Return true if action should close inventory and end the turn
  */
-static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, struct PendingActions* pending_actions, ListNode** highlighted, bool* went, int allow_mask)
+static bool _input_handled(struct Inventory* inventory, struct Equipment* equipment, struct PendingActions* pending_actions, struct ListNode** highlighted, bool* went, int allow_mask)
 {
     enum InventoryCommand in = (enum InventoryCommand)get_key();
 
@@ -232,7 +232,7 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
     //struct MapCell* cell = map_get_cell_by_world_coord(g_cmap, g_you->mon->x, g_you->mon->y);
 
     // Drop items
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&pending->to_drop, node)
     {
         struct Object* obj = node->data;
@@ -307,7 +307,7 @@ static void _resolve_actions(struct Inventory* inventory, struct Equipment* equi
 /**
  * Internal commonised display inventory method
  */
-static void _display_inventory(struct Inventory* inventory, struct Equipment* equipment, ListNode** highlighted)
+static void _display_inventory(struct Inventory* inventory, struct Equipment* equipment, struct ListNode** highlighted)
 {
     int y;
     int displayable_rows = screen_rows - 4;
@@ -316,7 +316,7 @@ static void _display_inventory(struct Inventory* inventory, struct Equipment* eq
     term_draw_text(1, y, NULL, NULL, A_BOLD_BIT, "Inventory");
     y += 2;
 
-    ListNode* node = NULL;
+    struct ListNode* node = NULL;
     list_for_each(&inventory->obj_list, node)
     {
         if(y >= displayable_rows)
@@ -364,7 +364,7 @@ bool display_inventory_player(void)
     pending.to_equip = NULL;
 
     bool went = false;
-    ListNode* highlighted = g_you->mon->inventory->obj_list.head;
+    struct ListNode* highlighted = g_you->mon->inventory->obj_list.head;
 
     do
     {
@@ -393,7 +393,7 @@ void display_inventory_read_only(struct Mon* mon)
 {
     term_clear();
 
-    ListNode* highlighted = mon->inventory->obj_list.head;
+    struct ListNode* highlighted = mon->inventory->obj_list.head;
 
     do
     {

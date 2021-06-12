@@ -45,8 +45,8 @@ enum ParserCode parse_features(void)
 
 parsing_callback(_parse_features_finalise)
 {
-    List* features_data = parser_get_userdata(parser);
-    ListNode* node = NULL;
+    struct List* features_data = parser_get_userdata(parser);
+    struct ListNode* node = NULL;
 
     log_format_msg(LOG_DEBUG, "Parsed features count: %d", features_data->count);
 

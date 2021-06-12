@@ -2,6 +2,7 @@
 
 #include "cursor_utils.h"
 #include "geom.h"
+#include "list.h"
 #include "look.h"
 #include "log.h"
 #include "map.h"
@@ -43,7 +44,7 @@ static bool _spell_cast_skewer_is_valid_loc(struct Mon* caster, struct MapLocati
 }
 
 // Create a line, checking for validity, and get the targets that this spell will hit
-static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocation* origin, struct MapLocation** target, List* loc_cache, List* mon_cache)
+static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocation* origin, struct MapLocation** target, struct List* loc_cache, struct List* mon_cache)
 {
     struct Line line;
     geom_gen_line(&line, origin->x, origin->y, (*target)->x, (*target)->y);
@@ -53,7 +54,7 @@ static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocatio
     geom_dbg_log_line(&line, "spell_cast_skewer_get_targets line");
 
     // Set the in-between line segments
-    ListNode* n = NULL;
+    struct ListNode* n = NULL;
     list_for_each(&line.coordinate_list, n)
     {
         struct Coordinate* xy = n->data;
@@ -81,10 +82,10 @@ static void _spell_cast_skewer_target_info(struct Mon* caster, struct MapLocatio
 }
 
 // Set the symbols for the casting targetting indicator
-static void _spell_cast_skewer_set_visuals(struct Mon* caster, List* loc_cache)
+static void _spell_cast_skewer_set_visuals(struct Mon* caster, struct List* loc_cache)
 {
     int count = 0;
-    ListNode* n = NULL;
+    struct ListNode* n = NULL;
     list_for_each(loc_cache, n)
     {
         int sx = -1;
@@ -110,11 +111,11 @@ static void _spell_cast_skewer_set_visuals(struct Mon* caster, List* loc_cache)
 }
 
 // Take the cached locations and unset the term visuals, then clean the cache out
-static void _spell_cast_skewer_unset_visuals(struct Mon* caster, List* loc_cache)
+static void _spell_cast_skewer_unset_visuals(struct Mon* caster, struct List* loc_cache)
 {
     int sx = 0;
     int sy = 0;
-    ListNode* n = NULL, *nn = NULL;
+    struct ListNode* n = NULL, *nn = NULL;
 
     list_for_each_safe(loc_cache, n, nn)
     {
@@ -135,8 +136,8 @@ void spell_cast_skewer(struct Spell* spell, struct Mon* caster)
     struct MapLocation* origin = map_get_location(g_cmap, g_you->mon->x, g_you->mon->y);
     struct MapLocation* target = origin;
 
-    List loc_cache;
-    List mon_cache;
+    struct List loc_cache;
+    struct List mon_cache;
     list_init(&loc_cache);
     list_init(&mon_cache);
 
@@ -183,7 +184,7 @@ void spell_cast_skewer(struct Spell* spell, struct Mon* caster)
     }
 
     log_msg(LOG_DEBUG, "Spell got targets:");
-    ListNode* n = NULL;
+    struct ListNode* n = NULL;
     list_for_each(&mon_cache, n)
     {
         log_format_msg(LOG_DEBUG, "\t%s - %p", ((struct Mon*)n->data)->type->name, n->data);

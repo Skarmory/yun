@@ -1,8 +1,6 @@
 #ifndef YUN_OBJECT_H
 #define YUN_OBJECT_H
 
-#include "defs.h"
-
 #include <stdbool.h>
 
 #define OBJECT_WEAPON_OFF 0

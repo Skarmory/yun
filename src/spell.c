@@ -3,7 +3,6 @@
 #include "colour.h"
 #include "gameplay_commands.h"
 #include "geom.h"
-#include "list.h"
 #include "log.h"
 #include "look.h"
 #include "map.h"
