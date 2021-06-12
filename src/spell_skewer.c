@@ -149,6 +149,9 @@ void spell_cast_skewer(struct Spell* spell, struct Mon* caster)
 
         display_msg_nolog("Move cursor to select a target [hjklyubn]. Confirm [ENTER]. Cancel [ESC].");
 
+        clear_msgs();
+        flush_msg_buffer();
+
         _spell_cast_skewer_get_targets(caster, origin, &target, &loc_cache, &mon_cache);
         _spell_cast_skewer_set_visuals(caster, &loc_cache);
         _spell_cast_skewer_target_info(caster, target);
