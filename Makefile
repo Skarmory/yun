@@ -22,6 +22,9 @@ fast: $(GAME)
 debug: CFLAGS += -DDEBUG -g
 debug: $(GAME)
 
+profile: CFLAGS += -g -pg
+profile: $(GAME)
+
 clean:
 	@rm -f $(OBJS)
 	@rm -f $(DEPS)
