@@ -2,4 +2,6 @@
 *.d
 *.swp
 *.o
+*.so
+*.a
 yun
