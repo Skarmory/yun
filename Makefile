@@ -1,14 +1,18 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -Iinclude
+CFLAGS=-std=c2x -Wall -Wextra -Iinclude
 LDFLAGS=-lm -pthread
 GAME=yun
+
+LDFLAGS+=-L3rd/scieppend -lscieppend.so
+CFLAGS+=-isystem 3rd/scieppend/include
 
 INCL=$(wildcard include/*.h)
 SRCS=$(wildcard src/*.c)
 OBJS=$(SRCS:.c=.o)
 DEPS=$(SRCS:.c=.d)
 
-.PHONY: clean fullclean debug fast $(GAME)
+.PHONY: clean full-clean debug release profile submodules all all-debug all-clean $(GAME)
+.NOTPARALLEL:
 
 $(GAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(GAME) $(LDFLAGS)
@@ -16,13 +20,20 @@ $(GAME): $(OBJS)
 %.o: %.c
 	$(CC) -MMD $(CFLAGS) -c $< -o $@
 
-fast: CFLAGS += -Ofast
-fast: $(GAME)
+submodules:
+	make -C submodules/scieppend
 
-debug: CFLAGS += -DDEBUG -g
+all-debug: submodules debug
+
+all: submodules release
+
+release: CFLAGS+=-Ofast
+release: $(GAME)
+
+debug: CFLAGS+=-g -DDEBUG
 debug: $(GAME)
 
-profile: CFLAGS += -g -pg
+profile: CFLAGS+=-g -pg
 profile: $(GAME)
 
 clean:
@@ -31,5 +42,8 @@ clean:
 
 fullclean: clean
 	@rm -f $(GAME)
+
+all-clean: fullclean
+	make -C submodules/scieppend fullclean
 
 -include $(DEPS)
