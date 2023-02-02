@@ -1,10 +1,9 @@
 #include "init.h"
-#include "colour.h"
+
 #include "feature.h"
 #include "gameplay.h"
 #include "globals.h"
 #include "console_commands_init.h"
-#include "log.h"
 #include "mon_attack.h"
 #include "mon_type.h"
 #include "obj_armour.h"
@@ -12,24 +11,18 @@
 #include "parsing.h"
 #include "spell.h"
 #include "spell_effect.h"
-#include "symbol.h"
-#include "tasking.h"
+#include "symbols.h"
 #include "util.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
+#include <scieppend/core/tasking.h>
+#include <scieppend/core/term.h>
 
 #include <stddef.h>
 #include <stdlib.h>
 #include <time.h>
-
-static inline bool _init_symbols(void)
-{
-    g_symbol_weapon_metal.fg = *COL(g_symbol_weapon_metal.base_fg_idx);
-    g_symbol_weapon_metal.bg = *COL(g_symbol_weapon_metal.base_bg_idx);
-
-    g_symbol_weapon_wood.fg = *COL(g_symbol_weapon_wood.base_fg_idx);
-    g_symbol_weapon_wood.bg = *COL(g_symbol_weapon_wood.base_bg_idx);
-
-    return true;
-}
 
 static inline bool _init_gamedata(void)
 {
@@ -92,7 +85,7 @@ static inline bool _init_gamedata(void)
     return true;
 }
 
-void _uninit_gamedata(void)
+static void _uninit_gamedata(void)
 {
     free(g_spells);
     g_spells_count = 0;
@@ -137,10 +130,7 @@ bool init_yun(void)
 
     g_tasker = tasker_new();
 
-    if(!_init_symbols())
-    {
-        return false;
-    }
+    symbols_init();
 
     if(!_init_gamedata())
     {

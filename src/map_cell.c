@@ -1,11 +1,12 @@
 #include "map_cell.h"
 
-#include "colour.h"
 #include "feature.h"
 #include "map_room.h"
 #include "monster.h"
 #include "object.h"
 #include "pathing.h"
+
+#include <scieppend/core/colour.h>
 
 #include <stdlib.h>
 

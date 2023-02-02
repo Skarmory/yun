@@ -1,8 +1,9 @@
 #include "parsing.h"
 
-#include "log.h"
 #include "spell_effect.h"
 #include "spell_effect_action.h"
+
+#include <scieppend/core/log.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,7 +26,7 @@ enum ParserCode parse_spell_effects(void)
     parser_register_field(parser, "action-type", "action int", &_parse_spell_effect_action_type_callback);
     parser_register_field(parser, "damage", "dice-count int dice-sides int", &_parse_spell_effect_cause_damage_callback);
 
-    if(open_file_and_parse_all(parser, c_spell_effects_file_name))
+    if(parser_parse_file(parser, c_spell_effects_file_name))
     {
         _parse_spell_effects_finalise(parser);
     }

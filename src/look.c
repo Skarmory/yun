@@ -1,9 +1,7 @@
 #include "look.h"
 
-#include "colour.h"
 #include "cursor_utils.h"
 #include "feature.h"
-#include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
@@ -14,7 +12,10 @@
 #include "object.h"
 #include "player.h"
 #include "player_class.h"
-#include "term.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <stddef.h>
 

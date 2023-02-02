@@ -6,9 +6,10 @@
  * objects, and other things can occupy.
  */
 
-#include "list.h"
 #include "pathing_flags.h"
-#include "symbol.h"
+
+#include <scieppend/core/list.h>
+#include <scieppend/core/symbol.h>
 
 #include <stdbool.h>
 

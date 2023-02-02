@@ -6,9 +6,10 @@
 #include "monster.h"
 #include "mon_type.h"
 #include "player_class.h"
-#include "term.h"
 #include "ui.h"
 #include "util.h"
+
+#include <scieppend/core/term.h>
 
 #include <stdlib.h>
 

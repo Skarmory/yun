@@ -1,10 +1,12 @@
 #include "parsing.h"
-#include "colour.h"
+
 #include "obj_armour.h"
 #include "obj_weapon.h"
-#include "log.h"
 #include "mon_type.h"
-#include "symbol.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,7 +41,7 @@ enum ParserCode parse_mon_types(void)
     parser_register_field(parser, "base-weapon", "id string", &_parse_mon_type_base_weapon_callback);
     parser_register_field(parser, "vision-radius", "radius int", &_parse_mon_type_vision_radius_callback);
 
-    if(open_file_and_parse_all(parser, c_mon_type_file_name))
+    if(parser_parse_file(parser, c_mon_type_file_name))
     {
         _parse_mon_types_finalise(parser);
     }

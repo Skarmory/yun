@@ -1,10 +1,10 @@
 #include "map_room.h"
 
-#include "geom.h"
+#include <scieppend/core/geom.h>
 
 bool room_has_location(struct Room* room, int x, int y)
 {
-    return geom_point_in_rect(x, y, room->x, room->y, room->w-1, room->h-1);
+    return geom_point_in_rect(x, y, room->x, room->y, room->w, room->h);
 }
 
 bool room_is_corner(struct Room* room, int x, int y)

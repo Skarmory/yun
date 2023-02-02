@@ -1,9 +1,10 @@
 #ifndef YUN_MAP_CELL_H
 #define YUN_MAP_CELL_H
 
-#include "list.h"
 #include "map_location.h"
 #include "mon_attr.h"
+
+#include <scieppend/core/list.h>
 
 #include <stdbool.h>
 

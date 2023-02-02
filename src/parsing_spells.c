@@ -1,8 +1,9 @@
 #include "parsing.h"
 
-#include "log.h"
 #include "spell.h"
 #include "spell_effect.h"
+
+#include <scieppend/core/log.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +24,7 @@ enum ParserCode parse_spells(void)
     parser_register_field(parser, "spatial-type", "spatial int", &_parse_spell_spatial_type_callback);
     parser_register_field(parser, "spell-effect", "id string", &_parse_spell_spell_effect_callback);
 
-    if(open_file_and_parse_all(parser, c_spells_file_name))
+    if(parser_parse_file(parser, c_spells_file_name))
     {
         _parse_spells_finalise(parser);
     }

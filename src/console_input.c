@@ -1,9 +1,10 @@
 #include "console.h"
 
 #include "message.h"
-#include "colour.h"
-#include "input_keycodes.h"
-#include "term.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/input_keycodes.h>
+#include <scieppend/core/term.h>
 
 #include <stdio.h>
 #include <string.h>

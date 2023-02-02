@@ -1,15 +1,16 @@
 #include "util.h"
 
 #include "init.h"
-#include "log.h"
 #include "map.h"
 #include "monster.h"
 #include "mon_type.h"
 #include "player.h"
 #include "player_class.h"
 #include "player_faction.h"
-#include "term.h"
 #include "ui.h"
+
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <math.h>
 #include <stdio.h>

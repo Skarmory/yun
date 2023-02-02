@@ -1,10 +1,7 @@
 #include "gameplay.h"
 
-#include "colour.h"
 #include "console.h"
 #include "gameplay_commands.h"
-#include "input_keycodes.h"
-#include "log.h"
 #include "look.h"
 #include "map.h"
 #include "map_cell.h"
@@ -24,6 +21,11 @@
 #include "ui_inventory.h"
 #include "ui_stats.h"
 #include "util.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/input_keycodes.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <stddef.h>
 

@@ -1,6 +1,6 @@
 #include "console_command.h"
 
-#include "variant.h"
+#include <scieppend/core/variant.h>
 
 #include <assert.h>
 #include <stddef.h>

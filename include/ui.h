@@ -1,8 +1,8 @@
 #ifndef YUN_UI_H
 #define YUN_UI_H
 
-#include "input_keycodes.h"
-#include "list.h"
+#include <scieppend/core/input_keycodes.h>
+#include <scieppend/core/list.h>
 
 #include <stdbool.h>
 

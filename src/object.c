@@ -1,8 +1,9 @@
 #include "object.h"
 
-#include "log.h"
 #include "obj_armour.h"
 #include "obj_weapon.h"
+
+#include <scieppend/core/log.h>
 
 #include <stdlib.h>
 

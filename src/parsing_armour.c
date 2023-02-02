@@ -1,7 +1,9 @@
 #include "parsing.h"
-#include "log.h"
+
 #include "obj_armour.h"
 #include "mon_equip.h"
+
+#include <scieppend/core/log.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,7 +30,7 @@ enum ParserCode parse_armours(void)
     parser_register_field(parser, "class", "class string", &_parse_armour_class_callback);
     parser_register_field(parser, "armour-value", "value int", &_parse_armour_armour_value_callback);
 
-    if(open_file_and_parse_all(parser, c_armours_file_name))
+    if(parser_parse_file(parser, c_armours_file_name))
     {
         _parse_armours_finalise(parser);
     }

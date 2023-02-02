@@ -2,10 +2,11 @@
 
 #include "console_command.h"
 #include "console_input.h"
-#include "log.h"
 #include "message.h"
 #include "ui.h"
-#include "variant.h"
+
+#include <scieppend/core/log.h>
+#include <scieppend/core/variant.h>
 
 #include <stdlib.h>
 #include <stdio.h>

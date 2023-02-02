@@ -1,7 +1,7 @@
 #ifndef YUN_GAMEPLAY_COMMANDS_H
 #define YUN_GAMEPLAY_COMMANDS_H
 
-#include "input_keycodes.h"
+#include <scieppend/core/input_keycodes.h>
 
 #include <stdbool.h>
 

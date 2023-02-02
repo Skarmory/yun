@@ -1,10 +1,5 @@
 #include "monster.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "geom.h"
-#include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "message.h"
@@ -16,6 +11,12 @@
 #include "obj_weapon.h"
 #include "player.h"
 #include "util.h"
+
+#include <scieppend/core/geom.h>
+#include <scieppend/core/log.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 /**
  * Create a monster of given type at given position and return it

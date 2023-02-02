@@ -1,7 +1,7 @@
 #ifndef YUN_PARSING_H
 #define YUN_PARSING_H
 
-#include "parser.h"
+#include <scieppend/core/parser.h>
 
 #define parsing_callback(func_name) static enum ParseCallbackCode func_name(struct Parser* parser)
 

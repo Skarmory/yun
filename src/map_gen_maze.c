@@ -1,15 +1,15 @@
 #include "map_gen_maze.h"
-#include "map_gen_utils.h"
 
+#include "feature.h"
 #include "map_cell.h"
+#include "map_gen_utils.h"
 #include "map_location.h"
 #include "map_room.h"
 #include "map_utils.h"
-
-#include "feature.h"
-#include "log.h"
-#include "tasking.h"
 #include "util.h"
+
+#include <scieppend/core/log.h>
+#include <scieppend/core/tasking.h>
 
 #include <stddef.h>
 #include <string.h>

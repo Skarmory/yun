@@ -1,10 +1,11 @@
 #include "mon_type.h"
 
-#include "colour.h"
-#include "log.h"
 #include "obj_armour.h"
 #include "obj_weapon.h"
-#include "symbol.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
 
 #include <stddef.h>
 #include <stdlib.h>

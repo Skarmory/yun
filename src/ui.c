@@ -1,8 +1,6 @@
 #include "ui.h"
 
-#include "colour.h"
 #include "globals.h"
-#include "log.h"
 #include "map.h"
 #include "message.h"
 #include "monster.h"
@@ -12,8 +10,11 @@
 #include "object.h"
 #include "player.h"
 #include "player_class.h"
-#include "term.h"
 #include "util.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -61,20 +62,20 @@ void draw_textbox_border(int x, int y, int w, int h, struct Colour* fg, struct C
 
     for(int _x = x + 1; _x < (x+_w-1); ++_x)
     {
-        term_draw_symbol(_x,        y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '=');
-        term_draw_symbol(_x, (y+_h-1), NULL, COL(CLR_DGREY), A_BOLD_BIT, '=');
+        term_draw_symbol(_x,        y, COL(CLR_DEFAULT), COL(CLR_DGREY), A_BOLD_BIT, '=');
+        term_draw_symbol(_x, (y+_h-1), COL(CLR_DEFAULT), COL(CLR_DGREY), A_BOLD_BIT, '=');
     }
 
     for(int _y = y + 1; _y < (y+_h-1); ++_y)
     {
-        term_draw_symbol(x,        _y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '|');
-        term_draw_symbol((x+_w-1), _y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '|');
+        term_draw_symbol(x,        _y, COL(CLR_DEFAULT), COL(CLR_DGREY), A_BOLD_BIT, '|');
+        term_draw_symbol((x+_w-1), _y, COL(CLR_DEFAULT), COL(CLR_DGREY), A_BOLD_BIT, '|');
     }
 
-    term_draw_symbol(x,           y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '+');
-    term_draw_symbol(x+_w-1, y+_h-1, NULL, COL(CLR_DGREY), A_BOLD_BIT, '+');
-    term_draw_symbol(x+_w-1,      y, NULL, COL(CLR_DGREY), A_BOLD_BIT, '+');
-    term_draw_symbol(x,      y+_h-1, NULL, COL(CLR_DGREY), A_BOLD_BIT, '+');
+    term_draw_symbol(x,           y, COL(CLR_DEFAULT), COL(CLR_DGREY), A_BOLD_BIT, '+');
+    term_draw_symbol(x+_w-1, y+_h-1, COL(CLR_DEFAULT), COL(CLR_DGREY), A_BOLD_BIT, '+');
+    term_draw_symbol(x+_w-1,      y, COL(CLR_DEFAULT), COL(CLR_DGREY), A_BOLD_BIT, '+');
+    term_draw_symbol(x,      y+_h-1, COL(CLR_DEFAULT), COL(CLR_DGREY), A_BOLD_BIT, '+');
 
     draw_textbox(x+2, y+2, _w-3, _h-3, fg, bg, text);
 }
@@ -101,11 +102,11 @@ char prompt_choice(const char* title, char** choices, int length)
     int x = (screen_cols / 2) - (g_option_name_max_size / 2);
     int y = (screen_rows / 2) - (length / 2);
 
-    term_draw_ftext(x, y++, NULL, NULL, A_BOLD_BIT, "%s", title);
+    term_draw_ftext(x, y++, COL(CLR_DEFAULT), COL(CLR_DEFAULT), A_BOLD_BIT, "%s", title);
 
     for(int option_id = 0; option_id < length; ++option_id)
     {
-        term_draw_ftext(x, y++, NULL, NULL, 0, "%c - %s", (KEYCODE_a + option_id), choices[option_id]);
+        term_draw_ftext(x, y++, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "%c - %s", (KEYCODE_a + option_id), choices[option_id]);
     }
 
     term_refresh();
@@ -135,5 +136,5 @@ void display_char_status(void)
     sprintf(tmp, "%s\tHP: %d/%d", g_you->name, g_you->mon->stats.hp, g_you->mon->stats.hp_max);
 
     term_clear_area(STATUS_X, STATUS_Y, MCOLS, 1);
-    term_draw_text(STATUS_X, STATUS_Y, NULL, NULL, 0, tmp);
+    term_draw_text(STATUS_X, STATUS_Y, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, tmp);
 }

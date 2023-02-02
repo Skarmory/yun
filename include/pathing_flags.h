@@ -1,7 +1,7 @@
 #ifndef YUN_PATHING_FLAGS_H
 #define YUN_PATHING_FLAGS_H
 
-#include "bit_flags.h"
+#include <scieppend/core/bit_flags.h>
 
 enum PathingFlag
 {

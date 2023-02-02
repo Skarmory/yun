@@ -1,19 +1,21 @@
 #include "map_gen.h"
-#include "map_gen_maze.h"
-#include "map_gen_utils.h"
 
-#include "colour.h"
 #include "feature.h"
 #include "globals.h"
-#include "log.h"
 #include "map.h"
 #include "map_cell.h"
+#include "map_gen_maze.h"
+#include "map_gen_utils.h"
 #include "map_location.h"
 #include "map_room.h"
 #include "map_utils.h"
-#include "symbol.h"
-#include "tasking.h"
 #include "util.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
+#include <scieppend/core/tasking.h>
+#include <scieppend/core/term.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -181,7 +183,7 @@ static void _connect_cells(struct Map* map)
                 if(map_util_is_wall(loc))
                 {
                     struct Room* room = map_cell_get_room(cell, loc->x, loc->y);
-                    if(room_is_corner(room, loc->x, loc->y))
+                    if(room && room_is_corner(room, loc->x, loc->y))
                     {
                         // Cannot cut into a corner currently. Just try again.
                         --hconn;
@@ -301,8 +303,8 @@ static void _gen_map_dungeon(struct Map* map)
     int loading_progress_x = (screen_cols/2) - 9;
     int loading_progress_y = screen_rows/8;
 
-    term_draw_text(loading_progress_x, loading_progress_y, NULL, NULL, A_BOLD, "Generating map");
-    term_draw_text(loading_progress_x, loading_progress_y + 1, NULL, NULL, 0, "Creating rooms...");
+    term_draw_text(loading_progress_x, loading_progress_y, COL(CLR_DEFAULT), COL(CLR_DEFAULT), A_BOLD_BIT, "Generating map");
+    term_draw_text(loading_progress_x, loading_progress_y + 1, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Creating rooms...");
 
     term_refresh();
 
@@ -312,10 +314,10 @@ static void _gen_map_dungeon(struct Map* map)
         _gen_rooms_async(node->data);
     }
     tasker_sync(g_tasker);
-    tasker_integrate(g_tasker);
+    //tasker_integrate(g_tasker);
 
-    term_draw_text(loading_progress_x, loading_progress_y + 1, NULL, NULL, 0, "Creating rooms... Done!");
-    term_draw_text(loading_progress_x, loading_progress_y + 2, NULL, NULL, 0, "Generating maze...");
+    term_draw_text(loading_progress_x, loading_progress_y + 1, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Creating rooms... Done!");
+    term_draw_text(loading_progress_x, loading_progress_y + 2, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Generating maze...");
 
     term_refresh();
 
@@ -324,17 +326,17 @@ static void _gen_map_dungeon(struct Map* map)
         map_gen_maze_async(node->data);
     }
     tasker_sync(g_tasker);
-    tasker_integrate(g_tasker);
+    //tasker_integrate(g_tasker);
 
-    term_draw_text(loading_progress_x, loading_progress_y + 2, NULL, NULL, 0, "Generating maze... Done!");
-    term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells...");
+    term_draw_text(loading_progress_x, loading_progress_y + 2, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Generating maze... Done!");
+    term_draw_text(loading_progress_x, loading_progress_y + 3, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Connecting cells...");
 
     term_refresh();
 
     _connect_cells(map);
 
-    term_draw_text(loading_progress_x, loading_progress_y + 3, NULL, NULL, 0, "Connecting cells... Done!");
-    term_draw_text(loading_progress_x, loading_progress_y + 5, NULL, NULL, 0, "Entering Yun...");
+    term_draw_text(loading_progress_x, loading_progress_y + 3, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Connecting cells... Done!");
+    term_draw_text(loading_progress_x, loading_progress_y + 5, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Entering Yun...");
 
     term_refresh();
     term_wait_on_input();

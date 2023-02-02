@@ -1,9 +1,11 @@
 #include "obj_weapon.h"
 
-#include "list.h"
-#include "log.h"
 #include "object.h"
-#include "symbol.h"
+#include "symbols.h"
+
+#include <scieppend/core/list.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -29,14 +31,14 @@ struct Weapon* weapon_new(struct WeaponBase* base)
         case WEAPON_CLASS_GUN:
         case WEAPON_CLASS_AXE:
         {
-            weapon->obj->symbol = &g_symbol_weapon_metal;
+            weapon->obj->symbol = symbols_get(SYMBOL_WEAPON_METAL_ID);
             break;
         }
         case WEAPON_CLASS_BOW:
         case WEAPON_CLASS_STAFF:
         case WEAPON_CLASS_POLEARM:
         {
-            weapon->obj->symbol = &g_symbol_weapon_wood;
+            weapon->obj->symbol = symbols_get(SYMBOL_WEAPON_WOOD_ID);
             break;
         }
         case WEAPON_CLASS_NATURAL:

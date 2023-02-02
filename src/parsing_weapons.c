@@ -1,8 +1,10 @@
 #include "parsing.h"
-#include "log.h"
+
 #include "obj_weapon.h"
 #include "mon_equip.h"
 #include "mon_attack.h"
+
+#include <scieppend/core/log.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,7 +32,7 @@ enum ParserCode parse_weapons(void)
     parser_register_field(parser, "damage", "dice int sides int", &_parse_weapon_damage_callback);
     parser_register_field(parser, "attack-method", "id string", &_parse_weapon_attack_method_callback);
 
-    if(open_file_and_parse_all(parser, c_weapons_file_name))
+    if(parser_parse_file(parser, c_weapons_file_name))
     {
         _parse_weapons_finalise(parser);
     }

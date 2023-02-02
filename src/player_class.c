@@ -1,7 +1,8 @@
 #include "player_class.h"
 
-#include "colour.h"
 #include "mon_stats.h"
+
+#include <scieppend/core/colour.h>
 
 #define CLS(name, pl, mhk) \
     {\

@@ -1,10 +1,11 @@
 #include "map_utils.h"
 
 #include "feature.h"
-#include "list.h"
 #include "map_cell.h"
 #include "map_location.h"
 #include "util.h"
+
+#include <scieppend/core/list.h>
 
 #include <string.h>
 

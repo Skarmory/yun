@@ -1,6 +1,8 @@
 #include "parsing.h"
-#include "log.h"
+
 #include "mon_attack.h"
+
+#include <scieppend/core/log.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +23,7 @@ enum ParserCode parse_attack_methods(void)
     parser_register_field(parser, "msg-1", "msg string", &_parse_attack_method_msg1_callback);
     parser_register_field(parser, "msg-2", "msg string", &_parse_attack_method_msg2_callback);
 
-    if(open_file_and_parse_all(parser, c_attack_methods_file_name))
+    if(parser_parse_file(parser, c_attack_methods_file_name))
     {
         _parse_attack_methods_finalise(parser);
     }

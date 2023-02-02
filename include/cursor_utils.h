@@ -1,7 +1,7 @@
 #ifndef YUN_CURSOR_UTILS_H
 #define YUN_CURSOR_UTILS_H
 
-#include "input_keycodes.h"
+#include <scieppend/core/input_keycodes.h>
 
 enum CursorMoveCommand
 {

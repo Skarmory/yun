@@ -1,8 +1,5 @@
 #include "ui_menu.h"
 
-#include "colour.h"
-#include "input_keycodes.h"
-#include "log.h"
 #include "monster.h"
 #include "mon_stats.h"
 #include "mon_type.h"
@@ -11,6 +8,11 @@
 #include "player_faction.h"
 #include "ui.h"
 #include "util.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/input_keycodes.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <pwd.h>
 #include <stdlib.h>
@@ -22,11 +24,11 @@
 void print_picked(void)
 {
     int col;
-    term_draw_ftext(1, 2, NULL, NULL, 0, "   name: %s", !g_you->name ? "unknown" : g_you->name);
+    term_draw_ftext(1, 2, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "   name: %s", !g_you->name ? "unknown" : g_you->name);
 
     col = get_class_colour(g_you->cls);
-    term_draw_text(2, 2, NULL, NULL, 0, "  class: ");
-    term_draw_ftext(11, 2, COL(col), NULL, 0, "%s", !g_you->cls ? "not chosen" : g_you->cls->name);
+    term_draw_text(2, 2, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "  class: ");
+    term_draw_ftext(11, 2, COL(col), COL(CLR_DEFAULT), 0, "%s", !g_you->cls ? "not chosen" : g_you->cls->name);
 }
 
 /**
@@ -41,28 +43,28 @@ void print_options(int what, short mask)
     {
         case PICK_CLASS:
         {
-            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Choose your class");
+            term_draw_text(menu_col, menu_row, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Choose your class");
             menu_row += 2;
             for(int i = 0; i < g_classes_count; i++, menu_row++)
             {
                 int col = get_class_colour(&g_classes[i]);
-                term_draw_ftext(menu_col, menu_row, col != CLR_DEFAULT ? COL(col) : NULL, NULL, 0, "%c - %s", g_classes[i].hotkey, g_classes[i].name);
+                term_draw_ftext(menu_col, menu_row, COL(col), COL(CLR_DEFAULT), 0, "%c - %s", g_classes[i].hotkey, g_classes[i].name);
             }
             break;
         }
 
         case CONFIRM:
         {
-            term_draw_text(menu_col, menu_row, NULL, NULL, 0, "Confirm this character and start a new game?");
+            term_draw_text(menu_col, menu_row, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Confirm this character and start a new game?");
             menu_row += 2;
-            term_draw_text(menu_col, menu_row++, NULL, NULL, 0, "y - Start game");
-            term_draw_text(menu_col, menu_row++, NULL, NULL, 0, "n - Choose again");
+            term_draw_text(menu_col, menu_row++, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "y - Start game");
+            term_draw_text(menu_col, menu_row++, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "n - Choose again");
             break;
         }
     }
 
     menu_row++;
-    term_draw_text(menu_col, menu_row, NULL, NULL, 0, "q - quit");
+    term_draw_text(menu_col, menu_row, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "q - quit");
 
     term_refresh();
 }

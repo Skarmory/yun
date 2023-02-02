@@ -5,7 +5,8 @@
 #include "map_cell.h"
 #include "monster.h"
 #include "mon_type.h"
-#include "variant.h"
+
+#include <scieppend/core/variant.h>
 
 #include <string.h>
 

@@ -1,6 +1,8 @@
 #ifndef YUN_CONSOLE_COMMAND_H
 #define YUN_CONSOLE_COMMAND_H
 
+#include <scieppend/core/variant.h>
+
 struct ConsoleCommand;
 struct CommandParams;
 struct Param;

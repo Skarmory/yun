@@ -1,7 +1,7 @@
 #ifndef YUN_SPELL_H
 #define YUN_SPELL_H
 
-#include "list.h"
+#include <scieppend/core/list.h>
 
 struct SpellEffect;
 

@@ -1,7 +1,7 @@
 #ifndef YUN_INVENTORY_H
 #define YUN_INVENTORY_H
 
-#include "list.h"
+#include <scieppend/core/list.h>
 
 #include <stdbool.h>
 

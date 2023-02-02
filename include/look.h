@@ -1,8 +1,8 @@
 #ifndef YUN_LOOK_H
 #define YUN_LOOK_H
 
-#include "input_keycodes.h"
-#include "symbol.h"
+#include <scieppend/core/input_keycodes.h>
+#include <scieppend/core/symbol.h>
 
 struct MapLocation;
 struct Mon;

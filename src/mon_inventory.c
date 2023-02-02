@@ -1,9 +1,5 @@
 #include "mon_inventory.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "log.h"
 #include "map.h"
 #include "message.h"
 #include "monster.h"
@@ -11,6 +7,11 @@
 #include "object.h"
 #include "player.h"
 #include "ui.h"
+
+#include <scieppend/core/log.h>
+
+#include <stdio.h>
+#include <stdlib.h>
 
 #define DEFAULT_INVENTORY_SIZE 16
 
@@ -85,13 +86,13 @@ bool inventory_sanity_check(struct Inventory* inventory)
     bool ret = true;
     if(inventory->size > inventory->capacity)
     {
-        log_scheck_fail("Inventory size exceeds capacity");
+        log_msg(LOG_DEBUG, "Inventory size exceeds capacity");
         ret = false;
     }
 
     if(inventory->size > 0 && inventory->obj_list.head == NULL)
     {
-        log_scheck_fail("Inventory size is >0 but objects is null");
+        log_msg(LOG_DEBUG, "Inventory size is >0 but objects is null");
         ret = false;
     }
 
@@ -104,12 +105,12 @@ bool inventory_sanity_check(struct Inventory* inventory)
 
     if(counter > inventory->size)
     {
-        log_scheck_fail("Number of objects in inventory exceeds inventory size");
+        log_msg(LOG_DEBUG, "Number of objects in inventory exceeds inventory size");
         ret = false;
     }
     else if(counter < inventory->size)
     {
-        log_scheck_fail("Number of objects in inventory is less than inventory size");
+        log_msg(LOG_DEBUG, "Number of objects in inventory is less than inventory size");
         ret = false;
     }
 

@@ -3,8 +3,8 @@ CFLAGS=-std=c2x -Wall -Wextra -Iinclude
 LDFLAGS=-lm -pthread
 GAME=yun
 
-LDFLAGS+=-L3rd/scieppend -lscieppend.so
-CFLAGS+=-isystem 3rd/scieppend/include
+LDFLAGS+=-Lsubmodules/scieppend -Wl,-rpath=./submodules/scieppend -lscieppend
+CFLAGS+=-isystem submodules/scieppend/include/
 
 INCL=$(wildcard include/*.h)
 SRCS=$(wildcard src/*.c)

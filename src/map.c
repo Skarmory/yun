@@ -1,10 +1,7 @@
 #include "map.h"
 
-#include "colour.h"
 #include "feature.h"
 #include "gameplay_commands.h"
-#include "input_keycodes.h"
-#include "log.h"
 #include "map_cell.h"
 #include "map_location.h"
 #include "monster.h"
@@ -12,9 +9,13 @@
 #include "object.h"
 #include "player.h"
 #include "pathing.h"
-#include "symbol.h"
-#include "term.h"
 #include "util.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/input_keycodes.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
+#include <scieppend/core/term.h>
 
 #include <stdlib.h>
 

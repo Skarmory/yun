@@ -1,6 +1,5 @@
 #include "mon_ai.h"
 
-#include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
@@ -9,6 +8,8 @@
 #include "movement.h"
 #include "pathing.h"
 #include "player.h"
+
+#include <scieppend/core/log.h>
 
 #include <stdio.h>
 

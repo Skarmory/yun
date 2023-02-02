@@ -1,9 +1,9 @@
 #ifndef YUN_MAP_H
 #define YUN_MAP_H
 
-#include "list.h"
 #include "mon_attr.h"
 
+#include <scieppend/core/list.h>
 #include <stdbool.h>
 
 #define MROWS 40

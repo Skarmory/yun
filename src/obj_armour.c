@@ -1,11 +1,12 @@
 #include "obj_armour.h"
 
+#include "object.h"
+
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
+
 #include <stdlib.h>
 #include <string.h>
-
-#include "log.h"
-#include "object.h"
-#include "symbol.h"
 
 struct ArmourBase* g_armour_base = NULL;
 int g_armour_base_count = 0;

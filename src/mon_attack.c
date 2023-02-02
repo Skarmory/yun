@@ -1,6 +1,5 @@
 #include "mon_attack.h"
 
-#include "log.h"
 #include "message.h"
 #include "monster.h"
 #include "mon_equip.h"
@@ -11,6 +10,8 @@
 #include "obj_weapon.h"
 #include "player.h"
 #include "util.h"
+
+#include <scieppend/core/log.h>
 
 #include <stdio.h>
 #include <string.h>

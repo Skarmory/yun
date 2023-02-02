@@ -1,9 +1,10 @@
 #include "spell_effect.h"
-#include "spell_effect_action.h"
 
-#include "list.h"
 #include "monster.h"
+#include "spell_effect_action.h"
 #include "util.h"
+
+#include <scieppend/core/list.h>
 
 #include <stddef.h>
 #include <string.h>

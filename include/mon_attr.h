@@ -1,7 +1,7 @@
 #ifndef YUN_MON_ATTR_H
 #define YUN_MON_ATTR_H
 
-#include "bit_flags.h"
+#include <scieppend/core/bit_flags.h>
 
 enum MonAttrMoveFlag
 {

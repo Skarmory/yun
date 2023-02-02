@@ -1,10 +1,11 @@
 #include "parsing.h"
 
-#include "colour.h"
 #include "feature.h"
-#include "log.h"
 #include "pathing_flags.h"
-#include "symbol.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,7 +34,7 @@ enum ParserCode parse_features(void)
     parser_register_field(parser, "path-flag", "flag string", &_parse_feature_pathing_flags_callback);
     parser_register_field(parser, "block-sight", "value bool", &_parse_feature_block_sight_callback);
 
-    if(open_file_and_parse_all(parser, c_features_file_name))
+    if(parser_parse_file(parser, c_features_file_name))
     {
         _parse_features_finalise(parser);
     }

@@ -1,9 +1,6 @@
 #include "ui_inventory.h"
 
-#include "colour.h"
 #include "globals.h"
-#include "input_keycodes.h"
-#include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
@@ -14,8 +11,12 @@
 #include "object.h"
 #include "obj_armour.h"
 #include "player.h"
-#include "term.h"
 #include "ui.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/input_keycodes.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -313,7 +314,7 @@ static void _display_inventory(struct Inventory* inventory, struct Equipment* eq
     int displayable_rows = screen_rows - 4;
 
     y = 0;
-    term_draw_text(1, y, NULL, NULL, A_BOLD_BIT, "Inventory");
+    term_draw_text(1, y, COL(CLR_DEFAULT), COL(CLR_DEFAULT), A_BOLD_BIT, "Inventory");
     y += 2;
 
     struct ListNode* node = NULL;
@@ -330,16 +331,16 @@ static void _display_inventory(struct Inventory* inventory, struct Equipment* eq
 
         if(highlighted && node == *highlighted)
         {
-            term_draw_ftext(1, y++, NULL, NULL, A_BOLD_BIT, "%s %s", obj->name, extra_text);
+            term_draw_ftext(1, y++, COL(CLR_DEFAULT), COL(CLR_DEFAULT), A_BOLD_BIT, "%s %s", obj->name, extra_text);
         }
         else
         {
-            term_draw_ftext(1, y++, NULL, NULL, 0, "%s %s", obj->name, extra_text);
+            term_draw_ftext(1, y++, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "%s %s", obj->name, extra_text);
         }
     }
 
     y = 0;
-    term_draw_text(c_desc_x, y, NULL, NULL, A_BOLD_BIT, "Description");
+    term_draw_text(c_desc_x, y, COL(CLR_DEFAULT), COL(CLR_DEFAULT), A_BOLD_BIT, "Description");
     y+=2;
 
     if(highlighted && *highlighted)
@@ -370,7 +371,7 @@ bool display_inventory_player(void)
     {
         _display_inventory(g_you->mon->inventory, g_you->mon->equipment, &highlighted);
 
-        term_draw_ftext(1, screen_rows-1, NULL, NULL, 0, "%c: close inventory / %c: drop object / %c: equip object", INVENTORY_COMMAND_QUIT, INVENTORY_COMMAND_DROP, INVENTORY_COMMAND_EQUIP);
+        term_draw_ftext(1, screen_rows-1, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "%c: close inventory / %c: drop object / %c: equip object", INVENTORY_COMMAND_QUIT, INVENTORY_COMMAND_DROP, INVENTORY_COMMAND_EQUIP);
 
         term_refresh();
 
@@ -399,7 +400,7 @@ void display_inventory_read_only(struct Mon* mon)
     {
         _display_inventory(mon->inventory, mon->equipment, &highlighted);
 
-        term_draw_ftext(1, screen_rows-1, NULL, NULL, 0, "%c: close inventory", INVENTORY_COMMAND_QUIT);
+        term_draw_ftext(1, screen_rows-1, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "%c: close inventory", INVENTORY_COMMAND_QUIT);
 
         term_refresh();
 

@@ -1,10 +1,7 @@
 #include "spell_skewer.h"
 
 #include "cursor_utils.h"
-#include "geom.h"
-#include "list.h"
 #include "look.h"
-#include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_location.h"
@@ -14,8 +11,12 @@
 #include "player.h"
 #include "spell.h"
 #include "spell_effect.h"
-#include "symbol.h"
-#include "term.h"
+
+#include <scieppend/core/geom.h>
+#include <scieppend/core/list.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/symbol.h>
+#include <scieppend/core/term.h>
 
 #include <stddef.h>
 
@@ -59,15 +60,15 @@ static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocatio
     struct Line line;
     geom_gen_line(&line, origin->x, origin->y, (*target)->x, (*target)->y);
 
-    struct Coordinate* xy = list_pop_head(&line.coordinate_list); // Discard the origin of the line (the caster's location)
+    struct Point* xy = list_pop_head(&line.point_list); // Discard the origin of the line (the caster's location)
     struct MapLocation* loc = map_get_location(g_cmap, xy->x, xy->y);
     *target = loc;
 
-    geom_dbg_log_line(&line, "spell_cast_skewer_get_targets line");
+    geom_debug_log_line(&line, "spell_cast_skewer_get_targets line");
 
     // Set the in-between line segments
     struct ListNode* n = NULL;
-    list_for_each(&line.coordinate_list, n)
+    list_for_each(&line.point_list, n)
     {
         xy = n->data;
         loc = map_get_location(g_cmap, xy->x, xy->y);
@@ -86,7 +87,7 @@ static void _spell_cast_skewer_get_targets(struct Mon* caster, struct MapLocatio
         }
     }
 
-    list_uninit(&line.coordinate_list);
+    list_uninit(&line.point_list);
 }
 
 static void _spell_cast_skewer_target_info(struct Mon* caster, struct MapLocation* loc)
@@ -146,7 +147,7 @@ static void _spell_cast_skewer_set_visuals(struct Mon* caster, struct List* loc_
         struct MapLocation* loc = map_get_location(g_cmap, caster->x, caster->y);
         map_get_screen_coord_by_world_coord(g_cmap, loc->x, loc->y, &sx, &sy);
 
-        term_draw_symbol(sx, sy, &caster->type->symbol->fg, &g_colours[CLR_LRED], A_NONE, caster->type->symbol->sym);
+        term_draw_symbol(sx, sy, &caster->type->symbol->fg, &g_colours[CLR_LRED], A_NONE_BIT, caster->type->symbol->sym);
     }
 }
 

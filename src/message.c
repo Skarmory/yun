@@ -1,10 +1,12 @@
 #include "message.h"
 
-#include "log.h"
 #include "map.h"
-#include "term.h"
 #include "ui.h"
 #include "util.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -20,7 +22,7 @@ int msgbuf_size = 0;
  */
 void _flush_and_prompt(void)
 {
-    term_draw_text(MSGBOX_X, MSGBOX_Y+1, NULL, NULL, 0, "-- more--");
+    term_draw_text(MSGBOX_X, MSGBOX_Y+1, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "-- more--");
     flush_msg_buffer();
 
     // Redraw visual info
@@ -142,7 +144,7 @@ void clear_msgs(void)
  */
 void flush_msg_buffer(void)
 {
-    term_draw_text(MSGBOX_X, MSGBOX_Y, NULL, NULL, 0, msgbuf);
+    term_draw_text(MSGBOX_X, MSGBOX_Y, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, msgbuf);
     msgbuf_size = 0;
     memset(msgbuf, '\0', MSGBOX_W-1);
 }

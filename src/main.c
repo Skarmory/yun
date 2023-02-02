@@ -1,8 +1,6 @@
 #include "gameplay.h"
 #include "globals.h"
 #include "init.h"
-#include "list.h"
-#include "log.h"
 #include "map.h"
 #include "map_cell.h"
 #include "map_gen.h"
@@ -14,10 +12,13 @@
 #include "spawn.h"
 #include "spell.h"
 #include "spell_effect.h"
-#include "term.h"
 #include "ui.h"
 #include "ui_menu.h"
 #include "util.h"
+
+#include <scieppend/core/list.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -54,14 +55,14 @@ void new_game(void)
 
                 for(int j = 0; j < (int)sizeof(tmp) && tmp[j] != '\0'; ++j)
                 {
-                    term_draw_symbol(col, row, NULL, NULL, 0, tmp[j]);
+                    term_draw_symbol(col, row, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, tmp[j]);
                     ++col;
                 }
 
                 ++i;
             }
 
-            term_draw_symbol(col, row, NULL, NULL, 0, buf[i]);
+            term_draw_symbol(col, row, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, buf[i]);
             ++col;
         }
 
@@ -121,7 +122,7 @@ int main(int argc, char** argv)
 #endif
 
     // some intro text
-    term_draw_text((screen_cols/2) - 7, screen_rows/2, NULL, NULL, 0, "Welcome to Yun");
+    term_draw_text((screen_cols/2) - 7, screen_rows/2, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Welcome to Yun");
     term_refresh();
     term_wait_on_input();
 

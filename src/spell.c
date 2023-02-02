@@ -1,9 +1,6 @@
 #include "spell.h"
 
-#include "colour.h"
 #include "gameplay_commands.h"
-#include "geom.h"
-#include "log.h"
 #include "look.h"
 #include "map.h"
 #include "map_cell.h"
@@ -13,7 +10,11 @@
 #include "player.h"
 #include "spell_effect.h"
 #include "spell_skewer.h"
-#include "term.h"
+
+#include <scieppend/core/colour.h>
+#include <scieppend/core/geom.h>
+#include <scieppend/core/log.h>
+#include <scieppend/core/term.h>
 
 #include <string.h>
 
