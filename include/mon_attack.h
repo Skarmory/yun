@@ -24,7 +24,7 @@ struct Attack
 
 struct AttackMethod* attack_method_look_up_by_id(const char* id);
 
-bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender);
+//bool do_attack_mon_mon(struct Mon* attacker, struct Mon* defender);
 
 extern struct AttackMethod* g_attack_methods;
 extern int g_attack_methods_count;

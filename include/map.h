@@ -35,10 +35,10 @@ void map_get_screen_coord_by_world_coord(struct Map* map, int world_x, int world
 struct MapLocation* map_get_location(struct Map* map, int x, int y);
 struct MapLocation* map_get_location_offset_by_direction(struct Map* map, struct MapLocation* loc, int input_keycode);
 
-bool map_add_mon(struct Map* map, struct Mon* mon, int x, int y);
-bool map_has_mon(struct Map* map, int x, int y);
-bool map_is_in_bounds(struct Map* map, int x, int y);
-bool map_is_in_view_bounds(struct Map* map, int x, int y);
+//bool map_add_mon(struct Map* map, struct Mon* mon, int x, int y);
+//bool map_has_mon(struct Map* map, int x, int y);
+//bool map_is_in_bounds(struct Map* map, int x, int y);
+//bool map_is_in_view_bounds(struct Map* map, int x, int y);
 
 extern struct Map* g_cmap;
 

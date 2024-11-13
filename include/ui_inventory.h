@@ -5,8 +5,8 @@
 
 struct Mon;
 
-bool display_inventory_player(void);
+//bool display_inventory_player(void);
 
-void display_inventory_read_only(struct Mon* mon);
+//void display_inventory_read_only(struct Mon* mon);
 
 #endif

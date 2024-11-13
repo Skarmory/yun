@@ -7,7 +7,7 @@
 struct MapLocation;
 struct Mon;
 
-struct Symbol look_get_symbol(const struct MapLocation* loc, const struct Mon* looker);
-void look(void);
+//struct Symbol look_get_symbol(const struct MapLocation* loc, const struct Mon* looker);
+//void look(void);
 
 #endif

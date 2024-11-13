@@ -11,6 +11,8 @@ enum MapType
 };
 
 /* Create a map */
-void gen_map(struct Map* map, enum MapType type);
+//void gen_map(struct Map* map, enum MapType type);
+
+void generate_map(void);
 
 #endif

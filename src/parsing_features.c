@@ -30,7 +30,7 @@ enum ParserCode parse_features(void)
     parser_register_field(parser, "name", "name string", &_parse_feature_name_callback);
     parser_register_field(parser, "desc", "desc string", &_parse_feature_desc_callback);
     parser_register_field(parser, "symbol", "symbol char", &_parse_feature_symbol_callback);
-    parser_register_field(parser, "colour", "red int green int blue int", &_parse_feature_colour_callback);
+    parser_register_field(parser, "colour", "fg_red int fg_green int fg_blue int bg_red int bg_green int bg_blue int", &_parse_feature_colour_callback);
     parser_register_field(parser, "path-flag", "flag string", &_parse_feature_pathing_flags_callback);
     parser_register_field(parser, "block-sight", "value bool", &_parse_feature_block_sight_callback);
 
@@ -71,6 +71,7 @@ parsing_callback(_parse_feature_id_callback)
 
     parser_set_userdata(parser, feature);
     snprintf(feature->id, sizeof(feature->id), "%s", parser_field_get_string(parser, "id", "id"));
+    feature->id_hash = hash(feature->id, sizeof(feature->id));
     return PARSE_CALLBACK_OK;
 }
 
@@ -101,10 +102,12 @@ parsing_callback(_parse_feature_symbol_callback)
 parsing_callback(_parse_feature_colour_callback)
 {
     struct Feature* feature = parser_get_userdata_active(parser);
-    feature->symbol->fg.r = parser_field_get_int(parser, "colour", "red");
-    feature->symbol->fg.g = parser_field_get_int(parser, "colour", "green");
-    feature->symbol->fg.b = parser_field_get_int(parser, "colour", "blue");
-    feature->symbol->bg = *COL(CLR_DEFAULT);
+    feature->symbol->fg.r = parser_field_get_int(parser, "colour", "fg_red");
+    feature->symbol->fg.g = parser_field_get_int(parser, "colour", "fg_green");
+    feature->symbol->fg.b = parser_field_get_int(parser, "colour", "fg_blue");
+    feature->symbol->bg.r = parser_field_get_int(parser, "colour", "bg_red");
+    feature->symbol->bg.g = parser_field_get_int(parser, "colour", "bg_green");
+    feature->symbol->bg.b = parser_field_get_int(parser, "colour", "bg_blue");
     return PARSE_CALLBACK_OK;
 }
 

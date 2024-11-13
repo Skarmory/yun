@@ -63,25 +63,25 @@ int strrfindi(const char* haystack, const char needle, size_t start)
  */
 void do_quit(void)
 {
-    char exit_msg[512];
-    if(g_you && g_you->mon && mon_is_dead(g_you->mon))
-    {
-        sprintf(exit_msg, "The cycle continues.");
-    }
-    else
-    {
-        sprintf(exit_msg, "The fate of Yun is in your hands.");
-    }
+    //char exit_msg[512];
+    //if(g_you && g_you->mon && mon_is_dead(g_you->mon))
+    //{
+    //    sprintf(exit_msg, "The cycle continues.");
+    //}
+    //else
+    //{
+    //    sprintf(exit_msg, "The fate of Yun is in your hands.");
+    //}
 
-    free_player();
+    //free_player();
 
-    if(g_cmap)
-    {
-        map_free(g_cmap);
-    }
+    //if(g_cmap)
+    //{
+    //    map_free(g_cmap);
+    //}
 
     uninit_yun();
-    puts(exit_msg);
+    //puts(exit_msg);
     exit(0);
 }
 
@@ -89,10 +89,10 @@ void sigint_handler(int _)
 {
     (void)_;
 
-    if(prompt_yn("Really quit?"))
-    {
+    //if(prompt_yn("Really quit?"))
+    //{
         do_quit();
-    }
+    //}
 }
 
 /**

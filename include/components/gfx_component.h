@@ -1,0 +1,9 @@
+#ifndef YUN_COMPONENTS_GFX_COMPONENT_H
+#define YUN_COMPONENTS_GFX_COMPONENT_H
+
+DECL_COMPONENT(GFXComponent)
+{
+    int handle;
+};
+
+#endif
