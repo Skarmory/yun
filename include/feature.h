@@ -9,6 +9,7 @@ struct Symbol;
 
 struct Feature
 {
+    int id_hash;
     char id[5];
     char name[32];
     char desc[32];

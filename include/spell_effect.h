@@ -30,7 +30,7 @@ struct SpellEffectArgs
     struct List* affected_mons;
 };
 
-void spell_effect_execute(struct SpellEffect* effect, struct SpellEffectArgs* args);
+//void spell_effect_execute(struct SpellEffect* effect, struct SpellEffectArgs* args);
 
 struct SpellEffect* spell_effect_look_up_by_id(const char* id);
 

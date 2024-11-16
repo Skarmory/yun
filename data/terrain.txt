@@ -1,0 +1,32 @@
+# List of terrain in Yun.
+
+# INFO
+# Terrain is the base ground at a map location.
+
+# USAGE
+# Each entry is comprised of standard key-value pair fields.
+# The key and value are separated by an ':' character.
+# Each entry is separated by a new line.
+# Leading and trailing whitespace is stripped.
+
+# KEYS
+# id             - The id of the feature for the game to use to look it up
+# name           - The name of the feature
+# desc           - Description of the feature
+# symbol         - ASCII character for in-game drawing
+# colour         - RGB colour for the symbol. [0-255]
+# path-flag      - The movement requirements to move through the feature [none, ground, water, flying]
+
+id:flor
+name:floor
+desc:It's the floor
+symbol:.
+colour:20;20;20;-1;-1;-1
+path-flag:ground
+
+id:crdr
+name:corridor
+desc:It's the corridor
+symbol:#
+colour:20;20;20;-1;-1;-1
+path-flag:ground

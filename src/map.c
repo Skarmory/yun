@@ -167,105 +167,105 @@ struct MapLocation* map_get_location_offset_by_direction(struct Map* map, struct
     return map_get_location(map, newx, newy);
 }
 
-bool map_add_mon(struct Map* map, struct Mon* mon, int x, int y)
-{
-    struct MapCell* cell = map_get_cell_by_world_coord(map, x, y);
-    if(!cell)
-    {
-        return false;
-    }
-
-    map_cell_add_mon(cell, mon);
-
-    return true;
-}
-
-bool map_has_mon(struct Map* map, int x, int y)
-{
-    struct MapLocation* loc = map_get_location(map, x, y);
-
-    return loc->mon != NULL;
-}
-
-bool map_is_in_bounds(struct Map* map, int x, int y)
-{
-    struct MapCell* cell = map_get_cell_by_world_coord(map, x, y);
-
-    return cell != NULL;
-}
+//bool map_add_mon(struct Map* map, struct Mon* mon, int x, int y)
+//{
+//    struct MapCell* cell = map_get_cell_by_world_coord(map, x, y);
+//    if(!cell)
+//    {
+//        return false;
+//    }
+//
+//    map_cell_add_mon(cell, mon);
+//
+//    return true;
+//}
+//
+//bool map_has_mon(struct Map* map, int x, int y)
+//{
+//    struct MapLocation* loc = map_get_location(map, x, y);
+//
+//    return loc->mon != NULL;
+//}
+//
+//bool map_is_in_bounds(struct Map* map, int x, int y)
+//{
+//    struct MapCell* cell = map_get_cell_by_world_coord(map, x, y);
+//
+//    return cell != NULL;
+//}
 
 // TODO: Replace with proper map view functionality
-bool map_is_in_view_bounds(struct Map* map, int x, int y)
-{
-    int xmin = clamp(g_you->mon->x - (MCOLS/2), 0, (map->width * g_map_cell_width) - MCOLS - 1);
-    int ymin = clamp(g_you->mon->y - (MROWS/2), 0, (map->height * g_map_cell_height) - MROWS - 1);
-
-    int xmax = clamp(g_you->mon->x + (MCOLS/2), 0, (map->width * g_map_cell_width) + MCOLS - 1);
-    int ymax = clamp(g_you->mon->y + (MROWS/2), 0, (map->height * g_map_cell_height) + MROWS - 1);
-
-    return (x >= xmin && x < xmax) && (y >= ymin && y < ymax);
-}
+//bool map_is_in_view_bounds(struct Map* map, int x, int y)
+//{
+//    int xmin = clamp(g_you->mon->x - (MCOLS/2), 0, (map->width * g_map_cell_width) - MCOLS - 1);
+//    int ymin = clamp(g_you->mon->y - (MROWS/2), 0, (map->height * g_map_cell_height) - MROWS - 1);
+//
+//    int xmax = clamp(g_you->mon->x + (MCOLS/2), 0, (map->width * g_map_cell_width) + MCOLS - 1);
+//    int ymax = clamp(g_you->mon->y + (MROWS/2), 0, (map->height * g_map_cell_height) + MROWS - 1);
+//
+//    return (x >= xmin && x < xmax) && (y >= ymin && y < ymax);
+//}
 
 /**
  * Draw map
  */
-void display_map(void)
-{
-    int xstart = clamp(g_you->mon->x - (MCOLS/2), 0, (g_cmap->width * g_map_cell_width) - MCOLS - 1);
-    int ystart = clamp(g_you->mon->y - (MROWS/2), 0, (g_cmap->height * g_map_cell_height) - MROWS - 1);
-
-    int i = 0;
-    for(int x = xstart; i < MCOLS; ++x, ++i)
-    {
-        int j = 0;
-        for(int y = ystart; j < MROWS; ++y, ++j)
-        {
-            struct MapLocation* loc = map_get_location(g_cmap, x, y);
-
-            if(!mon_can_see(g_you->mon, x, y))
-            {
-                if(loc->seen)
-                {
-                    if(loc->feature)
-                    {
-                        term_draw_symbol(i, j, COL(CLR_FOG_OF_WAR), COL(CLR_DEFAULT), 0, loc->feature->symbol->sym);
-                    }
-                    else
-                    {
-                        term_draw_symbol(i, j, COL(CLR_FOG_OF_WAR), COL(CLR_DEFAULT), 0, loc->symbol.sym);
-                    }
-                }
-                else
-                {
-                    term_draw_symbol(i, j, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, ' ');
-                }
-            }
-            else
-            {
-                loc->seen = true;
-
-                if(loc->mon)
-                {
-                    // Draw mon
-                    term_draw_symbol(i, j, &loc->mon->type->symbol->fg, &loc->mon->type->symbol->bg, loc->mon->type->symbol->attr, loc->mon->type->symbol->sym);
-                }
-                else if(loc_has_obj(loc))
-                {
-                    // Draw object
-                    struct Object* obj = loc_get_obj(loc);
-                    term_draw_symbol(i, j, &obj->symbol->fg, &obj->symbol->bg, obj->symbol->attr, obj->symbol->sym);
-                }
-                else if(loc->feature)
-                {
-                    // Draw feature
-                    term_draw_symbol(i, j, &loc->feature->symbol->fg, &loc->feature->symbol->bg, loc->feature->symbol->attr, loc->feature->symbol->sym);
-                }
-                else
-                {
-                    // Draw base floor
-                    term_draw_symbol(i, j, &loc->symbol.fg, &loc->symbol.bg, loc->symbol.attr, loc->symbol.sym);
-                }
-            }
-        }
-    }
-}
+//void display_map(void)
+//{
+//    int xstart = clamp(g_you->mon->x - (MCOLS/2), 0, (g_cmap->width * g_map_cell_width) - MCOLS - 1);
+//    int ystart = clamp(g_you->mon->y - (MROWS/2), 0, (g_cmap->height * g_map_cell_height) - MROWS - 1);
+//
+//    int i = 0;
+//    for(int x = xstart; i < MCOLS; ++x, ++i)
+//    {
+//        int j = 0;
+//        for(int y = ystart; j < MROWS; ++y, ++j)
+//        {
+//            struct MapLocation* loc = map_get_location(g_cmap, x, y);
+//
+//            if(!mon_can_see(g_you->mon, x, y))
+//            {
+//                if(loc->seen)
+//                {
+//                    if(loc->feature)
+//                    {
+//                        term_draw_symbol(i, j, COL(CLR_FOG_OF_WAR), COL(CLR_DEFAULT), 0, loc->feature->symbol->sym);
+//                    }
+//                    else
+//                    {
+//                        term_draw_symbol(i, j, COL(CLR_FOG_OF_WAR), COL(CLR_DEFAULT), 0, loc->symbol.sym);
+//                    }
+//                }
+//                else
+//                {
+//                    term_draw_symbol(i, j, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, ' ');
+//                }
+//            }
+//            else
+//            {
+//                loc->seen = true;
+//
+//                if(loc->mon)
+//                {
+//                    // Draw mon
+//                    term_draw_symbol(i, j, &loc->mon->type->symbol->fg, &loc->mon->type->symbol->bg, loc->mon->type->symbol->attr, loc->mon->type->symbol->sym);
+//                }
+//                else if(loc_has_obj(loc))
+//                {
+//                    // Draw object
+//                    struct Object* obj = loc_get_obj(loc);
+//                    term_draw_symbol(i, j, &obj->symbol->fg, &obj->symbol->bg, obj->symbol->attr, obj->symbol->sym);
+//                }
+//                else if(loc->feature)
+//                {
+//                    // Draw feature
+//                    term_draw_symbol(i, j, &loc->feature->symbol->fg, &loc->feature->symbol->bg, loc->feature->symbol->attr, loc->feature->symbol->sym);
+//                }
+//                else
+//                {
+//                    // Draw base floor
+//                    term_draw_symbol(i, j, &loc->symbol.fg, &loc->symbol.bg, loc->symbol.attr, loc->symbol.sym);
+//                }
+//            }
+//        }
+//    }
+//}

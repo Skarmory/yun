@@ -24,7 +24,7 @@ id:walv
 name:wall
 desc:It's a wall
 symbol:|
-colour:255;255;255
+colour:255;255;255;-1;-1;-1
 path-flag:none
 block-sight:true
 
@@ -32,7 +32,7 @@ id:walh
 name:wall
 desc:It's a wall
 symbol:-
-colour:255;255;255
+colour:255;255;255;-1;-1;-1
 path-flag:none
 block-sight:true
 
@@ -40,7 +40,7 @@ id:walc
 name:wall
 desc:It's a wall
 symbol:+
-colour:255;255;255
+colour:255;255;255;-1;-1;-1
 path-flag:none
 block-sight:true
 
@@ -48,6 +48,22 @@ id:sroc
 name:solid rock
 desc:Dense solid rock
 symbol: 
-colour:0;0;0
+colour:0;0;0;-1;-1;-1
 path-flag:none
+block-sight:true
+
+id:cdor
+name:closed door
+desc:A closed door
+symbol:+
+colour:200;150;60;-1;-1;-1
+path-flag:none
+block-sight:true
+
+id:odor
+name:open door
+desc:An open door
+symbol:-
+colour:200;150;60;-1;-1;-1
+path-flag:ground
 block-sight:true

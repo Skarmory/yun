@@ -91,56 +91,56 @@ static void _back_delete_one(struct _ConsoleTextEditorState* state)
     --state->cursor_pos;
 }
 
-bool console_input(char* out_command)
-{
-    struct _ConsoleTextEditorState state;
-    state.cursor_pos = 0;
-    state.length = 0;
-    memset(&state.input, '\0', INPUT_BUFFER_LENGTH);
-
-    clear_msgs();
-
-    while(true)
-    {
-        term_clear_area(MSGBOX_X, MSGBOX_Y, MSGBOX_W, MSGBOX_H);
-        term_draw_text(MSGBOX_X, MSGBOX_Y, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "Input console command:");
-        term_draw_ftext(MSGBOX_X, MSGBOX_Y+1, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "%s ", state.input);
-        term_draw_ftext(MSGBOX_X, MSGBOX_Y+2, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "Length: %d, Cursor Pos: %d", state.length, state.cursor_pos);
-        term_draw_symbol(MSGBOX_X + state.cursor_pos, MSGBOX_Y+1, &g_colours[CLR_BLACK], &g_colours[CLR_WHITE], A_NONE_BIT, state.input[state.cursor_pos] == '\0' ? ' ' : state.input[state.cursor_pos]);
-        term_refresh();
-
-        enum KeyCode key = get_key();
-        switch(key)
-        {
-            case CONSOLE_TEXT_EDITOR_COMMAND_QUIT:
-            {
-                return true;
-            }
-            case CONSOLE_TEXT_EDITOR_COMMAND_EXECUTE:
-            {
-                snprintf(out_command, INPUT_BUFFER_LENGTH, "%s", state.input);
-                return false;
-            }
-            case CONSOLE_TEXT_EDITOR_COMMAND_BACK_ONE:
-            {
-                _move_cursor_back_one_space(&state);
-                break;
-            }
-            case CONSOLE_TEXT_EDITOR_COMMAND_FORWARD_ONE:
-            {
-                _move_cursor_forward_one_space(&state);
-                break;
-            }
-            case CONSOLE_TEXT_EDITOR_COMMAND_BACK_DELETE:
-            {
-                _back_delete_one(&state);
-                break;
-            }
-            default:
-            {
-                _add_character_to_input(&state, key);
-                break;
-            }
-        }
-    }
-}
+//bool console_input(char* out_command)
+//{
+//    struct _ConsoleTextEditorState state;
+//    state.cursor_pos = 0;
+//    state.length = 0;
+//    memset(&state.input, '\0', INPUT_BUFFER_LENGTH);
+//
+//    clear_msgs();
+//
+//    while(true)
+//    {
+//        term_clear_area(MSGBOX_X, MSGBOX_Y, MSGBOX_W, MSGBOX_H);
+//        term_draw_text(MSGBOX_X, MSGBOX_Y, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "Input console command:");
+//        term_draw_ftext(MSGBOX_X, MSGBOX_Y+1, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "%s ", state.input);
+//        term_draw_ftext(MSGBOX_X, MSGBOX_Y+2, &g_colours[CLR_WHITE], &g_colours[CLR_DEFAULT], A_NONE_BIT, "Length: %d, Cursor Pos: %d", state.length, state.cursor_pos);
+//        term_draw_symbol(MSGBOX_X + state.cursor_pos, MSGBOX_Y+1, &g_colours[CLR_BLACK], &g_colours[CLR_WHITE], A_NONE_BIT, state.input[state.cursor_pos] == '\0' ? ' ' : state.input[state.cursor_pos]);
+//        term_refresh();
+//
+//        enum KeyCode key = get_key();
+//        switch(key)
+//        {
+//            case CONSOLE_TEXT_EDITOR_COMMAND_QUIT:
+//            {
+//                return true;
+//            }
+//            case CONSOLE_TEXT_EDITOR_COMMAND_EXECUTE:
+//            {
+//                snprintf(out_command, INPUT_BUFFER_LENGTH, "%s", state.input);
+//                return false;
+//            }
+//            case CONSOLE_TEXT_EDITOR_COMMAND_BACK_ONE:
+//            {
+//                _move_cursor_back_one_space(&state);
+//                break;
+//            }
+//            case CONSOLE_TEXT_EDITOR_COMMAND_FORWARD_ONE:
+//            {
+//                _move_cursor_forward_one_space(&state);
+//                break;
+//            }
+//            case CONSOLE_TEXT_EDITOR_COMMAND_BACK_DELETE:
+//            {
+//                _back_delete_one(&state);
+//                break;
+//            }
+//            default:
+//            {
+//                _add_character_to_input(&state, key);
+//                break;
+//            }
+//        }
+//    }
+//}

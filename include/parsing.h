@@ -12,5 +12,6 @@ enum ParserCode parse_weapons(void);
 enum ParserCode parse_features(void);
 enum ParserCode parse_spell_effects(void);
 enum ParserCode parse_spells(void);
+enum ParserCode parse_terrains(void);
 
 #endif

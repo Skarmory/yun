@@ -3,6 +3,6 @@
 
 #include <stdbool.h>
 
-bool console_input(char* out_command);
+//bool console_input(char* out_command);
 
 #endif

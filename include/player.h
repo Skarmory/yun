@@ -16,9 +16,9 @@ struct Player
     struct Mon*   mon;
 };
 
-void new_player(void);
-void free_player(void);
-void player_chk_dead(void);
+//void new_player(void);
+//void free_player(void);
+//void player_chk_dead(void);
 
 extern struct Player* g_you;
 

@@ -7,6 +7,6 @@ struct MapLocation;
 struct Mon;
 struct Spell;
 
-void spell_cast_skewer(struct Spell* spell, struct Mon* caster);
+//void spell_cast_skewer(struct Spell* spell, struct Mon* caster);
 
 #endif

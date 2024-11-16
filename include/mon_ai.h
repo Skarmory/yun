@@ -3,6 +3,6 @@
 
 struct Mon;
 
-void update_mon_ai(struct Mon* mon);
+//void update_mon_ai(struct Mon* mon);
 
 #endif

@@ -1,5 +1,6 @@
 #include "init.h"
 
+#include "components/components_init.h"
 #include "feature.h"
 #include "gameplay.h"
 #include "globals.h"
@@ -12,9 +13,13 @@
 #include "spell.h"
 #include "spell_effect.h"
 #include "symbols.h"
+#include "systems/turn_system.h"
+#include "systems/turn_take_system.h"
+#include "terminal_renderer.h"
 #include "util.h"
 
 #include <scieppend/core/colour.h>
+#include <scieppend/core/ecs.h>
 #include <scieppend/core/log.h>
 #include <scieppend/core/symbol.h>
 #include <scieppend/core/tasking.h>
@@ -82,14 +87,30 @@ static inline bool _init_gamedata(void)
     }
     log_msg(LOG_DEBUG, "parsing complete");
 
+    log_msg(LOG_DEBUG, "parsing terrains");
+    if(parse_terrains() != PARSER_OK)
+    {
+        log_msg(LOG_DEBUG, "parsing failed");
+        return false;
+    }
+    log_msg(LOG_DEBUG, "parsing complete");
+
     return true;
 }
 
 static void _uninit_gamedata(void)
 {
+    for(int idx = 0; idx < g_spells_count; ++idx)
+    {
+        list_uninit(&g_spells[idx].spell_effects);
+    }
     free(g_spells);
     g_spells_count = 0;
 
+    for(int idx = 0; idx < g_spell_effects_count; ++idx)
+    {
+        free(g_spell_effects[idx].action_data);
+    }
     free(g_spell_effects);
     g_spell_effects_count = 0;
 
@@ -124,6 +145,9 @@ bool init_yun(void)
     srand(time(NULL));
 
     init_logs();
+
+    eventing_init();
+    ecs_init();
     term_init();
     term_set_sigint_callback(&sigint_handler);
     term_get_wh(&screen_cols, &screen_rows);
@@ -138,15 +162,25 @@ bool init_yun(void)
     }
 
     init_console_commands();
+    components_init();
+    terminal_renderer_init();
+    turn_system_init();
+    turn_take_system_init();
 
     return true;
 }
 
 void uninit_yun(void)
 {
+    turn_take_system_uninit();
+    turn_system_uninit();
+    terminal_renderer_uninit();
+    components_uninit();
     uninit_console_commands();
     _uninit_gamedata();
     tasker_free(g_tasker);
     term_uninit();
+    ecs_uninit();
+    eventing_uninit();
     uninit_logs();
 }

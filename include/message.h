@@ -14,9 +14,9 @@
 #define MSGBOX_W 80
 #define MSGBOX_H 3
 
-void display_msg(bool should_log, const char* msg);
-void display_fmsg(bool should_log, const char* format, ...);
-void clear_msgs(void);
-void flush_msg_buffer(void);
+//void display_msg(bool should_log, const char* msg);
+//void display_fmsg(bool should_log, const char* format, ...);
+//void clear_msgs(void);
+//void flush_msg_buffer(void);
 
 #endif

@@ -19,14 +19,14 @@ enum YesNoCommand
     NO  = KEYCODE_n
 };
 
-void draw_textbox(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, const char* text);
-void draw_textbox_border(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, const char* text);
+//void draw_textbox(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, const char* text);
+//void draw_textbox_border(int x, int y, int w, int h, struct Colour* fg, struct Colour* bg, const char* text);
+//
+//bool prompt_yn(const char* msg);
+//char prompt_choice(const char* title, char** choices, int length);
 
-bool prompt_yn(const char* msg);
-char prompt_choice(const char* title, char** choices, int length);
-
-void display_main_screen(void);
-void display_char_status(void);
-void display_char_info_screen(void);
+//void display_main_screen(void);
+//void display_char_status(void);
+//void display_char_info_screen(void);
 
 #endif

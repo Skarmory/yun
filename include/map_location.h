@@ -8,15 +8,26 @@
 
 #include "pathing_flags.h"
 
-#include <scieppend/core/list.h>
+//#include <scieppend/core/list.h>
+//#include <scieppend/core/symbol.h>
+#include <scieppend/core/ecs.h>
+#include <scieppend/core/stack_array.h>
 #include <scieppend/core/symbol.h>
 
 #include <stdbool.h>
 
-struct Feature;
-struct Mon;
-struct Object;
-struct PathNode;
+//struct Feature;
+//struct Mon;
+//struct Object;
+//struct PathNode;
+
+/**
+ * A location may contain ONLY ONE:
+ *      - Terrain entity
+ *      - Monster entity
+ *
+ * A location may contain
+ */
 
 /**
  * Contains information about a square on the map
@@ -25,22 +36,28 @@ struct MapLocation
 {
     int x;
     int y;
-    PathingFlags pathing_flags;
-    struct PathNode* path_node;
-    struct Mon* mon;
-    struct Feature* feature;
-    struct List obj_list;
-    struct Symbol symbol;
-    bool seen;
+
+    EntityHandle terrain;
+    EntityHandle creature;
+    EntityHandle feature;
+    StackArray(int, 32) objects;
+
+    //PathingFlags pathing_flags;
+    //struct PathNode* path_node;
+    //struct Mon* mon;
+    //struct Feature* feature;
+    //struct List obj_list;
+    //struct Symbol symbol;
+    //bool seen;
 };
 
-bool loc_add_obj(struct MapLocation* loc, struct Object* obj);
-bool loc_rm_obj(struct MapLocation* loc, struct Object* obj);
-bool loc_blocks_sight(struct MapLocation* loc);
-bool loc_has_obj(struct MapLocation* loc);
-bool loc_has_mon(struct MapLocation* loc);
-struct Object* loc_get_obj(struct MapLocation* loc);
-struct List* loc_get_objs(struct MapLocation* loc);
-PathingFlags loc_get_pathing(struct MapLocation* loc);
+//bool loc_add_obj(struct MapLocation* loc, struct Object* obj);
+//bool loc_rm_obj(struct MapLocation* loc, struct Object* obj);
+//bool loc_blocks_sight(struct MapLocation* loc);
+//bool loc_has_obj(struct MapLocation* loc);
+//bool loc_has_mon(struct MapLocation* loc);
+//struct Object* loc_get_obj(struct MapLocation* loc);
+//struct List* loc_get_objs(struct MapLocation* loc);
+//PathingFlags loc_get_pathing(struct MapLocation* loc);
 
 #endif

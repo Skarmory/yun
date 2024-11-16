@@ -42,7 +42,7 @@ struct PathNode
     int gen_id;
 };
 
-struct PathNode* new_path_node(struct MapLocation* loc);
-struct MapLocation* next_path_loc(struct MapLocation* start, struct MapLocation* dest, int path_bits);
+//struct PathNode* new_path_node(struct MapLocation* loc);
+//struct MapLocation* next_path_loc(struct MapLocation* start, struct MapLocation* dest, int path_bits);
 
 #endif
