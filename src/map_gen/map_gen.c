@@ -1,24 +1,32 @@
-#include "map_gen.h"
+#include "map_gen/map_gen.h"
 
+#include "components/feature_component.h"
+#include "components/gfx_component.h"
 #include "components/gfx_terminal_component.h"
 #include "components/map_component.h"
+#include "components/position_component.h"
+#include "components/terrain_component.h"
 
-#include "entities.h"
 #include "feature.h"
+#include "game_world.h"
 #include "globals.h"
 #include "map.h"
 #include "map_cell.h"
-#include "map_gen_maze.h"
-#include "map_gen_utils.h"
+#include "map_gen/map_gen_cell.h"
+#include "map_gen/map_gen_location.h"
+#include "map_gen/map_gen_maze.h"
+#include "map_gen/map_gen_room.h"
+#include "map_gen/map_gen_utils.h"
 #include "map_location.h"
 #include "map_room.h"
-#include "map_utils.h"
 #include "terrain.h"
 #include "util.h"
 
 #include <scieppend/core/colour.h>
-#include <scieppend/core/ecs.h>
+#include <scieppend/core/ecs_world.h>
+#include <scieppend/core/hash.h>
 #include <scieppend/core/log.h>
+#include <scieppend/core/rng.h>
 #include <scieppend/core/stack_array.h>
 #include <scieppend/core/symbol.h>
 #include <scieppend/core/tasking.h>
@@ -30,112 +38,26 @@
 // TODO: Check over the maze gen algorithm for performance improvements
 // TODO: Ensure that rooms are always connected
 
-// FDECL
-static void _gen_room(struct MapCell* cell);
-static void _gen_rooms(struct MapCell* cell);
-static int  _gen_rooms_task_func(void* state);
-static void _gen_open_area(struct MapCell* cell);
-static struct Task* _gen_rooms_async(struct MapCell* cell);
-
-static const struct Feature* s_wallv = NULL;
-static const struct Feature* s_wallh = NULL;
-static const struct Terrain* s_floor = NULL;
-
-static EntityHandle _create_feature(int x, int y, const struct Feature* feature)
+static void _init_cell(struct MapGenCell* cell)
 {
-    EntityHandle e_h = entity_create();
-    add_position_component(e_h, x, y, 1);
-    add_gfx_component(e_h, feature->symbol);
-    add_feature_component(e_h, feature->id_hash);
-    return e_h;
-}
+    const struct Terrain* floor = terrain_look_up_by_id("flor");
+    const struct Feature* rock = feature_look_up_by_id("sroc");
 
-static EntityHandle _create_terrain(int x, int y, const struct Terrain* terrain)
-{
-    EntityHandle e_h = entity_create();
-    add_position_component(e_h, x, y, 0);
-    add_gfx_component(e_h, terrain->symbol);
-    add_terrain_component(e_h, terrain->id_hash);
-    return e_h;
-}
-
-static void _gen_room(struct MapCell* cell)
-{
-    int w = random_int(4, 10);
-    int h = random_int(4, 8);
-    int x = random_int(cell->world_x, cell->world_x+g_map_cell_width-1-w);
-    int y = random_int(cell->world_y, cell->world_y+g_map_cell_height-1-h);
-
-    for(int i = 0; i < array_count(&cell->rooms); ++i)
+    for(int x = 0; x < g_map_cell_width; ++x)
+    for(int y = 0; y < g_map_cell_height; ++y)
     {
-        struct Room* r = array_get(&cell->rooms, i);
-        if((((x >= r->x) && (x <= (r->x + r->w))) || ((r->x >= x) && (r->x <= (x + w)))) &&
-           (((y >= r->y) && (y <= (r->y + r->h))) || ((r->y >= y) && (r->y <= (y + h)))))
-        {
-            return;
-        }
-    }
-
-    struct Room room;
-    room.x = x;
-    room.y = y;
-    room.w = w;
-    room.h = h;
-
-    array_add(&cell->rooms, &room);
-
-    struct MapLocation* loc = NULL;
-
-    // Draw vertical walls
-    for(int yoff = 0; yoff < room.h; ++yoff)
-    {
-        loc = map_cell_get_location(cell, room.x, room.y + yoff);
-        loc->feature = _create_feature(loc->x, loc->y, s_wallv);
-        loc = map_cell_get_location(cell, room.x + room.w - 1, room.y + yoff);
-        loc->feature = _create_feature(loc->x, loc->y, s_wallv);
-    }
-
-    // Draw horizontal walls
-    for(int xoff = 0; xoff < room.w; ++xoff)
-    {
-        loc = map_cell_get_location(cell, room.x + xoff, room.y);
-        loc->feature = _create_feature(loc->x, loc->y, s_wallh);
-        loc = map_cell_get_location(cell, room.x + xoff, room.y + room.h - 1);
-        loc->feature = _create_feature(loc->x, loc->y, s_wallh);
-    }
-
-    // Fill in with floor
-    for(int xoff = 0; xoff < room.w; ++xoff)
-    for(int yoff = 0; yoff < room.h; ++yoff)
-    {
-        int floor_col = random_int(20, 180);
-        loc = map_cell_get_location(cell, room.x + xoff, room.y + yoff);
-        loc->terrain = _create_terrain(loc->x, loc->y, s_floor);
-
-        struct GFXTerminalComponent* ter_c = entity_get_component(loc->terrain, g_GFXTerminalComponent_id);
-
-        ter_c->symbol.fg = (struct Colour){floor_col, floor_col, floor_col};
-        ter_c->symbol.bg = ((xoff + yoff) % 2 == 0) ? (struct Colour){ 20, 20, 20 } : (struct Colour){ 26, 26, 26 };
-        
-        entity_unget_component(loc->terrain, g_GFXTerminalComponent_id);
+        struct MapGenLocation* loc = map_gen_cell_get_location_relative(cell, x, y);
+        loc->feature = rock;
+        loc->terrain = floor;
     }
 }
 
-/* Draws a map by drawing square rooms at random locations, and with random dimensions. */
-static void _gen_rooms(struct MapCell* cell)
+static int _gen_cell_task_func(void* state)
 {
-    // Place as many rooms as we can, limited to 200 attempts
-    int attempts = 200;
-    for(int i = 0; i < attempts; i++)
-    {
-        _gen_room(cell);
-    }
-}
-
-static int _gen_rooms_task_func(void* state)
-{
-    struct MapCell* cell = *(struct MapCell**)state;
-    _gen_rooms(cell);
+    //struct MapCell* cell = *(struct MapCell**)state;
+    struct MapGenCell* cell = *(struct MapGenCell**)state;
+    _init_cell(cell);
+    map_gen_rooms(cell);
     return TASK_STATUS_SUCCESS;
 }
 
@@ -169,11 +91,11 @@ static int _gen_rooms_task_func(void* state)
 //    }
 //}
 
-static struct Task* _gen_rooms_async(struct MapCell* cell)
+//static struct Task* _gen_cell_async(struct MapCell* cell)
+static struct Task* _gen_cell_async(struct MapGenCell* cell)
 {
-    struct Task* gen_rooms_task = task_new("Gen rooms", &_gen_rooms_task_func, NULL, &cell, sizeof(cell));
+    struct Task* gen_rooms_task = task_new("Gen rooms task", &_gen_cell_task_func, NULL, &cell, sizeof(cell));
     tasker_add_task(g_tasker, gen_rooms_task);
-
     log_msg(LOG_DEBUG, "Added gen rooms task.");
     return gen_rooms_task;
 }
@@ -344,8 +266,8 @@ static struct Task* _gen_rooms_async(struct MapCell* cell)
 //    struct ListNode* node = NULL;
 //    list_for_each(&map->cell_list, node)
 //    {
-//        struct Task* gen_room_task = _gen_rooms_async(node->data);
-//        stackarray_add(&tasks, gen_room_task);
+//        struct Task* _gen_cell_task = _gen_cell_async(node->data);
+//        stackarray_add(&tasks, _gen_cell_task);
 //    }
 //
 //    tasker_sync(g_tasker);
@@ -421,24 +343,23 @@ static struct Task* _gen_rooms_async(struct MapCell* cell)
 //    }
 //}
 
-static void _generate_map_rooms(struct MapComponent* map)
+static void _generate_map_cells(struct Array* cells)
 {
-    int loading_progress_x = (screen_cols/2) - 9;
-    int loading_progress_y = screen_rows/8;
+    int loading_progress_x = (screen_cols / 2) - 9;
+    int loading_progress_y = screen_rows / 8;
 
     term_draw_text(loading_progress_x, loading_progress_y, COL(CLR_DEFAULT), COL(CLR_DEFAULT), A_BOLD_BIT, "Generating map");
     term_draw_text(loading_progress_x, loading_progress_y + 1, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Creating rooms...");
-
     term_refresh();
 
     StackArray(struct Task*, 9) tasks;
     stackarray_init(&tasks);
 
-    for(int i = 0; i < array_count(&map->cells); ++i)
+    for(int i = 0; i < array_count(cells); ++i)
     {
-        struct MapCell* cell = array_get(&map->cells, i);
-        struct Task* gen_room_task = _gen_rooms_async(cell);
-        stackarray_add(&tasks, gen_room_task);
+        struct MapGenCell* cell = array_get(cells, i);
+        struct Task* _gen_cell_task = _gen_cell_async(cell);
+        stackarray_add(&tasks, _gen_cell_task);
     }
 
     tasker_sync(g_tasker);
@@ -449,24 +370,22 @@ static void _generate_map_rooms(struct MapComponent* map)
     }
 }
 
-static void _generate_maze(struct MapComponent* map)
+static void _generate_map_maze(struct Array* cells)
 {
-    int loading_progress_x = (screen_cols/2) - 9;
-    int loading_progress_y = screen_rows/8;
+    int loading_progress_x = (screen_cols / 2) - 9;
+    int loading_progress_y = screen_rows / 8;
 
-    term_draw_text(loading_progress_x, loading_progress_y + 1, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Creating rooms... Done!");
-    term_draw_text(loading_progress_x, loading_progress_y + 2, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Generating maze...");
-
+    term_draw_text(loading_progress_x, loading_progress_y + 2, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Creating maze...");
     term_refresh();
 
     StackArray(struct Task*, 9) tasks;
     stackarray_init(&tasks);
 
-    for(int i = 0; i < array_count(&map->cells); ++i)
+    for(int i = 0; i < array_count(cells); ++i)
     {
-        struct MapCell* cell = array_get(&map->cells, i);
-        struct Task* gen_maze_task = map_gen_maze_async(cell);
-        stackarray_add(&tasks, gen_maze_task);
+        struct MapGenCell* cell = array_get(cells, i);
+        struct Task* _gen_maze_task = map_gen_maze_async(cell);
+        stackarray_add(&tasks, _gen_maze_task);
     }
 
     tasker_sync(g_tasker);
@@ -477,31 +396,146 @@ static void _generate_maze(struct MapComponent* map)
     }
 }
 
-void generate_map(void)
+static void _instantiate_map_location(struct MapGenLocation* mg_loc, struct MapLocation* loc)
 {
-    s_wallv = feature_look_up_by_id("walv");
-    s_wallh = feature_look_up_by_id("walh");
-    s_floor  = terrain_look_up_by_id("flor");
+    struct ECSWorld* world = game_world_get();
 
-    EntityHandle map = entity_create();
-    ComponentHandle map_h = entity_add_component(map, g_MapComponent_id);
+    loc->terrain = ecs_world_create_entity(world);
+    add_position_component(loc->terrain, mg_loc->x, mg_loc->y, 0);
+    add_terrain_component(loc->terrain, mg_loc->terrain->id_hash);
+    add_gfx_terminal_component(loc->terrain, mg_loc->terrain->symbol);
+
+    if(mg_loc->feature != NULL)
+    {
+        loc->feature = ecs_world_create_entity(game_world_get());
+        add_position_component(loc->feature, mg_loc->x, mg_loc->y, 1);
+        add_feature_component(loc->feature, mg_loc->feature->id_hash);
+        add_gfx_terminal_component(loc->feature, mg_loc->feature->symbol);
+    }
+}
+
+static void _instantiate_map_rooms(struct MapGenCell* mg_cell, struct MapCell* cell)
+{
+    struct ECSWorld* world = game_world_get();
+
+    for(int ridx = 0; ridx < array_count(&mg_cell->rooms); ++ridx)
+    {
+        struct Room* room = array_get(&mg_cell->rooms, ridx);
+
+        for(int x = room->x; x < (room->x + room->w); ++x)
+        for(int y = room->y; y < (room->y + room->h); ++y)
+        {
+            struct MapLocation* loc = map_cell_get_location(cell, x, y);
+
+            struct GFXTerminalComponent* gfx_c = ecs_world_entity_get_component(world, loc->terrain, COMPONENT_TYPE_ID(GFXTerminalComponent), WRITE);
+            {
+                if(room_is_floor(room, x, y))
+                {
+                    int floor_col = rng_range(mg_cell->rng, 20, 180);
+                    gfx_c->symbol.fg = (struct Colour){ floor_col, floor_col, floor_col };
+                    gfx_c->symbol.bg = ((x + y) % 2 == 0) ? (struct Colour){ 20, 20, 20 } : (struct Colour){ 26, 26, 26 };
+                }
+            }
+            ecs_world_entity_unget_component(world, loc->terrain, COMPONENT_TYPE_ID(GFXTerminalComponent), WRITE);
+        }
+    }
+}
+
+static void _instantiate_map(struct Array* cells)
+{
+    int loading_progress_x = (screen_cols / 2) - 9;
+    int loading_progress_y = screen_rows / 8;
+    term_draw_text(loading_progress_x, loading_progress_y + 3, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Instantiating entities...");
+    term_refresh();
+
+    EntityHandle map_eh = ecs_world_create_entity(game_world_get());
+    ecs_world_entity_add_component(game_world_get(), map_eh, COMPONENT_TYPE_ID(MapComponent));
 
     const int map_width = 1;
     const int map_height = 1;
 
-    struct MapComponent* map_c = component_get(map_h, g_MapComponent_id);
+    struct MapComponent* map_c = ecs_world_entity_get_component(game_world_get(), map_eh, COMPONENT_TYPE_ID(MapComponent), WRITE);
     map_component_init(map_c, map_width, map_height);
+
+    for(int i = 0; i < array_count(cells); ++i)
+    {
+        struct MapGenCell* mapgen_cell = array_get(cells, i);
+        struct MapCell cell;
+        map_cell_init(&cell, mapgen_cell->cell_x, mapgen_cell->cell_y);
+
+        for(int x = 0; x < g_map_cell_width; ++x)
+        for(int y = 0; y < g_map_cell_height; ++y)
+        {
+            struct MapGenLocation* mapgen_loc = map_gen_cell_get_location_relative(mapgen_cell, x, y);
+            struct MapLocation* loc = map_cell_get_location_relative(&cell, x, y);
+            _instantiate_map_location(mapgen_loc, loc);
+        }
+
+        _instantiate_map_rooms(mapgen_cell, &cell);
+
+        array_add(&map_c->cells, &cell);
+    }
+
+    ecs_world_entity_unget_component(game_world_get(), map_eh, COMPONENT_TYPE_ID(MapComponent), WRITE);
+
+    term_clear();
+}
+
+//static void _generate_maze(struct MapComponent* map)
+//{
+//    int loading_progress_x = (screen_cols/2) - 9;
+//    int loading_progress_y = screen_rows/8;
+//
+//    term_draw_text(loading_progress_x, loading_progress_y + 1, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Creating rooms... Done!");
+//    term_draw_text(loading_progress_x, loading_progress_y + 2, COL(CLR_DEFAULT), COL(CLR_DEFAULT), 0, "Generating maze...");
+//
+//    term_refresh();
+//
+//    StackArray(struct Task*, 9) tasks;
+//    stackarray_init(&tasks);
+//
+//    for(int i = 0; i < array_count(&map->cells); ++i)
+//    {
+//        struct MapCell* cell = array_get(&map->cells, i);
+//        struct Task* gen_maze_task = map_gen_maze_async(cell);
+//        stackarray_add(&tasks, gen_maze_task);
+//    }
+//
+//    tasker_sync(g_tasker);
+//
+//    for(int i = 0; i < tasks.count; ++i)
+//    {
+//        task_free(stackarray_get(&tasks, i));
+//    }
+//}
+
+void generate_map(void)
+{
+    struct RNG* mapgen_base_rng = rng_new(7);
+
+    const int map_width = 1;
+    const int map_height = 1;
+
+    struct Array cells;
+    array_init(&cells, sizeof(struct MapGenCell), (map_width * map_height), NULL, NULL);
 
     for(int i = 0; i < map_width; ++i)
     for(int j = 0; j < map_height; ++j)
     {
-        struct MapCell cell;
-        map_cell_init(&cell, i, j);
-        array_add(&map_c->cells, &cell);
+        struct MapGenCell cell;
+        map_gen_cell_init(&cell, i, j, rng_get(mapgen_base_rng));
+        array_add(&cells, &cell);
     }
 
-    _generate_map_rooms(map_c);
-    _generate_maze(map_c);
+    _generate_map_cells(&cells);
+    _generate_map_maze(&cells);
+    _instantiate_map(&cells);
 
-    component_unget(map_h, g_MapComponent_id);
+    for(int i = 0; i < array_count(&cells); ++i)
+    {
+        struct MapGenCell* cell = array_get(&cells, i);
+        map_gen_cell_uninit(cell);
+    }
+
+    array_uninit(&cells);
 }

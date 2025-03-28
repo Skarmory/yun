@@ -4,6 +4,7 @@
 #include "pathing_flags.h"
 
 #include <scieppend/core/colour.h>
+#include <scieppend/core/hash.h>
 #include <scieppend/core/log.h>
 #include <scieppend/core/symbol.h>
 
@@ -71,7 +72,7 @@ parsing_callback(_parse_feature_id_callback)
 
     parser_set_userdata(parser, feature);
     snprintf(feature->id, sizeof(feature->id), "%s", parser_field_get_string(parser, "id", "id"));
-    feature->id_hash = hash(feature->id, sizeof(feature->id));
+    feature->id_hash = hash(feature->id, strlen(feature->id));
     return PARSE_CALLBACK_OK;
 }
 

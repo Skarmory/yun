@@ -1,13 +1,16 @@
 #ifndef YUN_COMPONENTS_POSITION_COMPONENT_H
 #define YUN_COMPONENTS_POSITION_COMPONENT_H
 
-#include "components/component_decl.h"
+#include <scieppend/core/component.h>
 
-DECL_COMPONENT(PositionComponent)
+COMPONENT_TYPE_DECL(PositionComponent)
 {
     int x;
     int y;
     int z;
 };
+
+void add_position_component(EntityHandle e_h, const int x, const int y, const int z);
+void position_component_set_xyz(EntityHandle e_h, const int x, const int y, const int z);
 
 #endif

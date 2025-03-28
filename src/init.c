@@ -3,6 +3,7 @@
 #include "components/components_init.h"
 #include "feature.h"
 #include "gameplay.h"
+#include "game_world.h"
 #include "globals.h"
 #include "console_commands_init.h"
 #include "mon_attack.h"
@@ -19,7 +20,7 @@
 #include "util.h"
 
 #include <scieppend/core/colour.h>
-#include <scieppend/core/ecs.h>
+#include <scieppend/core/event.h>
 #include <scieppend/core/log.h>
 #include <scieppend/core/symbol.h>
 #include <scieppend/core/tasking.h>
@@ -145,9 +146,9 @@ bool init_yun(void)
     srand(time(NULL));
 
     init_logs();
-
     eventing_init();
-    ecs_init();
+    components_init();
+    game_world_init();
     term_init();
     term_set_sigint_callback(&sigint_handler);
     term_get_wh(&screen_cols, &screen_rows);
@@ -162,7 +163,6 @@ bool init_yun(void)
     }
 
     init_console_commands();
-    components_init();
     terminal_renderer_init();
     turn_system_init();
     turn_take_system_init();
@@ -180,7 +180,7 @@ void uninit_yun(void)
     _uninit_gamedata();
     tasker_free(g_tasker);
     term_uninit();
-    ecs_uninit();
+    game_world_uninit();
     eventing_uninit();
     uninit_logs();
 }

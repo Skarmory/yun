@@ -9,7 +9,7 @@
 #include "pathing.h"
 #include "player.h"
 
-#include <scieppend/core/ecs.h>
+//#include <scieppend/core/ecs.h>
 #include <scieppend/core/log.h>
 
 #include <stdio.h>

@@ -1,0 +1,4 @@
+#ifndef YUN_MAP_GEN_TYPES_H
+#define YUN_MAP_GEN_TYPES_H
+
+

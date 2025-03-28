@@ -1,7 +1,7 @@
 #ifndef YUN_TERMINAL_RENDERER_H
 #define YUN_TERMINAL_RENDERER_H
 
-#include <scieppend/core/ecs.h>
+#include <scieppend/core/ecs_defs.h>
 
 void terminal_renderer_init(void);
 void terminal_renderer_uninit(void);

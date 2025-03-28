@@ -1,5 +1,6 @@
 #include "map_cell.h"
 
+#include "entities.h"
 #include "feature.h"
 #include "map_room.h"
 #include "monster.h"

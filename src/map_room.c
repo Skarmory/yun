@@ -9,16 +9,31 @@ bool room_has_location(struct Room* room, int x, int y)
 
 bool room_is_corner(struct Room* room, int x, int y)
 {
-    return ((x == room->x && y == room->y)             ||
-            (x == room->x && y == room->y + room->h-1) ||
-            (x == room->x + room->w-1 && y == room->y) ||
-            (x == room->x + room->w-1 && y == room->y + room->h-1));
+    return (x == room->x && y == room->y)               ||
+           (x == room->x && y == room->y + room->h - 1) ||
+           (y == room->y && x == room->x + room->w - 1) ||
+           (y == room->y + room->h - 1 && x == room->x + room->w - 1);
 }
 
 bool room_is_wall(struct Room* room, int x, int y)
 {
-    return ((x == room->x && (y >= room->y && y <= room->y + room->h-1)) ||
-            (x == room->x + room->w && (y >= room->y && y <= room->y + room->h-1)) ||
-            (y == room->y && (x >= room->x && x <= room->x + room->w-1)) ||
-            (y == room->y + room->h && (x >= room->x && x <= room->x + room->w-1)));
+    return room_is_hwall(room, x, y) || room_is_vwall(room, x, y);
+}
+
+bool room_is_hwall(struct Room* room, int x, int y)
+{
+    return (y == room->y || y == room->y + room->h - 1) &&
+           (x >= room->x && x <= room->x + room->w - 1);
+}
+
+bool room_is_vwall(struct Room* room, int x, int y)
+{
+    return (x == room->x || x == room->x + room->w - 1) &&
+           (y >= room->y && y <= room->y + room->h - 1);
+}
+
+bool room_is_floor(struct Room* room, int x, int y)
+{
+    return (x > room->x && x < room->x + room->w - 1) &&
+           (y > room->y && y < room->y + room->h - 1);
 }

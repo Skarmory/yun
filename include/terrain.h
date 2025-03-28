@@ -16,6 +16,7 @@ struct Terrain
 };
 
 const struct Terrain* terrain_look_up_by_id(const char* id);
+const struct Terrain* terrain_look_up_by_id_hash(int id_hash);
 
 void terrain_parsing_finalise(struct Parser* parser);
 

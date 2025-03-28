@@ -11,5 +11,8 @@ struct Room
 bool room_has_location(struct Room* room, int x, int y);
 bool room_is_corner(struct Room* room, int x, int y);
 bool room_is_wall(struct Room* room, int x, int y);
+bool room_is_hwall(struct Room* room, int x, int y);
+bool room_is_vwall(struct Room* room, int x, int y);
+bool room_is_floor(struct Room* room, int x, int y);
 
 #endif

@@ -28,5 +28,5 @@ id:crdr
 name:corridor
 desc:It's the corridor
 symbol:#
-colour:20;20;20;-1;-1;-1
+colour:100;100;100;-1;-1;-1
 path-flag:ground

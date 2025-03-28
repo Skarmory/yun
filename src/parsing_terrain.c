@@ -48,7 +48,7 @@ parsing_callback(_parse_terrain_id_callback)
 
     parser_set_userdata(parser, terrain);
     snprintf(terrain->id, sizeof(terrain->id), "%s", parser_field_get_string(parser, "id", "id"));
-    terrain->id_hash = hash(terrain->id, sizeof(terrain->id));
+    terrain->id_hash = hash(terrain->id, strlen(terrain->id));
     return PARSE_CALLBACK_OK;
 }
 

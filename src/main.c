@@ -1,9 +1,11 @@
+#include "entities.h"
 #include "gameplay.h"
+#include "game_world.h"
 #include "globals.h"
 #include "init.h"
 #include "map.h"
 #include "map_cell.h"
-#include "map_gen.h"
+#include "map_gen/map_gen.h"
 #include "map_room.h"
 #include "message.h"
 #include "monster.h"
@@ -19,7 +21,8 @@
 #include "util.h"
 
 #include <scieppend/core/colour.h>
-#include <scieppend/core/ecs.h>
+#include <scieppend/core/ecs_defs.h>
+#include <scieppend/core/ecs_world.h>
 #include <scieppend/core/list.h>
 #include <scieppend/core/log.h>
 #include <scieppend/core/term.h>
@@ -118,19 +121,12 @@ void setup_scene(void)
     //    log_format_msg(LOG_DEBUG, "Created entity %d", e_h);
     //}
 
-    EntityHandle e_h = entity_create();
-    ComponentHandle cam_h = entity_add_component(e_h, g_CameraComponent_id);
-    ComponentHandle pos_h = entity_add_component(e_h, g_PositionComponent_id);
+    EntityHandle e_h = ecs_world_create_entity(game_world_get());
+    add_position_component(e_h, 79 / 2, 39 / 2, 0);
+    add_camera_component(e_h, 79, 39);
 
-    struct CameraComponent* cam_c = component_get(cam_h, g_CameraComponent_id);
-    cam_c->width = 79;
-    cam_c->height = 39;
-    component_unget(cam_h, g_CameraComponent_id);
-
-    struct PositionComponent* pos_c = component_get(pos_h, g_PositionComponent_id);
-    pos_c->x = 79 / 2;
-    pos_c->y = 39 / 2;
-    component_unget(pos_h, g_PositionComponent_id);
+    ComponentHandle cam_h = ecs_world_entity_get_component_handle(game_world_get(), e_h, COMPONENT_TYPE_ID(CameraComponent));
+    ComponentHandle pos_h = ecs_world_entity_get_component_handle(game_world_get(), e_h, COMPONENT_TYPE_ID(PositionComponent));
 
     terminal_renderer_set_active_camera(cam_h, pos_h);
 }
@@ -156,7 +152,7 @@ void main_loop(void)
         //flush_msg_buffer();
         //display_main_screen();
 
-        systems_update();
+        ecs_world_update_systems(game_world_get());
 
         terminal_renderer_render();
         term_refresh();

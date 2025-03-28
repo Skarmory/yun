@@ -3,8 +3,10 @@
 #include "components/ai_component.h"
 #include "components/player_component.h"
 #include "components/turn_component.h"
+#include "game_world.h"
 
-#include <scieppend/core/ecs.h>
+#include <scieppend/core/ecs_events.h>
+#include <scieppend/core/ecs_world.h>
 #include <scieppend/core/event.h>
 #include <scieppend/core/input_keycodes.h>
 #include <scieppend/core/log.h>
@@ -14,27 +16,23 @@
 
 struct TurnTakeSystem
 {
-    int system_id;
     struct CommandManagerComponent* cmd_mgr;
     ObserverHandle observer;
 };
 
-static struct TurnTakeSystem _player_tts;
-static struct TurnTakeSystem _ai_tts;
-
-static void _player_tts_update(EntityHandle entity_handle)
+static void _player_tts_update(struct ECSWorld* world, EntityHandle entity_handle)
 {
     //enum GameplayCommand cmd = (enum GameplayCommand)get_key();
     //switch(cmd)
     //{
     //}
 
-    entity_remove_component(entity_handle, g_TurnComponent_id);
+    ecs_world_entity_remove_component(world, entity_handle, COMPONENT_TYPE_ID(TurnComponent));
 }
 
-static void _ai_tts_update(EntityHandle entity_handle)
+static void _ai_tts_update(struct ECSWorld* world, EntityHandle entity_handle)
 {
-    entity_remove_component(entity_handle, g_TurnComponent_id);
+    ecs_world_entity_remove_component(world, entity_handle, COMPONENT_TYPE_ID(TurnComponent));
 }
 
 //static void _tts_observer_callback(struct Event* sender, void* observer_data, void* event_args)
@@ -51,18 +49,20 @@ void turn_take_system_init(void)
 
     struct Array required_components;
     array_init(&required_components, sizeof(int), 1, NULL, NULL); 
-    array_add(&required_components, &g_TurnComponent_id);
-    array_add(&required_components, &g_PlayerComponent_id);
+    array_add(&required_components, &COMPONENT_TYPE_ID(TurnComponent));
+    array_add(&required_components, &COMPONENT_TYPE_ID(PlayerComponent));
 
-    _player_tts.system_id = system_register(&sysname, &_player_tts_update, &required_components);
+    //_player_tts.system_id = system_register(&sysname, &_player_tts_update, &required_components);
+    ecs_world_system_register(game_world_get(), &sysname, &required_components, &_player_tts_update);
 
     array_uninit(&required_components);
     array_init(&required_components, sizeof(int), 1, NULL, NULL); 
     string_set(&sysname, "AITurnTakeSystem");
-    array_add(&required_components, &g_TurnComponent_id);
-    array_add(&required_components, &g_AIComponent_id);
+    array_add(&required_components, &COMPONENT_TYPE_ID(TurnComponent));
+    array_add(&required_components, &COMPONENT_TYPE_ID(AIComponent));
 
-    _ai_tts.system_id = system_register(&sysname, &_ai_tts_update, &required_components);
+    //_ai_tts.system_id = system_register(&sysname, &_ai_tts_update, &required_components);
+    ecs_world_system_register(game_world_get(), &sysname, &required_components, &_ai_tts_update);
 
     array_uninit(&required_components);
     string_uninit(&sysname);
@@ -76,6 +76,6 @@ void turn_take_system_init(void)
 
 void turn_take_system_uninit(void)
 {
-    observer_destroy(_player_tts.observer);
-    observer_destroy(_ai_tts.observer);
+    //observer_destroy(_player_tts.observer);
+    //observer_destroy(_ai_tts.observer);
 }

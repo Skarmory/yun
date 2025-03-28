@@ -10,7 +10,7 @@
 
 //#include <scieppend/core/list.h>
 //#include <scieppend/core/symbol.h>
-#include <scieppend/core/ecs.h>
+#include <scieppend/core/ecs_defs.h>
 #include <scieppend/core/stack_array.h>
 #include <scieppend/core/symbol.h>
 

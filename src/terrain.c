@@ -1,5 +1,6 @@
 #include "terrain.h"
 
+#include <scieppend/core/hash.h>
 #include <scieppend/core/list.h>
 #include <scieppend/core/log.h>
 #include <scieppend/core/parser.h>
@@ -12,9 +13,15 @@ static int s_terrains_count = 0;
 
 const struct Terrain* terrain_look_up_by_id(const char* id)
 {
+    int id_hash = hash(id, strlen(id));
+    return terrain_look_up_by_id_hash(id_hash);
+}
+
+const struct Terrain* terrain_look_up_by_id_hash(int id_hash)
+{
     for(int i = 0; i < s_terrains_count; ++i)
     {
-        if(strcmp(s_terrains[i].id, id) == 0)
+        if(s_terrains[i].id_hash == id_hash)
         {
             return &s_terrains[i];
         }

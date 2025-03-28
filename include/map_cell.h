@@ -1,15 +1,13 @@
 #ifndef YUN_MAP_CELL_H
 #define YUN_MAP_CELL_H
 
+#include "map_defs.h"
 #include "map_location.h"
 #include "mon_attr.h"
 
 #include <scieppend/core/array.h>
 
 #include <stdbool.h>
-
-#define g_map_cell_width  100
-#define g_map_cell_height 100
 
 struct Mon;
 

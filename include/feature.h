@@ -18,7 +18,8 @@ struct Feature
     bool block_sight;
 };
 
-struct Feature* feature_look_up_by_id(const char* id);
+const struct Feature* feature_look_up_by_id(const char* id);
+const struct Feature* feature_look_up_by_id_hash(int id_hash);
 
 extern struct Feature* g_features;
 extern int g_features_count;
